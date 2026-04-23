@@ -1,30 +1,36 @@
 # Codex Video Console
 
-本目录是一个独立的网页端原型，目标是把 Codex 本地能力包装成视频生成工作台。
+This directory contains a local web console for driving a video-generation workflow around Codex, local templates, local assets, and Remotion.
 
-当前版本是纯静态前端：
+## Files
 
-- `index.html`：三栏工作台界面
-- `styles.css`：响应式布局和视觉样式
-- `app.js`：mock 对话、任务流、日志和预览状态
+- `index.html`: main UI shell
+- `styles.css`: layout and styling
+- `app.js`: browser client, fetches local API and subscribes to SSE updates
+- `server.js`: zero-dependency local Node server
+- `start-server.cmd`: Windows launcher for the local server
 
-## 本地打开
+## Run
 
-直接打开：
+From the workspace root:
 
-```text
-D:\program\ai_video\workflow\web-video-console\index.html
+```powershell
+node web-video-console/server.js
 ```
 
-如果后续需要接真实 API，建议从本地服务托管：
+Or on Windows:
+
+```text
+D:\program\ai_video\workflow\web-video-console\start-server.cmd
+```
+
+Then open:
 
 ```text
 http://127.0.0.1:3008
 ```
 
-## 后续后端接口
-
-第一阶段可以让前端保持不变，把 `app.js` 里的 mock 行为替换成以下接口。
+## Current API
 
 ```text
 GET  /api/projects
@@ -35,25 +41,31 @@ POST /api/jobs
 GET  /api/jobs/:id
 GET  /api/jobs/:id/events
 POST /api/jobs/:id/codex/message
-POST /api/jobs/:id/tts
-POST /api/jobs/:id/render
-GET  /api/jobs/:id/artifacts
+POST /api/jobs/:id/actions/generate-plan
+POST /api/jobs/:id/actions/tts
+POST /api/jobs/:id/actions/render
 ```
 
-## Codex Bridge 职责
+## Current behavior
 
-网页端只负责展示和提交用户意图，本地后端负责执行受控动作：
+- Reads real templates from `data/templates`
+- Reads real images from `assets/images`
+- Reads historical jobs from `data/jobs`
+- Seeds one runtime demo job for the video-generation UI
+- Streams job snapshots over SSE
 
-- 调用 Codex 生成或修改 `data/jobs/<job_id>/video_plan.json`
-- 调用现有 TTS 脚本生成音频和字幕时间轴
-- 调用 Remotion 渲染 `video-app` 里的 composition
-- 把日志通过 SSE 推送给网页端
-- 把输出 MP4、字幕、封面和 JSON 作为 artifacts 返回
+## Next backend step
 
-## 建议安全边界
+Replace the current in-memory runtime actions with real bridge calls that:
 
-- 仅监听 `127.0.0.1`
-- 工作区固定为 `D:\program\ai_video\workflow`
-- 写入限制在 `data/jobs`、`assets/generated` 和明确允许的模板目录
-- 命令使用白名单
-- Codex 修改代码时先返回 diff，再由用户确认执行
+- invoke local Codex for planning and code edits
+- invoke existing TTS scripts for audio and timestamps
+- invoke Remotion for rendering
+- write outputs into `data/jobs/<job_id>`
+
+## Safety boundary
+
+- bind only to `127.0.0.1`
+- keep workspace rooted at `D:\program\ai_video\workflow`
+- restrict writes to approved output directories
+- put Codex code edits behind an explicit diff/apply step

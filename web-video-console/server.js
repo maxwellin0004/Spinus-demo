@@ -156,7 +156,8 @@ function makeVideoSteps(stageIndex = 1) {
 function createRuntimeJob(prompt) {
   const templateId = chooseTemplate(prompt);
   const id = `job_ui_${Date.now()}_${slugFromPrompt(prompt)}`;
-  const title = prompt.includes("假突破") ? "假突破交易教育短视频" : prompt.slice(0, 22) || "新建视频任务";
+  const hasFakeBreakout = /假突破/.test(prompt);
+  const title = hasFakeBreakout ? "假突破交易教育短视频" : prompt.slice(0, 22) || "新建视频任务";
   const job = {
     id,
     source: "runtime",
@@ -178,11 +179,11 @@ function createRuntimeJob(prompt) {
     preview: {
       statusText: "Draft",
       episodeLabel: "EP. 04 / Trading Signals",
-      headline: prompt.includes("假突破") ? "假突破最危险的地方" : "新任务预览已准备",
-      summary: prompt.includes("假突破")
+      headline: hasFakeBreakout ? "假突破最危险的地方" : "新任务预览已准备",
+      summary: hasFakeBreakout
         ? "不是亏损，而是它会让你连续追错方向。"
         : "当前先生成任务计划，确认脚本与素材绑定后再进入配音和渲染。",
-      subtitle: prompt.includes("假突破")
+      subtitle: hasFakeBreakout
         ? "先等回踩确认，再判断量能是否跟上"
         : "先确定结构，再进入配音和渲染",
       progress: 34,
@@ -525,7 +526,7 @@ function advanceJob(job, action) {
 
 function codexReply(job, message) {
   const text = String(message || "");
-  if (/hook|前三秒|开场/.test(text)) {
+  if (/hook|前三秒|开场/i.test(text)) {
     job.preview.headline = "这不是信号失败，而是你进场太早";
     job.scriptSections[0].text = "前三秒先抛出风险反转，再让观众意识到自己一直踩在同一个坑里。";
     pushLog(job, "codex: tightened opening hook");
