@@ -1,0 +1,50 @@
+{
+  "template_id": "minimal_psych_explainer",
+  "audio_sync_contract": {
+    "voiceover_units_source": "example_data.json.voiceover_units",
+    "tts_output_path_pattern": "video-app/public/audio/minimal-psych/{topic_slug}-voiceover.mp3",
+    "measured_audio_duration_source": "media parser or ffprobe-compatible duration read",
+    "subtitle_timeline_output": "subtitle_timeline.horizontal.json",
+    "remotion_audio_data_file": "video-app/src/data/minimalPsychExplainerAudio.ts",
+    "remotion_subtitle_component": "SubtitleTrack",
+    "remotion_audio_component": "AudioTrackLayer"
+  },
+  "mapping_steps": [
+    {
+      "step": 1,
+      "from": "voiceover_units[].text",
+      "to": "ElevenLabs TTS input",
+      "rule": "Concatenate units in order with short pauses or generate one continuous narration file."
+    },
+    {
+      "step": 2,
+      "from": "TTS output audio",
+      "to": "audio_alignment.measured_duration_sec",
+      "rule": "Read exact audio duration before final render."
+    },
+    {
+      "step": 3,
+      "from": "voiceover_units + measured audio duration",
+      "to": "subtitle_timeline.horizontal.json.cues",
+      "rule": "Use forced alignment if available; otherwise scale cue durations by target_duration_sec and text length."
+    },
+    {
+      "step": 4,
+      "from": "subtitle_timeline.horizontal.json.cues",
+      "to": "minimalPsychExplainerAudio.subtitles",
+      "rule": "Copy aligned cues into Remotion audio data. Do not use stale hand-estimated cues."
+    },
+    {
+      "step": 5,
+      "from": "audio_alignment.composition_duration_frames",
+      "to": "Root.tsx composition duration",
+      "rule": "Composition duration must be greater than or equal to measured audio duration in frames."
+    }
+  ],
+  "current_reference_audio": {
+    "src": "video-app/public/audio/minimal-psych/rumination-preview-voiceover.mp3",
+    "duration_sec": 37.87755102040816,
+    "duration_frames_30fps": 1137,
+    "composition_duration_frames": 1140
+  }
+}

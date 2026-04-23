@@ -1,0 +1,43 @@
+{
+  "template_id": "comic_emotional_insight",
+  "example_id": "emotional_scroll",
+  "voiceover_units": [
+    {
+      "voice_id": "v01",
+      "section": "split_hook",
+      "text": "你不是离不开手机，你是在借它快速离开那种不舒服的感觉。",
+      "target_duration_sec": 4.8,
+      "intended_pause_after_sec": 0.25,
+      "emphasis_words": ["不是离不开手机", "不舒服"],
+      "visual_section_id": "split_hook",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "v02",
+      "section": "mechanism",
+      "text": "真正的问题不是屏幕，而是情绪一出现，大脑就自动寻找最快的止痛方式。",
+      "target_duration_sec": 5.8,
+      "intended_pause_after_sec": 0.25,
+      "emphasis_words": ["不是屏幕", "止痛方式"],
+      "visual_section_id": "mechanism",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "v03",
+      "section": "close",
+      "text": "下一次先别急着刷，先停一口气，让自己从自动反应里回来。",
+      "target_duration_sec": 5.2,
+      "intended_pause_after_sec": 0.3,
+      "emphasis_words": ["先停一口气", "回来"],
+      "visual_section_id": "close",
+      "timing_status": "estimated"
+    }
+  ],
+  "audio_alignment": {
+    "tts_provider": "elevenlabs",
+    "voiceover_audio_path": "video-app/public/audio/comic-emotional-insight/emotional-scroll-voiceover.mp3",
+    "subtitle_timeline_path": "data/templates/comic_emotional_insight/subtitle_timeline.horizontal.json",
+    "alignment_status": "estimated",
+    "alignment_method": "duration_fit"
+  }
+}

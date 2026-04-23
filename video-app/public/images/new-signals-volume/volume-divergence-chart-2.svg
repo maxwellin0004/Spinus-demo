@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+  <rect width="1200" height="760" fill="#071019"/>
+  <g stroke="#233247" stroke-width="2">
+    <path d="M90 120H1120M90 240H1120M90 360H1120M90 480H1120M90 600H1120"/>
+    <path d="M170 80V640M310 80V640M450 80V640M590 80V640M730 80V640M870 80V640M1010 80V640"/>
+  </g>
+  <rect x="118" y="282" width="950" height="8" rx="4" fill="#ffb04d" opacity="0.82"/>
+  <text x="928" y="266" fill="#ffb04d" font-family="Arial, sans-serif" font-size="28" font-weight="700">breakout level</text>
+  <path d="M120 470L230 426L336 388L444 330L556 292L672 270L788 282L904 278L1038 286" fill="none" stroke="#4d8dff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M672 270L788 282L904 278L1038 286" fill="none" stroke="#f7f9ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="18 18"/>
+  <g fill="#ff6c4a">
+    <rect x="144" y="548" width="54" height="84" rx="8"/>
+    <rect x="282" y="518" width="54" height="114" rx="8"/>
+    <rect x="420" y="486" width="54" height="146" rx="8"/>
+    <rect x="558" y="526" width="54" height="106" rx="8"/>
+    <rect x="696" y="558" width="54" height="74" rx="8"/>
+    <rect x="834" y="574" width="54" height="58" rx="8"/>
+    <rect x="972" y="582" width="54" height="50" rx="8"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-weight="700">
+    <text x="90" y="62" fill="#f7f9ff" font-size="38">CASE 2 / Breakout Without Follow-through</text>
+    <text x="676" y="342" fill="#f7f9ff" font-size="30">sideways after breakout</text>
+    <text x="688" y="686" fill="#ff6c4a" font-size="30">volume dries up</text>
+  </g>
+</svg>

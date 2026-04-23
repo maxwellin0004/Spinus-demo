@@ -1,0 +1,94 @@
+{
+  "video_id": "budget_theater_validation_v2",
+  "orientation": "horizontal",
+  "style_variant": "chalk_bubble_classic",
+  "hook": {
+    "headline_lines": [
+      "??????",
+      "?????",
+      "?????????"
+    ],
+    "subline": "??24???????????????"
+  },
+  "sections": [
+    {
+      "id": "s01",
+      "scene_type": "StageEquationScene",
+      "title": "????",
+      "beats": [
+        "??1?????",
+        "??=7??",
+        "???364??"
+      ],
+      "board_items": [
+        {
+          "label": "????",
+          "value": "1h/day"
+        },
+        {
+          "label": "???",
+          "value": "7h"
+        },
+        {
+          "label": "???",
+          "value": "364h"
+        }
+      ]
+    },
+    {
+      "id": "s02",
+      "scene_type": "DebateBubbleScene",
+      "title": "????",
+      "beats": [
+        "????????",
+        "????????",
+        "???????"
+      ],
+      "character_blocks": [
+        {
+          "role": "????",
+          "side": "left",
+          "scale": 0.95
+        },
+        {
+          "role": "????",
+          "side": "right",
+          "scale": 1.02
+        },
+        {
+          "role": "???",
+          "side": "center",
+          "scale": 1.0
+        }
+      ]
+    },
+    {
+      "id": "s03",
+      "scene_type": "ChoiceCardScene",
+      "title": "???",
+      "beats": [
+        "30????",
+        "30????",
+        "?????3.5??"
+      ],
+      "board_items": [
+        {
+          "label": "????",
+          "value": "30min"
+        },
+        {
+          "label": "???",
+          "value": "3.5h"
+        },
+        {
+          "label": "???",
+          "value": "14h"
+        }
+      ]
+    }
+  ],
+  "close": {
+    "slogan": "?????????????",
+    "cta": "?????????????1??????"
+  }
+}

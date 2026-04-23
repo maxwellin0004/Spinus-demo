@@ -1,0 +1,18 @@
+{
+  "topic_name": "情绪性刷手机",
+  "style_variant": "night_purple_soft_day",
+  "duration_sec": 60,
+  "orientation": "horizontal",
+  "hook_title": "你不是离不开手机，你是在借它止痛",
+  "hook_subtitle": "情绪一乱，手就先摸向屏幕",
+  "trigger_scene": "孤独、焦虑或不舒服的消息出现后，角色自动拿起手机反复刷新",
+  "core_loop": ["不舒服", "拿起手机", "短暂麻木", "更空更累"],
+  "emotional_cost": "看似在缓解情绪，最后却更空、更累、更难回到现实",
+  "turning_point": "不是完全戒掉手机，而是打断情绪一上来就先刷的默认动作",
+  "action_points": [
+    "先停 1 个呼吸，再碰手机",
+    "把手机从手边移开",
+    "用一个极小的线下动作接住情绪"
+  ],
+  "close_statement": "你真正要打断的，不是手机本身，而是情绪一来就先刷的自动反应"
+}

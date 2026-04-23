@@ -1,0 +1,135 @@
+{
+  "template_id": "ai_concept_analyse",
+  "topic_name": "MCP",
+  "topic_alias": "模型连接协议",
+  "language": "zh-CN",
+  "platform": "YouTube",
+  "duration_sec": 65,
+  "style_variant": "dark_hud_orange",
+  "hook_frames": [
+    {
+      "label": "AI 系列 31",
+      "title": "MCP",
+      "ghost": "协议",
+      "subtitle": "不是工具列表"
+    },
+    {
+      "label": "AI 系列 31",
+      "title": "不是插件名",
+      "ghost": "连接",
+      "subtitle": "它解决的是模型如何稳定接工具"
+    },
+    {
+      "label": "AI 系列 31",
+      "title": "是连接层",
+      "ghost": "标准",
+      "subtitle": "让模型、工具和资源之间按统一方式协作"
+    }
+  ],
+  "doc_scene": {
+    "path": "~/.codex/protocols/mcp/",
+    "filename": "MCP.md",
+    "headline": "MCP 会把模型与外部工具、资源、操作的连接方式标准化",
+    "cards": [
+      {
+        "title": "统一入口",
+        "description": "模型不再用零散私有方式接每个工具，而是走统一协议入口。"
+      },
+      {
+        "title": "能力发现",
+        "description": "模型可以知道现在有哪些工具、资源和可调用动作。"
+      },
+      {
+        "title": "结构交互",
+        "description": "输入、输出、调用关系都有更稳定的结构化约束。"
+      },
+      {
+        "title": "可扩展复用",
+        "description": "换工具或换系统时，接入成本更低，更适合规模化协作。"
+      }
+    ]
+  },
+  "compare_scene": {
+    "left_title": "没有 MCP",
+    "right_title": "有 MCP",
+    "left_points": [
+      "每接一个工具都要单独适配",
+      "调用方式容易碎片化",
+      "跨系统协作难维护"
+    ],
+    "right_points": [
+      "模型按统一协议发现能力",
+      "调用关系更稳定",
+      "更适合多工具和多系统扩展"
+    ],
+    "footer": "MCP 的价值，不是多一个名词，而是把连接层标准化。"
+  },
+  "scenarios": [
+    {
+      "badge": "MCP 应用场景 1",
+      "title": "让模型接入多个工具",
+      "description": "当模型需要同时访问文档、搜索、数据库或文件系统时，MCP 可以统一接入方式。",
+      "bullets": [
+        "统一发现工具能力",
+        "统一调用入口",
+        "减少单独适配成本"
+      ],
+      "image_asset": "scenario_video_breakdown.jpg"
+    },
+    {
+      "badge": "MCP 应用场景 2",
+      "title": "让 Agent 系统更稳定",
+      "description": "当 Agent 不只会对话，而是要真实调用外部能力时，MCP 有助于把连接层整理清楚。",
+      "bullets": [
+        "模型和工具职责分离",
+        "能力层更清晰",
+        "便于系统扩展"
+      ],
+      "image_asset": "scenario_ppt.jpg"
+    },
+    {
+      "badge": "MCP 应用场景 3",
+      "title": "做工作流级整合",
+      "description": "当多个模块要共享工具、资源和调用方式时，MCP 更像是系统里的公共连接协议。",
+      "bullets": [
+        "统一资源接入",
+        "统一动作接口",
+        "支持规模化工作流协作"
+      ],
+      "image_asset": "scenario_batch_content.jpg"
+    }
+  ],
+  "flow_scene": {
+    "title": "一个典型的 MCP 链路，会把模型和外部能力这样连起来",
+    "steps": [
+      {
+        "title": "模型提出需求",
+        "body": "先明确这次要访问什么资源或调用什么动作。"
+      },
+      {
+        "title": "MCP 发现并转发",
+        "body": "通过统一协议发现可用能力，并把请求发到对应系统。"
+      },
+      {
+        "title": "工具返回结果",
+        "body": "结果以更稳定的结构回到模型，再进入后续推理或执行。"
+      }
+    ]
+  },
+  "concept_compare": {
+    "title": "MCP 和 Skill 的区别",
+    "left_label": "MCP",
+    "right_label": "Skill",
+    "left_points": [
+      "连接工具 / 资源 / 外部能力"
+    ],
+    "right_points": [
+      "规则包 / 方法包 / 执行模板"
+    ],
+    "footer": "MCP 更像连接层，Skill 更像方法层。它们能配合，但不是同一个东西。"
+  },
+  "close_scene": {
+    "headline": "MCP 的本质，是把模型连接外部能力这件事标准化。",
+    "subheadline": "当连接层被整理清楚，模型和工具的协作就更稳定，也更适合扩展成真正的工作流系统。"
+  }
+}

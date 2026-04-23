@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#211018"/>
+      <stop offset="1" stop-color="#05070b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="760" fill="url(#bg)"/>
+  <g opacity="0.2" stroke="#ffffff" stroke-width="1">
+    <path d="M90 150H1110M90 280H1110M90 410H1110M90 540H1110"/>
+    <path d="M210 100V620M390 100V620M570 100V620M750 100V620M930 100V620"/>
+  </g>
+  <path d="M118 496C210 420 280 370 352 322C438 264 522 190 612 218C700 246 740 352 822 388C912 428 988 388 1082 472" fill="none" stroke="#ffb04d" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M614 218C688 250 738 350 824 388C906 424 992 394 1084 472" fill="none" stroke="#ff3d3d" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M1012 404l72 68-100 18" fill="none" stroke="#ff3d3d" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#ff3d3d" opacity="0.74">
+    <rect x="156" y="592" width="46" height="58" rx="10"/>
+    <rect x="270" y="570" width="46" height="80" rx="10"/>
+    <rect x="384" y="548" width="46" height="102" rx="10"/>
+    <rect x="498" y="520" width="46" height="130" rx="10"/>
+    <rect x="612" y="488" width="46" height="162" rx="10"/>
+    <rect x="726" y="450" width="46" height="200" rx="10"/>
+    <rect x="840" y="410" width="46" height="240" rx="10"/>
+    <rect x="954" y="372" width="46" height="278" rx="10"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-weight="700">
+    <text x="92" y="92" fill="#ff6c4a" font-size="46">FALSE BREAKOUT RISK</text>
+    <text x="92" y="148" fill="#f7f9ff" font-size="30">Price looks strong, but follow-through disappears</text>
+    <text x="92" y="706" fill="#8d97aa" font-size="24">synthetic asset / generated locally</text>
+  </g>
+</svg>

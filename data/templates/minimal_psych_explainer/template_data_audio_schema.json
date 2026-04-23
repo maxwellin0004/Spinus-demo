@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "minimal_psych_explainer.template_data_audio_schema.json",
+  "title": "Minimal Psych Explainer Audio Data Schema",
+  "type": "object",
+  "$defs": {
+    "voiceover_units": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "scene_id",
+          "text",
+          "target_duration_sec",
+          "intended_pause_after_sec",
+          "emphasis_words",
+          "timing_status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "scene_id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "target_duration_sec": {
+            "type": "number",
+            "minimum": 0.5
+          },
+          "intended_pause_after_sec": {
+            "type": "number",
+            "minimum": 0
+          },
+          "emphasis_words": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "visual_section_id": {
+            "type": "string"
+          },
+          "timing_status": {
+            "type": "string",
+            "enum": [
+              "estimated",
+              "tts_generated",
+              "aligned_from_audio",
+              "aligned_from_current_audio",
+              "manual_reviewed"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "audio_alignment": {
+      "type": "object",
+      "required": [
+        "source_audio",
+        "measured_duration_sec",
+        "fps",
+        "composition_duration_frames",
+        "alignment_method",
+        "alignment_status"
+      ],
+      "properties": {
+        "source_audio": {
+          "type": "string"
+        },
+        "measured_duration_sec": {
+          "type": "number"
+        },
+        "fps": {
+          "type": "number"
+        },
+        "composition_duration_frames": {
+          "type": "number"
+        },
+        "alignment_method": {
+          "type": "string"
+        },
+        "alignment_status": {
+          "type": "string",
+          "enum": [
+            "estimated",
+            "preview_aligned",
+            "forced_aligned",
+            "manual_reviewed"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "subtitle_timeline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "voiceover_unit_id",
+          "startFrame",
+          "endFrame",
+          "text"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "voiceover_unit_id": {
+            "type": "string"
+          },
+          "startFrame": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "endFrame": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "text": {
+            "type": "string"
+          },
+          "emphasisWords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

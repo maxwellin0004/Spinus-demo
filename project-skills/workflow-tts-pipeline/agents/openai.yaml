@@ -1,0 +1,4 @@
+version: 1
+display_name: Workflow TTS Pipeline
+short_description: Guide for ElevenLabs voiceover, subtitle timing, and audio config generation.
+default_prompt: Use this skill when working on the workflow repository TTS pipeline.

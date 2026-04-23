@@ -1,0 +1,47 @@
+{
+  "template_id": "new_signals",
+  "example_id": "macd_warning",
+  "composition": {
+    "component": "NewSignalsComposition",
+    "source_file": "D:/program/ai_video/workflow/video-app/src/compositions/NewSignalsComposition.tsx",
+    "data_file": "D:/program/ai_video/workflow/video-app/src/data/newSignalsData.ts"
+  },
+  "audio_sync": {
+    "audio_alignment_protocol": "../../audio_alignment_protocol.json",
+    "voiceover_units_source": "../../example_voiceover_units.json",
+    "audio_sync_mapping": "../../render_mapping.audio_sync.json",
+    "final_subtitle_source": "aligned_subtitle_timeline",
+    "tts_output": "video-app/public/audio/new-signals/macd-warning-voiceover.mp3",
+    "subtitle_timing_status": "estimated_until_rebuilt_from_final_audio",
+    "fallback_timing_status": "estimated_after_audio_duration_fit",
+    "hard_rule": "Do not render final voiceover videos from hand-estimated subtitle frames unless explicitly requested as a rough preview."
+  },
+  "scene_mapping": [
+    {
+      "scene_id": "news_context",
+      "component": "TradingNewsContextScene",
+      "props_from": "news_context",
+      "timeline_key": "news",
+      "notes": "新闻人物/情绪/后果三联"
+    },
+    {
+      "scene_id": "case_shock",
+      "component": "TradingCaseShockScene",
+      "props_from": "hook",
+      "timeline_key": "hook",
+      "notes": "用跌幅数字和图表 inset 打 Hook"
+    },
+    {
+      "scene_id": "indicator_mechanism",
+      "component": "TradingIndicatorMechanismScene",
+      "props_from": "mechanism",
+      "timeline_key": "mechanism",
+      "notes": "四卡机制页"
+    },
+    { "scene_id": "chart_case_1", "component": "TradingChartCaseScene", "props_from": "cases[0]", "timeline_key": "case1" },
+    { "scene_id": "chart_case_2", "component": "TradingChartCaseScene", "props_from": "cases[1]", "timeline_key": "case2" },
+    { "scene_id": "chart_case_3", "component": "TradingChartCaseScene", "props_from": "cases[2]", "timeline_key": "case3" },
+    { "scene_id": "checklist", "component": "TradingChecklistScene", "props_from": "checklist", "timeline_key": "checklist" },
+    { "scene_id": "risk_close", "component": "TradingRiskCloseScene", "props_from": "close", "timeline_key": "close" }
+  ]
+}

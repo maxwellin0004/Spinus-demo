@@ -1,0 +1,129 @@
+{
+  "template_id": "minimal_psych_explainer",
+  "render_engine": "React + Remotion",
+  "composition": {
+    "id": "minimal-psych-explainer-preview",
+    "component": "MinimalPsychExplainerComposition",
+    "file": "video-app/src/compositions/MinimalPsychExplainerComposition.tsx",
+    "fps": 30,
+    "width": 1920,
+    "height": 1080,
+    "duration_source": "audio_alignment.composition_duration_frames"
+  },
+  "data_files": {
+    "visual_data": "video-app/src/data/minimalPsychExplainerData.ts",
+    "audio_data": "video-app/src/data/minimalPsychExplainerAudio.ts",
+    "template_example": "data/templates/minimal_psych_explainer/example_data.json",
+    "subtitle_timeline": "data/templates/minimal_psych_explainer/subtitle_timeline.horizontal.json"
+  },
+  "scene_sequence": [
+    {
+      "scene_id": "series_title",
+      "component": "PsychSeriesTitleScene",
+      "props_from": "title",
+      "start_frame_source": "timeline.series_title.startFrame",
+      "duration_frame_source": "timeline.series_title.durationInFrames"
+    },
+    {
+      "scene_id": "keyword_reel",
+      "component": "PsychKeywordReelScene",
+      "props_from": "reelWords",
+      "start_frame_source": "timeline.keyword_reel.startFrame",
+      "duration_frame_source": "timeline.keyword_reel.durationInFrames"
+    },
+    {
+      "scene_id": "statement_1",
+      "component": "PsychStatementScene",
+      "props_from": "scenes[0]",
+      "start_frame_source": "timeline.statement_1.startFrame",
+      "duration_frame_source": "timeline.statement_1.durationInFrames"
+    },
+    {
+      "scene_id": "statement_2",
+      "component": "PsychStatementScene",
+      "props_from": "scenes[1]",
+      "start_frame_source": "timeline.statement_2.startFrame",
+      "duration_frame_source": "timeline.statement_2.durationInFrames"
+    },
+    {
+      "scene_id": "statement_3",
+      "component": "PsychStatementScene",
+      "props_from": "scenes[2]",
+      "start_frame_source": "timeline.statement_3.startFrame",
+      "duration_frame_source": "timeline.statement_3.durationInFrames"
+    },
+    {
+      "scene_id": "statement_4",
+      "component": "PsychStatementScene",
+      "props_from": "scenes[3]",
+      "start_frame_source": "timeline.statement_4.startFrame",
+      "duration_frame_source": "timeline.statement_4.durationInFrames"
+    },
+    {
+      "scene_id": "method",
+      "component": "PsychMethodScene",
+      "props_from": "method",
+      "start_frame_source": "timeline.method.startFrame",
+      "duration_frame_source": "timeline.method.durationInFrames"
+    },
+    {
+      "scene_id": "close",
+      "component": "PsychStatementScene",
+      "props_from": "close",
+      "start_frame_source": "timeline.close.startFrame",
+      "duration_frame_source": "timeline.close.durationInFrames"
+    }
+  ],
+  "timeline": {
+    "series_title": {
+      "startFrame": 0,
+      "durationInFrames": 80
+    },
+    "keyword_reel": {
+      "startFrame": 80,
+      "durationInFrames": 53
+    },
+    "statement_1": {
+      "startFrame": 133,
+      "durationInFrames": 159
+    },
+    "statement_2": {
+      "startFrame": 292,
+      "durationInFrames": 186
+    },
+    "statement_3": {
+      "startFrame": 478,
+      "durationInFrames": 159
+    },
+    "statement_4": {
+      "startFrame": 637,
+      "durationInFrames": 159
+    },
+    "method": {
+      "startFrame": 796,
+      "durationInFrames": 212
+    },
+    "close": {
+      "startFrame": 1008,
+      "durationInFrames": 132
+    }
+  },
+  "component_mapping": {
+    "title.seriesLabel": "PsychBaseScene.titleLeft",
+    "title.title": "PsychTitleBlock.title",
+    "title.accent": "PsychTitleBlock.accent",
+    "reelWords": "PsychKeywordReelScene.words",
+    "scenes[].header": "IntroCard.text",
+    "scenes[].icon": "PsychIconFigure.type",
+    "scenes[].bubble": "PsychStatementScene.bubble",
+    "method.steps[].icon": "PsychIconFigure.type",
+    "voiceover_units": "AudioTrackLayer.config.voiceover + SubtitleTrack.cues",
+    "subtitle_timeline": "SubtitleTrack.cues"
+  },
+  "render_rules": [
+    "Do not place scene text below the bottom rule unless it is the global subtitle layer.",
+    "Bottom subtitle safe area is reserved for SubtitleTrack only.",
+    "Bubble text must be positioned relative to the full canvas, not inside transformed reveal containers.",
+    "Final duration must cover measured audio duration."
+  ]
+}

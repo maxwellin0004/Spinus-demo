@@ -1,0 +1,141 @@
+{
+  "topic": "USB-C 为什么能统一接口",
+  "kicker": "TECH ARCHIVE / CONNECTOR HISTORY",
+  "hook": {
+    "leftMetric": "1个口",
+    "rightMetric": "充电 / 数据 / 显示 / 扩展",
+    "question": "为什么一个小小的USB-C，最后能逼着整个行业统一接口？",
+    "answer": "它不是只换了形状，而是把协议、功率、生态和监管压力压进了同一个接口里。",
+    "duckPose": "question",
+    "mediaCards": [
+      {
+        "imageSrc": "images/tech-archive/usb-c-laptop.jpg",
+        "label": "现在的接口",
+        "caption": "同一个 Type-C 口，开始承担充电、数据和显示输出。"
+      },
+      {
+        "imageSrc": "images/tech-archive/multi-usb-charger.jpg",
+        "label": "过去的混乱",
+        "caption": "接口和充电头越做越多，用户管理成本一路上升。"
+      }
+    ]
+  },
+  "chapters": [
+    {
+      "id": "messy_ports",
+      "year": "2000s",
+      "title": "先是接口混战",
+      "subtitle": "手机、相机、MP3、掌机，各有各的线，连接能力被切得很碎。",
+      "duckPose": "archive",
+      "evidence": [
+        {"label": "旧接口", "title": "Mini / Micro / 专有 DC 口并存", "detail": "设备越多，线越多，用户需要记住不同接口组合。"},
+        {"label": "问题", "title": "充电、数据、扩展各说各话", "detail": "接口更像零散配件，不像统一基础设施。"}
+      ],
+      "mediaCards": [
+        {
+          "imageSrc": "images/tech-archive/legacy-usb-connectors.jpg",
+          "label": "接口样本",
+          "caption": "旧时代 USB 家族和专有连接器长相不同、能力也不同。",
+          "objectFit": "contain",
+          "objectPosition": "center center"
+        },
+        {
+          "imageSrc": "images/tech-archive/multi-usb-charger.jpg",
+          "label": "配件负担",
+          "caption": "接口越碎片化，用户维护线材和充电器就越多。"
+        }
+      ]
+    },
+    {
+      "id": "standard_push",
+      "year": "2014",
+      "title": "真正的变化，是标准开始说同一种语言",
+      "subtitle": "USB-C 不只可正反插，它把接口形态和协议扩展开始绑定。",
+      "duckPose": "point",
+      "evidence": [
+        {"label": "协议", "title": "USB-C + USB PD 成为一组系统", "detail": "连接形态、功率协商和功能扩展开始纳入统一规则。"},
+        {"label": "体验", "title": "用户第一次明显感到接口统一的好处", "detail": "不用再试方向，不用反复猜这根线到底能做什么。"}
+      ],
+      "mediaCards": [
+        {
+          "imageSrc": "images/tech-archive/usb-c-laptop.jpg",
+          "label": "统一接口",
+          "caption": "Type-C 成为跨设备共同入口。"
+        },
+        {
+          "imageSrc": "images/tech-archive/three-port-usb-charger.png",
+          "label": "能力叠加",
+          "caption": "一个充电器适配更多设备成为现实。",
+          "objectFit": "contain",
+          "objectPosition": "center center"
+        }
+      ]
+    },
+    {
+      "id": "power_jump",
+      "year": "2017-2021",
+      "title": "功率升级，把它推成主接口",
+      "subtitle": "当充电功率和扩展能力一起上升，Type-C 从手机口走向PC生态。",
+      "duckPose": "power",
+      "evidence": [
+        {"label": "供电", "title": "从手机快充走向笔记本和显示器", "detail": "高功率协商让接口拥有跨设备级价值。"},
+        {"label": "生态", "title": "厂商开始减少私有充电线", "detail": "统一接口降低配件SKU与售后复杂度。"}
+      ],
+      "mediaCards": [
+        {
+          "imageSrc": "images/tech-archive/usb-c-laptop.jpg",
+          "label": "进入电脑",
+          "caption": "接口能力越强，越容易成为默认入口。"
+        },
+        {
+          "imageSrc": "images/tech-archive/three-port-usb-charger.png",
+          "label": "高功率扩展",
+          "caption": "多口充电器和扩展坞出现后，Type-C 接入桌面工作流。",
+          "objectFit": "contain",
+          "objectPosition": "center center"
+        }
+      ]
+    },
+    {
+      "id": "regulation",
+      "year": "2024+",
+      "title": "最后一推，来自监管和环保压力",
+      "subtitle": "当监管、环保和消费者便利站到一起，统一接口不再只是厂商偏好。",
+      "duckPose": "present",
+      "evidence": [
+        {"label": "监管", "title": "通用充电器规则压实统一趋势", "detail": "减少电子垃圾和重复购买。"},
+        {"label": "结论", "title": "接口变成公共规则", "detail": "谁能接入共同生态，谁更易被市场接受。"}
+      ],
+      "mediaCards": [
+        {
+          "imageSrc": "images/tech-archive/eu-common-charger.jpg",
+          "label": "外部推动",
+          "caption": "统一接口从工程选择变成市场规则。"
+        },
+        {
+          "imageSrc": "images/tech-archive/multi-usb-charger.jpg",
+          "label": "环保背景",
+          "caption": "减少重复充电头和线材，本质是压低电子垃圾总量。"
+        }
+      ]
+    }
+  ],
+  "close": {
+    "title": "所以 USB-C 的胜利，不是因为它更小，而是因为它把体验、标准、功率和规则压进了一个口里。",
+    "body": "真正统一行业的，从来不是一个漂亮形状，而是这个形状背后能不能承接协议、生态、成本和监管四种力量。",
+    "tags": ["科技史", "接口统一", "标准战争", "产品演进"],
+    "duckPose": "present",
+    "mediaCards": [
+      {
+        "imageSrc": "images/tech-archive/usb-c-laptop.jpg",
+        "label": "统一入口",
+        "caption": "接口一旦变成基础设施，产品设计就会围绕它重构。"
+      },
+      {
+        "imageSrc": "images/tech-archive/eu-common-charger.jpg",
+        "label": "规则闭环",
+        "caption": "当外部规则确认其价值，标准从选项变成默认。"
+      }
+    ]
+  }
+}

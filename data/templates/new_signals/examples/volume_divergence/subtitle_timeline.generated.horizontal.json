@@ -1,0 +1,149 @@
+{
+  "template_id": "new_signals",
+  "example_id": "volume_divergence",
+  "orientation": "horizontal",
+  "fps": 30,
+  "audio_file": "video-app/public/audio/new-signals/volume-divergence-voiceover.mp3",
+  "audio_duration_sec": 55.51020408163265,
+  "timing_status": "estimated_after_audio_duration_fit",
+  "alignment_method": "duration_fit",
+  "note": "Preview timeline generated from real ElevenLabs audio duration. Replace with forced_alignment or transcription_timestamps for final publish.",
+  "cues": [
+    {
+      "voice_id": "v01",
+      "visual_section_id": "news_context",
+      "start_frame": 0,
+      "end_frame": 88,
+      "text": "一段行情最容易让人误判的时候，\n往往不是下跌之后。",
+      "emphasis_words": ["误判"]
+    },
+    {
+      "voice_id": "v02",
+      "visual_section_id": "news_context",
+      "start_frame": 89,
+      "end_frame": 176,
+      "text": "而是价格还在\n创新高的时候。",
+      "emphasis_words": ["创新高"]
+    },
+    {
+      "voice_id": "v03",
+      "visual_section_id": "case_shock",
+      "start_frame": 177,
+      "end_frame": 282,
+      "text": "如果价格继续往上走，\n但成交量却一波比一波低。",
+      "emphasis_words": ["价格", "成交量"]
+    },
+    {
+      "voice_id": "v04",
+      "visual_section_id": "case_shock",
+      "start_frame": 283,
+      "end_frame": 388,
+      "text": "这通常不是健康加速，\n而是推动行情的人正在变少。",
+      "emphasis_words": ["不是健康加速", "正在变少"]
+    },
+    {
+      "voice_id": "v05",
+      "visual_section_id": "indicator_mechanism",
+      "start_frame": 389,
+      "end_frame": 493,
+      "text": "成交量背离真正有用的地方，\n不是让你立刻做空。",
+      "emphasis_words": ["成交量背离", "不是立刻做空"]
+    },
+    {
+      "voice_id": "v06",
+      "visual_section_id": "indicator_mechanism",
+      "start_frame": 494,
+      "end_frame": 598,
+      "text": "而是提醒你\n先暂停追高。",
+      "emphasis_words": ["暂停追高"]
+    },
+    {
+      "voice_id": "v07",
+      "visual_section_id": "indicator_mechanism",
+      "start_frame": 599,
+      "end_frame": 703,
+      "text": "观察突破是不是\n还有真实买盘支撑。",
+      "emphasis_words": ["真实买盘支撑"]
+    },
+    {
+      "voice_id": "v08",
+      "visual_section_id": "chart_case_1",
+      "start_frame": 704,
+      "end_frame": 801,
+      "text": "更稳的顺序是，\n先看价格有没有新高。",
+      "emphasis_words": ["先看价格"]
+    },
+    {
+      "voice_id": "v09",
+      "visual_section_id": "chart_case_1",
+      "start_frame": 802,
+      "end_frame": 899,
+      "text": "再看成交量\n有没有同步放大。",
+      "emphasis_words": ["成交量", "同步放大"]
+    },
+    {
+      "voice_id": "v10",
+      "visual_section_id": "chart_case_2",
+      "start_frame": 900,
+      "end_frame": 997,
+      "text": "然后看回踩时\n能不能守住关键位置。",
+      "emphasis_words": ["回踩", "关键位置"]
+    },
+    {
+      "voice_id": "v11",
+      "visual_section_id": "chart_case_2",
+      "start_frame": 998,
+      "end_frame": 1095,
+      "text": "如果价格创新高，\n量能缩小。",
+      "emphasis_words": ["价格创新高", "量能缩小"]
+    },
+    {
+      "voice_id": "v12",
+      "visual_section_id": "chart_case_3",
+      "start_frame": 1096,
+      "end_frame": 1193,
+      "text": "回踩又跌回\n突破位下方。",
+      "emphasis_words": ["跌回突破位"]
+    },
+    {
+      "voice_id": "v13",
+      "visual_section_id": "chart_case_3",
+      "start_frame": 1194,
+      "end_frame": 1291,
+      "text": "这种突破就更像诱多，\n而不是趋势确认。",
+      "emphasis_words": ["诱多", "不是趋势确认"]
+    },
+    {
+      "voice_id": "v14",
+      "visual_section_id": "checklist",
+      "start_frame": 1292,
+      "end_frame": 1390,
+      "text": "所以成交量背离\n不是买卖按钮。",
+      "emphasis_words": ["不是买卖按钮"]
+    },
+    {
+      "voice_id": "v15",
+      "visual_section_id": "checklist",
+      "start_frame": 1391,
+      "end_frame": 1484,
+      "text": "它更像一个\n风险灯。",
+      "emphasis_words": ["风险灯"]
+    },
+    {
+      "voice_id": "v16",
+      "visual_section_id": "risk_close",
+      "start_frame": 1485,
+      "end_frame": 1574,
+      "text": "当价格很漂亮，\n但参与的人越来越少。",
+      "emphasis_words": ["价格很漂亮", "参与的人越来越少"]
+    },
+    {
+      "voice_id": "v17",
+      "visual_section_id": "risk_close",
+      "start_frame": 1575,
+      "end_frame": 1665,
+      "text": "你就需要把仓位、止损，\n和追高冲动重新检查一遍。",
+      "emphasis_words": ["仓位", "止损", "追高冲动"]
+    }
+  ]
+}

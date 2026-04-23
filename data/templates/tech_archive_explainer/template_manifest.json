@@ -1,0 +1,61 @@
+{
+  "template_id": "tech_archive_explainer",
+  "template_name": "科技档案演进解说",
+  "version": "v0.2",
+  "status": "ready",
+  "source_video": "D:/document/google/32129091707-1-192.mp4",
+  "positioning": {
+    "tracks": ["technology history", "consumer electronics", "product evolution", "standards explainer"],
+    "platforms": ["Bilibili", "YouTube", "TikTok horizontal cutdown"],
+    "video_type": "archive evidence documentary explainer",
+    "recommended_duration_sec": [45, 120],
+    "target_audience": ["科技产品用户", "数码爱好者", "消费电子科普观众"],
+    "conversion_goal": "让观众理解一个技术或产品标准为何演进为今天的形态"
+  },
+  "not_existing_template_reason": [
+    "它不是 AI 概念分析、交易信号、漫画心理叙事或极简心理解释。",
+    "核心画面语言不是单页卡片，而是年份推进 + 档案证据 + 资料图 + IP鸭子叙述。",
+    "核心节奏是历史证据链推进，不是单概念解释。"
+  ],
+  "fixed_rules": {
+    "visual_language": [
+      "light archive canvas",
+      "large translucent year typography",
+      "evidence cards",
+      "document screenshot panels",
+      "small mascot narrator"
+    ],
+    "narrative_pattern": ["hook contrast", "old problem", "standard appears", "market adoption", "regulation push", "final conclusion"],
+    "motion_language": [
+      "card slide-in",
+      "year fade/scale",
+      "document tilt drift",
+      "duck entrance + floating + breathing",
+      "hard cut between eras"
+    ],
+    "subtitle_style": "bottom centered Chinese subtitles, white text with dark stroke",
+    "duck_rules": [
+      "must use transparent AI duck png assets",
+      "duck position/size/motion changes by page content",
+      "avoid fixed right-only placement"
+    ],
+    "audio_rules": [
+      "supports ElevenLabs voiceover",
+      "voiceover clip mounted in composition audio layer",
+      "subtitle timing can be staged first and replaced by aligned timeline"
+    ]
+  },
+  "scene_modules": [
+    {"scene_id": "archive_hook", "component": "TechArchiveHookScene", "purpose": "用对比指标和问题句建立技术谜题"},
+    {"scene_id": "era_chapter", "component": "TechArchiveChapterScene", "purpose": "用年份+证据卡+资料图推进时代阶段"},
+    {"scene_id": "archive_close", "component": "TechArchiveCloseScene", "purpose": "收束结论并给出复用判断"}
+  ],
+  "implementation_refs": [
+    "video-app/src/compositions/TechArchiveExplainerComposition.tsx",
+    "video-app/src/scenes/techArchive/TechArchiveScenes.tsx",
+    "video-app/src/data/techArchiveData.ts",
+    "video-app/src/data/techArchiveAudio.ts",
+    "video-app/public/images/tech-archive/duck-ai/*.png",
+    "video-app/public/audio/tech-archive/tech-archive-explainer-elevenlabs.mp3"
+  ]
+}

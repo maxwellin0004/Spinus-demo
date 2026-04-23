@@ -1,0 +1,65 @@
+{
+  "template_id": "ai_concept_analyse",
+  "default_variant": "dark_hud_orange",
+  "variants": [
+    {
+      "variant_id": "dark_hud_orange",
+      "label": "Dark HUD Orange",
+      "description": "当前默认风格。黑底 HUD + 橙红强调，最接近参考样片。",
+      "tokens": {
+        "background_base": "#050816",
+        "background_soft": "#0b1022",
+        "accent": "#ff7a45",
+        "text_primary": "#f7f9ff",
+        "text_muted": "rgba(247, 249, 255, 0.72)",
+        "frame": "rgba(255, 255, 255, 0.16)"
+      },
+      "usage_notes": [
+        "适合 Skill、Agent、Workflow、MCP 这类概念解释。",
+        "识别性最强，建议作为系列默认风格。"
+      ]
+    },
+    {
+      "variant_id": "dark_hud_blue",
+      "label": "Dark HUD Blue",
+      "description": "保留同样结构，但把橙红强调改为冷蓝，更偏协议、系统、工程感。",
+      "tokens": {
+        "background_base": "#05111a",
+        "background_soft": "#0a1826",
+        "accent": "#4cb9ff",
+        "text_primary": "#f4fbff",
+        "text_muted": "rgba(244, 251, 255, 0.72)",
+        "frame": "rgba(255, 255, 255, 0.14)"
+      },
+      "usage_notes": [
+        "适合 MCP、API、Protocol、Infra 类主题。",
+        "要注意避免页面显得太冷，可提高文字对比度。"
+      ]
+    },
+    {
+      "variant_id": "dark_hud_red",
+      "label": "Dark HUD Red",
+      "description": "保留同样结构，把强调色改成更强的红色，用于冲突感、风险感更强的主题。",
+      "tokens": {
+        "background_base": "#09060b",
+        "background_soft": "#15101a",
+        "accent": "#ff4d5a",
+        "text_primary": "#fff7f8",
+        "text_muted": "rgba(255, 247, 248, 0.72)",
+        "frame": "rgba(255, 255, 255, 0.16)"
+      },
+      "usage_notes": [
+        "适合风险、误区、冲突感更强的话题。",
+        "谨慎使用，避免整条视频过于压迫。"
+      ]
+    }
+  ],
+  "editable_runtime_fields": [
+    "style_variant",
+    "accent",
+    "background_base",
+    "frame",
+    "text_primary",
+    "text_muted"
+  ]
+}

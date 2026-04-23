@@ -1,0 +1,79 @@
+{
+  "template_id": "minimal_psych_explainer",
+  "orientation": "horizontal",
+  "fps": 30,
+  "source_audio": "video-app/public/audio/minimal-psych/rumination-preview-voiceover.mp3",
+  "source_audio_duration_sec": 37.87755102040816,
+  "alignment_status": "preview_aligned",
+  "alignment_method": "audio_duration_scaled_scene_timeline",
+  "cues": [
+    {
+      "id": "sub_01",
+      "voiceover_unit_id": "vo_01",
+      "startFrame": 0,
+      "endFrame": 158,
+      "text": "为什么一件事已经过去了，\n你的脑子里却还在一遍遍 replay。",
+      "emphasisWords": [
+        "replay"
+      ]
+    },
+    {
+      "id": "sub_02",
+      "voiceover_unit_id": "vo_02",
+      "startFrame": 159,
+      "endFrame": 343,
+      "text": "你不是不知道别想了，\n而是总觉得，只要再想一会儿，就能把它想明白。",
+      "emphasisWords": [
+        "想明白"
+      ]
+    },
+    {
+      "id": "sub_03",
+      "voiceover_unit_id": "vo_03",
+      "startFrame": 344,
+      "endFrame": 528,
+      "text": "心理学里，这更像一种反刍思维。\n它看起来像分析，实际上却让你停在原地。",
+      "emphasisWords": [
+        "反刍思维",
+        "停在原地"
+      ]
+    },
+    {
+      "id": "sub_04",
+      "voiceover_unit_id": "vo_04",
+      "startFrame": 529,
+      "endFrame": 713,
+      "text": "它也像一个越拉越紧的绳结。\n你越想一次解决，它反而越难松开。",
+      "emphasisWords": [
+        "越拉越紧"
+      ]
+    },
+    {
+      "id": "sub_05",
+      "voiceover_unit_id": "vo_05",
+      "startFrame": 714,
+      "endFrame": 978,
+      "text": "想打断这种循环，不是逼自己立刻想通，\n而是先暂停追问为什么，把脑中的内容写下来，再做一个现实里的小动作。",
+      "emphasisWords": [
+        "暂停",
+        "写下来",
+        "小动作"
+      ]
+    },
+    {
+      "id": "sub_06",
+      "voiceover_unit_id": "vo_06",
+      "startFrame": 979,
+      "endFrame": 1136,
+      "text": "当你不再逼自己立刻想明白，\n脑子反而会慢慢安静下来。",
+      "emphasisWords": [
+        "安静下来"
+      ]
+    }
+  ],
+  "hard_rules": [
+    "Final renders must rebuild this timeline after TTS generation when the voiceover changes.",
+    "This file is a working example, not a universal timing file for all future topics.",
+    "Do not place any scene-local caption inside the bottom subtitle safe area."
+  ]
+}

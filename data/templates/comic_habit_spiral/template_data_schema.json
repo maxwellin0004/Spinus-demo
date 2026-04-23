@@ -1,0 +1,35 @@
+{
+  "template_id": "comic_habit_spiral",
+  "type": "object",
+  "required": ["topic_name", "hook", "story_a", "mechanism", "story_b", "story_c", "triptych", "close"],
+  "properties": {
+    "topic_name": { "type": "string" },
+    "duration_sec": { "type": "number", "default": 60 },
+    "orientation": { "type": "string", "enum": ["horizontal"] },
+    "voiceover_units": {
+      "$ref": "template_data_audio_schema.json#/properties/voiceover_units"
+    },
+    "audio_alignment": {
+      "$ref": "template_data_audio_schema.json#/properties/audio_alignment"
+    },
+    "hook": {
+      "type": "object",
+      "required": ["left_label", "right_label", "title", "subtitle", "caption"]
+    },
+    "story_a": { "type": "object" },
+    "mechanism": {
+      "type": "object",
+      "required": ["tag", "title", "steps", "caption"]
+    },
+    "story_b": { "type": "object" },
+    "story_c": { "type": "object" },
+    "triptych": {
+      "type": "object",
+      "required": ["title", "cards", "caption"]
+    },
+    "close": {
+      "type": "object",
+      "required": ["title", "body", "caption"]
+    }
+  }
+}

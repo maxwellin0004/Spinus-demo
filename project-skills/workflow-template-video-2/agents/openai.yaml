@@ -1,0 +1,4 @@
+version: 1
+display_name: Workflow Template Video 2
+short_description: Structured Stage 2 style sample-video decomposition for this repository.
+default_prompt: Use this skill for structured sample-video decomposition in the workflow repository.

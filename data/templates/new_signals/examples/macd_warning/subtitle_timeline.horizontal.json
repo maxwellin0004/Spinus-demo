@@ -1,0 +1,21 @@
+{
+  "example_id": "macd_warning",
+  "orientation": "horizontal",
+  "chunks": [
+    { "start_sec": 0.0, "end_sec": 1.8, "text": "最危险的时候", "emphasis": ["危险"] },
+    { "start_sec": 1.8, "end_sec": 3.8, "text": "新闻和人物会让你觉得行情还没结束", "emphasis": ["还没结束"] },
+    { "start_sec": 3.8, "end_sec": 6.2, "text": "真正该警惕的 是动能已经先掉队", "emphasis": ["动能", "掉队"] },
+    { "start_sec": 8.0, "end_sec": 10.6, "text": "很多人追的 只是最后一段热度", "emphasis": ["最后一段热度"] },
+    { "start_sec": 10.6, "end_sec": 13.4, "text": "三天回撤 16%", "emphasis": ["16%"] },
+    { "start_sec": 16.0, "end_sec": 19.5, "text": "MACD 背离不是开仓按钮", "emphasis": ["不是开仓按钮"] },
+    { "start_sec": 19.5, "end_sec": 24.5, "text": "它是趋势动能走弱的提前预警", "emphasis": ["提前预警"] },
+    { "start_sec": 26.0, "end_sec": 33.0, "text": "趋势末端预警 不是立刻反手", "emphasis": ["预警"] },
+    { "start_sec": 33.0, "end_sec": 40.0, "text": "只有碰到结构位 背离价值才会放大", "emphasis": ["结构位"] },
+    { "start_sec": 40.0, "end_sec": 47.0, "text": "它最适合过滤假突破和高位追单", "emphasis": ["假突破", "追单"] },
+    { "start_sec": 47.0, "end_sec": 52.0, "text": "先看结构", "emphasis": ["结构"] },
+    { "start_sec": 52.0, "end_sec": 55.0, "text": "再看动能", "emphasis": ["动能"] },
+    { "start_sec": 55.0, "end_sec": 58.0, "text": "最后等确认", "emphasis": ["确认"] },
+    { "start_sec": 58.0, "end_sec": 66.0, "text": "它是风险提醒 不是交易命令", "emphasis": ["风险提醒", "不是交易命令"] },
+    { "start_sec": 66.0, "end_sec": 75.0, "text": "真正成熟的用法 是和结构位和确认动作一起看", "emphasis": ["结构位", "确认动作"] }
+  ]
+}

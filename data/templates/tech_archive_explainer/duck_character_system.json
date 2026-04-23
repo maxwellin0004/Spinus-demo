@@ -1,0 +1,43 @@
+{
+  "character_id": "tech_archive_duck_ip_v2",
+  "name": "tech archive duck",
+  "goal": "为 tech_archive_explainer 模板提供统一鸭子IP，但每页姿态、位置和动效必须变化，避免固定占位。",
+  "style_core": {
+    "medium": "cute 2D digital illustration",
+    "render_quality": "clean polished character art",
+    "background": "transparent background only",
+    "shape_language": ["round", "soft", "cute", "simple silhouette", "high readability"],
+    "face_rules": [
+      "large head relative to body",
+      "big expressive eye",
+      "small blush patch",
+      "orange rounded beak",
+      "friendly playful expression"
+    ],
+    "body_rules": [
+      "bright warm yellow body",
+      "small rounded wings",
+      "thin orange legs",
+      "short compact proportions"
+    ],
+    "finish_rules": [
+      "no checkerboard baked into image",
+      "no background card",
+      "no frame",
+      "transparent png asset"
+    ]
+  },
+  "animation_grammar": {
+    "entrance_presets": ["from-right", "from-left", "from-bottom", "pop"],
+    "idle_motion": ["float", "sway", "breathing", "micro drift"],
+    "layout_rule": "duck placement must follow content area and avoid covering key media cards",
+    "distribution_rule": "across full video include right, center and left placements",
+    "size_rule": "duck size varies by page emphasis and available whitespace"
+  },
+  "do_not_use": [
+    "fixed right-only placement across all scenes",
+    "single static duck size across all scenes",
+    "non-transparent background",
+    "placeholder ugly vector mascot"
+  ]
+}

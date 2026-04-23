@@ -1,0 +1,13 @@
+{
+  "template_id": "new_signals",
+  "orientation": "horizontal",
+  "rules": {
+    "position": "bottom-center",
+    "hook_chunk_duration_sec": [1.1, 1.8],
+    "body_chunk_duration_sec": [1.8, 2.8],
+    "close_chunk_duration_sec": [2.0, 3.2],
+    "max_lines": 2,
+    "preferred_chars_per_line": [10, 18],
+    "highlight_mode": "scene headlines and stat cards carry the main emphasis; subtitles remain secondary"
+  }
+}

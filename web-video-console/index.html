@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Codex Video Console</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-block" aria-label="Codex Video Console">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" role="img">
+              <path d="M6 8.5 16 3l10 5.5v15L16 29 6 23.5v-15Z" />
+              <path d="M11 11.5 16 8.8l5 2.7v7L16 21.2l-5-2.7v-7Z" />
+            </svg>
+          </div>
+          <div>
+            <h1>Codex Video Console</h1>
+            <p>D:\program\ai_video\workflow</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="icon-button" type="button" title="刷新状态" aria-label="刷新状态" id="refreshButton">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 12a8 8 0 1 1-2.34-5.66" />
+              <path d="M20 4v5h-5" />
+            </svg>
+          </button>
+          <button class="icon-button" type="button" title="打开设置" aria-label="打开设置">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
+              <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.37a1.7 1.7 0 0 0-1 .2 1.7 1.7 0 0 0-.9 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-.9-1.5 1.7 1.7 0 0 0-1-.2 1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.63 15a1.7 1.7 0 0 0-.2-1 1.7 1.7 0 0 0-1.5-.9H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-.9 1.7 1.7 0 0 0 .2-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.63a1.7 1.7 0 0 0 1-.2 1.7 1.7 0 0 0 .9-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 .9 1.5 1.7 1.7 0 0 0 1 .2 1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.37 9c.1.32.1.68 0 1 .18.63.72 1.1 1.4 1.1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5.9Z" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="workspace-grid">
+        <section class="chat-panel" aria-label="Codex 对话">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">Codex Thread</span>
+              <h2>视频任务对话</h2>
+            </div>
+            <span class="status-pill is-live">
+              <span></span>
+              Local
+            </span>
+          </div>
+
+          <div class="thread-list" id="threadList" aria-live="polite"></div>
+
+          <div class="prompt-toolbar" aria-label="提示词快捷操作">
+            <button type="button" data-prompt="生成一个 60 秒竖屏交易教育视频，主题是假突破，节奏紧凑，适合小红书。">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m5 12 4 4L19 6" />
+              </svg>
+              交易教育
+            </button>
+            <button type="button" data-prompt="把当前视频改成更强的开场 Hook，前三秒必须出现风险反转和大字标题。">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M13 2 4 14h7l-1 8 10-13h-7l0-7Z" />
+              </svg>
+              强化 Hook
+            </button>
+            <button type="button" data-prompt="检查最新渲染日志，定位错误并给出需要修改的 Remotion 文件。">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9 11 12 14 22 4" />
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+              </svg>
+              修复渲染
+            </button>
+          </div>
+
+          <form class="composer" id="composerForm">
+            <textarea
+              id="composerInput"
+              rows="4"
+              placeholder="输入视频需求，Codex 将读取本地模板、脚本和素材生成任务计划。"
+            ></textarea>
+            <div class="composer-actions">
+              <button class="ghost-button" type="button" id="attachButton">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 1 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.82-2.82l8.48-8.49" />
+                </svg>
+                素材
+              </button>
+              <button class="primary-button" type="submit">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m22 2-7 20-4-9-9-4 20-7Z" />
+                  <path d="M22 2 11 13" />
+                </svg>
+                发送
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section class="work-panel" aria-label="任务执行流">
+          <div class="panel-heading is-split">
+            <div>
+              <span class="eyebrow">Pipeline</span>
+              <h2 id="activeJobTitle">假突破交易教育短视频</h2>
+            </div>
+            <div class="segmented-control" aria-label="任务视图">
+              <button class="is-active" type="button" data-view="timeline">任务</button>
+              <button type="button" data-view="resources">资源</button>
+              <button type="button" data-view="logs">日志</button>
+            </div>
+          </div>
+
+          <div class="job-summary">
+            <div>
+              <span>状态</span>
+              <strong id="jobStatusLabel">规划中</strong>
+            </div>
+            <div>
+              <span>模板</span>
+              <strong>new_signals</strong>
+            </div>
+            <div>
+              <span>比例</span>
+              <strong>9:16</strong>
+            </div>
+            <div>
+              <span>输出</span>
+              <strong>data/jobs</strong>
+            </div>
+          </div>
+
+          <div class="view-stack">
+            <div class="view-page is-active" id="timelineView">
+              <ol class="step-list" id="stepList"></ol>
+            </div>
+
+            <div class="view-page" id="resourcesView">
+              <div class="resource-grid">
+                <article class="resource-card">
+                  <img src="../assets/images/macd_ref_chart_1.jpg" alt="MACD 图表素材" />
+                  <div>
+                    <strong>macd_ref_chart_1.jpg</strong>
+                    <span>图表素材</span>
+                  </div>
+                </article>
+                <article class="resource-card">
+                  <img src="../assets/images/scenario_video_breakdown.jpg" alt="视频拆解场景素材" />
+                  <div>
+                    <strong>scenario_video_breakdown.jpg</strong>
+                    <span>场景素材</span>
+                  </div>
+                </article>
+                <article class="resource-card">
+                  <img src="../assets/images/hook_financial_crisis_newspaper.jpg" alt="金融危机报纸素材" />
+                  <div>
+                    <strong>financial_crisis_newspaper.jpg</strong>
+                    <span>Hook 素材</span>
+                  </div>
+                </article>
+              </div>
+
+              <div class="template-list" aria-label="模板列表">
+                <button type="button" class="template-item is-selected">
+                  <span>new_signals</span>
+                  <strong>交易信号 / 指标解释</strong>
+                </button>
+                <button type="button" class="template-item">
+                  <span>minimal_psych_explainer</span>
+                  <strong>心理机制 / 方法论</strong>
+                </button>
+                <button type="button" class="template-item">
+                  <span>comic_habit_spiral</span>
+                  <strong>漫画叙事 / 情绪洞察</strong>
+                </button>
+              </div>
+            </div>
+
+            <div class="view-page" id="logsView">
+              <pre class="log-stream" id="logStream" aria-live="polite"></pre>
+            </div>
+          </div>
+
+          <div class="work-actions">
+            <button class="secondary-button" type="button" id="generatePlanButton">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 19.5V5a2 2 0 0 1 2-2h9l5 5v11.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19.5Z" />
+                <path d="M14 3v6h6" />
+                <path d="M8 13h8M8 17h6" />
+              </svg>
+              生成计划
+            </button>
+            <button class="secondary-button" type="button" id="ttsButton">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M11 5 6 9H2v6h4l5 4V5Z" />
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+              </svg>
+              配音
+            </button>
+            <button class="primary-button" type="button" id="renderButton">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m8 5 11 7-11 7V5Z" />
+              </svg>
+              渲染
+            </button>
+          </div>
+        </section>
+
+        <aside class="preview-panel" aria-label="视频预览">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">Preview</span>
+              <h2>竖屏预览</h2>
+            </div>
+            <span class="status-pill" id="previewStatus">
+              <span></span>
+              Draft
+            </span>
+          </div>
+
+          <div class="phone-frame">
+            <div class="video-stage">
+              <img src="../assets/images/macd_ref_chart_2.jpg" alt="交易视频预览画面" />
+              <div class="video-overlay">
+                <div class="episode-label">EP. 04 / Trading Signals</div>
+                <h3>假突破最危险的地方</h3>
+                <p>不是亏损，而是它会让你连续追错方向。</p>
+              </div>
+              <div class="subtitle-band" id="subtitleBand">先等回踩确认，再判断量能是否跟上</div>
+              <div class="progress-rail" aria-hidden="true">
+                <span id="previewProgress"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="preview-actions">
+            <button class="icon-label-button" type="button" title="播放预览" aria-label="播放预览" id="playPreviewButton">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m8 5 11 7-11 7V5Z" />
+              </svg>
+              预览
+            </button>
+            <button class="icon-label-button" type="button" title="打开输出目录" aria-label="打开输出目录">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" />
+              </svg>
+              目录
+            </button>
+            <button class="icon-label-button" type="button" title="导出视频" aria-label="导出视频">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3v12" />
+                <path d="m7 10 5 5 5-5" />
+                <path d="M5 21h14" />
+              </svg>
+              导出
+            </button>
+          </div>
+
+          <div class="script-panel">
+            <div class="script-row">
+              <span>Hook</span>
+              <p>很多假突破不是信号失败，而是你进场太早。</p>
+            </div>
+            <div class="script-row">
+              <span>Body</span>
+              <p>先看突破后的回踩，再看成交量是否放大。</p>
+            </div>
+            <div class="script-row">
+              <span>Close</span>
+              <p>真正的确认，往往发生在你最想冲进去之后。</p>
+            </div>
+          </div>
+        </aside>
+      </main>
+    </div>
+  </body>
+</html>

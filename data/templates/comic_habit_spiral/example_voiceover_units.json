@@ -1,0 +1,43 @@
+{
+  "template_id": "comic_habit_spiral",
+  "example_id": "procrastination_loop",
+  "voiceover_units": [
+    {
+      "voice_id": "v01",
+      "section": "split_hook",
+      "text": "拖延很多时候不是你懒，而是压力一来，大脑先选择逃开。",
+      "target_duration_sec": 4.8,
+      "intended_pause_after_sec": 0.25,
+      "emphasis_words": ["不是你懒", "逃开"],
+      "visual_section_id": "split_hook",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "v02",
+      "section": "mechanism",
+      "text": "真正形成循环的是，逃避带来短暂舒服，然后让下一次开始变得更难。",
+      "target_duration_sec": 5.8,
+      "intended_pause_after_sec": 0.25,
+      "emphasis_words": ["短暂舒服", "更难"],
+      "visual_section_id": "mechanism",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "v03",
+      "section": "close",
+      "text": "打断它的方法，不是逼自己立刻自律，而是把开始动作缩小到可以完成。",
+      "target_duration_sec": 5.8,
+      "intended_pause_after_sec": 0.3,
+      "emphasis_words": ["开始动作", "缩小"],
+      "visual_section_id": "close",
+      "timing_status": "estimated"
+    }
+  ],
+  "audio_alignment": {
+    "tts_provider": "elevenlabs",
+    "voiceover_audio_path": "video-app/public/audio/comic-habit-spiral/procrastination-loop-voiceover.mp3",
+    "subtitle_timeline_path": "data/templates/comic_habit_spiral/subtitle_timeline.horizontal.json",
+    "alignment_status": "estimated",
+    "alignment_method": "duration_fit"
+  }
+}

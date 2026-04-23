@@ -1,0 +1,95 @@
+{
+  "topic_name": "情绪性刷手机",
+  "duration_sec": 60,
+  "orientation": "horizontal",
+  "style_variant": "night_purple_focus",
+  "hook": {
+    "left_label": "夜里反复刷新",
+    "right_label": "白天假装平静",
+    "title": "你不是离不开手机，你是在借它止痛",
+    "subtitle": "情绪一上来，手就先摸向屏幕",
+    "caption": "很多时候你不是想刷手机，你只是太想快一点离开那种不舒服的感觉。",
+    "left_image_src": "/generated/comic_habit_spiral/emotional_scroll_single/hook_left.png",
+    "right_image_src": "/generated/comic_habit_spiral/emotional_scroll_single/hook_right.png"
+  },
+  "story_a": {
+    "kicker": "阶段 1 / 触发",
+    "title": "一条消息、一次空下来、一次不舒服，手就会先去碰手机",
+    "bubble_lines": [
+      "先刷一下",
+      "缓一缓再说"
+    ],
+    "caption": "情绪性刷手机，往往不是因为无聊，而是因为你一难受，身体就自动去找最快的止痛方式。",
+    "image_src": "/generated/comic_habit_spiral/emotional_scroll_single/trigger.png"
+  },
+  "mechanism": {
+    "tag": "循环机制",
+    "title": "不舒服 -> 拿起手机 -> 短暂麻木 -> 更空更累",
+    "steps": [
+      {
+        "title": "情绪先冒出来",
+        "body": "孤独、压力、空虚感一出现，大脑就先想离开它。"
+      },
+      {
+        "title": "立刻去刷",
+        "body": "一摸到手机，就像给自己按下了最熟悉的缓冲键。"
+      },
+      {
+        "title": "回头更空",
+        "body": "你暂时麻木了，但情绪没被接住，现实也还在原地。"
+      }
+    ],
+    "caption": "问题不只在手机本身，而在大脑慢慢记住了：只要难受，就先去刷。",
+    "image_src": "/generated/comic_habit_spiral/emotional_scroll_single/mechanism.png"
+  },
+  "story_b": {
+    "kicker": "阶段 2 / 代价",
+    "title": "看起来像在缓解情绪，最后却更空、更累、更回不来",
+    "bubble_lines": [
+      "我怎么又刷这么久",
+      "但停下来更难受"
+    ],
+    "caption": "最消耗你的，不只是时间，而是你越来越不相信自己能不靠刷屏来熬过情绪。",
+    "image_src": "/generated/comic_habit_spiral/emotional_scroll_single/cost.png"
+  },
+  "story_c": {
+    "kicker": "阶段 3 / 转折",
+    "title": "改变不是立刻戒掉手机，而是别再把它当成情绪止痛药",
+    "bubble_lines": [
+      "先停 1 个呼吸",
+      "先不碰它"
+    ],
+    "caption": "你不需要立刻变得自律，只要先把“难受就刷”的自动动作打断一点点。",
+    "image_src": "/generated/comic_habit_spiral/emotional_scroll_single/turning.png"
+  },
+  "triptych": {
+    "title": "把情绪性刷手机拆成 3 个更小的动作",
+    "cards": [
+      {
+        "badge": "动作 1",
+        "title": "先停 1 个呼吸，再碰手机",
+        "body": "给情绪一个被看见的瞬间，而不是立刻让它消失。",
+        "image_src": "/generated/comic_habit_spiral/emotional_scroll_single/action_01.png"
+      },
+      {
+        "badge": "动作 2",
+        "title": "把手机从手边移开",
+        "body": "让自动拿起这件事稍微变难一点，循环就会松动。",
+        "image_src": "/generated/comic_habit_spiral/emotional_scroll_single/action_02.png"
+      },
+      {
+        "badge": "动作 3",
+        "title": "用一个极小的线下动作接住自己",
+        "body": "喝水、站起来、翻开笔记本，先让身体回到现实里。",
+        "image_src": "/generated/comic_habit_spiral/emotional_scroll_single/action_03.png"
+      }
+    ],
+    "caption": "新的习惯不是靠忍出来的，而是靠一次次不再自动刷出来的。"
+  },
+  "close": {
+    "title": "你真正要打断的，不是手机本身，而是压力一来就先逃的默认反应",
+    "body": "有些日子还是会难 / 但你可以不再先逃 / 从一个更小的开始动作重新训练自己",
+    "caption": "下一次先别急着刷，先停一口气，让自己回来。",
+    "image_src": "/generated/comic_habit_spiral/emotional_scroll_single/action_03.png"
+  }
+}

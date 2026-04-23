@@ -1,0 +1,4 @@
+version: 1
+display_name: Workflow Remotion Render
+short_description: Guide for editing and troubleshooting the Remotion project in video-app.
+default_prompt: Use this skill when working on the video-app Remotion rendering pipeline.

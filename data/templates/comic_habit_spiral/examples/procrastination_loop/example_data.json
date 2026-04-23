@@ -1,0 +1,18 @@
+{
+  "topic_name": "拖延症循环",
+  "style_variant": "night_purple_soft_day",
+  "duration_sec": 60,
+  "orientation": "horizontal",
+  "hook_title": "你不是懒，你只是先逃",
+  "hook_subtitle": "压力一来，大脑先学会的不是开始，而是躲开",
+  "trigger_scene": "深夜书桌前，任务变难，手机开始变得比待办更有吸引力",
+  "core_loop": ["压力出现", "立刻逃开", "暂时舒服", "更难开始"],
+  "emotional_cost": "短暂轻松以后留下更重的自责和更难开始的明天",
+  "turning_point": "改变不是靠更狠的决心，而是让开始更容易",
+  "action_points": [
+    "把开始动作缩到离谱地小",
+    "把逃跑入口提前变难",
+    "只要求开始，不要求完美"
+  ],
+  "close_statement": "你真正要打断的，不是拖延本身，而是压力一来就先逃的默认反应"
+}

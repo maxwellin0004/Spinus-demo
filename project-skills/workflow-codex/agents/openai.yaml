@@ -1,0 +1,4 @@
+version: 1
+display_name: Workflow Codex
+short_description: Repository-level guide for the workflow project.
+default_prompt: Use this skill when working inside the workflow repository and you need project-specific guidance.

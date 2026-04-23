@@ -1,0 +1,78 @@
+{
+  "template_id": "new_signals",
+  "topic_name": "RSI 顶背离",
+  "topic_alias": "强势里先掉速",
+  "language": "zh-CN",
+  "platform": "YouTube",
+  "duration_sec": 72,
+  "style_variant": "dark_warning_red",
+  "news_context": {
+    "kicker": "热点事件 / 过热情绪",
+    "title": "最容易追高的那一刻，通常也是 RSI 先开始掉速的时候",
+    "quote": "风险不会等新闻结束才出现，很多时候它是先出现在动能指标里。",
+    "sourceLabel": "第二主题验证示例：过热行情 + RSI 顶背离",
+    "bullets": [
+      "情绪越热，越容易忽略动能衰减",
+      "RSI 不创新高，往往比价格更早暴露疲态",
+      "这类内容适合继续套用同一套风险预警模板"
+    ],
+    "tags": ["热点行情", "过热叙事", "指标证据"],
+    "mediaCards": [
+      {
+        "imageSrc": "assets/images/hook_paul_tudor_jones.jpg",
+        "label": "人物观点",
+        "caption": "名人观点会强化趋势延续预期。"
+      },
+      {
+        "imageSrc": "assets/images/hook_occupy_wall_street.jpg",
+        "label": "群体情绪",
+        "caption": "热度越高，越容易把风险理解成噪音。"
+      },
+      {
+        "imageSrc": "assets/images/hook_financial_crisis_store.jpg",
+        "label": "后果提示",
+        "caption": "一旦掉头，后果通常比叙事转向更快。"
+      }
+    ]
+  },
+  "hook": {
+    "kicker": "指标预警模板 02",
+    "headline": "RSI 顶背离",
+    "subheadline": "价格还在冲高，但 RSI 已经没有继续抬升，这种不跟随，往往比新闻和情绪更早告诉你危险在哪。",
+    "stat": "-12%",
+    "statLabel": "开头先讲后果，再讲指标为什么提前失真。",
+    "dateLabel": "适合做第二条模板验证视频",
+    "boardLines": ["FOMO", "RUNS", "THIN", "FAST"]
+  },
+  "mechanism": {
+    "tag": "指标机制",
+    "title": "RSI 顶背离讲的不是价格结束，而是上行动能先衰减",
+    "formula": "价格创新高 -> RSI 未创新高 -> 先看结构 再等确认",
+    "description": "RSI 更适合用来识别过热段里的动能不跟随，再把它和结构位、回落确认放在一起看。",
+    "cards": [
+      { "title": "价格前提", "body": "价格必须处于延续中，背离才有观察价值。" },
+      { "title": "指标不跟随", "body": "RSI 先掉队，说明上涨效率下降。" },
+      { "title": "过热情绪", "body": "越热的时候，越容易把这类预警忽略掉。" },
+      { "title": "确认动作", "body": "等回落和结构破坏，不抢第一根反向 K 线。" }
+    ]
+  },
+  "cases": [
+    { "badge": "用法 1", "title": "强势里先减速", "takeaway": "不直接反手，先当作趋势健康度下降。", "bullets": ["先看趋势", "再看 RSI 不跟随", "最后看确认"], "imageSrc": "assets/images/macd_ref_chart_1.jpg" },
+    { "badge": "用法 2", "title": "配合前高位更有意义", "takeaway": "单独的背离容易误判，结构位会放大它的价值。", "bullets": ["靠近前高", "过滤噪音", "再升级为执行"], "imageSrc": "assets/images/macd_ref_chart_2.jpg" },
+    { "badge": "用法 3", "title": "过滤最后一段追高", "takeaway": "最热的那段，往往也是最危险的一段。", "bullets": ["情绪最热", "内部走弱", "提醒别追"], "imageSrc": "assets/images/macd_ref_chart_3.jpg" }
+  ],
+  "checklist": {
+    "title": "看 RSI 顶背离，顺序仍然是结构 -> 指标 -> 确认",
+    "subtitle": "它不是机械卖点，而是提醒你热度和动能已经开始错位。",
+    "steps": [
+      { "title": "先看价格延续", "body": "没有延续，就没有背离的讨论前提。" },
+      { "title": "再看 RSI 不跟随", "body": "不创新高就是掉速信号。" },
+      { "title": "最后等破位确认", "body": "把提醒变成动作，需要确认层。" }
+    ]
+  },
+  "close": {
+    "title": "RSI 顶背离最值得用的地方，是帮你少做最后一段高位追单。",
+    "body": "它不是绝对拐点，而是让你更早看到“热度还在、质量却先掉了”。",
+    "tags": ["过热过滤", "风险预警", "等确认"]
+  }
+}

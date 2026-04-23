@@ -1,0 +1,129 @@
+{
+  "template_id": "comic_emotional_insight",
+  "template_name": "Comic Emotional Insight",
+  "template_name_zh": "漫画情绪洞察模板",
+  "version": "v1",
+  "status": "production_ready",
+  "positioning": {
+    "track": [
+      "psychology",
+      "emotional education",
+      "habit change",
+      "self-help"
+    ],
+    "platform": [
+      "TikTok",
+      "YouTube",
+      "Bilibili",
+      "Xiaohongshu"
+    ],
+    "video_type": "comic narrative explainer",
+    "recommended_duration_sec": [
+      55,
+      75
+    ],
+    "orientation": [
+      "horizontal"
+    ],
+    "audience": "对情绪循环、回避行为、拖延、熬夜、刷手机、焦虑和自我调节内容感兴趣的泛大众用户",
+    "goal": "通过高代入感的漫画叙事，把抽象心理机制讲清楚，并在结尾给出可执行的小动作建议"
+  },
+  "fixed_rules": {
+    "structure": [
+      "split_hook",
+      "trigger_story",
+      "mechanism_breakdown",
+      "cost_story",
+      "turning_point_story",
+      "action_triptych",
+      "hope_close"
+    ],
+    "page_system": [
+      "ComicSplitHookScene",
+      "ComicStoryScene",
+      "ComicMechanismScene",
+      "ComicTriptychScene",
+      "ComicCloseScene"
+    ],
+    "visual_rules": [
+      "固定主角贯穿全片，画风统一，避免每段都像不同作品",
+      "以高分辨率单图主画面推动叙事，不再用 contact sheet 裁切图冒充主图",
+      "底部字幕承担完整叙事，画内大字承担情绪和关键词强调",
+      "思维气泡延迟浮现，不允许静态硬贴在画面上",
+      "日常场景优先选择卧室、书桌、夜灯、窗边、手机等低门槛高代入元素"
+    ],
+    "motion_rules": [
+      "整体以 hard cut 为主，辅以缓慢 push in、轻微 pan 和层次叠加",
+      "Hook 允许更强的标题 punch 和对比构图",
+      "机制段用分步亮起和关系递进，不做复杂图表动画",
+      "行动建议段采用漫画翻页式卡组切换",
+      "结尾段减少运动，让情绪停留和收束更自然"
+    ]
+  },
+  "variable_candidates": [
+    "topic_name",
+    "hook_title",
+    "hook_subtitle",
+    "trigger_scene",
+    "mechanism_steps",
+    "emotional_cost",
+    "turning_point",
+    "action_points",
+    "close_statement",
+    "style_variant",
+    "art_asset_plan"
+  ],
+  "scene_modules": [
+    {
+      "id": "split_hook",
+      "component": "ComicSplitHookScene",
+      "purpose": "开场建立反差、对照和核心判断"
+    },
+    {
+      "id": "story_panel",
+      "component": "ComicStoryScene",
+      "purpose": "通过单幅漫画场景推进故事，并承接情绪气泡和大字"
+    },
+    {
+      "id": "mechanism",
+      "component": "ComicMechanismScene",
+      "purpose": "把心理循环、行为机制或回避链条讲清楚"
+    },
+    {
+      "id": "triptych",
+      "component": "ComicTriptychScene",
+      "purpose": "用连续翻页式卡组输出 3 个可执行动作"
+    },
+    {
+      "id": "close",
+      "component": "ComicCloseScene",
+      "purpose": "收束主题、降低压迫感，并留下一个可记住的结尾句"
+    }
+  ],
+  "example_packs": [
+    "examples/emotional_scroll"
+  ],
+  "audio_alignment": {
+    "enabled": true,
+    "protocol_file": "audio_alignment_protocol.json",
+    "audio_schema_file": "template_data_audio_schema.json",
+    "example_voiceover_units_file": "example_voiceover_units.json",
+    "render_mapping_file": "render_mapping.audio_sync.json",
+    "final_subtitle_source": "subtitle_timeline.{orientation}.json",
+    "timing_rule": "voiceover_units are estimated until TTS audio is generated and subtitle_timeline is rebuilt from real audio timing",
+    "hard_rule": "Do not render final voiceover videos from hand-estimated subtitle frames unless the user explicitly asks for a rough preview."
+  },
+  "output_contract": {
+    "renderer": "React + Remotion",
+    "fps": 30,
+    "deliverables": [
+      "template_manifest.json",
+      "template_data_schema.json",
+      "style_variants.json",
+      "example_data.json",
+      "workflow_report.md",
+      "example packs",
+      "preview videos"
+    ]
+  }
+}

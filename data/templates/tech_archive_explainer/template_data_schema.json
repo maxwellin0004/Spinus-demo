@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "tech_archive_explainer data schema",
+  "type": "object",
+  "required": ["topic", "kicker", "hook", "chapters", "close"],
+  "properties": {
+    "topic": {"type": "string"},
+    "kicker": {"type": "string"},
+    "hook": {
+      "type": "object",
+      "required": ["leftMetric", "rightMetric", "question", "answer", "mediaCards", "duckPose"],
+      "properties": {
+        "leftMetric": {"type": "string"},
+        "rightMetric": {"type": "string"},
+        "question": {"type": "string"},
+        "answer": {"type": "string"},
+        "duckPose": {"type": "string", "enum": ["question", "archive", "point", "power", "present"]},
+        "mediaCards": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"$ref": "#/$defs/mediaCard"}
+        }
+      }
+    },
+    "chapters": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id", "year", "title", "subtitle", "evidence", "mediaCards", "duckPose"],
+        "properties": {
+          "id": {"type": "string"},
+          "year": {"type": "string"},
+          "title": {"type": "string"},
+          "subtitle": {"type": "string"},
+          "duckPose": {"type": "string", "enum": ["question", "archive", "point", "power", "present"]},
+          "evidence": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "required": ["label", "title", "detail"],
+              "properties": {
+                "label": {"type": "string"},
+                "title": {"type": "string"},
+                "detail": {"type": "string"}
+              }
+            }
+          },
+          "mediaCards": {
+            "type": "array",
+            "minItems": 2,
+            "items": {"$ref": "#/$defs/mediaCard"}
+          }
+        }
+      }
+    },
+    "close": {
+      "type": "object",
+      "required": ["title", "body", "tags", "mediaCards", "duckPose"],
+      "properties": {
+        "title": {"type": "string"},
+        "body": {"type": "string"},
+        "tags": {"type": "array", "items": {"type": "string"}},
+        "duckPose": {"type": "string", "enum": ["question", "archive", "point", "power", "present"]},
+        "mediaCards": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"$ref": "#/$defs/mediaCard"}
+        }
+      }
+    },
+    "duckMotionProfiles": {
+      "type": "array",
+      "description": "Optional page-level duck motion presets used by scene implementation.",
+      "items": {
+        "type": "object",
+        "required": ["x", "y", "size", "entrance"],
+        "properties": {
+          "x": {"type": "number"},
+          "y": {"type": "number"},
+          "size": {"type": "number"},
+          "entrance": {"type": "string", "enum": ["from-right", "from-left", "from-bottom", "pop"]},
+          "delay": {"type": "number"},
+          "bobAmp": {"type": "number"},
+          "swayAmp": {"type": "number"},
+          "driftX": {"type": "number"},
+          "driftY": {"type": "number"},
+          "breathMin": {"type": "number"},
+          "breathMax": {"type": "number"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "mediaCard": {
+      "type": "object",
+      "required": ["imageSrc", "label", "caption"],
+      "properties": {
+        "imageSrc": {"type": "string"},
+        "label": {"type": "string"},
+        "caption": {"type": "string"},
+        "objectFit": {"type": "string", "enum": ["cover", "contain"]},
+        "objectPosition": {"type": "string"}
+      }
+    }
+  }
+}

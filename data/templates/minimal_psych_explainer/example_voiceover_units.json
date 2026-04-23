@@ -1,0 +1,81 @@
+{
+  "template_id": "minimal_psych_explainer",
+  "topic_name": "反刍思维",
+  "voiceover_units": [
+    {
+      "id": "vo_01",
+      "scene_id": "statement_1",
+      "text": "为什么一件事已经过去了，你的脑子里却还在一遍遍 replay。",
+      "target_duration_sec": 5.3,
+      "intended_pause_after_sec": 0.15,
+      "emphasis_words": [
+        "replay"
+      ],
+      "visual_section_id": "statement_1",
+      "timing_status": "aligned_from_current_audio"
+    },
+    {
+      "id": "vo_02",
+      "scene_id": "statement_2",
+      "text": "你不是不知道别想了，而是总觉得，只要再想一会儿，就能把它想明白。",
+      "target_duration_sec": 6.2,
+      "intended_pause_after_sec": 0.15,
+      "emphasis_words": [
+        "想明白"
+      ],
+      "visual_section_id": "statement_2",
+      "timing_status": "aligned_from_current_audio"
+    },
+    {
+      "id": "vo_03",
+      "scene_id": "statement_3",
+      "text": "心理学里，这更像一种反刍思维。它看起来像分析，实际上却让你停在原地。",
+      "target_duration_sec": 6.2,
+      "intended_pause_after_sec": 0.15,
+      "emphasis_words": [
+        "反刍思维",
+        "停在原地"
+      ],
+      "visual_section_id": "statement_3",
+      "timing_status": "aligned_from_current_audio"
+    },
+    {
+      "id": "vo_04",
+      "scene_id": "statement_4",
+      "text": "它也像一个越拉越紧的绳结。你越想一次解决，它反而越难松开。",
+      "target_duration_sec": 6.2,
+      "intended_pause_after_sec": 0.15,
+      "emphasis_words": [
+        "越拉越紧"
+      ],
+      "visual_section_id": "statement_4",
+      "timing_status": "aligned_from_current_audio"
+    },
+    {
+      "id": "vo_05",
+      "scene_id": "method",
+      "text": "想打断这种循环，不是逼自己立刻想通，而是先暂停追问为什么，把脑中的内容写下来，再做一个现实里的小动作。",
+      "target_duration_sec": 8.8,
+      "intended_pause_after_sec": 0.15,
+      "emphasis_words": [
+        "暂停",
+        "写下来",
+        "小动作"
+      ],
+      "visual_section_id": "method",
+      "timing_status": "aligned_from_current_audio"
+    },
+    {
+      "id": "vo_06",
+      "scene_id": "close",
+      "text": "当你不再逼自己立刻想明白，脑子反而会慢慢安静下来。",
+      "target_duration_sec": 5.3,
+      "intended_pause_after_sec": 0,
+      "emphasis_words": [
+        "安静下来"
+      ],
+      "visual_section_id": "close",
+      "timing_status": "aligned_from_current_audio"
+    }
+  ]
+}

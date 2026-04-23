@@ -1,0 +1,14 @@
+{
+  "template_id": "ai_concept_analyse",
+  "mapping_version": "audio_sync_v1",
+  "voiceover_units_source": "example_voiceover_units.json.voiceover_units",
+  "tts_output_pattern": "video-app/public/audio/ai-concept-analyse/{video_id}-voiceover.mp3",
+  "subtitle_timeline_output_pattern": "data/templates/ai_concept_analyse/{example_or_video_id}/subtitle_timeline.{orientation}.json",
+  "render_subtitle_source": "aligned_subtitle_timeline",
+  "fallback_timing_status": "estimated_after_audio_duration_fit",
+  "required_render_check": [
+    "Every subtitle cue maps to voice_id.",
+    "Every voice_id maps to visual_section_id.",
+    "Final render data imports aligned subtitle_timeline, not script-estimated cue frames."
+  ]
+}

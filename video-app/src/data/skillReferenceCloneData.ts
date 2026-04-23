@@ -1,0 +1,122 @@
+import { staticFile } from "remotion";
+
+const scenarioBatchContent = staticFile("images/shared/scenario_batch_content.jpg");
+const scenarioPpt = staticFile("images/shared/scenario_ppt.jpg");
+const scenarioVideoBreakdown = staticFile("images/shared/scenario_video_breakdown.jpg");
+
+export const skillReferenceCloneData = {
+  hookFrames: [
+    {
+      label: "AI 系列 30",
+      title: "Skill",
+      ghost: "智能体",
+      subtitle: "不是一句提示词",
+    },
+    {
+      label: "AI 系列 30",
+      title: "不是 Prompt",
+      ghost: "规则",
+      subtitle: "它是任务经验的结构化打包",
+    },
+    {
+      label: "AI 系列 30",
+      title: "是任务模块",
+      ghost: "模块",
+      subtitle: "让同一模型开始稳定、像你、能复用",
+    },
+  ],
+  docScene: {
+    path: "~/.codex/skills/skill/",
+    filename: "SKILL.md",
+    headline: "Skill 会把任务目标、步骤、风格和输出一起固化",
+    cards: [
+      {
+        title: "任务目标",
+        description: "先定义这次到底要做什么，成功标准是什么。",
+      },
+      {
+        title: "执行步骤",
+        description: "把顺序、判断点、交付步骤沉淀下来。",
+      },
+      {
+        title: "风格规则",
+        description: "统一语气、结构、重点突出方式和边界。",
+      },
+      {
+        title: "输出约束",
+        description: "规定最终格式、字段完整性和交付形态。",
+      },
+    ],
+  },
+  compareScene: {
+    leftTitle: "普通提问",
+    rightTitle: "带 Skill 调用",
+    leftPoints: [
+      "每次都要重新解释背景和要求",
+      "表达风格容易飘",
+      "输出结构不稳定",
+    ],
+    rightPoints: [
+      "直接进入既定方法",
+      "结果更像同一团队成员",
+      "更适合批量化和复用",
+    ],
+    footer: "差别不是模型突然更聪明，而是执行方法被固定下来了。",
+  },
+  scenarios: [
+    {
+      badge: "Skill 应用场景 1",
+      title: "视频拆解工作流",
+      description:
+        "把标题结构、简介公式、逐段节奏、字幕规则都拆进同一套分析方法里。",
+      bullets: ["标题/封面/首屏联动", "逐段结构拆解", "节奏和切换点记录"],
+      imageSrc: scenarioVideoBreakdown,
+    },
+    {
+      badge: "Skill 应用场景 2",
+      title: "PPT 动画页制作",
+      description:
+        "固定页面母版、内容密度和动画语法，后续换主题时还能直接套用。",
+      bullets: ["页面母版复用", "动效规则固化", "版式层级统一"],
+      imageSrc: scenarioPpt,
+    },
+    {
+      badge: "Skill 应用场景 3",
+      title: "批量内容生产",
+      description:
+        "保留固定框架，只替换 topic、outcome 和场景块，就能持续产出系列化内容。",
+      bullets: ["保留固定结构", "替换变量字段", "持续系列化输出"],
+      imageSrc: scenarioBatchContent,
+    },
+  ],
+  flowScene: {
+    title: "一个可复用的 Skill，通常会把这条链路固定下来",
+    steps: [
+      {
+        title: "输入主题",
+        body: "接收 topic、平台、时长和风格约束。",
+      },
+      {
+        title: "产出脚本",
+        body: "按固定结构生成内容层、画面层和执行层。",
+      },
+      {
+        title: "合成视频",
+        body: "映射到 React/Remotion 页面，批量生成成片。",
+      },
+    ],
+  },
+  mcpCompare: {
+    title: "Skill 和 MCP 的区别",
+    leftLabel: "Skill",
+    rightLabel: "MCP",
+    leftBody: "规则包 / 方法包 / 执行模板",
+    rightBody: "连接工具 / 资源 / 外部能力",
+    footer: "一个定义怎么做，一个负责接能力。两者不是同一层。",
+  },
+  closeScene: {
+    headline: "Skill 的本质，是把经验变成可重复执行的模块。",
+    subheadline:
+      "当你把经验写成结构化规则，后面换主题、换任务、换平台，产出依然能稳定延续。",
+  },
+} as const;

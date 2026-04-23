@@ -1,0 +1,256 @@
+{
+  "template_id": "minimal_psych_explainer",
+  "template_name": "Minimal Psych Explainer",
+  "template_name_zh": "极简心理解释模板",
+  "version": "v1.0",
+  "status": "production_ready",
+  "description": "用于心理学、情绪认知、自我调节、行为模式解释类短视频的极简白底解释模板。核心特征是白底留白、黑色极简图形、顶部栏目标签、中心图形隐喻、小气泡提示、底部分割线和透明字幕。",
+  "positioning": {
+    "tracks": [
+      "psychology",
+      "mental model",
+      "self-help",
+      "emotional education",
+      "behavior explanation"
+    ],
+    "platforms": [
+      "YouTube",
+      "TikTok",
+      "Bilibili",
+      "Xiaohongshu"
+    ],
+    "aspect_ratios": [
+      "16:9"
+    ],
+    "duration_sec_range": [
+      35,
+      60
+    ],
+    "video_types": [
+      "minimal psychology explainer",
+      "mental model explanation",
+      "self-help insight short"
+    ],
+    "target_audience": [
+      "对心理学概念、情绪困扰、行为模式和自我调节方法感兴趣的用户",
+      "需要把抽象心理机制讲清楚的科普内容创作者",
+      "希望低素材成本批量制作心理解释视频的内容团队"
+    ],
+    "goals": [
+      "用极简画面降低认知负担",
+      "把抽象心理概念转成可理解的图形隐喻",
+      "形成安静、克制、可信的心理科普风格",
+      "支持批量替换主题、概念、场景和行动建议"
+    ]
+  },
+  "template_decision": {
+    "belongs_to_ai_concept_analyse": false,
+    "belongs_to_new_signals": false,
+    "belongs_to_comic_templates": false,
+    "reason": [
+      "它不是 AI 概念分析，也不是交易新闻或漫画叙事",
+      "画面系统依赖白底极简符号和中心隐喻，而不是复杂页面、图表或高饱和漫画图",
+      "节奏更接近安静解释型视频，重心在口播、符号隐喻和字幕理解"
+    ],
+    "needs_new_scene_system": true,
+    "scene_system": "video-app/src/scenes/psych",
+    "composition_id": "minimal-psych-explainer-preview"
+  },
+  "fixed_rules": {
+    "structure": [
+      "series_title",
+      "keyword_reel",
+      "statement_1",
+      "statement_2",
+      "statement_3",
+      "statement_4",
+      "method",
+      "close"
+    ],
+    "page_system": [
+      "PsychSeriesTitleScene",
+      "PsychKeywordReelScene",
+      "PsychStatementScene",
+      "PsychMethodScene"
+    ],
+    "visual_system": {
+      "background_style": "clean_white_minimal",
+      "primary_shape_color": "#111111",
+      "accent_color": "#4d78c3",
+      "secondary_accent": "#e8b84e",
+      "layout_style": "centered_symbolic_diagram",
+      "subtitle_style": "transparent_subtitle_with_stroke"
+    },
+    "editing_rhythm": {
+      "opening_style": "quiet_title_then_keyword_reel",
+      "primary_transition_types": [
+        "hard_cut",
+        "soft_reveal",
+        "minimal_symbol_swap",
+        "bubble_fade_in",
+        "step_card_reveal"
+      ],
+      "motion_character": "restrained_minimal_explainer",
+      "recommended_scene_density": "low_medium"
+    },
+    "audio_rules": [
+      "默认带口播音频",
+      "口播节奏应平稳、温和、解释性强，避免新闻播报式紧张感",
+      "字幕时间轴必须以真实 TTS 音频回填后的时间为准",
+      "BGM 可选，若使用必须低音量、轻环境感，不能压过口播",
+      "不建议大量 SFX，仅允许轻微 pop、soft whoosh 或 page tick"
+    ]
+  },
+  "scene_modules": [
+    {
+      "scene_id": "series_title",
+      "component_name": "PsychSeriesTitleScene",
+      "purpose": "建立系列身份和本期核心概念",
+      "duration_sec": 2.5,
+      "template_role": "opening_identity",
+      "fixed_elements": [
+        "top_bar",
+        "center_title",
+        "accent_word",
+        "minimal_icon"
+      ],
+      "variable_fields": [
+        "title.seriesLabel",
+        "title.title",
+        "title.accent",
+        "title.footer"
+      ]
+    },
+    {
+      "scene_id": "keyword_reel",
+      "component_name": "PsychKeywordReelScene",
+      "purpose": "用 2-4 个关键词建立问题感和概念入口",
+      "duration_sec": 1.8,
+      "template_role": "keyword_bridge",
+      "fixed_elements": [
+        "center_keyword",
+        "minimal_reveal"
+      ],
+      "variable_fields": [
+        "reelWords"
+      ]
+    },
+    {
+      "scene_id": "statement",
+      "component_name": "PsychStatementScene",
+      "purpose": "用一个核心判断和一个图形隐喻解释心理机制",
+      "duration_sec": 5.3,
+      "template_role": "main_explanation_unit",
+      "fixed_elements": [
+        "top_bar",
+        "intro_card",
+        "center_icon",
+        "optional_bubble",
+        "bottom_rule"
+      ],
+      "variable_fields": [
+        "scenes[].header",
+        "scenes[].zh",
+        "scenes[].en",
+        "scenes[].icon",
+        "scenes[].bubble"
+      ]
+    },
+    {
+      "scene_id": "method",
+      "component_name": "PsychMethodScene",
+      "purpose": "把解释收束成 3 个更小、更可执行的动作",
+      "duration_sec": 7.1,
+      "template_role": "action_method",
+      "fixed_elements": [
+        "top_bar",
+        "method_title",
+        "three_step_cards",
+        "minimal_icons"
+      ],
+      "variable_fields": [
+        "method.title",
+        "method.zh",
+        "method.en",
+        "method.steps"
+      ]
+    },
+    {
+      "scene_id": "close",
+      "component_name": "PsychStatementScene",
+      "purpose": "用温和结论完成心理安抚和认知收束",
+      "duration_sec": 4.4,
+      "template_role": "calm_closing",
+      "fixed_elements": [
+        "top_bar",
+        "closing_statement",
+        "calm_icon",
+        "bottom_rule"
+      ],
+      "variable_fields": [
+        "close.header",
+        "close.zh",
+        "close.en",
+        "close.icon"
+      ]
+    }
+  ],
+  "variables": {
+    "required": [
+      "topic_name",
+      "style_variant",
+      "title",
+      "reelWords",
+      "scenes",
+      "method",
+      "close",
+      "voiceover_units"
+    ],
+    "optional": [
+      "platform",
+      "language",
+      "duration_sec",
+      "audio_profile",
+      "subtitle_timeline",
+      "bgm",
+      "sfx"
+    ]
+  },
+  "audio_alignment": {
+    "enabled": true,
+    "protocol_file": "audio_alignment_protocol.json",
+    "audio_schema_file": "template_data_audio_schema.json",
+    "example_voiceover_units_file": "example_voiceover_units.json",
+    "render_mapping_file": "render_mapping.audio_sync.json",
+    "final_subtitle_source": "subtitle_timeline.horizontal.json",
+    "timing_rule": "voiceover_units are estimated until TTS audio is generated and subtitle_timeline is rebuilt from real audio duration or alignment result",
+    "hard_rule": "Final voiceover videos must not use hand-estimated subtitle frames unless the user explicitly asks for a rough preview."
+  },
+  "output_contract": {
+    "primary_outputs": [
+      "content_script",
+      "storyboard_script",
+      "asset_script",
+      "subtitle_voice_script",
+      "voiceover_script",
+      "audio_plan",
+      "sfx_bgm_map",
+      "visual_script.horizontal",
+      "react_page_script.horizontal",
+      "timeline_script.horizontal",
+      "formal_script.horizontal"
+    ],
+    "render_target": {
+      "engine": "React + Remotion",
+      "composition_id": "minimal-psych-explainer-preview",
+      "fps": 30,
+      "resolution": "1920x1080"
+    }
+  },
+  "implementation_refs": [
+    "video-app/src/compositions/MinimalPsychExplainerComposition.tsx",
+    "video-app/src/data/minimalPsychExplainerData.ts",
+    "video-app/src/data/minimalPsychExplainerAudio.ts",
+    "video-app/src/scenes/psych"
+  ]
+}

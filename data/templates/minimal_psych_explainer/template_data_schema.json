@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "minimal_psych_explainer.template_data_schema.json",
+  "title": "Minimal Psych Explainer Template Data",
+  "type": "object",
+  "required": [
+    "template_id",
+    "topic_name",
+    "style_variant",
+    "title",
+    "reelWords",
+    "scenes",
+    "method",
+    "close",
+    "voiceover_units"
+  ],
+  "properties": {
+    "template_id": {
+      "const": "minimal_psych_explainer"
+    },
+    "topic_name": {
+      "type": "string"
+    },
+    "platform": {
+      "type": "string",
+      "default": "YouTube"
+    },
+    "orientation": {
+      "type": "string",
+      "enum": [
+        "horizontal"
+      ],
+      "default": "horizontal"
+    },
+    "duration_sec": {
+      "type": "number",
+      "minimum": 35,
+      "maximum": 60
+    },
+    "language": {
+      "type": "string",
+      "default": "zh-CN"
+    },
+    "style_variant": {
+      "type": "string",
+      "enum": [
+        "clean_white",
+        "soft_blue",
+        "warm_paper",
+        "gray_academic"
+      ]
+    },
+    "title": {
+      "type": "object",
+      "required": [
+        "seriesLabel",
+        "title",
+        "accent",
+        "footer"
+      ],
+      "properties": {
+        "seriesLabel": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "accent": {
+          "type": "string"
+        },
+        "footer": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "reelWords": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 4,
+      "items": {
+        "type": "string"
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 5,
+      "items": {
+        "$ref": "#/$defs/statementScene"
+      }
+    },
+    "method": {
+      "type": "object",
+      "required": [
+        "title",
+        "zh",
+        "en",
+        "steps"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "zh": {
+          "type": "string"
+        },
+        "en": {
+          "type": "string"
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": [
+              "label",
+              "body",
+              "icon"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              },
+              "icon": {
+                "$ref": "#/$defs/iconType"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "close": {
+      "$ref": "#/$defs/statementScene"
+    },
+    "voiceover_units": {
+      "$ref": "template_data_audio_schema.json#/$defs/voiceover_units"
+    },
+    "audio_alignment": {
+      "$ref": "template_data_audio_schema.json#/$defs/audio_alignment"
+    },
+    "subtitle_timeline": {
+      "$ref": "template_data_audio_schema.json#/$defs/subtitle_timeline"
+    }
+  },
+  "$defs": {
+    "iconType": {
+      "type": "string",
+      "enum": [
+        "desk",
+        "replay",
+        "person",
+        "treadmill",
+        "knot",
+        "write",
+        "step",
+        "calm"
+      ]
+    },
+    "statementScene": {
+      "type": "object",
+      "required": [
+        "header",
+        "zh",
+        "en",
+        "icon"
+      ],
+      "properties": {
+        "header": {
+          "type": "string"
+        },
+        "zh": {
+          "type": "string"
+        },
+        "en": {
+          "type": "string"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconType"
+        },
+        "bubble": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

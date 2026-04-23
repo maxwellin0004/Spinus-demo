@@ -1,0 +1,30 @@
+{
+  "template_id": "bikini_margin_theater",
+  "template_name": "Bikini Margin Theater",
+  "version": "1.0.0",
+  "created_at": "2026-04-22",
+  "design_origin": "D:/document/google/download (11).mp4",
+  "orientation": [
+    "horizontal"
+  ],
+  "fps": 30,
+  "page_masters": [
+    "ink_hook_black",
+    "fixed_stage_equation",
+    "debate_bubble_stage",
+    "choice_cards_stage",
+    "night_slogan_close"
+  ],
+  "scene_types": [
+    "InkHookScene",
+    "StageEquationScene",
+    "DebateBubbleScene",
+    "ChoiceCardScene",
+    "NightSloganScene"
+  ],
+  "audio": {
+    "voice_required": true,
+    "tts_provider": "elevenlabs",
+    "timeline_rule": "audio first, then generated subtitle timeline"
+  }
+}

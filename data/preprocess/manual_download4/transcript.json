@@ -1,0 +1,13 @@
+{
+  "full_text": "第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude。第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 287.68,
+      "text": "第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude。第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude"
+    }
+  ],
+  "generated": true,
+  "source": "mock_fallback",
+  "fallback_reason": "Network error calling https://api.bltcy.ai/v1/audio/transcriptions: [WinError 10054] 远程主机强迫关闭了一个现有的连接。"
+}

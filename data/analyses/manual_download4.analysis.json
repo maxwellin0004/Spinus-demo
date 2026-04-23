@@ -1,0 +1,485 @@
+{
+  "source_video_id": "manual_download4",
+  "status": "draft",
+  "engine": {
+    "provider": "bltcy",
+    "mock_analysis": false,
+    "models": {
+      "analyze_title": "gpt-5.4-nano",
+      "analyze_description": "gpt-5.4-nano",
+      "analyze_hook": "gpt-5.4-nano",
+      "analyze_structure": "gpt-5.4-nano",
+      "analyze_script_style": "gpt-5.4-nano",
+      "analyze_visual_rhythm": "gemini-3.1-flash-lite-preview-thinking-minimal",
+      "analyze_visual_style": "gemini-3.1-flash-lite-preview-thinking-minimal",
+      "analyze_subtitle_audio": "gpt-5.4-nano",
+      "build_summary": "gpt-5.4-nano",
+      "transcribe_audio": "gpt-4o-mini-transcribe"
+    }
+  },
+  "meta": {
+    "title": "第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude",
+    "description": "第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude",
+    "cover_text": "ai神器：skill",
+    "first_frame_text": "skill，智能体",
+    "platform": "tiktok",
+    "track": "ai tools / agent / claude / skill",
+    "duration_sec": 287.68,
+    "language": "zh"
+  },
+  "transcript": {
+    "full_text": "第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude。第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude",
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 287.68,
+        "text": "第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude。第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude"
+      }
+    ],
+    "generated": true,
+    "source": "mock_fallback",
+    "fallback_reason": "Network error calling https://api.bltcy.ai/v1/audio/transcriptions: [WinError 10054] 远程主机强迫关闭了一个现有的连接。"
+  },
+  "title_analysis": {
+    "raw_title": "第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude",
+    "cover_text": "ai神器：skill",
+    "first_frame_text": "skill，智能体",
+    "title_type": "系列集数型 + 痛点反向（拒绝低效）+ 效果承诺（让Claude更有灵魂）+ 话题标签",
+    "formula": "【第{n}集】+【拒绝/反向否定{痛点}！】+【{工具/方法名}{让/帮助}{对象}{效果/结果}】+【话题标签】",
+    "conclusion_first": true,
+    "contains": {
+      "risk": false,
+      "benefit": true,
+      "conflict": false,
+      "number": true,
+      "contrast": true,
+      "promise": true
+    },
+    "relationship_between_surfaces": {
+      "title_vs_cover": "封面突出“ai神器：skill”，用于产品/工具归因；标题进一步加上“第30集”与“拒绝低效！Skill让Claude更有灵魂”，属于在同一核心对象（Skill）基础上补充集数与价值/效果。",
+      "title_vs_first_frame": "首屏强调“skill，智能体”，直接对齐标题中的“Skill”；标题中“拒绝低效”和“让Claude更有灵魂”则在首屏基础上补充具体使用场景/结果指向（Claude更有灵魂）。"
+    },
+    "keyword_slots": [
+      "集数编号{n}",
+      "反向否定/痛点{低效}（拒绝低效）",
+      "工具/方法名{Skill}",
+      "被增强对象{Claude}",
+      "效果形容/结果{更有灵魂}",
+      "平台/项目标签{#AI新星计划}",
+      "能力/内容标签{#skills}",
+      "内容形式标签{#PPT动画/ #动画视频}"
+    ],
+    "variable_candidates": [
+      "{n}（第30集可替换为任意集数）",
+      "{痛点}（低效可替换为其他负面/问题，如繁琐、慢、不会等）",
+      "{工具/方法名}（Skill可替换为对应AI工具/代理名）",
+      "{对象/模型}（Claude可替换为其他模型或角色）",
+      "{效果/结果}（更有灵魂可替换为具体正向收益表述）",
+      "{话题标签1}（#AI新星计划可替换为项目标签）",
+      "{话题标签2}（#skills可替换为技能/分类标签）",
+      "{内容形式标签}（#PPT动画/ #动画视频可替换为对应内容形式）"
+    ],
+    "confidence": 0.74
+  },
+  "description_analysis": {
+    "raw_description": "第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude",
+    "description_type": "系列集数更新/内容预告型（episode update + 核心卖点概括）",
+    "description_formula": "「第{集数}集：{反差/价值主张}! {工具/方法} 让 {对象} 更有{效果}」+「#话题标签」",
+    "opening_role": "内容/系列定位（第30集）+ 价值主张开头（拒绝低效）",
+    "has_call_to_action": false,
+    "call_to_action_type": null,
+    "tone": "强调效率与优化（反低效）+ 轻量营销/口号式（更有灵魂）",
+    "title_relation": "简介与标题几乎一致（仅重复“第30集：拒绝低效！Skill 让 Claude 更有灵魂”，标题中额外包含同样的标签串与#AI新星计划等，简介基本复用标题内容）",
+    "keyword_clusters": [
+      [
+        "技能/工具链",
+        "Skill",
+        "skills"
+      ],
+      [
+        "模型/对象",
+        "Claude",
+        "claude"
+      ],
+      [
+        "内容形态",
+        "PPT动画",
+        "动画视频"
+      ],
+      [
+        "计划/栏目",
+        "AI新星计划"
+      ]
+    ],
+    "hashtag_strategy": {
+      "count": 5,
+      "hashtags": [
+        "AI新星计划",
+        "skills",
+        "PPT动画",
+        "动画视频",
+        "claude"
+      ],
+      "language_mix": "中文为主 + 英文/小写brand词（claude/skills）",
+      "mix_type": "栏目/品牌词 + 工具泛关键词 + 形式/内容关键词 + 目标模型词",
+      "broad_tags": [
+        "skills",
+        "动画视频"
+      ],
+      "niche_tags": [
+        "PPT动画",
+        "claude"
+      ],
+      "brand_or_account_tags": [
+        "AI新星计划"
+      ]
+    },
+    "variable_candidates": [
+      "episode_number（第{集数}集）",
+      "value_proposition（如：拒绝低效）",
+      "tool_name（Skill）",
+      "model_or_subject（Claude）",
+      "outcome_phrase（如：更有灵魂）",
+      "content_format_tags（如：PPT动画、动画视频）",
+      "program_or_series_tag（如：AI新星计划）",
+      "model_hashtag（如：claude）"
+    ],
+    "confidence": 0.84
+  },
+  "hook_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "structure_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "script_style_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "rhythm_engine": {
+    "mode": "api",
+    "model": "gemini-3.1-flash-lite-preview-thinking-minimal"
+  },
+  "visual_engine": {
+    "mode": "api",
+    "model": "gemini-3.1-flash-lite-preview-thinking-minimal"
+  },
+  "subtitle_audio_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "hook_analysis": {
+    "time_range_sec": [
+      0,
+      5
+    ],
+    "hook_text": "第30集：拒绝低效！Skill 让 Claude 更有灵魂",
+    "hook_type": "系列集数+反低效主张（口号式价值宣告）",
+    "core_mechanism": "以“拒绝低效/更有灵魂”的价值对比来建立兴趣，并用“第30集”暗示连续内容与稳定更新；借助具体对象“Claude + Skill”强化主题指向。",
+    "conclusion_first": true,
+    "devices": {
+      "risk": false,
+      "conflict": false,
+      "promise": true,
+      "question": false,
+      "surprise": false,
+      "contrarian": true
+    },
+    "visual_support": "仅从提供信息看：封面文字为“ai神器：skill”，首屏大字为“skill，智能体”。这些与口播的“Skill 让 Claude 更有灵魂”形成主题一致的对齐，但未看到更具体的动作/对比画面描述。",
+    "surface_dependency": "较依赖“Skill/智能体/Claude”的品牌词与赛道理解；同时依赖“第30集”带来的系列信任感。若观众不熟悉 Claude 或 Skill，价值宣告的具体性会降低。",
+    "template_rule_candidates": [
+      "【系列集数】+【反低效/立场】+【具体工具/模型】+【情绪化收益】（如“更有灵魂”）",
+      "用口号式短语替代问题：拒绝某种常见问题（低效）→ 指向解决方案（Skill）→ 强化对象（Claude）",
+      "“第N集”制造持续性预期，同时把价值点放在同一句开头（更像结论先行的标题口播）"
+    ],
+    "confidence": 0.62
+  },
+  "structure_analysis": [
+    {
+      "id": "S1",
+      "start_sec": 0,
+      "end_sec": 287.68,
+      "label": "封面/标题重复引导（转写无实质内容）",
+      "purpose": "通过标题与标签强化本集主题：Skill 让 Claude 更高效/更有灵魂，但由于转写缺失，无法提炼具体内容段落。",
+      "summary": "转写全文仅重复出现“第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude”（未见具体步骤、演示或观点展开）。",
+      "transition_to_next": "无后续可识别段落",
+      "information_density": "极低（转写仅为标题与话题重复）",
+      "confidence": 0.22
+    }
+  ],
+  "global_structure_pattern": "单段式占位：标题/话题重复为主（缺少可解析的内容叙事），疑似为无口播/转写抓取失败或视频实质内容未被提供。",
+  "script_analysis": {
+    "tone": "偏营销/号召式，强调卖点与对比（如“拒绝低效”）但缺少实际内容展开",
+    "sentence_style": "高度标题化/话题化复述；以短句+口号式短语为主；缺少叙事动词链与解释性结构",
+    "sentence_length_pattern": "极短句居多，整体由“集数 + 标题主语 + 情绪/观点短语 + 产品名/关键词 + hashtag”拼接；无长句段落",
+    "conclusion_first": false,
+    "dominant_modes": [
+      "标题占位复述",
+      "话题标签堆叠",
+      "卖点口号式表达"
+    ],
+    "density_pattern": "hashtags密度高且重复（同一标题/话题出现两次），信息集中在主题词与标签而非观点论证",
+    "paragraph_organization": "单段式；主要依赖“标题/话题重复”为组织方式；几乎无可解析的因果、步骤、示例或结论展开",
+    "rule_candidates": [
+      "用“第N集：主标题”作为开头锚点",
+      "用强观点短语（如“拒绝低效”）+ 目标对象（Claude）+ 工具/产品名（Skill）拼接卖点",
+      "大量插入垂类hashtag（如 #claude #skills #PPT动画 等）以提高主题覆盖",
+      "在字幕层面可能存在重复渲染：同一标题与hashtag全文复读/重复出现"
+    ],
+    "confidence": 0.42
+  },
+  "rhythm_analysis": {
+    "scene_changes": [
+      {
+        "time_sec": 0,
+        "approximate": false,
+        "change_strength": "hard_change",
+        "change_type": "loop_start",
+        "from_visual": "null",
+        "to_visual": "static_title_card",
+        "purpose": "establish_topic",
+        "linked_to_audio_emphasis": true
+      }
+    ],
+    "section_rhythm": {
+      "hook": {
+        "avg_change_interval_sec": 287.68,
+        "rhythm_level": "static"
+      },
+      "body": {
+        "avg_change_interval_sec": 287.68,
+        "rhythm_level": "static"
+      },
+      "outro": {
+        "avg_change_interval_sec": 287.68,
+        "rhythm_level": "static"
+      }
+    },
+    "peak_moments": [],
+    "rhythm_rule_candidates": [
+      "single_frame_loop_pattern",
+      "static_placeholder_strategy"
+    ],
+    "confidence": 0.95
+  },
+  "visual_analysis": [
+    {
+      "section_id": "S1_Intro_Transition",
+      "visual_type": "Title_Card",
+      "layout": "Centered_Text_Overlay_with_Corner_Badges",
+      "asset_types": [
+        "Text",
+        "Brand_Logo",
+        "Background_Texture"
+      ],
+      "style_markers": [
+        "Dark_Dot_Pattern",
+        "Minimalist_UI",
+        "High_Contrast"
+      ],
+      "fixed_elements": [
+        "Top_Left_Channel_Badge",
+        "Top_Right_Series_Number",
+        "Background_Dot_Texture"
+      ],
+      "variable_elements": [
+        "Center_Title_Text"
+      ],
+      "recreation_difficulty": "easy",
+      "confidence": 0.9
+    },
+    {
+      "section_id": "S2_Knowledge_Cover",
+      "visual_type": "Info_Graphic_Card",
+      "layout": "Top_Title_Bar_with_Central_Icon_and_Footer_Caption",
+      "asset_types": [
+        "Icon",
+        "Text",
+        "Grid_Background"
+      ],
+      "style_markers": [
+        "Tech_Style",
+        "Cartoon_Icon",
+        "PPT_Animation_Style"
+      ],
+      "fixed_elements": [
+        "Top_Corner_Badges",
+        "Grid_Background",
+        "Bottom_Chapter_Indicators"
+      ],
+      "variable_elements": [
+        "Central_Icon",
+        "Main_Title_Text",
+        "Footer_Caption"
+      ],
+      "recreation_difficulty": "medium",
+      "confidence": 0.85
+    },
+    {
+      "section_id": "S3_UI_Demo_Overlay",
+      "visual_type": "Screen_Recording_Composite",
+      "layout": "Split_Screen_with_Layered_UI_Windows",
+      "asset_types": [
+        "Code_Snippet",
+        "UI_Icon",
+        "Text_Overlay"
+      ],
+      "style_markers": [
+        "Dark_Theme_UI",
+        "Layered_Depth",
+        "Engineering_Focus"
+      ],
+      "fixed_elements": [
+        "Top_Left_Channel_Badge",
+        "Grid_Background"
+      ],
+      "variable_elements": [
+        "Left_Side_Icon_Label",
+        "Right_Side_Code_Windows",
+        "Bottom_Caption"
+      ],
+      "recreation_difficulty": "hard",
+      "confidence": 0.9
+    },
+    {
+      "section_id": "S4_HUD_Scenario_Guide",
+      "visual_type": "HUD_Info_Card",
+      "layout": "Top_Title_Bar_with_Central_Content_Container",
+      "asset_types": [
+        "HUD_Elements",
+        "Text_Box",
+        "Decorative_Icons"
+      ],
+      "style_markers": [
+        "HUD_Style",
+        "Blurred_Background",
+        "Modular_Layout"
+      ],
+      "fixed_elements": [
+        "Top_Title_Bar",
+        "Side_HUD_Decorations",
+        "Grid_Background"
+      ],
+      "variable_elements": [
+        "Central_Content_Box",
+        "Bottom_Explanation_Text"
+      ],
+      "recreation_difficulty": "medium",
+      "confidence": 0.8
+    },
+    {
+      "section_id": "S5_Impact_Cover",
+      "visual_type": "Impact_Title_Card",
+      "layout": "Layered_Character_with_Large_Typography",
+      "asset_types": [
+        "Character_Cutout",
+        "Bold_Typography",
+        "Graphic_Fragments"
+      ],
+      "style_markers": [
+        "Explosive_Typography",
+        "Collage_Style",
+        "High_Impact"
+      ],
+      "fixed_elements": [
+        "Top_Corner_Badges",
+        "Grid_Background"
+      ],
+      "variable_elements": [
+        "Central_Character_Image",
+        "Large_Red_Typography",
+        "Decorative_Fragments"
+      ],
+      "recreation_difficulty": "medium",
+      "confidence": 0.85
+    }
+  ],
+  "subtitle_analysis": {
+    "position": "画面上半区到中下区的硬字幕常规区域（更可能为居中底部或底部偏中，适配 TikTok 信息卡/静态标题卡）",
+    "line_count_pattern": "单段式重复占位，疑似1屏1行或2行以内；由于转写仅包含标题与话题标签复读，缺少正文叙事，故以短句块呈现",
+    "line_length_pattern": "短句为主（以“第30集：拒绝低效！Skill 让 Claude 更有灵魂”为主干，其他为#话题标签）；行长不随内容展开而变化，整体偏短、紧凑",
+    "highlight_strategy": "无明确可验证的关键词高亮（证据不足）；最合理的第一版为：情绪/卖点短语（如“拒绝低效！”“更有灵魂”以及“Skill”“Claude”）采用加粗/颜色高亮，其余话题标签保持常规白字或弱化灰度",
+    "timing_pattern": "静态占位/循环策略：标题卡起始即同时投放字幕；全片可能以固定频率重复同一标题字幕（转写中出现两次完整标题与话题），导致字幕节奏呈“单段循环/占位不推进内容”的规律。与场景变化相关的字幕更新强度更像硬同步（change_strength=hard_change，且仅检测到0s静态标题卡建立话题）",
+    "confidence": 0.35
+  },
+  "audio_analysis": {
+    "voice_style": "证据不足的情况下的第一版推断：若为硬字幕且转写重复标题，可能存在“无口播/少口播”或口播被抓取失败；或采用偏营销号的标题式配音（偏快、强调口号式关键词）",
+    "pace_wpm_estimate": 0,
+    "pause_pattern": "第一版推断：停顿与节奏主要服务于标题关键词（“第30集：/拒绝低效！/Skill 让 Claude 更有灵魂”），停顿更集中在冒号、感叹号与专有名词前后；但由于缺少逐句音频转写证据，整体停顿结构无法精确",
+    "bgm_style": "更可能为短视频常见的节奏型背景音乐（轻快/科技感/循环段落），与静态标题卡或循环剪辑匹配；若为静态重复标题，BGM也倾向循环不复杂",
+    "hook_sfx_likely": [
+      "开场UI音/叮咚提示音（hard hook）",
+      "科技/嗡鸣上扬音效（用于“拒绝低效”/“Skill”关键词）",
+      "卡点式鼓点强调（与字幕进入同拍）"
+    ],
+    "sync_pattern": "硬同步为主：当出现静态标题卡（0s）时字幕与音频强调同时触发（linked_to_audio_emphasis=true）；随后在缺少正文内容的情况下，字幕复写与节奏变化不明显，维持单段循环/占位式同步",
+    "confidence": 0.3
+  },
+  "review": {
+    "mode": "draft_then_review",
+    "reviewed": false,
+    "notes": ""
+  },
+  "summary": {
+    "top_template_rules": [
+      {
+        "rule_id": "T1_reverse_pain_promise_series",
+        "template": "【第{n}集】：【拒绝/反向否定{pain}！】+【{tool}让{subject}{object_effect}】+【话题标签串】",
+        "rationale": "标题同时完成“集数承接 + 反向否定痛点 + 效果承诺 + 标签导流”的信息拼装方式，高复用且易于做系列化。",
+        "example_fill": "第30集：拒绝低效！Skill让Claude更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude"
+      },
+      {
+        "rule_id": "T2_tool_brand_attribution_frontload",
+        "template": "首屏用【ai神器/智能体{tool}】做封面归因，标题再补【集数/反低效/效果】。",
+        "rationale": "封面聚焦“工具归因”（降低认知门槛），标题负责“理由与结果”（提升说服）。",
+        "example_fill": "封面：ai神器：Skill；标题：第{n}集：拒绝{pain}！Skill让{subject}{outcome}"
+      },
+      {
+        "rule_id": "T3_model_specific_outcome_nickname",
+        "template": "{tool} + {model/对象} + {结果短语(拟人/口号式)}（如：更有灵魂/更懂你/更像人）",
+        "rationale": "使用“拟人结果短语”增强记忆点与情绪价值，适合口号式短视频叙事。",
+        "example_fill": "Skill让Claude更有灵魂"
+      },
+      {
+        "rule_id": "T4_hashtag_mix_program_format_target",
+        "template": "# {program_or_series} + #{tool_topic} + #{content_format} + #{target_model} (+可选扩展tag)",
+        "rationale": "标签采用“栏目/品牌词 + 技能泛词 + 形式词 + 目标模型词”的稳定组合，兼顾平台分发与精准检索。",
+        "example_fill": "#AI新星计划 #skills #PPT动画 #动画视频 #claude"
+      },
+      {
+        "rule_id": "T5_static_title_loop_no_content_detected",
+        "template": "若转写/正文信息不足：用静态标题卡 + 短字幕块循环复现【同一主干句】（不推进长叙事）。",
+        "rationale": "当前节奏为“单帧/静态占位策略”，最有效的复用是把字幕做成可循环的短主句，而不是强依赖口播步骤。",
+        "example_fill": "字幕重复：第{n}集：拒绝{pain}！{tool}让{subject}{outcome}"
+      }
+    ],
+    "key_packaging_features": [
+      "封面/首帧/标题信息层级分工清晰：封面归因“{tool}”，标题补齐“第{n}集 + 反低效痛点 + 效果承诺”。",
+      "标题与简介高度复用：简介基本为“标题同句式 + 标签”，减少信息不一致风险。",
+      "视频视觉与节奏偏模板化：静态Title Card/信息卡为主，字幕以短句块硬同步、循环占位为主。"
+    ],
+    "best_variable_candidates": [
+      "{n}（集数编号）",
+      "{pain}（反向否定的痛点词）",
+      "{tool}（工具/方法名，如Skill）",
+      "{subject}（对象/模型，如Claude）",
+      "{outcome}（口号式结果短语，如更有灵魂，可替换为具体收益）",
+      "{program_or_series}（栏目/项目标签，如AI新星计划）",
+      "{tool_topic_hashtag}（工具泛关键词，如skills）",
+      "{content_format_hashtag}（形式标签，如PPT动画/动画视频）",
+      "{target_model_hashtag}（目标模型词，如claude）"
+    ],
+    "best_fixed_rules": [
+      "主干句式固定为：【第{n}集】+【拒绝/反向否定{pain}！】+【{tool}让{subject}{outcome}】。",
+      "强制保留“反向否定/痛点”语义位：使用拒绝、别、不要、反低效等结构来制造对比张力。",
+      "标签数量与结构固定倾向：至少包含 1 个栏目/品牌词 + 1 个工具泛词 + 1-2 个形式词 + 1 个目标模型词。",
+      "字幕包装固定为短句块硬同步：字幕优先复用主标题主干（情绪卖点+工具+对象+结果），其余信息以标签承载。"
+    ]
+  },
+  "summary_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  }
+}

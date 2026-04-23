@@ -1,0 +1,62 @@
+{
+  "summary": {
+    "top_template_rules": [
+      {
+        "rule_id": "T1_reverse_pain_promise_series",
+        "template": "【第{n}集】：【拒绝/反向否定{pain}！】+【{tool}让{subject}{object_effect}】+【话题标签串】",
+        "rationale": "标题同时完成“集数承接 + 反向否定痛点 + 效果承诺 + 标签导流”的信息拼装方式，高复用且易于做系列化。",
+        "example_fill": "第30集：拒绝低效！Skill让Claude更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude"
+      },
+      {
+        "rule_id": "T2_tool_brand_attribution_frontload",
+        "template": "首屏用【ai神器/智能体{tool}】做封面归因，标题再补【集数/反低效/效果】。",
+        "rationale": "封面聚焦“工具归因”（降低认知门槛），标题负责“理由与结果”（提升说服）。",
+        "example_fill": "封面：ai神器：Skill；标题：第{n}集：拒绝{pain}！Skill让{subject}{outcome}"
+      },
+      {
+        "rule_id": "T3_model_specific_outcome_nickname",
+        "template": "{tool} + {model/对象} + {结果短语(拟人/口号式)}（如：更有灵魂/更懂你/更像人）",
+        "rationale": "使用“拟人结果短语”增强记忆点与情绪价值，适合口号式短视频叙事。",
+        "example_fill": "Skill让Claude更有灵魂"
+      },
+      {
+        "rule_id": "T4_hashtag_mix_program_format_target",
+        "template": "# {program_or_series} + #{tool_topic} + #{content_format} + #{target_model} (+可选扩展tag)",
+        "rationale": "标签采用“栏目/品牌词 + 技能泛词 + 形式词 + 目标模型词”的稳定组合，兼顾平台分发与精准检索。",
+        "example_fill": "#AI新星计划 #skills #PPT动画 #动画视频 #claude"
+      },
+      {
+        "rule_id": "T5_static_title_loop_no_content_detected",
+        "template": "若转写/正文信息不足：用静态标题卡 + 短字幕块循环复现【同一主干句】（不推进长叙事）。",
+        "rationale": "当前节奏为“单帧/静态占位策略”，最有效的复用是把字幕做成可循环的短主句，而不是强依赖口播步骤。",
+        "example_fill": "字幕重复：第{n}集：拒绝{pain}！{tool}让{subject}{outcome}"
+      }
+    ],
+    "key_packaging_features": [
+      "封面/首帧/标题信息层级分工清晰：封面归因“{tool}”，标题补齐“第{n}集 + 反低效痛点 + 效果承诺”。",
+      "标题与简介高度复用：简介基本为“标题同句式 + 标签”，减少信息不一致风险。",
+      "视频视觉与节奏偏模板化：静态Title Card/信息卡为主，字幕以短句块硬同步、循环占位为主。"
+    ],
+    "best_variable_candidates": [
+      "{n}（集数编号）",
+      "{pain}（反向否定的痛点词）",
+      "{tool}（工具/方法名，如Skill）",
+      "{subject}（对象/模型，如Claude）",
+      "{outcome}（口号式结果短语，如更有灵魂，可替换为具体收益）",
+      "{program_or_series}（栏目/项目标签，如AI新星计划）",
+      "{tool_topic_hashtag}（工具泛关键词，如skills）",
+      "{content_format_hashtag}（形式标签，如PPT动画/动画视频）",
+      "{target_model_hashtag}（目标模型词，如claude）"
+    ],
+    "best_fixed_rules": [
+      "主干句式固定为：【第{n}集】+【拒绝/反向否定{pain}！】+【{tool}让{subject}{outcome}】。",
+      "强制保留“反向否定/痛点”语义位：使用拒绝、别、不要、反低效等结构来制造对比张力。",
+      "标签数量与结构固定倾向：至少包含 1 个栏目/品牌词 + 1 个工具泛词 + 1-2 个形式词 + 1 个目标模型词。",
+      "字幕包装固定为短句块硬同步：字幕优先复用主标题主干（情绪卖点+工具+对象+结果），其余信息以标签承载。"
+    ]
+  },
+  "_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  }
+}

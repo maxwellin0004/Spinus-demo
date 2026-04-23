@@ -1,0 +1,181 @@
+{
+  "video_id": "budget_theater_validation_v2",
+  "orientation": "horizontal",
+  "voiceover_units": [
+    {
+      "voice_id": "v01",
+      "section": "hook",
+      "text": "You are not out of time. Low-return choices consume it.",
+      "target_duration_sec": 3.5,
+      "intended_pause_after_sec": 0.18,
+      "emphasis_words": [
+        "Low-return"
+      ],
+      "visual_section_id": "hook_ink",
+      "timing_status": "estimated_after_audio_duration_fit"
+    },
+    {
+      "voice_id": "v02",
+      "section": "hook",
+      "text": "Use this undersea ledger to price your time clearly.",
+      "target_duration_sec": 3.5,
+      "intended_pause_after_sec": 0.18,
+      "emphasis_words": [
+        "ledger"
+      ],
+      "visual_section_id": "hook_ink",
+      "timing_status": "estimated_after_audio_duration_fit"
+    },
+    {
+      "voice_id": "v03",
+      "section": "equation",
+      "text": "Most common cost: one hour of short videos per day.",
+      "target_duration_sec": 3.5,
+      "intended_pause_after_sec": 0.18,
+      "emphasis_words": [
+        "one hour"
+      ],
+      "visual_section_id": "equation_stage",
+      "timing_status": "estimated_after_audio_duration_fit"
+    },
+    {
+      "voice_id": "v04",
+      "section": "equation",
+      "text": "That becomes 7 hours per week and 364 hours per year.",
+      "target_duration_sec": 3.533,
+      "intended_pause_after_sec": 0.18,
+      "emphasis_words": [
+        "364 hours"
+      ],
+      "visual_section_id": "equation_stage",
+      "timing_status": "estimated_after_audio_duration_fit"
+    },
+    {
+      "voice_id": "v05",
+      "section": "equation",
+      "text": "The issue is not fun itself. The issue is no cap.",
+      "target_duration_sec": 3.5,
+      "intended_pause_after_sec": 0.18,
+      "emphasis_words": [
+        "cap"
+      ],
+      "visual_section_id": "equation_stage",
+      "timing_status": "estimated_after_audio_duration_fit"
+    },
+    {
+      "voice_id": "v06",
+      "section": "debate",
+      "text": "Three voices start fighting in your head.",
+      "target_duration_sec": 3.5,
+      "intended_pause_after_sec": 0.18,
+      "emphasis_words": [
+        "three voices"
+      ],
+      "visual_section_id": "debate_stage",
+      "timing_status": "estimated_after_audio_duration_fit"
+    },
+    {
+      "voice_id": "v07",
+      "section": "debate",
+      "text": "Left says enjoy now. Right says invest now. You are pulled both ways.",
+      "target_duration_sec": 3.5,
+      "intended_pause_after_sec": 0.18,
+      "emphasis_words": [
+        "enjoy now",
+        "invest now"
+      ],
+      "visual_section_id": "debate_stage",
+      "timing_status": "estimated_after_audio_duration_fit"
+    },
+    {
+      "voice_id": "v08",
+      "section": "debate",
+      "text": "Key rule: put high-return actions first.",
+      "target_duration_sec": 3.5,
+      "intended_pause_after_sec": 0.18,
+      "emphasis_words": [
+        "high-return"
+      ],
+      "visual_section_id": "debate_stage",
+      "timing_status": "estimated_after_audio_duration_fit"
+    },
+    {
+      "voice_id": "v09",
+      "section": "choice",
+      "text": "A practical swap: reclaim 30 minutes each day.",
+      "target_duration_sec": 3.5,
+      "intended_pause_after_sec": 0.18,
+      "emphasis_words": [
+        "30 minutes"
+      ],
+      "visual_section_id": "choice_stage",
+      "timing_status": "estimated_after_audio_duration_fit"
+    },
+    {
+      "voice_id": "v10",
+      "section": "choice",
+      "text": "Fifteen minutes input, then fifteen minutes review.",
+      "target_duration_sec": 3.533,
+      "intended_pause_after_sec": 0.18,
+      "emphasis_words": [
+        "review"
+      ],
+      "visual_section_id": "choice_stage",
+      "timing_status": "estimated_after_audio_duration_fit"
+    },
+    {
+      "voice_id": "v11",
+      "section": "choice",
+      "text": "That recovers 3.5 hours weekly, 14 hours monthly.",
+      "target_duration_sec": 3.5,
+      "intended_pause_after_sec": 0.18,
+      "emphasis_words": [
+        "14 hours"
+      ],
+      "visual_section_id": "choice_stage",
+      "timing_status": "estimated_after_audio_duration_fit"
+    },
+    {
+      "voice_id": "v12",
+      "section": "close",
+      "text": "When night falls, the result is honest.",
+      "target_duration_sec": 3.5,
+      "intended_pause_after_sec": 0.18,
+      "emphasis_words": [
+        "honest"
+      ],
+      "visual_section_id": "night_close",
+      "timing_status": "estimated_after_audio_duration_fit"
+    },
+    {
+      "voice_id": "v13",
+      "section": "close",
+      "text": "You did not lose to busyness. You invested in non-compounding options.",
+      "target_duration_sec": 3.5,
+      "intended_pause_after_sec": 0.18,
+      "emphasis_words": [
+        "non-compounding"
+      ],
+      "visual_section_id": "night_close",
+      "timing_status": "estimated_after_audio_duration_fit"
+    },
+    {
+      "voice_id": "v14",
+      "section": "close",
+      "text": "From today, move every choice toward compounding.",
+      "target_duration_sec": 3.5,
+      "intended_pause_after_sec": 0.0,
+      "emphasis_words": [
+        "compounding"
+      ],
+      "visual_section_id": "night_close",
+      "timing_status": "estimated_after_audio_duration_fit"
+    }
+  ],
+  "audio_alignment": {
+    "tts_provider": "elevenlabs",
+    "voiceover_audio_path": "video-app/public/audio/bikini-margin/budget-theater-elevenlabs.mp3",
+    "subtitle_timeline_path": "data/templates/bikini_margin_theater/subtitle_timeline.generated.horizontal.json",
+    "alignment_status": "estimated_after_audio_duration_fit"
+  }
+}

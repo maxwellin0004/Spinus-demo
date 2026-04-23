@@ -1,0 +1,93 @@
+{
+  "template_id": "comic_habit_spiral",
+  "template_name": "Comic Habit Spiral",
+  "template_name_zh": "漫画习惯循环模板",
+  "version": "v2",
+  "positioning": {
+    "track": ["psychology", "habit change", "self-help", "emotional education"],
+    "platform": ["TikTok", "YouTube", "Bilibili", "Xiaohongshu"],
+    "video_type": "comic narrative explainer",
+    "recommended_duration_sec": [55, 75],
+    "audience": "对拖延、习惯、自控、情绪循环和心理自助内容感兴趣的泛大众用户",
+    "goal": "通过高代入感漫画叙事，把抽象的心理循环讲清楚，并给出可执行的小动作建议"
+  },
+  "fixed_rules": {
+    "structure": [
+      "split_hook",
+      "trigger_story",
+      "mechanism_breakdown",
+      "cost_story",
+      "turning_point_story",
+      "action_triptych",
+      "hope_close"
+    ],
+    "visual_rules": [
+      "固定主角反复出现",
+      "夜晚冷色与白天暖色形成转折",
+      "多张静帧漫画图切换，配合轻微推拉和前景叠层",
+      "底部字幕承担完整讲述，画内大字只负责情绪和关键词",
+      "动作建议段优先使用漫画翻页式卡组切换"
+    ],
+    "motion_rules": [
+      "hard cut 为主，辅以轻微 push in / pan",
+      "Hook 段允许更强的标题 punch 和冻结帧",
+      "机制段使用分阶段点亮和环形关系线",
+      "结尾段尽量减少运动，保留余韵"
+    ]
+  },
+  "scene_modules": [
+    {
+      "id": "split_hook",
+      "component": "ComicSplitHookScene",
+      "purpose": "开场建立反差和主题判断"
+    },
+    {
+      "id": "story_panel",
+      "component": "ComicStoryScene",
+      "purpose": "用单幅漫画场景推进故事，并通过 inset 图补细节"
+    },
+    {
+      "id": "mechanism",
+      "component": "ComicMechanismScene",
+      "purpose": "把心理循环机制讲清楚"
+    },
+    {
+      "id": "triptych",
+      "component": "ComicTriptychScene",
+      "purpose": "用连续翻页式卡组输出 3 个动作建议"
+    },
+    {
+      "id": "close",
+      "component": "ComicCloseScene",
+      "purpose": "收束、安抚，并留下新的行为锚点"
+    }
+  ],
+  "example_packs": [
+    "examples/procrastination_loop",
+    "examples/emotional_scroll"
+  ],
+  "audio_alignment": {
+    "enabled": true,
+    "protocol_file": "audio_alignment_protocol.json",
+    "audio_schema_file": "template_data_audio_schema.json",
+    "example_voiceover_units_file": "example_voiceover_units.json",
+    "render_mapping_file": "render_mapping.audio_sync.json",
+    "final_subtitle_source": "subtitle_timeline.{orientation}.json",
+    "timing_rule": "voiceover_units are estimated until TTS audio is generated and subtitle_timeline is rebuilt from real audio timing",
+    "hard_rule": "Do not render final voiceover videos from hand-estimated subtitle frames unless the user explicitly asks for a rough preview."
+  },
+  "output_contract": {
+    "renderer": "React + Remotion",
+    "orientation": "16:9 horizontal",
+    "fps": 30,
+    "deliverables": [
+      "template_manifest.json",
+      "template_data_schema.json",
+      "style_variants.json",
+      "workflow_report.md",
+      "example_data.json",
+      "example packs",
+      "preview videos"
+    ]
+  }
+}

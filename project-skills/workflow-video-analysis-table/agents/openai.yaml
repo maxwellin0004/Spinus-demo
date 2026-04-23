@@ -1,0 +1,4 @@
+version: 1
+display_name: Workflow Video Analysis Table
+short_description: Decompose a reference video into reusable Chinese tables.
+default_prompt: Use this skill to analyze a reference video in the workflow repository into Chinese production tables.

@@ -1,0 +1,20 @@
+{
+  "purpose": "????????????????????????",
+  "required_inputs": [
+    "voiceover_units",
+    "final_voiceover_audio",
+    "subtitle_timeline.generated.horizontal.json"
+  ],
+  "steps": [
+    "??ElevenLabs??",
+    "??????",
+    "?voice_id???????frame",
+    "??generated timeline",
+    "????generated timeline"
+  ],
+  "hard_rules": {
+    "final_render_requires_generated_timeline": true,
+    "manual_estimate_not_allowed_for_final": true,
+    "each_cue_must_map_voice_id": true
+  }
+}

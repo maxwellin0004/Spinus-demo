@@ -1,0 +1,135 @@
+{
+  "template_id": "ai_concept_analyse",
+  "topic_name": "Agent",
+  "topic_alias": "AI 执行体",
+  "language": "zh-CN",
+  "platform": "YouTube",
+  "duration_sec": 70,
+  "style_variant": "dark_hud_blue",
+  "hook_frames": [
+    {
+      "label": "AI 系列 32",
+      "title": "Agent",
+      "ghost": "执行体",
+      "subtitle": "不是聊天框"
+    },
+    {
+      "label": "AI 系列 32",
+      "title": "不是问答 UI",
+      "ghost": "协作",
+      "subtitle": "它接任务、做判断、调工具、交结果"
+    },
+    {
+      "label": "AI 系列 32",
+      "title": "是执行单元",
+      "ghost": "系统",
+      "subtitle": "让 AI 从回答问题走向完成事情"
+    }
+  ],
+  "doc_scene": {
+    "path": "~/.codex/agents/agent/",
+    "filename": "AGENT.node",
+    "headline": "Agent 更像一个能持续推进任务的系统节点，而不是一次性回答器",
+    "cards": [
+      {
+        "title": "目标",
+        "description": "先知道这次要完成什么结果，而不只是回答一句话。"
+      },
+      {
+        "title": "状态",
+        "description": "它能带着上下文和中间进度继续往下推进。"
+      },
+      {
+        "title": "工具",
+        "description": "它可以调用搜索、文件、数据库或外部服务去完成任务。"
+      },
+      {
+        "title": "决策",
+        "description": "它不只输出内容，还会决定下一步该做什么。"
+      }
+    ]
+  },
+  "compare_scene": {
+    "left_title": "普通 AI",
+    "right_title": "Agent",
+    "left_points": [
+      "更像一次性回答器",
+      "很难持续推进长任务",
+      "跨工具协作弱"
+    ],
+    "right_points": [
+      "围绕目标持续执行",
+      "能拆步骤并推进任务",
+      "更适合多工具工作流"
+    ],
+    "footer": "Agent 的变化，不在于更会说，而在于更像一个能做事的系统单元。"
+  },
+  "scenarios": [
+    {
+      "badge": "Agent 应用场景 1",
+      "title": "信息搜集与整理",
+      "description": "当任务不只是搜一条结果，而是要持续收集、筛选、归纳时，Agent 更合适。",
+      "bullets": [
+        "持续检索多轮信息",
+        "筛选与总结并行",
+        "面向结果而非单次回答"
+      ],
+      "image_asset": "scenario_video_breakdown.jpg"
+    },
+    {
+      "badge": "Agent 应用场景 2",
+      "title": "内容生产链路",
+      "description": "当内容生产包含拆解、生成、改写、审核多个步骤时，Agent 更像执行流而不是工具箱。",
+      "bullets": [
+        "多步骤串联推进",
+        "中间状态可保留",
+        "适合连续生产"
+      ],
+      "image_asset": "scenario_ppt.jpg"
+    },
+    {
+      "badge": "Agent 应用场景 3",
+      "title": "多工具工作流编排",
+      "description": "当任务要跨多个工具与系统协作时，Agent 可以承担调度和推进角色。",
+      "bullets": [
+        "连接多个工具",
+        "按目标编排动作",
+        "持续推进到交付"
+      ],
+      "image_asset": "scenario_batch_content.jpg"
+    }
+  ],
+  "flow_scene": {
+    "title": "一个典型 Agent 链路，会按目标、判断、调用、回收结果持续推进",
+    "steps": [
+      {
+        "title": "接收目标",
+        "body": "先明确任务目标、上下文和交付要求。"
+      },
+      {
+        "title": "决策并调用",
+        "body": "判断下一步需要什么工具、资源或动作。"
+      },
+      {
+        "title": "整合并继续",
+        "body": "拿到结果后继续推进，直到真正交付。"
+      }
+    ]
+  },
+  "concept_compare": {
+    "title": "Agent、Prompt、MCP 的关系",
+    "left_label": "Prompt",
+    "right_label": "MCP",
+    "left_points": [
+      "一句指令 / 一次触发"
+    ],
+    "right_points": [
+      "连接工具 / 资源 / 外部能力"
+    ],
+    "footer": "Prompt 更像指令，MCP 更像连接层，而 Agent 是真正承担持续执行的那一层。"
+  },
+  "close_scene": {
+    "headline": "Agent 的本质，是可持续推进任务的 AI 执行体。",
+    "subheadline": "理解 Agent 的关键，不是它会不会说话，而是它能不能围绕目标，一步一步把事情做完。"
+  }
+}

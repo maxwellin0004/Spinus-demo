@@ -1,0 +1,17 @@
+{
+  "template_id": "comic_emotional_insight",
+  "variants": [
+    {
+      "id": "night_purple_focus",
+      "description": "深夜暖灯加冷紫阴影，适合情绪刷手机、熬夜、孤独和夜间回避主题"
+    },
+    {
+      "id": "soft_day_recovery",
+      "description": "白天冷灰蓝和奶油白过渡，适合恢复、走出循环、重新开始类主题"
+    },
+    {
+      "id": "contrast_alert_red",
+      "description": "Hook 的对比和告警感更强，适合冲动行为、情绪爆点、失控前兆类主题"
+    }
+  ]
+}

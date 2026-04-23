@@ -1,0 +1,164 @@
+{
+  "video_id": "budget_theater_validation_v2",
+  "orientation": "horizontal",
+  "fps": 30,
+  "audio_duration_sec": 61.466,
+  "timing_status": "generated_from_elevenlabs_per_line_duration",
+  "alignment_method": "elevenlabs_per_line_concat",
+  "cues": [
+    {
+      "voice_id": "v01",
+      "visual_section_id": "auto",
+      "start_sec": 0.0,
+      "end_sec": 5.133,
+      "startFrame": 0,
+      "endFrame": 154,
+      "text": "海绵宝宝不是没时间，是把时间全花在追水母热闹上。",
+      "emphasisWords": [],
+      "timing_status": "generated_from_elevenlabs_per_line_duration"
+    },
+    {
+      "voice_id": "v02",
+      "visual_section_id": "auto",
+      "start_sec": 5.133,
+      "end_sec": 10.933,
+      "startFrame": 154,
+      "endFrame": 328,
+      "text": "蟹老板先让海绵宝宝记一张时间账本，把每天投入算清楚。",
+      "emphasisWords": [],
+      "timing_status": "generated_from_elevenlabs_per_line_duration"
+    },
+    {
+      "voice_id": "v03",
+      "visual_section_id": "auto",
+      "start_sec": 10.933,
+      "end_sec": 15.3,
+      "startFrame": 328,
+      "endFrame": 459,
+      "text": "比如下班后刷一小时海底八卦短片，当下很爽。",
+      "emphasisWords": [],
+      "timing_status": "generated_from_elevenlabs_per_line_duration"
+    },
+    {
+      "voice_id": "v04",
+      "visual_section_id": "auto",
+      "start_sec": 15.3,
+      "end_sec": 19.533,
+      "startFrame": 459,
+      "endFrame": 586,
+      "text": "但一周就是七小时，一年就能消耗三百多小时。",
+      "emphasisWords": [],
+      "timing_status": "generated_from_elevenlabs_per_line_duration"
+    },
+    {
+      "voice_id": "v05",
+      "visual_section_id": "auto",
+      "start_sec": 19.533,
+      "end_sec": 23.533,
+      "startFrame": 586,
+      "endFrame": 706,
+      "text": "问题不是放松，而是没给娱乐设预算上限。",
+      "emphasisWords": [],
+      "timing_status": "generated_from_elevenlabs_per_line_duration"
+    },
+    {
+      "voice_id": "v06",
+      "visual_section_id": "auto",
+      "start_sec": 23.533,
+      "end_sec": 27.4,
+      "startFrame": 706,
+      "endFrame": 822,
+      "text": "接着，海绵宝宝脑子里会跳出三种声音。",
+      "emphasisWords": [],
+      "timing_status": "generated_from_elevenlabs_per_line_duration"
+    },
+    {
+      "voice_id": "v07",
+      "visual_section_id": "auto",
+      "start_sec": 27.4,
+      "end_sec": 33.8,
+      "startFrame": 822,
+      "endFrame": 1014,
+      "text": "派大星喊先爽再说，章鱼哥说先投再涨，海绵宝宝左右摇摆。",
+      "emphasisWords": [],
+      "timing_status": "generated_from_elevenlabs_per_line_duration"
+    },
+    {
+      "voice_id": "v08",
+      "visual_section_id": "auto",
+      "start_sec": 33.8,
+      "end_sec": 37.4,
+      "startFrame": 1014,
+      "endFrame": 1122,
+      "text": "真正有效的做法，是把高回报动作排在第一位。",
+      "emphasisWords": [],
+      "timing_status": "generated_from_elevenlabs_per_line_duration"
+    },
+    {
+      "voice_id": "v09",
+      "visual_section_id": "auto",
+      "start_sec": 37.4,
+      "end_sec": 40.567,
+      "startFrame": 1122,
+      "endFrame": 1217,
+      "text": "可执行版本：每天先拿回三十分钟。",
+      "emphasisWords": [],
+      "timing_status": "generated_from_elevenlabs_per_line_duration"
+    },
+    {
+      "voice_id": "v10",
+      "visual_section_id": "auto",
+      "start_sec": 40.567,
+      "end_sec": 45.633,
+      "startFrame": 1217,
+      "endFrame": 1369,
+      "text": "前十五分钟学配方、英语或剪辑，后十五分钟复盘笔记。",
+      "emphasisWords": [],
+      "timing_status": "generated_from_elevenlabs_per_line_duration"
+    },
+    {
+      "voice_id": "v11",
+      "visual_section_id": "auto",
+      "start_sec": 45.633,
+      "end_sec": 48.733,
+      "startFrame": 1369,
+      "endFrame": 1462,
+      "text": "这样每周都能回收一段可复利的时间。",
+      "emphasisWords": [],
+      "timing_status": "generated_from_elevenlabs_per_line_duration"
+    },
+    {
+      "voice_id": "v12",
+      "visual_section_id": "auto",
+      "start_sec": 48.733,
+      "end_sec": 53.133,
+      "startFrame": 1462,
+      "endFrame": 1594,
+      "text": "到了夜里，结果会像章鱼哥的表情一样诚实。",
+      "emphasisWords": [],
+      "timing_status": "generated_from_elevenlabs_per_line_duration"
+    },
+    {
+      "voice_id": "v13",
+      "visual_section_id": "auto",
+      "start_sec": 53.133,
+      "end_sec": 57.133,
+      "startFrame": 1594,
+      "endFrame": 1714,
+      "text": "你输的不是忙，是把时间投给了低回报选项。",
+      "emphasisWords": [],
+      "timing_status": "generated_from_elevenlabs_per_line_duration"
+    },
+    {
+      "voice_id": "v14",
+      "visual_section_id": "auto",
+      "start_sec": 57.133,
+      "end_sec": 61.433,
+      "startFrame": 1714,
+      "endFrame": 1843,
+      "text": "从今天起，让海绵宝宝式努力，每次都更值钱。",
+      "emphasisWords": [],
+      "timing_status": "generated_from_elevenlabs_per_line_duration"
+    }
+  ]
+}

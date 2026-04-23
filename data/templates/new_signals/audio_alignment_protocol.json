@@ -1,0 +1,48 @@
+{
+  "version": "v1.3",
+  "template_id": "new_signals",
+  "purpose": "Define how voiceover, subtitles, and visual scenes are aligned after final TTS audio is generated.",
+  "source_of_truth_order": [
+    "voiceover_units",
+    "final_voiceover_audio",
+    "aligned_subtitle_timeline",
+    "remotion_render_data"
+  ],
+  "required_voiceover_unit_fields": [
+    "voice_id",
+    "section",
+    "text",
+    "target_duration_sec",
+    "intended_pause_after_sec",
+    "emphasis_words",
+    "visual_section_id",
+    "timing_status"
+  ],
+  "timing_status_values": [
+    "estimated",
+    "aligned",
+    "estimated_after_audio_duration_fit"
+  ],
+  "workflow": [
+    "Generate voiceover_units in video-script-maker. Each unit must be split into short sentence_units or semantic_units, not only paragraph-level narration.",
+    "Generate final TTS audio from voiceover_units.",
+    "Read the real TTS audio duration before rendering.",
+    "Run forced alignment or transcription timestamps when available. If unavailable, create a duration-fit preview timeline from the real audio duration and mark it as estimated_after_audio_duration_fit.",
+    "Write subtitle_timeline.generated.{orientation}.json from real audio timing or duration-fit timing.",
+    "Map each subtitle cue to voice_id and visual_section_id.",
+    "Render video-app from the generated subtitle timeline, not hand-estimated script timing.",
+    "For final publishable renders, replace duration-fit timing with forced_alignment or transcription_timestamps."
+  ],
+  "hard_rules": [
+    "Final voiceover videos must not read subtitle cues directly from hand-written script estimates.",
+    "Subtitle cues must be short: normally 1 spoken sentence or 1 semantic clause per cue.",
+    "Each cue should target 1.5 to 4.5 seconds. Avoid 8+ second subtitle blocks unless the line is intentionally held.",
+    "Scene switching should follow visual_section_id boundaries derived from voiceover_units whenever practical.",
+    "If the voiceover audio duration differs from the planned video duration by more than 1 second, update the subtitle timeline and either retime scenes or add an intentional closing hold."
+  ],
+  "fallback_policy": {
+    "when_forced_alignment_unavailable": "Distribute cue durations from real audio duration across short sentence_units and mark timing_status as estimated_after_audio_duration_fit.",
+    "rough_preview_allowed": true,
+    "final_render_requires_aligned_timeline": true
+  }
+}

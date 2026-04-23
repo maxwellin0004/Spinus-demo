@@ -1,0 +1,218 @@
+{
+  "template_id": "ai_concept_analyse",
+  "template_name": "AI 概念分析",
+  "version": "v1",
+  "status": "draft",
+  "description": "用于 AI 概念科普、AI 工作流解释、AI 工具关系说明的视频模板。核心特点是黑底 HUD 母版、橙红高对比、巨字 Hook、文档解释页、对比页、场景页和流程页循环。",
+  "positioning": {
+    "tracks": ["AI tools", "AI workflow", "AI concepts", "Agent systems"],
+    "platforms": ["YouTube", "TikTok", "Bilibili"],
+    "aspect_ratios": ["16:9"],
+    "duration_sec_range": [60, 90],
+    "video_types": ["concept explainer", "workflow explainer", "comparison explainer"],
+    "target_audience": [
+      "对 AI 工具、Agent、MCP、Skill、Workflow 感兴趣的用户",
+      "希望把 AI 概念做成系列化内容的人",
+      "需要制作高密度信息型视频的人"
+    ],
+    "goals": [
+      "提高开场注意力",
+      "提高概念理解效率",
+      "让内容更适合系列化复用",
+      "建立统一包装识别"
+    ]
+  },
+  "fixed_rules": {
+    "visual_system": {
+      "background_style": "dark_hud_grid",
+      "accent_color": "#ff7a45",
+      "text_primary": "#f7f9ff",
+      "layout_style": "high-contrast panel system",
+      "fonts": {
+        "headline_zh": "NotoSansSC",
+        "headline_en": "BebasNeue",
+        "body": "NotoSansSC",
+        "ui": "SourceSans3",
+        "numbers": "Orbitron"
+      }
+    },
+    "editing_rhythm": {
+      "opening_style": "big-title relay",
+      "primary_transition_types": [
+        "hard_cut_flash",
+        "title_snap_in",
+        "panel_slide_left",
+        "panel_slide_right",
+        "card_cascade",
+        "line_draw"
+      ],
+      "motion_character": "fast but clean, information-first",
+      "recommended_scene_density": "medium_high"
+    },
+    "narrative_pattern": [
+      "Hook",
+      "Document Definition",
+      "Compare",
+      "Scenario 1",
+      "Scenario 2",
+      "Scenario 3",
+      "Flow",
+      "Concept Compare",
+      "Close"
+    ]
+  },
+  "scene_modules": [
+    {
+      "scene_id": "hook",
+      "component_name": "ReferenceHookScene",
+      "purpose": "通过连续巨字和大底字建立记忆点与注意力",
+      "duration_sec": 6,
+      "template_role": "opening",
+      "fixed_elements": ["top_badge", "ghost_word", "big_title", "dark_hud_grid"],
+      "variable_fields": ["hook_frames"]
+    },
+    {
+      "scene_id": "document_definition",
+      "component_name": "ReferenceDocScene",
+      "purpose": "把概念解释成一个文档化、模块化对象",
+      "duration_sec": 10,
+      "template_role": "definition",
+      "fixed_elements": ["path_bar", "file_card", "rule_cards_grid"],
+      "variable_fields": ["doc_scene.path", "doc_scene.filename", "doc_scene.headline", "doc_scene.cards"]
+    },
+    {
+      "scene_id": "compare_basic",
+      "component_name": "ReferenceCompareScene",
+      "purpose": "说明普通做法与模板化/Skill 化做法的差异",
+      "duration_sec": 9,
+      "template_role": "value_compare",
+      "fixed_elements": ["split_panels", "center_arrow", "footer_line"],
+      "variable_fields": ["compare_scene.left_title", "compare_scene.right_title", "compare_scene.left_points", "compare_scene.right_points", "compare_scene.footer"]
+    },
+    {
+      "scene_id": "scenario_1",
+      "component_name": "ReferenceScenarioScene",
+      "purpose": "展示应用场景 1",
+      "duration_sec": 6,
+      "template_role": "use_case",
+      "fixed_elements": ["badge_bar", "image_panel", "bullet_cards"],
+      "variable_fields": ["scenarios[0]"]
+    },
+    {
+      "scene_id": "scenario_2",
+      "component_name": "ReferenceScenarioScene",
+      "purpose": "展示应用场景 2",
+      "duration_sec": 6,
+      "template_role": "use_case",
+      "fixed_elements": ["badge_bar", "image_panel", "bullet_cards"],
+      "variable_fields": ["scenarios[1]"]
+    },
+    {
+      "scene_id": "scenario_3",
+      "component_name": "ReferenceScenarioScene",
+      "purpose": "展示应用场景 3",
+      "duration_sec": 6,
+      "template_role": "use_case",
+      "fixed_elements": ["badge_bar", "image_panel", "bullet_cards"],
+      "variable_fields": ["scenarios[2]"]
+    },
+    {
+      "scene_id": "flow",
+      "component_name": "ReferenceFlowScene",
+      "purpose": "把概念落到工作流链路上",
+      "duration_sec": 6,
+      "template_role": "process",
+      "fixed_elements": ["step_cards", "arrow_chain", "panel_grid"],
+      "variable_fields": ["flow_scene.title", "flow_scene.steps"]
+    },
+    {
+      "scene_id": "concept_compare",
+      "component_name": "ReferenceCompareScene",
+      "purpose": "与另一个关键概念做边界区分",
+      "duration_sec": 7,
+      "template_role": "boundary",
+      "fixed_elements": ["split_panels", "title", "center_arrow"],
+      "variable_fields": ["concept_compare.title", "concept_compare.left_label", "concept_compare.right_label", "concept_compare.left_points", "concept_compare.right_points", "concept_compare.footer"]
+    },
+    {
+      "scene_id": "close",
+      "component_name": "ReferenceCloseScene",
+      "purpose": "收束成一句可记忆的定义",
+      "duration_sec": 9,
+      "template_role": "closing",
+      "fixed_elements": ["center_statement", "subheadline", "mini_file_icons"],
+      "variable_fields": ["close_scene.headline", "close_scene.subheadline"]
+    }
+  ],
+  "variables": {
+    "required": [
+      "topic_name",
+      "hook_frames",
+      "doc_scene",
+      "compare_scene",
+      "scenarios",
+      "flow_scene",
+      "concept_compare",
+      "close_scene"
+    ],
+    "optional": [
+      "topic_alias",
+      "platform",
+      "language",
+      "duration_sec",
+      "style_variant",
+      "input_assets"
+    ],
+    "notes": [
+      "默认按 3 个场景页组织。若不足 3 个场景，需要补占位内容或调整模板分支。",
+      "默认按 16:9 横屏制作。竖屏需要单独的 layout 分支。",
+      "若没有真实截图，可先使用程序生成面板占位。"
+    ]
+  },
+  "audio_alignment": {
+    "enabled": true,
+    "protocol_file": "audio_alignment_protocol.json",
+    "audio_schema_file": "template_data_audio_schema.json",
+    "example_voiceover_units_file": "example_voiceover_units.json",
+    "render_mapping_file": "render_mapping.audio_sync.json",
+    "final_subtitle_source": "subtitle_timeline.{orientation}.json",
+    "timing_rule": "voiceover_units are estimated until TTS audio is generated and subtitle_timeline is rebuilt from real audio timing",
+    "hard_rule": "Do not render final voiceover videos from hand-estimated subtitle frames unless the user explicitly asks for a rough preview."
+  },
+  "output_contract": {
+    "primary_outputs": [
+      "content_script",
+      "storyboard_script",
+      "asset_script",
+      "subtitle_voice_script",
+      "visual_script.horizontal",
+      "react_page_script.horizontal",
+      "timeline_script.horizontal",
+      "formal_script.horizontal"
+    ],
+    "render_target": {
+      "engine": "React + Remotion",
+      "composition_id": "skill-horizontal-preview",
+      "fps": 30,
+      "resolution": "1920x1080"
+    }
+  },
+  "execution_notes": {
+    "recommended_workflow": [
+      "先生成脚本数据",
+      "再映射到 scene_modules",
+      "再补素材",
+      "最后统一渲染"
+    ],
+    "implementation_refs": [
+      "video-app/src/compositions/SkillHorizontalComposition.tsx",
+      "video-app/src/data/skillReferenceCloneData.ts",
+      "video-app/src/scenes/reference"
+    ],
+    "current_limitations": [
+      "目前只完整支持横屏版本",
+      "音频层和字幕层还没有完全模板化",
+      "场景数量默认固定为 3 个"
+    ]
+  }
+}

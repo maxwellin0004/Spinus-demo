@@ -1,0 +1,30 @@
+{
+  "variants": [
+    {
+      "id": "chalk_bubble_classic",
+      "font_hook": "STKaiti",
+      "font_body": "Microsoft YaHei",
+      "palette": {
+        "ink": "#ffffff",
+        "stroke": "#101010",
+        "bubble": "#ffffff",
+        "accent": "#ffdb4d",
+        "warning": "#ff6f61"
+      },
+      "camera": "static_stage_with_micro_zoom"
+    },
+    {
+      "id": "teal_ledger_modern",
+      "font_hook": "STKaiti",
+      "font_body": "Microsoft YaHei",
+      "palette": {
+        "ink": "#ecf4ff",
+        "stroke": "#111827",
+        "bubble": "#f8fafc",
+        "accent": "#22c55e",
+        "warning": "#f97316"
+      },
+      "camera": "static_stage_with_parallax_props"
+    }
+  ]
+}

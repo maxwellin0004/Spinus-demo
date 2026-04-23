@@ -1,0 +1,8 @@
+{
+  "topic_name": "拖延症循环",
+  "duration_sec": 60,
+  "orientation": "horizontal",
+  "style_variant": "night_purple",
+  "core_loop": ["压力", "逃避", "短暂舒服", "更难开始"],
+  "action_points": ["缩小开始动作", "增加逃避成本", "只要求先开始"]
+}

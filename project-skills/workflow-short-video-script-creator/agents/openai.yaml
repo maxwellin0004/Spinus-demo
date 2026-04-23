@@ -1,0 +1,4 @@
+version: 1
+display_name: Workflow Short Video Script Creator
+short_description: Write short-form scripts and dialogue scenes for this repository.
+default_prompt: Use this skill to create a short-form video script for the workflow repository.

@@ -1,0 +1,263 @@
+{
+  "template_id": "ai_concept_analyse",
+  "example_id": "skill",
+  "orientation": "horizontal",
+  "fps": 30,
+  "subtitle_style": {
+    "position": "bottom_center",
+    "max_lines": 2,
+    "chunk_length_rule": "short_phrase_first",
+    "font_family": "NotoSansSC",
+    "font_size": 48,
+    "line_height": 1.18,
+    "highlight_color": "#ff7a45",
+    "base_color": "#f7f9ff"
+  },
+  "segments": [
+    {
+      "id": "sub_001",
+      "time_range": [0.0, 1.8],
+      "scene": "hook",
+      "source_line": "很多人一提到 skill，就以为只是多写了一段提示词。",
+      "subtitle_chunks": [
+        {
+          "text": "很多人一提到 Skill",
+          "time_range": [0.0, 0.9],
+          "emphasis_words": ["Skill"]
+        },
+        {
+          "text": "就以为只是多写了一段提示词",
+          "time_range": [0.9, 1.8],
+          "emphasis_words": ["提示词"]
+        }
+      ]
+    },
+    {
+      "id": "sub_002",
+      "time_range": [1.8, 3.8],
+      "scene": "hook",
+      "source_line": "其实不是。真正的 skill，更像是给 AI 装上的任务模块。",
+      "subtitle_chunks": [
+        {
+          "text": "其实不是",
+          "time_range": [1.8, 2.4],
+          "emphasis_words": []
+        },
+        {
+          "text": "真正的 Skill",
+          "time_range": [2.4, 3.0],
+          "emphasis_words": ["Skill"]
+        },
+        {
+          "text": "更像是给 AI 装上的任务模块",
+          "time_range": [3.0, 3.8],
+          "emphasis_words": ["AI", "任务模块"]
+        }
+      ]
+    },
+    {
+      "id": "sub_003",
+      "time_range": [6.0, 10.0],
+      "scene": "document_definition",
+      "source_line": "它会把任务目标、执行步骤、风格规则，还有最终输出格式，一起打包下来。",
+      "subtitle_chunks": [
+        {
+          "text": "它会把任务目标",
+          "time_range": [6.0, 6.9],
+          "emphasis_words": ["任务目标"]
+        },
+        {
+          "text": "执行步骤、风格规则",
+          "time_range": [6.9, 8.0],
+          "emphasis_words": ["执行步骤", "风格规则"]
+        },
+        {
+          "text": "还有最终输出格式",
+          "time_range": [8.0, 9.0],
+          "emphasis_words": ["输出格式"]
+        },
+        {
+          "text": "一起打包下来",
+          "time_range": [9.0, 10.0],
+          "emphasis_words": []
+        }
+      ]
+    },
+    {
+      "id": "sub_004",
+      "time_range": [16.0, 21.0],
+      "scene": "compare_basic",
+      "source_line": "所以它带来的变化，不是模型突然变聪明了，而是结果更稳定、更省反复沟通、更适合批量化。",
+      "subtitle_chunks": [
+        {
+          "text": "它带来的变化",
+          "time_range": [16.0, 16.9],
+          "emphasis_words": []
+        },
+        {
+          "text": "不是模型突然变聪明了",
+          "time_range": [16.9, 18.2],
+          "emphasis_words": ["不是"]
+        },
+        {
+          "text": "而是结果更稳定",
+          "time_range": [18.2, 19.2],
+          "emphasis_words": ["更稳定"]
+        },
+        {
+          "text": "更省反复沟通",
+          "time_range": [19.2, 20.0],
+          "emphasis_words": ["更省"]
+        },
+        {
+          "text": "更适合批量化",
+          "time_range": [20.0, 21.0],
+          "emphasis_words": ["批量化"]
+        }
+      ]
+    },
+    {
+      "id": "sub_005",
+      "time_range": [25.0, 31.0],
+      "scene": "scenario_1",
+      "source_line": "比如视频拆解，你可以把标题结构、节奏拆解和包装逻辑都写进 skill。",
+      "subtitle_chunks": [
+        {
+          "text": "比如视频拆解",
+          "time_range": [25.0, 26.0],
+          "emphasis_words": ["视频拆解"]
+        },
+        {
+          "text": "你可以把标题结构",
+          "time_range": [26.0, 27.2],
+          "emphasis_words": ["标题结构"]
+        },
+        {
+          "text": "节奏拆解和包装逻辑",
+          "time_range": [27.2, 29.0],
+          "emphasis_words": ["节奏拆解", "包装逻辑"]
+        },
+        {
+          "text": "都写进 Skill",
+          "time_range": [29.0, 31.0],
+          "emphasis_words": ["Skill"]
+        }
+      ]
+    },
+    {
+      "id": "sub_006",
+      "time_range": [31.0, 37.0],
+      "scene": "scenario_2",
+      "source_line": "做 PPT 动画页也是一样，你不想每次都重新教布局、密度和动效节奏。",
+      "subtitle_chunks": [
+        {
+          "text": "做 PPT 动画页也是一样",
+          "time_range": [31.0, 32.6],
+          "emphasis_words": ["PPT 动画页"]
+        },
+        {
+          "text": "你不想每次都重新教",
+          "time_range": [32.6, 34.1],
+          "emphasis_words": []
+        },
+        {
+          "text": "布局、密度和动效节奏",
+          "time_range": [34.1, 37.0],
+          "emphasis_words": ["布局", "动效节奏"]
+        }
+      ]
+    },
+    {
+      "id": "sub_007",
+      "time_range": [37.0, 43.0],
+      "scene": "scenario_3",
+      "source_line": "批量内容生产更明显，固定框架保留，只替换主题和变量就能持续产出。",
+      "subtitle_chunks": [
+        {
+          "text": "批量内容生产更明显",
+          "time_range": [37.0, 38.4],
+          "emphasis_words": ["批量内容生产"]
+        },
+        {
+          "text": "固定框架保留",
+          "time_range": [38.4, 39.8],
+          "emphasis_words": ["固定框架"]
+        },
+        {
+          "text": "只替换主题和变量",
+          "time_range": [39.8, 41.2],
+          "emphasis_words": ["主题", "变量"]
+        },
+        {
+          "text": "就能持续产出",
+          "time_range": [41.2, 43.0],
+          "emphasis_words": ["持续产出"]
+        }
+      ]
+    },
+    {
+      "id": "sub_008",
+      "time_range": [43.0, 49.0],
+      "scene": "flow",
+      "source_line": "一个可复用的 skill，通常会把整条链路先固定下来。",
+      "subtitle_chunks": [
+        {
+          "text": "一个可复用的 Skill",
+          "time_range": [43.0, 44.6],
+          "emphasis_words": ["Skill"]
+        },
+        {
+          "text": "通常会把整条链路",
+          "time_range": [44.6, 46.8],
+          "emphasis_words": ["整条链路"]
+        },
+        {
+          "text": "先固定下来",
+          "time_range": [46.8, 49.0],
+          "emphasis_words": ["固定下来"]
+        }
+      ]
+    },
+    {
+      "id": "sub_009",
+      "time_range": [49.0, 56.0],
+      "scene": "concept_compare",
+      "source_line": "Skill 更像规则和方法的封装，MCP 更像连接工具和资源的能力层。",
+      "subtitle_chunks": [
+        {
+          "text": "Skill 更像规则和方法的封装",
+          "time_range": [49.0, 52.2],
+          "emphasis_words": ["Skill", "规则", "方法"]
+        },
+        {
+          "text": "MCP 更像连接工具和资源的能力层",
+          "time_range": [52.2, 56.0],
+          "emphasis_words": ["MCP", "工具", "资源"]
+        }
+      ]
+    },
+    {
+      "id": "sub_010",
+      "time_range": [56.0, 65.0],
+      "scene": "close",
+      "source_line": "你一旦把经验沉淀成 skill，后面换主题、换任务、换平台，都还能沿着同一套方法稳定产出。",
+      "subtitle_chunks": [
+        {
+          "text": "你一旦把经验沉淀成 Skill",
+          "time_range": [56.0, 58.5],
+          "emphasis_words": ["经验", "Skill"]
+        },
+        {
+          "text": "后面换主题、换任务、换平台",
+          "time_range": [58.5, 61.3],
+          "emphasis_words": ["换主题", "换任务", "换平台"]
+        },
+        {
+          "text": "都还能沿着同一套方法稳定产出",
+          "time_range": [61.3, 65.0],
+          "emphasis_words": ["同一套方法", "稳定产出"]
+        }
+      ]
+    }
+  ]
+}

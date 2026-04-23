@@ -1,0 +1,46 @@
+{
+  "composition_id": "bikini-margin-theater-preview",
+  "data_source": "video-app/src/data/BikiniMarginValidationData.ts",
+  "scene_prop_mapping": [
+    {
+      "scene_type": "InkHookScene",
+      "props": [
+        "hook.headline_lines",
+        "hook.subline"
+      ]
+    },
+    {
+      "scene_type": "StageEquationScene",
+      "props": [
+        "sections[].title",
+        "sections[].board_items",
+        "sections[].beats"
+      ]
+    },
+    {
+      "scene_type": "DebateBubbleScene",
+      "props": [
+        "sections[].character_blocks",
+        "sections[].beats"
+      ]
+    },
+    {
+      "scene_type": "ChoiceCardScene",
+      "props": [
+        "sections[].board_items",
+        "sections[].beats"
+      ]
+    },
+    {
+      "scene_type": "NightSloganScene",
+      "props": [
+        "close.slogan",
+        "close.cta"
+      ]
+    }
+  ],
+  "audio_mapping": {
+    "voiceover": "video-app/public/audio/bikini-margin/budget-theater-elevenlabs.mp3",
+    "subtitles": "data/templates/bikini_margin_theater/subtitle_timeline.generated.horizontal.json"
+  }
+}

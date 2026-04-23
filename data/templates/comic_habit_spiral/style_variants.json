@@ -1,0 +1,17 @@
+{
+  "template_id": "comic_habit_spiral",
+  "variants": [
+    {
+      "id": "night_purple",
+      "description": "深夜房间、紫色卫衣、冷色环境，是最接近参考样片的主变体"
+    },
+    {
+      "id": "soft_day_blue",
+      "description": "白天室内、冷灰蓝背景、结尾更明亮，适合恢复感或解决方案内容"
+    },
+    {
+      "id": "alert_red_split",
+      "description": "开头强调冲击和对照，适合成瘾、情绪爆点、冲动行为题材"
+    }
+  ]
+}

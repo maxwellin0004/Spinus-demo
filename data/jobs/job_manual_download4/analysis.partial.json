@@ -1,0 +1,2304 @@
+{
+  "status": "draft",
+  "current_stage": "completed",
+  "updated_at": "2026-04-16T13:12:53+0800",
+  "audio_extracted": true,
+  "audio_path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\audio.wav",
+  "frame_index": {
+    "success": true,
+    "source": "ffmpeg_fps_1",
+    "count": 288,
+    "frames": [
+      {
+        "index": 0,
+        "time_sec": 0.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0001.jpg",
+        "name": "frame_0001.jpg"
+      },
+      {
+        "index": 1,
+        "time_sec": 1.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0002.jpg",
+        "name": "frame_0002.jpg"
+      },
+      {
+        "index": 2,
+        "time_sec": 2.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0003.jpg",
+        "name": "frame_0003.jpg"
+      },
+      {
+        "index": 3,
+        "time_sec": 3.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0004.jpg",
+        "name": "frame_0004.jpg"
+      },
+      {
+        "index": 4,
+        "time_sec": 4.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0005.jpg",
+        "name": "frame_0005.jpg"
+      },
+      {
+        "index": 5,
+        "time_sec": 5.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0006.jpg",
+        "name": "frame_0006.jpg"
+      },
+      {
+        "index": 6,
+        "time_sec": 6.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0007.jpg",
+        "name": "frame_0007.jpg"
+      },
+      {
+        "index": 7,
+        "time_sec": 7.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0008.jpg",
+        "name": "frame_0008.jpg"
+      },
+      {
+        "index": 8,
+        "time_sec": 8.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0009.jpg",
+        "name": "frame_0009.jpg"
+      },
+      {
+        "index": 9,
+        "time_sec": 9.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0010.jpg",
+        "name": "frame_0010.jpg"
+      },
+      {
+        "index": 10,
+        "time_sec": 10.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0011.jpg",
+        "name": "frame_0011.jpg"
+      },
+      {
+        "index": 11,
+        "time_sec": 11.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0012.jpg",
+        "name": "frame_0012.jpg"
+      },
+      {
+        "index": 12,
+        "time_sec": 12.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0013.jpg",
+        "name": "frame_0013.jpg"
+      },
+      {
+        "index": 13,
+        "time_sec": 13.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0014.jpg",
+        "name": "frame_0014.jpg"
+      },
+      {
+        "index": 14,
+        "time_sec": 14.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0015.jpg",
+        "name": "frame_0015.jpg"
+      },
+      {
+        "index": 15,
+        "time_sec": 15.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0016.jpg",
+        "name": "frame_0016.jpg"
+      },
+      {
+        "index": 16,
+        "time_sec": 16.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0017.jpg",
+        "name": "frame_0017.jpg"
+      },
+      {
+        "index": 17,
+        "time_sec": 17.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0018.jpg",
+        "name": "frame_0018.jpg"
+      },
+      {
+        "index": 18,
+        "time_sec": 18.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0019.jpg",
+        "name": "frame_0019.jpg"
+      },
+      {
+        "index": 19,
+        "time_sec": 19.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0020.jpg",
+        "name": "frame_0020.jpg"
+      },
+      {
+        "index": 20,
+        "time_sec": 20.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0021.jpg",
+        "name": "frame_0021.jpg"
+      },
+      {
+        "index": 21,
+        "time_sec": 21.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0022.jpg",
+        "name": "frame_0022.jpg"
+      },
+      {
+        "index": 22,
+        "time_sec": 22.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0023.jpg",
+        "name": "frame_0023.jpg"
+      },
+      {
+        "index": 23,
+        "time_sec": 23.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0024.jpg",
+        "name": "frame_0024.jpg"
+      },
+      {
+        "index": 24,
+        "time_sec": 24.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0025.jpg",
+        "name": "frame_0025.jpg"
+      },
+      {
+        "index": 25,
+        "time_sec": 25.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0026.jpg",
+        "name": "frame_0026.jpg"
+      },
+      {
+        "index": 26,
+        "time_sec": 26.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0027.jpg",
+        "name": "frame_0027.jpg"
+      },
+      {
+        "index": 27,
+        "time_sec": 27.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0028.jpg",
+        "name": "frame_0028.jpg"
+      },
+      {
+        "index": 28,
+        "time_sec": 28.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0029.jpg",
+        "name": "frame_0029.jpg"
+      },
+      {
+        "index": 29,
+        "time_sec": 29.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0030.jpg",
+        "name": "frame_0030.jpg"
+      },
+      {
+        "index": 30,
+        "time_sec": 30.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0031.jpg",
+        "name": "frame_0031.jpg"
+      },
+      {
+        "index": 31,
+        "time_sec": 31.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0032.jpg",
+        "name": "frame_0032.jpg"
+      },
+      {
+        "index": 32,
+        "time_sec": 32.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0033.jpg",
+        "name": "frame_0033.jpg"
+      },
+      {
+        "index": 33,
+        "time_sec": 33.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0034.jpg",
+        "name": "frame_0034.jpg"
+      },
+      {
+        "index": 34,
+        "time_sec": 34.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0035.jpg",
+        "name": "frame_0035.jpg"
+      },
+      {
+        "index": 35,
+        "time_sec": 35.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0036.jpg",
+        "name": "frame_0036.jpg"
+      },
+      {
+        "index": 36,
+        "time_sec": 36.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0037.jpg",
+        "name": "frame_0037.jpg"
+      },
+      {
+        "index": 37,
+        "time_sec": 37.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0038.jpg",
+        "name": "frame_0038.jpg"
+      },
+      {
+        "index": 38,
+        "time_sec": 38.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0039.jpg",
+        "name": "frame_0039.jpg"
+      },
+      {
+        "index": 39,
+        "time_sec": 39.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0040.jpg",
+        "name": "frame_0040.jpg"
+      },
+      {
+        "index": 40,
+        "time_sec": 40.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0041.jpg",
+        "name": "frame_0041.jpg"
+      },
+      {
+        "index": 41,
+        "time_sec": 41.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0042.jpg",
+        "name": "frame_0042.jpg"
+      },
+      {
+        "index": 42,
+        "time_sec": 42.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0043.jpg",
+        "name": "frame_0043.jpg"
+      },
+      {
+        "index": 43,
+        "time_sec": 43.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0044.jpg",
+        "name": "frame_0044.jpg"
+      },
+      {
+        "index": 44,
+        "time_sec": 44.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0045.jpg",
+        "name": "frame_0045.jpg"
+      },
+      {
+        "index": 45,
+        "time_sec": 45.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0046.jpg",
+        "name": "frame_0046.jpg"
+      },
+      {
+        "index": 46,
+        "time_sec": 46.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0047.jpg",
+        "name": "frame_0047.jpg"
+      },
+      {
+        "index": 47,
+        "time_sec": 47.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0048.jpg",
+        "name": "frame_0048.jpg"
+      },
+      {
+        "index": 48,
+        "time_sec": 48.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0049.jpg",
+        "name": "frame_0049.jpg"
+      },
+      {
+        "index": 49,
+        "time_sec": 49.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0050.jpg",
+        "name": "frame_0050.jpg"
+      },
+      {
+        "index": 50,
+        "time_sec": 50.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0051.jpg",
+        "name": "frame_0051.jpg"
+      },
+      {
+        "index": 51,
+        "time_sec": 51.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0052.jpg",
+        "name": "frame_0052.jpg"
+      },
+      {
+        "index": 52,
+        "time_sec": 52.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0053.jpg",
+        "name": "frame_0053.jpg"
+      },
+      {
+        "index": 53,
+        "time_sec": 53.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0054.jpg",
+        "name": "frame_0054.jpg"
+      },
+      {
+        "index": 54,
+        "time_sec": 54.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0055.jpg",
+        "name": "frame_0055.jpg"
+      },
+      {
+        "index": 55,
+        "time_sec": 55.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0056.jpg",
+        "name": "frame_0056.jpg"
+      },
+      {
+        "index": 56,
+        "time_sec": 56.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0057.jpg",
+        "name": "frame_0057.jpg"
+      },
+      {
+        "index": 57,
+        "time_sec": 57.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0058.jpg",
+        "name": "frame_0058.jpg"
+      },
+      {
+        "index": 58,
+        "time_sec": 58.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0059.jpg",
+        "name": "frame_0059.jpg"
+      },
+      {
+        "index": 59,
+        "time_sec": 59.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0060.jpg",
+        "name": "frame_0060.jpg"
+      },
+      {
+        "index": 60,
+        "time_sec": 60.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0061.jpg",
+        "name": "frame_0061.jpg"
+      },
+      {
+        "index": 61,
+        "time_sec": 61.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0062.jpg",
+        "name": "frame_0062.jpg"
+      },
+      {
+        "index": 62,
+        "time_sec": 62.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0063.jpg",
+        "name": "frame_0063.jpg"
+      },
+      {
+        "index": 63,
+        "time_sec": 63.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0064.jpg",
+        "name": "frame_0064.jpg"
+      },
+      {
+        "index": 64,
+        "time_sec": 64.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0065.jpg",
+        "name": "frame_0065.jpg"
+      },
+      {
+        "index": 65,
+        "time_sec": 65.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0066.jpg",
+        "name": "frame_0066.jpg"
+      },
+      {
+        "index": 66,
+        "time_sec": 66.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0067.jpg",
+        "name": "frame_0067.jpg"
+      },
+      {
+        "index": 67,
+        "time_sec": 67.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0068.jpg",
+        "name": "frame_0068.jpg"
+      },
+      {
+        "index": 68,
+        "time_sec": 68.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0069.jpg",
+        "name": "frame_0069.jpg"
+      },
+      {
+        "index": 69,
+        "time_sec": 69.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0070.jpg",
+        "name": "frame_0070.jpg"
+      },
+      {
+        "index": 70,
+        "time_sec": 70.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0071.jpg",
+        "name": "frame_0071.jpg"
+      },
+      {
+        "index": 71,
+        "time_sec": 71.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0072.jpg",
+        "name": "frame_0072.jpg"
+      },
+      {
+        "index": 72,
+        "time_sec": 72.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0073.jpg",
+        "name": "frame_0073.jpg"
+      },
+      {
+        "index": 73,
+        "time_sec": 73.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0074.jpg",
+        "name": "frame_0074.jpg"
+      },
+      {
+        "index": 74,
+        "time_sec": 74.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0075.jpg",
+        "name": "frame_0075.jpg"
+      },
+      {
+        "index": 75,
+        "time_sec": 75.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0076.jpg",
+        "name": "frame_0076.jpg"
+      },
+      {
+        "index": 76,
+        "time_sec": 76.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0077.jpg",
+        "name": "frame_0077.jpg"
+      },
+      {
+        "index": 77,
+        "time_sec": 77.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0078.jpg",
+        "name": "frame_0078.jpg"
+      },
+      {
+        "index": 78,
+        "time_sec": 78.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0079.jpg",
+        "name": "frame_0079.jpg"
+      },
+      {
+        "index": 79,
+        "time_sec": 79.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0080.jpg",
+        "name": "frame_0080.jpg"
+      },
+      {
+        "index": 80,
+        "time_sec": 80.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0081.jpg",
+        "name": "frame_0081.jpg"
+      },
+      {
+        "index": 81,
+        "time_sec": 81.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0082.jpg",
+        "name": "frame_0082.jpg"
+      },
+      {
+        "index": 82,
+        "time_sec": 82.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0083.jpg",
+        "name": "frame_0083.jpg"
+      },
+      {
+        "index": 83,
+        "time_sec": 83.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0084.jpg",
+        "name": "frame_0084.jpg"
+      },
+      {
+        "index": 84,
+        "time_sec": 84.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0085.jpg",
+        "name": "frame_0085.jpg"
+      },
+      {
+        "index": 85,
+        "time_sec": 85.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0086.jpg",
+        "name": "frame_0086.jpg"
+      },
+      {
+        "index": 86,
+        "time_sec": 86.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0087.jpg",
+        "name": "frame_0087.jpg"
+      },
+      {
+        "index": 87,
+        "time_sec": 87.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0088.jpg",
+        "name": "frame_0088.jpg"
+      },
+      {
+        "index": 88,
+        "time_sec": 88.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0089.jpg",
+        "name": "frame_0089.jpg"
+      },
+      {
+        "index": 89,
+        "time_sec": 89.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0090.jpg",
+        "name": "frame_0090.jpg"
+      },
+      {
+        "index": 90,
+        "time_sec": 90.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0091.jpg",
+        "name": "frame_0091.jpg"
+      },
+      {
+        "index": 91,
+        "time_sec": 91.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0092.jpg",
+        "name": "frame_0092.jpg"
+      },
+      {
+        "index": 92,
+        "time_sec": 92.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0093.jpg",
+        "name": "frame_0093.jpg"
+      },
+      {
+        "index": 93,
+        "time_sec": 93.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0094.jpg",
+        "name": "frame_0094.jpg"
+      },
+      {
+        "index": 94,
+        "time_sec": 94.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0095.jpg",
+        "name": "frame_0095.jpg"
+      },
+      {
+        "index": 95,
+        "time_sec": 95.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0096.jpg",
+        "name": "frame_0096.jpg"
+      },
+      {
+        "index": 96,
+        "time_sec": 96.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0097.jpg",
+        "name": "frame_0097.jpg"
+      },
+      {
+        "index": 97,
+        "time_sec": 97.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0098.jpg",
+        "name": "frame_0098.jpg"
+      },
+      {
+        "index": 98,
+        "time_sec": 98.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0099.jpg",
+        "name": "frame_0099.jpg"
+      },
+      {
+        "index": 99,
+        "time_sec": 99.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0100.jpg",
+        "name": "frame_0100.jpg"
+      },
+      {
+        "index": 100,
+        "time_sec": 100.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0101.jpg",
+        "name": "frame_0101.jpg"
+      },
+      {
+        "index": 101,
+        "time_sec": 101.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0102.jpg",
+        "name": "frame_0102.jpg"
+      },
+      {
+        "index": 102,
+        "time_sec": 102.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0103.jpg",
+        "name": "frame_0103.jpg"
+      },
+      {
+        "index": 103,
+        "time_sec": 103.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0104.jpg",
+        "name": "frame_0104.jpg"
+      },
+      {
+        "index": 104,
+        "time_sec": 104.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0105.jpg",
+        "name": "frame_0105.jpg"
+      },
+      {
+        "index": 105,
+        "time_sec": 105.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0106.jpg",
+        "name": "frame_0106.jpg"
+      },
+      {
+        "index": 106,
+        "time_sec": 106.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0107.jpg",
+        "name": "frame_0107.jpg"
+      },
+      {
+        "index": 107,
+        "time_sec": 107.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0108.jpg",
+        "name": "frame_0108.jpg"
+      },
+      {
+        "index": 108,
+        "time_sec": 108.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0109.jpg",
+        "name": "frame_0109.jpg"
+      },
+      {
+        "index": 109,
+        "time_sec": 109.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0110.jpg",
+        "name": "frame_0110.jpg"
+      },
+      {
+        "index": 110,
+        "time_sec": 110.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0111.jpg",
+        "name": "frame_0111.jpg"
+      },
+      {
+        "index": 111,
+        "time_sec": 111.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0112.jpg",
+        "name": "frame_0112.jpg"
+      },
+      {
+        "index": 112,
+        "time_sec": 112.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0113.jpg",
+        "name": "frame_0113.jpg"
+      },
+      {
+        "index": 113,
+        "time_sec": 113.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0114.jpg",
+        "name": "frame_0114.jpg"
+      },
+      {
+        "index": 114,
+        "time_sec": 114.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0115.jpg",
+        "name": "frame_0115.jpg"
+      },
+      {
+        "index": 115,
+        "time_sec": 115.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0116.jpg",
+        "name": "frame_0116.jpg"
+      },
+      {
+        "index": 116,
+        "time_sec": 116.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0117.jpg",
+        "name": "frame_0117.jpg"
+      },
+      {
+        "index": 117,
+        "time_sec": 117.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0118.jpg",
+        "name": "frame_0118.jpg"
+      },
+      {
+        "index": 118,
+        "time_sec": 118.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0119.jpg",
+        "name": "frame_0119.jpg"
+      },
+      {
+        "index": 119,
+        "time_sec": 119.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0120.jpg",
+        "name": "frame_0120.jpg"
+      },
+      {
+        "index": 120,
+        "time_sec": 120.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0121.jpg",
+        "name": "frame_0121.jpg"
+      },
+      {
+        "index": 121,
+        "time_sec": 121.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0122.jpg",
+        "name": "frame_0122.jpg"
+      },
+      {
+        "index": 122,
+        "time_sec": 122.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0123.jpg",
+        "name": "frame_0123.jpg"
+      },
+      {
+        "index": 123,
+        "time_sec": 123.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0124.jpg",
+        "name": "frame_0124.jpg"
+      },
+      {
+        "index": 124,
+        "time_sec": 124.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0125.jpg",
+        "name": "frame_0125.jpg"
+      },
+      {
+        "index": 125,
+        "time_sec": 125.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0126.jpg",
+        "name": "frame_0126.jpg"
+      },
+      {
+        "index": 126,
+        "time_sec": 126.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0127.jpg",
+        "name": "frame_0127.jpg"
+      },
+      {
+        "index": 127,
+        "time_sec": 127.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0128.jpg",
+        "name": "frame_0128.jpg"
+      },
+      {
+        "index": 128,
+        "time_sec": 128.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0129.jpg",
+        "name": "frame_0129.jpg"
+      },
+      {
+        "index": 129,
+        "time_sec": 129.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0130.jpg",
+        "name": "frame_0130.jpg"
+      },
+      {
+        "index": 130,
+        "time_sec": 130.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0131.jpg",
+        "name": "frame_0131.jpg"
+      },
+      {
+        "index": 131,
+        "time_sec": 131.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0132.jpg",
+        "name": "frame_0132.jpg"
+      },
+      {
+        "index": 132,
+        "time_sec": 132.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0133.jpg",
+        "name": "frame_0133.jpg"
+      },
+      {
+        "index": 133,
+        "time_sec": 133.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0134.jpg",
+        "name": "frame_0134.jpg"
+      },
+      {
+        "index": 134,
+        "time_sec": 134.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0135.jpg",
+        "name": "frame_0135.jpg"
+      },
+      {
+        "index": 135,
+        "time_sec": 135.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0136.jpg",
+        "name": "frame_0136.jpg"
+      },
+      {
+        "index": 136,
+        "time_sec": 136.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0137.jpg",
+        "name": "frame_0137.jpg"
+      },
+      {
+        "index": 137,
+        "time_sec": 137.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0138.jpg",
+        "name": "frame_0138.jpg"
+      },
+      {
+        "index": 138,
+        "time_sec": 138.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0139.jpg",
+        "name": "frame_0139.jpg"
+      },
+      {
+        "index": 139,
+        "time_sec": 139.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0140.jpg",
+        "name": "frame_0140.jpg"
+      },
+      {
+        "index": 140,
+        "time_sec": 140.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0141.jpg",
+        "name": "frame_0141.jpg"
+      },
+      {
+        "index": 141,
+        "time_sec": 141.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0142.jpg",
+        "name": "frame_0142.jpg"
+      },
+      {
+        "index": 142,
+        "time_sec": 142.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0143.jpg",
+        "name": "frame_0143.jpg"
+      },
+      {
+        "index": 143,
+        "time_sec": 143.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0144.jpg",
+        "name": "frame_0144.jpg"
+      },
+      {
+        "index": 144,
+        "time_sec": 144.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0145.jpg",
+        "name": "frame_0145.jpg"
+      },
+      {
+        "index": 145,
+        "time_sec": 145.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0146.jpg",
+        "name": "frame_0146.jpg"
+      },
+      {
+        "index": 146,
+        "time_sec": 146.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0147.jpg",
+        "name": "frame_0147.jpg"
+      },
+      {
+        "index": 147,
+        "time_sec": 147.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0148.jpg",
+        "name": "frame_0148.jpg"
+      },
+      {
+        "index": 148,
+        "time_sec": 148.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0149.jpg",
+        "name": "frame_0149.jpg"
+      },
+      {
+        "index": 149,
+        "time_sec": 149.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0150.jpg",
+        "name": "frame_0150.jpg"
+      },
+      {
+        "index": 150,
+        "time_sec": 150.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0151.jpg",
+        "name": "frame_0151.jpg"
+      },
+      {
+        "index": 151,
+        "time_sec": 151.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0152.jpg",
+        "name": "frame_0152.jpg"
+      },
+      {
+        "index": 152,
+        "time_sec": 152.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0153.jpg",
+        "name": "frame_0153.jpg"
+      },
+      {
+        "index": 153,
+        "time_sec": 153.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0154.jpg",
+        "name": "frame_0154.jpg"
+      },
+      {
+        "index": 154,
+        "time_sec": 154.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0155.jpg",
+        "name": "frame_0155.jpg"
+      },
+      {
+        "index": 155,
+        "time_sec": 155.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0156.jpg",
+        "name": "frame_0156.jpg"
+      },
+      {
+        "index": 156,
+        "time_sec": 156.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0157.jpg",
+        "name": "frame_0157.jpg"
+      },
+      {
+        "index": 157,
+        "time_sec": 157.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0158.jpg",
+        "name": "frame_0158.jpg"
+      },
+      {
+        "index": 158,
+        "time_sec": 158.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0159.jpg",
+        "name": "frame_0159.jpg"
+      },
+      {
+        "index": 159,
+        "time_sec": 159.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0160.jpg",
+        "name": "frame_0160.jpg"
+      },
+      {
+        "index": 160,
+        "time_sec": 160.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0161.jpg",
+        "name": "frame_0161.jpg"
+      },
+      {
+        "index": 161,
+        "time_sec": 161.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0162.jpg",
+        "name": "frame_0162.jpg"
+      },
+      {
+        "index": 162,
+        "time_sec": 162.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0163.jpg",
+        "name": "frame_0163.jpg"
+      },
+      {
+        "index": 163,
+        "time_sec": 163.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0164.jpg",
+        "name": "frame_0164.jpg"
+      },
+      {
+        "index": 164,
+        "time_sec": 164.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0165.jpg",
+        "name": "frame_0165.jpg"
+      },
+      {
+        "index": 165,
+        "time_sec": 165.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0166.jpg",
+        "name": "frame_0166.jpg"
+      },
+      {
+        "index": 166,
+        "time_sec": 166.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0167.jpg",
+        "name": "frame_0167.jpg"
+      },
+      {
+        "index": 167,
+        "time_sec": 167.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0168.jpg",
+        "name": "frame_0168.jpg"
+      },
+      {
+        "index": 168,
+        "time_sec": 168.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0169.jpg",
+        "name": "frame_0169.jpg"
+      },
+      {
+        "index": 169,
+        "time_sec": 169.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0170.jpg",
+        "name": "frame_0170.jpg"
+      },
+      {
+        "index": 170,
+        "time_sec": 170.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0171.jpg",
+        "name": "frame_0171.jpg"
+      },
+      {
+        "index": 171,
+        "time_sec": 171.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0172.jpg",
+        "name": "frame_0172.jpg"
+      },
+      {
+        "index": 172,
+        "time_sec": 172.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0173.jpg",
+        "name": "frame_0173.jpg"
+      },
+      {
+        "index": 173,
+        "time_sec": 173.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0174.jpg",
+        "name": "frame_0174.jpg"
+      },
+      {
+        "index": 174,
+        "time_sec": 174.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0175.jpg",
+        "name": "frame_0175.jpg"
+      },
+      {
+        "index": 175,
+        "time_sec": 175.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0176.jpg",
+        "name": "frame_0176.jpg"
+      },
+      {
+        "index": 176,
+        "time_sec": 176.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0177.jpg",
+        "name": "frame_0177.jpg"
+      },
+      {
+        "index": 177,
+        "time_sec": 177.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0178.jpg",
+        "name": "frame_0178.jpg"
+      },
+      {
+        "index": 178,
+        "time_sec": 178.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0179.jpg",
+        "name": "frame_0179.jpg"
+      },
+      {
+        "index": 179,
+        "time_sec": 179.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0180.jpg",
+        "name": "frame_0180.jpg"
+      },
+      {
+        "index": 180,
+        "time_sec": 180.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0181.jpg",
+        "name": "frame_0181.jpg"
+      },
+      {
+        "index": 181,
+        "time_sec": 181.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0182.jpg",
+        "name": "frame_0182.jpg"
+      },
+      {
+        "index": 182,
+        "time_sec": 182.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0183.jpg",
+        "name": "frame_0183.jpg"
+      },
+      {
+        "index": 183,
+        "time_sec": 183.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0184.jpg",
+        "name": "frame_0184.jpg"
+      },
+      {
+        "index": 184,
+        "time_sec": 184.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0185.jpg",
+        "name": "frame_0185.jpg"
+      },
+      {
+        "index": 185,
+        "time_sec": 185.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0186.jpg",
+        "name": "frame_0186.jpg"
+      },
+      {
+        "index": 186,
+        "time_sec": 186.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0187.jpg",
+        "name": "frame_0187.jpg"
+      },
+      {
+        "index": 187,
+        "time_sec": 187.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0188.jpg",
+        "name": "frame_0188.jpg"
+      },
+      {
+        "index": 188,
+        "time_sec": 188.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0189.jpg",
+        "name": "frame_0189.jpg"
+      },
+      {
+        "index": 189,
+        "time_sec": 189.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0190.jpg",
+        "name": "frame_0190.jpg"
+      },
+      {
+        "index": 190,
+        "time_sec": 190.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0191.jpg",
+        "name": "frame_0191.jpg"
+      },
+      {
+        "index": 191,
+        "time_sec": 191.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0192.jpg",
+        "name": "frame_0192.jpg"
+      },
+      {
+        "index": 192,
+        "time_sec": 192.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0193.jpg",
+        "name": "frame_0193.jpg"
+      },
+      {
+        "index": 193,
+        "time_sec": 193.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0194.jpg",
+        "name": "frame_0194.jpg"
+      },
+      {
+        "index": 194,
+        "time_sec": 194.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0195.jpg",
+        "name": "frame_0195.jpg"
+      },
+      {
+        "index": 195,
+        "time_sec": 195.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0196.jpg",
+        "name": "frame_0196.jpg"
+      },
+      {
+        "index": 196,
+        "time_sec": 196.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0197.jpg",
+        "name": "frame_0197.jpg"
+      },
+      {
+        "index": 197,
+        "time_sec": 197.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0198.jpg",
+        "name": "frame_0198.jpg"
+      },
+      {
+        "index": 198,
+        "time_sec": 198.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0199.jpg",
+        "name": "frame_0199.jpg"
+      },
+      {
+        "index": 199,
+        "time_sec": 199.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0200.jpg",
+        "name": "frame_0200.jpg"
+      },
+      {
+        "index": 200,
+        "time_sec": 200.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0201.jpg",
+        "name": "frame_0201.jpg"
+      },
+      {
+        "index": 201,
+        "time_sec": 201.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0202.jpg",
+        "name": "frame_0202.jpg"
+      },
+      {
+        "index": 202,
+        "time_sec": 202.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0203.jpg",
+        "name": "frame_0203.jpg"
+      },
+      {
+        "index": 203,
+        "time_sec": 203.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0204.jpg",
+        "name": "frame_0204.jpg"
+      },
+      {
+        "index": 204,
+        "time_sec": 204.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0205.jpg",
+        "name": "frame_0205.jpg"
+      },
+      {
+        "index": 205,
+        "time_sec": 205.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0206.jpg",
+        "name": "frame_0206.jpg"
+      },
+      {
+        "index": 206,
+        "time_sec": 206.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0207.jpg",
+        "name": "frame_0207.jpg"
+      },
+      {
+        "index": 207,
+        "time_sec": 207.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0208.jpg",
+        "name": "frame_0208.jpg"
+      },
+      {
+        "index": 208,
+        "time_sec": 208.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0209.jpg",
+        "name": "frame_0209.jpg"
+      },
+      {
+        "index": 209,
+        "time_sec": 209.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0210.jpg",
+        "name": "frame_0210.jpg"
+      },
+      {
+        "index": 210,
+        "time_sec": 210.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0211.jpg",
+        "name": "frame_0211.jpg"
+      },
+      {
+        "index": 211,
+        "time_sec": 211.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0212.jpg",
+        "name": "frame_0212.jpg"
+      },
+      {
+        "index": 212,
+        "time_sec": 212.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0213.jpg",
+        "name": "frame_0213.jpg"
+      },
+      {
+        "index": 213,
+        "time_sec": 213.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0214.jpg",
+        "name": "frame_0214.jpg"
+      },
+      {
+        "index": 214,
+        "time_sec": 214.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0215.jpg",
+        "name": "frame_0215.jpg"
+      },
+      {
+        "index": 215,
+        "time_sec": 215.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0216.jpg",
+        "name": "frame_0216.jpg"
+      },
+      {
+        "index": 216,
+        "time_sec": 216.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0217.jpg",
+        "name": "frame_0217.jpg"
+      },
+      {
+        "index": 217,
+        "time_sec": 217.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0218.jpg",
+        "name": "frame_0218.jpg"
+      },
+      {
+        "index": 218,
+        "time_sec": 218.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0219.jpg",
+        "name": "frame_0219.jpg"
+      },
+      {
+        "index": 219,
+        "time_sec": 219.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0220.jpg",
+        "name": "frame_0220.jpg"
+      },
+      {
+        "index": 220,
+        "time_sec": 220.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0221.jpg",
+        "name": "frame_0221.jpg"
+      },
+      {
+        "index": 221,
+        "time_sec": 221.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0222.jpg",
+        "name": "frame_0222.jpg"
+      },
+      {
+        "index": 222,
+        "time_sec": 222.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0223.jpg",
+        "name": "frame_0223.jpg"
+      },
+      {
+        "index": 223,
+        "time_sec": 223.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0224.jpg",
+        "name": "frame_0224.jpg"
+      },
+      {
+        "index": 224,
+        "time_sec": 224.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0225.jpg",
+        "name": "frame_0225.jpg"
+      },
+      {
+        "index": 225,
+        "time_sec": 225.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0226.jpg",
+        "name": "frame_0226.jpg"
+      },
+      {
+        "index": 226,
+        "time_sec": 226.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0227.jpg",
+        "name": "frame_0227.jpg"
+      },
+      {
+        "index": 227,
+        "time_sec": 227.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0228.jpg",
+        "name": "frame_0228.jpg"
+      },
+      {
+        "index": 228,
+        "time_sec": 228.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0229.jpg",
+        "name": "frame_0229.jpg"
+      },
+      {
+        "index": 229,
+        "time_sec": 229.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0230.jpg",
+        "name": "frame_0230.jpg"
+      },
+      {
+        "index": 230,
+        "time_sec": 230.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0231.jpg",
+        "name": "frame_0231.jpg"
+      },
+      {
+        "index": 231,
+        "time_sec": 231.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0232.jpg",
+        "name": "frame_0232.jpg"
+      },
+      {
+        "index": 232,
+        "time_sec": 232.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0233.jpg",
+        "name": "frame_0233.jpg"
+      },
+      {
+        "index": 233,
+        "time_sec": 233.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0234.jpg",
+        "name": "frame_0234.jpg"
+      },
+      {
+        "index": 234,
+        "time_sec": 234.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0235.jpg",
+        "name": "frame_0235.jpg"
+      },
+      {
+        "index": 235,
+        "time_sec": 235.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0236.jpg",
+        "name": "frame_0236.jpg"
+      },
+      {
+        "index": 236,
+        "time_sec": 236.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0237.jpg",
+        "name": "frame_0237.jpg"
+      },
+      {
+        "index": 237,
+        "time_sec": 237.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0238.jpg",
+        "name": "frame_0238.jpg"
+      },
+      {
+        "index": 238,
+        "time_sec": 238.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0239.jpg",
+        "name": "frame_0239.jpg"
+      },
+      {
+        "index": 239,
+        "time_sec": 239.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0240.jpg",
+        "name": "frame_0240.jpg"
+      },
+      {
+        "index": 240,
+        "time_sec": 240.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0241.jpg",
+        "name": "frame_0241.jpg"
+      },
+      {
+        "index": 241,
+        "time_sec": 241.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0242.jpg",
+        "name": "frame_0242.jpg"
+      },
+      {
+        "index": 242,
+        "time_sec": 242.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0243.jpg",
+        "name": "frame_0243.jpg"
+      },
+      {
+        "index": 243,
+        "time_sec": 243.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0244.jpg",
+        "name": "frame_0244.jpg"
+      },
+      {
+        "index": 244,
+        "time_sec": 244.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0245.jpg",
+        "name": "frame_0245.jpg"
+      },
+      {
+        "index": 245,
+        "time_sec": 245.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0246.jpg",
+        "name": "frame_0246.jpg"
+      },
+      {
+        "index": 246,
+        "time_sec": 246.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0247.jpg",
+        "name": "frame_0247.jpg"
+      },
+      {
+        "index": 247,
+        "time_sec": 247.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0248.jpg",
+        "name": "frame_0248.jpg"
+      },
+      {
+        "index": 248,
+        "time_sec": 248.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0249.jpg",
+        "name": "frame_0249.jpg"
+      },
+      {
+        "index": 249,
+        "time_sec": 249.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0250.jpg",
+        "name": "frame_0250.jpg"
+      },
+      {
+        "index": 250,
+        "time_sec": 250.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0251.jpg",
+        "name": "frame_0251.jpg"
+      },
+      {
+        "index": 251,
+        "time_sec": 251.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0252.jpg",
+        "name": "frame_0252.jpg"
+      },
+      {
+        "index": 252,
+        "time_sec": 252.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0253.jpg",
+        "name": "frame_0253.jpg"
+      },
+      {
+        "index": 253,
+        "time_sec": 253.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0254.jpg",
+        "name": "frame_0254.jpg"
+      },
+      {
+        "index": 254,
+        "time_sec": 254.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0255.jpg",
+        "name": "frame_0255.jpg"
+      },
+      {
+        "index": 255,
+        "time_sec": 255.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0256.jpg",
+        "name": "frame_0256.jpg"
+      },
+      {
+        "index": 256,
+        "time_sec": 256.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0257.jpg",
+        "name": "frame_0257.jpg"
+      },
+      {
+        "index": 257,
+        "time_sec": 257.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0258.jpg",
+        "name": "frame_0258.jpg"
+      },
+      {
+        "index": 258,
+        "time_sec": 258.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0259.jpg",
+        "name": "frame_0259.jpg"
+      },
+      {
+        "index": 259,
+        "time_sec": 259.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0260.jpg",
+        "name": "frame_0260.jpg"
+      },
+      {
+        "index": 260,
+        "time_sec": 260.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0261.jpg",
+        "name": "frame_0261.jpg"
+      },
+      {
+        "index": 261,
+        "time_sec": 261.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0262.jpg",
+        "name": "frame_0262.jpg"
+      },
+      {
+        "index": 262,
+        "time_sec": 262.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0263.jpg",
+        "name": "frame_0263.jpg"
+      },
+      {
+        "index": 263,
+        "time_sec": 263.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0264.jpg",
+        "name": "frame_0264.jpg"
+      },
+      {
+        "index": 264,
+        "time_sec": 264.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0265.jpg",
+        "name": "frame_0265.jpg"
+      },
+      {
+        "index": 265,
+        "time_sec": 265.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0266.jpg",
+        "name": "frame_0266.jpg"
+      },
+      {
+        "index": 266,
+        "time_sec": 266.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0267.jpg",
+        "name": "frame_0267.jpg"
+      },
+      {
+        "index": 267,
+        "time_sec": 267.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0268.jpg",
+        "name": "frame_0268.jpg"
+      },
+      {
+        "index": 268,
+        "time_sec": 268.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0269.jpg",
+        "name": "frame_0269.jpg"
+      },
+      {
+        "index": 269,
+        "time_sec": 269.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0270.jpg",
+        "name": "frame_0270.jpg"
+      },
+      {
+        "index": 270,
+        "time_sec": 270.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0271.jpg",
+        "name": "frame_0271.jpg"
+      },
+      {
+        "index": 271,
+        "time_sec": 271.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0272.jpg",
+        "name": "frame_0272.jpg"
+      },
+      {
+        "index": 272,
+        "time_sec": 272.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0273.jpg",
+        "name": "frame_0273.jpg"
+      },
+      {
+        "index": 273,
+        "time_sec": 273.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0274.jpg",
+        "name": "frame_0274.jpg"
+      },
+      {
+        "index": 274,
+        "time_sec": 274.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0275.jpg",
+        "name": "frame_0275.jpg"
+      },
+      {
+        "index": 275,
+        "time_sec": 275.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0276.jpg",
+        "name": "frame_0276.jpg"
+      },
+      {
+        "index": 276,
+        "time_sec": 276.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0277.jpg",
+        "name": "frame_0277.jpg"
+      },
+      {
+        "index": 277,
+        "time_sec": 277.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0278.jpg",
+        "name": "frame_0278.jpg"
+      },
+      {
+        "index": 278,
+        "time_sec": 278.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0279.jpg",
+        "name": "frame_0279.jpg"
+      },
+      {
+        "index": 279,
+        "time_sec": 279.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0280.jpg",
+        "name": "frame_0280.jpg"
+      },
+      {
+        "index": 280,
+        "time_sec": 280.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0281.jpg",
+        "name": "frame_0281.jpg"
+      },
+      {
+        "index": 281,
+        "time_sec": 281.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0282.jpg",
+        "name": "frame_0282.jpg"
+      },
+      {
+        "index": 282,
+        "time_sec": 282.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0283.jpg",
+        "name": "frame_0283.jpg"
+      },
+      {
+        "index": 283,
+        "time_sec": 283.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0284.jpg",
+        "name": "frame_0284.jpg"
+      },
+      {
+        "index": 284,
+        "time_sec": 284.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0285.jpg",
+        "name": "frame_0285.jpg"
+      },
+      {
+        "index": 285,
+        "time_sec": 285.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0286.jpg",
+        "name": "frame_0286.jpg"
+      },
+      {
+        "index": 286,
+        "time_sec": 286.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0287.jpg",
+        "name": "frame_0287.jpg"
+      },
+      {
+        "index": 287,
+        "time_sec": 287.0,
+        "path": "D:\\program\\ai_video\\workflow\\data\\preprocess\\manual_download4\\frames\\frame_0288.jpg",
+        "name": "frame_0288.jpg"
+      }
+    ]
+  },
+  "transcript": {
+    "full_text": "第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude。第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude",
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 287.68,
+        "text": "第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude。第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude"
+      }
+    ],
+    "generated": true,
+    "source": "mock_fallback",
+    "fallback_reason": "Network error calling https://api.bltcy.ai/v1/audio/transcriptions: [WinError 10054] 远程主机强迫关闭了一个现有的连接。"
+  },
+  "title_analysis": {
+    "raw_title": "第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude",
+    "cover_text": "ai神器：skill",
+    "first_frame_text": "skill，智能体",
+    "title_type": "系列集数型 + 痛点反向（拒绝低效）+ 效果承诺（让Claude更有灵魂）+ 话题标签",
+    "formula": "【第{n}集】+【拒绝/反向否定{痛点}！】+【{工具/方法名}{让/帮助}{对象}{效果/结果}】+【话题标签】",
+    "conclusion_first": true,
+    "contains": {
+      "risk": false,
+      "benefit": true,
+      "conflict": false,
+      "number": true,
+      "contrast": true,
+      "promise": true
+    },
+    "relationship_between_surfaces": {
+      "title_vs_cover": "封面突出“ai神器：skill”，用于产品/工具归因；标题进一步加上“第30集”与“拒绝低效！Skill让Claude更有灵魂”，属于在同一核心对象（Skill）基础上补充集数与价值/效果。",
+      "title_vs_first_frame": "首屏强调“skill，智能体”，直接对齐标题中的“Skill”；标题中“拒绝低效”和“让Claude更有灵魂”则在首屏基础上补充具体使用场景/结果指向（Claude更有灵魂）。"
+    },
+    "keyword_slots": [
+      "集数编号{n}",
+      "反向否定/痛点{低效}（拒绝低效）",
+      "工具/方法名{Skill}",
+      "被增强对象{Claude}",
+      "效果形容/结果{更有灵魂}",
+      "平台/项目标签{#AI新星计划}",
+      "能力/内容标签{#skills}",
+      "内容形式标签{#PPT动画/ #动画视频}"
+    ],
+    "variable_candidates": [
+      "{n}（第30集可替换为任意集数）",
+      "{痛点}（低效可替换为其他负面/问题，如繁琐、慢、不会等）",
+      "{工具/方法名}（Skill可替换为对应AI工具/代理名）",
+      "{对象/模型}（Claude可替换为其他模型或角色）",
+      "{效果/结果}（更有灵魂可替换为具体正向收益表述）",
+      "{话题标签1}（#AI新星计划可替换为项目标签）",
+      "{话题标签2}（#skills可替换为技能/分类标签）",
+      "{内容形式标签}（#PPT动画/ #动画视频可替换为对应内容形式）"
+    ],
+    "confidence": 0.74
+  },
+  "title_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "description_analysis": {
+    "raw_description": "第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude",
+    "description_type": "系列集数更新/内容预告型（episode update + 核心卖点概括）",
+    "description_formula": "「第{集数}集：{反差/价值主张}! {工具/方法} 让 {对象} 更有{效果}」+「#话题标签」",
+    "opening_role": "内容/系列定位（第30集）+ 价值主张开头（拒绝低效）",
+    "has_call_to_action": false,
+    "call_to_action_type": null,
+    "tone": "强调效率与优化（反低效）+ 轻量营销/口号式（更有灵魂）",
+    "title_relation": "简介与标题几乎一致（仅重复“第30集：拒绝低效！Skill 让 Claude 更有灵魂”，标题中额外包含同样的标签串与#AI新星计划等，简介基本复用标题内容）",
+    "keyword_clusters": [
+      [
+        "技能/工具链",
+        "Skill",
+        "skills"
+      ],
+      [
+        "模型/对象",
+        "Claude",
+        "claude"
+      ],
+      [
+        "内容形态",
+        "PPT动画",
+        "动画视频"
+      ],
+      [
+        "计划/栏目",
+        "AI新星计划"
+      ]
+    ],
+    "hashtag_strategy": {
+      "count": 5,
+      "hashtags": [
+        "AI新星计划",
+        "skills",
+        "PPT动画",
+        "动画视频",
+        "claude"
+      ],
+      "language_mix": "中文为主 + 英文/小写brand词（claude/skills）",
+      "mix_type": "栏目/品牌词 + 工具泛关键词 + 形式/内容关键词 + 目标模型词",
+      "broad_tags": [
+        "skills",
+        "动画视频"
+      ],
+      "niche_tags": [
+        "PPT动画",
+        "claude"
+      ],
+      "brand_or_account_tags": [
+        "AI新星计划"
+      ]
+    },
+    "variable_candidates": [
+      "episode_number（第{集数}集）",
+      "value_proposition（如：拒绝低效）",
+      "tool_name（Skill）",
+      "model_or_subject（Claude）",
+      "outcome_phrase（如：更有灵魂）",
+      "content_format_tags（如：PPT动画、动画视频）",
+      "program_or_series_tag（如：AI新星计划）",
+      "model_hashtag（如：claude）"
+    ],
+    "confidence": 0.84
+  },
+  "description_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "hook_analysis": {
+    "time_range_sec": [
+      0,
+      5
+    ],
+    "hook_text": "第30集：拒绝低效！Skill 让 Claude 更有灵魂",
+    "hook_type": "系列集数+反低效主张（口号式价值宣告）",
+    "core_mechanism": "以“拒绝低效/更有灵魂”的价值对比来建立兴趣，并用“第30集”暗示连续内容与稳定更新；借助具体对象“Claude + Skill”强化主题指向。",
+    "conclusion_first": true,
+    "devices": {
+      "risk": false,
+      "conflict": false,
+      "promise": true,
+      "question": false,
+      "surprise": false,
+      "contrarian": true
+    },
+    "visual_support": "仅从提供信息看：封面文字为“ai神器：skill”，首屏大字为“skill，智能体”。这些与口播的“Skill 让 Claude 更有灵魂”形成主题一致的对齐，但未看到更具体的动作/对比画面描述。",
+    "surface_dependency": "较依赖“Skill/智能体/Claude”的品牌词与赛道理解；同时依赖“第30集”带来的系列信任感。若观众不熟悉 Claude 或 Skill，价值宣告的具体性会降低。",
+    "template_rule_candidates": [
+      "【系列集数】+【反低效/立场】+【具体工具/模型】+【情绪化收益】（如“更有灵魂”）",
+      "用口号式短语替代问题：拒绝某种常见问题（低效）→ 指向解决方案（Skill）→ 强化对象（Claude）",
+      "“第N集”制造持续性预期，同时把价值点放在同一句开头（更像结论先行的标题口播）"
+    ],
+    "confidence": 0.62
+  },
+  "hook_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "structure_analysis": [
+    {
+      "id": "S1",
+      "start_sec": 0,
+      "end_sec": 287.68,
+      "label": "封面/标题重复引导（转写无实质内容）",
+      "purpose": "通过标题与标签强化本集主题：Skill 让 Claude 更高效/更有灵魂，但由于转写缺失，无法提炼具体内容段落。",
+      "summary": "转写全文仅重复出现“第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude”（未见具体步骤、演示或观点展开）。",
+      "transition_to_next": "无后续可识别段落",
+      "information_density": "极低（转写仅为标题与话题重复）",
+      "confidence": 0.22
+    }
+  ],
+  "global_structure_pattern": "单段式占位：标题/话题重复为主（缺少可解析的内容叙事），疑似为无口播/转写抓取失败或视频实质内容未被提供。",
+  "structure_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "script_analysis": {
+    "tone": "偏营销/号召式，强调卖点与对比（如“拒绝低效”）但缺少实际内容展开",
+    "sentence_style": "高度标题化/话题化复述；以短句+口号式短语为主；缺少叙事动词链与解释性结构",
+    "sentence_length_pattern": "极短句居多，整体由“集数 + 标题主语 + 情绪/观点短语 + 产品名/关键词 + hashtag”拼接；无长句段落",
+    "conclusion_first": false,
+    "dominant_modes": [
+      "标题占位复述",
+      "话题标签堆叠",
+      "卖点口号式表达"
+    ],
+    "density_pattern": "hashtags密度高且重复（同一标题/话题出现两次），信息集中在主题词与标签而非观点论证",
+    "paragraph_organization": "单段式；主要依赖“标题/话题重复”为组织方式；几乎无可解析的因果、步骤、示例或结论展开",
+    "rule_candidates": [
+      "用“第N集：主标题”作为开头锚点",
+      "用强观点短语（如“拒绝低效”）+ 目标对象（Claude）+ 工具/产品名（Skill）拼接卖点",
+      "大量插入垂类hashtag（如 #claude #skills #PPT动画 等）以提高主题覆盖",
+      "在字幕层面可能存在重复渲染：同一标题与hashtag全文复读/重复出现"
+    ],
+    "confidence": 0.42
+  },
+  "script_style_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "rhythm_analysis": {
+    "scene_changes": [
+      {
+        "time_sec": 0,
+        "approximate": false,
+        "change_strength": "hard_change",
+        "change_type": "loop_start",
+        "from_visual": "null",
+        "to_visual": "static_title_card",
+        "purpose": "establish_topic",
+        "linked_to_audio_emphasis": true
+      }
+    ],
+    "section_rhythm": {
+      "hook": {
+        "avg_change_interval_sec": 287.68,
+        "rhythm_level": "static"
+      },
+      "body": {
+        "avg_change_interval_sec": 287.68,
+        "rhythm_level": "static"
+      },
+      "outro": {
+        "avg_change_interval_sec": 287.68,
+        "rhythm_level": "static"
+      }
+    },
+    "peak_moments": [],
+    "rhythm_rule_candidates": [
+      "single_frame_loop_pattern",
+      "static_placeholder_strategy"
+    ],
+    "confidence": 0.95
+  },
+  "rhythm_engine": {
+    "mode": "api",
+    "model": "gemini-3.1-flash-lite-preview-thinking-minimal"
+  },
+  "frame_summaries": [
+    {
+      "time_sec": 0.0,
+      "name": "frame_0001.jpg",
+      "summary": "深色圆点纹理背景的片头/过场画面，中间一行字幕提示主题进入“Agent工具”。左上与右上有节目/频道标识与第30集编号。",
+      "visible_text": [
+        "AI官僚 30",
+        "K薛动图",
+        "现在市面上所有的Agent工具"
+      ],
+      "layout_guess": "全屏背景（中心留白区域）+ 顶部左右角信息条（左上“AI官僚 30”，右上“K薛动图”）+ 底部中间单行字幕居中。",
+      "visual_type_guess": "文字驱动的过场/片头海报风关键帧（UI叠字+品牌角标+深色点阵背景，用于承接讲解内容）。",
+      "source": "api",
+      "model": "gpt-5.4-nano"
+    },
+    {
+      "time_sec": 72.0,
+      "name": "frame_0073.jpg",
+      "summary": "黑底网格风格的知识分享/动画课程封面帧，居中用红色卡通机器人图标强调“为什么要用 Skill”，下方配套一句话提示观点。",
+      "visible_text": [
+        "为什么要用Skill",
+        "是因为它能实现按需加载",
+        "AI后 30",
+        "K笑动圈"
+      ],
+      "layout_guess": "顶部左/右角落分别放置栏目/账号徽标；上方居中横向标题条；画面中央偏上放置大号红色机器人图标；底部居中放置一句解释性文案（白色）；下方还有三个小方块/图标做分镜或章节提示。",
+      "visual_type_guess": "PPT动画/课程解说型信息图关键帧（科技风、图标+标题+要点文案的字幕卡片式布局）",
+      "source": "api",
+      "model": "gpt-5.4-nano"
+    },
+    {
+      "time_sec": 144.0,
+      "name": "frame_0145.jpg",
+      "summary": "AI工具/Agent演示类的PPT动画关键帧：左侧以图标与标签展示“Project_manager”，右侧叠层多窗口代码界面，突出Skill带来更强的工程化/组织能力。",
+      "visible_text": [
+        "AI后 第30",
+        "Project_manager",
+        "技能清晰且具备可扩展性的工具"
+      ],
+      "layout_guess": "黑色网格背景；左上角红色“AI后 30”徽标；左侧大面积红色项目/文件夹风格图标，下方有“Project_manager”；右侧从前景到背景叠加3个浅色边框的代码编辑器窗口（深色主题），最底部有一条横向字幕/标语。",
+      "visual_type_guess": "屏幕录制/代码截图风格的UI动画叠加（PPT式信息图+多窗口代码演示）",
+      "source": "api",
+      "model": "gpt-5.4-nano"
+    },
+    {
+      "time_sec": 215.0,
+      "name": "frame_0216.jpg",
+      "summary": "黑色网格背景的HUD风格关键帧，顶部有“Skill应用场景”标题条；中间一条横向的模糊/发亮内容框像PPT动画卡片。底部给出第2个场景的说明文案。",
+      "visible_text": [
+        "Skill应用场景2",
+        "第2个场景是一个真实案例"
+      ],
+      "layout_guess": "顶部中央大标题条；画面中上部有一条居中的横向信息/画面容器（类似案例展示框），底部居中一句话说明；两侧有HUD圆点/角标装饰。",
+      "visual_type_guess": "信息图/教学PPT动画封面或章节引导帧（HUD风格+案例展示区域）",
+      "source": "api",
+      "model": "gpt-5.4-nano"
+    },
+    {
+      "time_sec": 287.0,
+      "name": "frame_0288.jpg",
+      "summary": "卡通风PPT/动画封面式关键帧：中心人物（骷髅头笑脸贴纸）叠加大尺寸红色标题字，背景为黑底网格与道具形状框，营造“强强调、开场/章节30集”视觉。",
+      "visible_text": [
+        "AI后 30",
+        "爪起吐~（疑似口号/小字）",
+        "K爆畅图（右上角）"
+      ],
+      "layout_guess": "黑色网格背景；左上角小牌“AI后30”；右上角小图标与文字；中间偏下为人物半身/脚部（穿制服+鞋）并被中间的大红字覆盖；大字横跨画面主要区域，左右与上下有棕红色矩形/爆炸碎片式框架点缀。",
+      "visual_type_guess": "文字冲击型动画封面/标题卡（粗体大字+角色叠加+HUD风UI）",
+      "source": "api",
+      "model": "gpt-5.4-nano"
+    }
+  ],
+  "visual_analysis": [
+    {
+      "section_id": "S1_Intro_Transition",
+      "visual_type": "Title_Card",
+      "layout": "Centered_Text_Overlay_with_Corner_Badges",
+      "asset_types": [
+        "Text",
+        "Brand_Logo",
+        "Background_Texture"
+      ],
+      "style_markers": [
+        "Dark_Dot_Pattern",
+        "Minimalist_UI",
+        "High_Contrast"
+      ],
+      "fixed_elements": [
+        "Top_Left_Channel_Badge",
+        "Top_Right_Series_Number",
+        "Background_Dot_Texture"
+      ],
+      "variable_elements": [
+        "Center_Title_Text"
+      ],
+      "recreation_difficulty": "easy",
+      "confidence": 0.9
+    },
+    {
+      "section_id": "S2_Knowledge_Cover",
+      "visual_type": "Info_Graphic_Card",
+      "layout": "Top_Title_Bar_with_Central_Icon_and_Footer_Caption",
+      "asset_types": [
+        "Icon",
+        "Text",
+        "Grid_Background"
+      ],
+      "style_markers": [
+        "Tech_Style",
+        "Cartoon_Icon",
+        "PPT_Animation_Style"
+      ],
+      "fixed_elements": [
+        "Top_Corner_Badges",
+        "Grid_Background",
+        "Bottom_Chapter_Indicators"
+      ],
+      "variable_elements": [
+        "Central_Icon",
+        "Main_Title_Text",
+        "Footer_Caption"
+      ],
+      "recreation_difficulty": "medium",
+      "confidence": 0.85
+    },
+    {
+      "section_id": "S3_UI_Demo_Overlay",
+      "visual_type": "Screen_Recording_Composite",
+      "layout": "Split_Screen_with_Layered_UI_Windows",
+      "asset_types": [
+        "Code_Snippet",
+        "UI_Icon",
+        "Text_Overlay"
+      ],
+      "style_markers": [
+        "Dark_Theme_UI",
+        "Layered_Depth",
+        "Engineering_Focus"
+      ],
+      "fixed_elements": [
+        "Top_Left_Channel_Badge",
+        "Grid_Background"
+      ],
+      "variable_elements": [
+        "Left_Side_Icon_Label",
+        "Right_Side_Code_Windows",
+        "Bottom_Caption"
+      ],
+      "recreation_difficulty": "hard",
+      "confidence": 0.9
+    },
+    {
+      "section_id": "S4_HUD_Scenario_Guide",
+      "visual_type": "HUD_Info_Card",
+      "layout": "Top_Title_Bar_with_Central_Content_Container",
+      "asset_types": [
+        "HUD_Elements",
+        "Text_Box",
+        "Decorative_Icons"
+      ],
+      "style_markers": [
+        "HUD_Style",
+        "Blurred_Background",
+        "Modular_Layout"
+      ],
+      "fixed_elements": [
+        "Top_Title_Bar",
+        "Side_HUD_Decorations",
+        "Grid_Background"
+      ],
+      "variable_elements": [
+        "Central_Content_Box",
+        "Bottom_Explanation_Text"
+      ],
+      "recreation_difficulty": "medium",
+      "confidence": 0.8
+    },
+    {
+      "section_id": "S5_Impact_Cover",
+      "visual_type": "Impact_Title_Card",
+      "layout": "Layered_Character_with_Large_Typography",
+      "asset_types": [
+        "Character_Cutout",
+        "Bold_Typography",
+        "Graphic_Fragments"
+      ],
+      "style_markers": [
+        "Explosive_Typography",
+        "Collage_Style",
+        "High_Impact"
+      ],
+      "fixed_elements": [
+        "Top_Corner_Badges",
+        "Grid_Background"
+      ],
+      "variable_elements": [
+        "Central_Character_Image",
+        "Large_Red_Typography",
+        "Decorative_Fragments"
+      ],
+      "recreation_difficulty": "medium",
+      "confidence": 0.85
+    }
+  ],
+  "visual_engine": {
+    "mode": "api",
+    "model": "gemini-3.1-flash-lite-preview-thinking-minimal"
+  },
+  "subtitle_analysis": {
+    "position": "画面上半区到中下区的硬字幕常规区域（更可能为居中底部或底部偏中，适配 TikTok 信息卡/静态标题卡）",
+    "line_count_pattern": "单段式重复占位，疑似1屏1行或2行以内；由于转写仅包含标题与话题标签复读，缺少正文叙事，故以短句块呈现",
+    "line_length_pattern": "短句为主（以“第30集：拒绝低效！Skill 让 Claude 更有灵魂”为主干，其他为#话题标签）；行长不随内容展开而变化，整体偏短、紧凑",
+    "highlight_strategy": "无明确可验证的关键词高亮（证据不足）；最合理的第一版为：情绪/卖点短语（如“拒绝低效！”“更有灵魂”以及“Skill”“Claude”）采用加粗/颜色高亮，其余话题标签保持常规白字或弱化灰度",
+    "timing_pattern": "静态占位/循环策略：标题卡起始即同时投放字幕；全片可能以固定频率重复同一标题字幕（转写中出现两次完整标题与话题），导致字幕节奏呈“单段循环/占位不推进内容”的规律。与场景变化相关的字幕更新强度更像硬同步（change_strength=hard_change，且仅检测到0s静态标题卡建立话题）",
+    "confidence": 0.35
+  },
+  "audio_analysis": {
+    "voice_style": "证据不足的情况下的第一版推断：若为硬字幕且转写重复标题，可能存在“无口播/少口播”或口播被抓取失败；或采用偏营销号的标题式配音（偏快、强调口号式关键词）",
+    "pace_wpm_estimate": 0,
+    "pause_pattern": "第一版推断：停顿与节奏主要服务于标题关键词（“第30集：/拒绝低效！/Skill 让 Claude 更有灵魂”），停顿更集中在冒号、感叹号与专有名词前后；但由于缺少逐句音频转写证据，整体停顿结构无法精确",
+    "bgm_style": "更可能为短视频常见的节奏型背景音乐（轻快/科技感/循环段落），与静态标题卡或循环剪辑匹配；若为静态重复标题，BGM也倾向循环不复杂",
+    "hook_sfx_likely": [
+      "开场UI音/叮咚提示音（hard hook）",
+      "科技/嗡鸣上扬音效（用于“拒绝低效”/“Skill”关键词）",
+      "卡点式鼓点强调（与字幕进入同拍）"
+    ],
+    "sync_pattern": "硬同步为主：当出现静态标题卡（0s）时字幕与音频强调同时触发（linked_to_audio_emphasis=true）；随后在缺少正文内容的情况下，字幕复写与节奏变化不明显，维持单段循环/占位式同步",
+    "confidence": 0.3
+  },
+  "subtitle_audio_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "source_video_id": "manual_download4",
+  "engine": {
+    "provider": "bltcy",
+    "mock_analysis": false,
+    "models": {
+      "analyze_title": "gpt-5.4-nano",
+      "analyze_description": "gpt-5.4-nano",
+      "analyze_hook": "gpt-5.4-nano",
+      "analyze_structure": "gpt-5.4-nano",
+      "analyze_script_style": "gpt-5.4-nano",
+      "analyze_visual_rhythm": "gemini-3.1-flash-lite-preview-thinking-minimal",
+      "analyze_visual_style": "gemini-3.1-flash-lite-preview-thinking-minimal",
+      "analyze_subtitle_audio": "gpt-5.4-nano",
+      "build_summary": "gpt-5.4-nano",
+      "transcribe_audio": "gpt-4o-mini-transcribe"
+    }
+  },
+  "meta": {
+    "title": "第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude",
+    "description": "第30集：拒绝低效！Skill 让 Claude 更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude",
+    "cover_text": "ai神器：skill",
+    "first_frame_text": "skill，智能体",
+    "platform": "tiktok",
+    "track": "ai tools / agent / claude / skill",
+    "duration_sec": 287.68,
+    "language": "zh"
+  },
+  "review": {
+    "mode": "draft_then_review",
+    "reviewed": false,
+    "notes": ""
+  },
+  "summary": {
+    "top_template_rules": [
+      {
+        "rule_id": "T1_reverse_pain_promise_series",
+        "template": "【第{n}集】：【拒绝/反向否定{pain}！】+【{tool}让{subject}{object_effect}】+【话题标签串】",
+        "rationale": "标题同时完成“集数承接 + 反向否定痛点 + 效果承诺 + 标签导流”的信息拼装方式，高复用且易于做系列化。",
+        "example_fill": "第30集：拒绝低效！Skill让Claude更有灵魂 #AI新星计划 #skills #PPT动画 #动画视频 #claude"
+      },
+      {
+        "rule_id": "T2_tool_brand_attribution_frontload",
+        "template": "首屏用【ai神器/智能体{tool}】做封面归因，标题再补【集数/反低效/效果】。",
+        "rationale": "封面聚焦“工具归因”（降低认知门槛），标题负责“理由与结果”（提升说服）。",
+        "example_fill": "封面：ai神器：Skill；标题：第{n}集：拒绝{pain}！Skill让{subject}{outcome}"
+      },
+      {
+        "rule_id": "T3_model_specific_outcome_nickname",
+        "template": "{tool} + {model/对象} + {结果短语(拟人/口号式)}（如：更有灵魂/更懂你/更像人）",
+        "rationale": "使用“拟人结果短语”增强记忆点与情绪价值，适合口号式短视频叙事。",
+        "example_fill": "Skill让Claude更有灵魂"
+      },
+      {
+        "rule_id": "T4_hashtag_mix_program_format_target",
+        "template": "# {program_or_series} + #{tool_topic} + #{content_format} + #{target_model} (+可选扩展tag)",
+        "rationale": "标签采用“栏目/品牌词 + 技能泛词 + 形式词 + 目标模型词”的稳定组合，兼顾平台分发与精准检索。",
+        "example_fill": "#AI新星计划 #skills #PPT动画 #动画视频 #claude"
+      },
+      {
+        "rule_id": "T5_static_title_loop_no_content_detected",
+        "template": "若转写/正文信息不足：用静态标题卡 + 短字幕块循环复现【同一主干句】（不推进长叙事）。",
+        "rationale": "当前节奏为“单帧/静态占位策略”，最有效的复用是把字幕做成可循环的短主句，而不是强依赖口播步骤。",
+        "example_fill": "字幕重复：第{n}集：拒绝{pain}！{tool}让{subject}{outcome}"
+      }
+    ],
+    "key_packaging_features": [
+      "封面/首帧/标题信息层级分工清晰：封面归因“{tool}”，标题补齐“第{n}集 + 反低效痛点 + 效果承诺”。",
+      "标题与简介高度复用：简介基本为“标题同句式 + 标签”，减少信息不一致风险。",
+      "视频视觉与节奏偏模板化：静态Title Card/信息卡为主，字幕以短句块硬同步、循环占位为主。"
+    ],
+    "best_variable_candidates": [
+      "{n}（集数编号）",
+      "{pain}（反向否定的痛点词）",
+      "{tool}（工具/方法名，如Skill）",
+      "{subject}（对象/模型，如Claude）",
+      "{outcome}（口号式结果短语，如更有灵魂，可替换为具体收益）",
+      "{program_or_series}（栏目/项目标签，如AI新星计划）",
+      "{tool_topic_hashtag}（工具泛关键词，如skills）",
+      "{content_format_hashtag}（形式标签，如PPT动画/动画视频）",
+      "{target_model_hashtag}（目标模型词，如claude）"
+    ],
+    "best_fixed_rules": [
+      "主干句式固定为：【第{n}集】+【拒绝/反向否定{pain}！】+【{tool}让{subject}{outcome}】。",
+      "强制保留“反向否定/痛点”语义位：使用拒绝、别、不要、反低效等结构来制造对比张力。",
+      "标签数量与结构固定倾向：至少包含 1 个栏目/品牌词 + 1 个工具泛词 + 1-2 个形式词 + 1 个目标模型词。",
+      "字幕包装固定为短句块硬同步：字幕优先复用主标题主干（情绪卖点+工具+对象+结果），其余信息以标签承载。"
+    ]
+  },
+  "summary_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  }
+}

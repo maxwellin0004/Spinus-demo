@@ -1,0 +1,55 @@
+{
+  "composition_id": "tech-archive-explainer-preview",
+  "orientation": "horizontal",
+  "fps": 30,
+  "resolution": "1920x1080",
+  "data_source": "video-app/src/data/techArchiveData.ts",
+  "audio_source": "video-app/src/data/techArchiveAudio.ts",
+  "mapping": [
+    {
+      "scene": "TechArchiveHookScene",
+      "fields": [
+        "kicker",
+        "hook.leftMetric",
+        "hook.rightMetric",
+        "hook.question",
+        "hook.answer",
+        "hook.mediaCards[]",
+        "hook.duckPose"
+      ]
+    },
+    {
+      "scene": "TechArchiveChapterScene",
+      "repeat_source": "chapters[]",
+      "fields": [
+        "year",
+        "title",
+        "subtitle",
+        "evidence[]",
+        "mediaCards[]",
+        "duckPose"
+      ]
+    },
+    {
+      "scene": "TechArchiveCloseScene",
+      "fields": [
+        "close.title",
+        "close.body",
+        "close.tags",
+        "close.mediaCards[]",
+        "close.duckPose"
+      ]
+    }
+  ],
+  "asset_slots": {
+    "duck_assets": "video-app/public/images/tech-archive/duck-ai/duck-*.png (must be transparent)",
+    "document_panel": "real screenshot image preferred; fallback to generated card",
+    "product_panel": "real product image preferred; fallback to generated card",
+    "voiceover": "video-app/public/audio/tech-archive/tech-archive-explainer-elevenlabs.mp3"
+  },
+  "animation_rules": {
+    "duck": "page-level motion profile: dynamic position + size + entrance + breathing/float",
+    "cards": "floating image cards keep tilt + delayed spring intro",
+    "camera_feel": "no global camera move; use local element motion and scene hard-cut rhythm"
+  }
+}

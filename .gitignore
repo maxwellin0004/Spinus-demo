@@ -1,0 +1,11 @@
+dist/
+__pycache__/
+.env
+.env.local
+temp/
+tmp/
+tmp_video_analysis/
+video-app/renders/
+tools/ffmpeg.exe
+assets/fonts/
+video-app/node_modules/

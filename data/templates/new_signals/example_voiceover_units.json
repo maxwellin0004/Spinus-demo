@@ -1,0 +1,43 @@
+{
+  "template_id": "new_signals",
+  "example_id": "macd_warning",
+  "voiceover_units": [
+    {
+      "voice_id": "v01",
+      "section": "news_context",
+      "text": "市场最危险的时候，往往不是没有新闻，而是新闻正在帮情绪加速。",
+      "target_duration_sec": 4.8,
+      "intended_pause_after_sec": 0.2,
+      "emphasis_words": ["最危险", "情绪加速"],
+      "visual_section_id": "news_context",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "v02",
+      "section": "mechanism",
+      "text": "MACD 背离真正提醒你的，是价格还在冲，但里面的动能已经开始变弱。",
+      "target_duration_sec": 5.8,
+      "intended_pause_after_sec": 0.2,
+      "emphasis_words": ["MACD 背离", "动能"],
+      "visual_section_id": "indicator_mechanism",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "v03",
+      "section": "risk_close",
+      "text": "所以它不是开仓命令，而是风险提醒，必须和结构位、确认动作一起看。",
+      "target_duration_sec": 5.4,
+      "intended_pause_after_sec": 0.3,
+      "emphasis_words": ["不是开仓命令", "风险提醒"],
+      "visual_section_id": "risk_close",
+      "timing_status": "estimated"
+    }
+  ],
+  "audio_alignment": {
+    "tts_provider": "elevenlabs",
+    "voiceover_audio_path": "video-app/public/audio/new-signals/macd-warning-voiceover.mp3",
+    "subtitle_timeline_path": "data/templates/new_signals/examples/macd_warning/subtitle_timeline.horizontal.json",
+    "alignment_status": "estimated",
+    "alignment_method": "duration_fit"
+  }
+}

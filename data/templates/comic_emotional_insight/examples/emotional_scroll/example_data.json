@@ -1,0 +1,22 @@
+{
+  "topic_name": "情绪性刷手机",
+  "template_id": "comic_emotional_insight",
+  "style_variant": "night_purple_focus",
+  "duration_sec": 60,
+  "orientation": "horizontal",
+  "core_claim": "很多时候你不是沉迷手机，而是在借它逃开不舒服的感受",
+  "trigger_scene": "一条消息、一次空下来、一次压力上来，角色自动伸手去碰手机",
+  "mechanism_summary": [
+    "情绪出现",
+    "拿起手机",
+    "短暂麻木",
+    "更空更累"
+  ],
+  "turning_point": "改变不是立刻戒掉手机，而是打断难受一来就先刷的默认动作",
+  "action_points": [
+    "先停 1 个呼吸，再碰手机",
+    "把手机从手边移开",
+    "用极小的线下动作接住自己"
+  ],
+  "close_statement": "下一次别急着刷，先停一口气，让自己回来"
+}

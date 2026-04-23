@@ -1,0 +1,23 @@
+{
+  "default": "dark_archive_green",
+  "variants": {
+    "dark_archive_green": {
+      "background": "black/charcoal archive grid",
+      "accent": "#62ff9f",
+      "secondary": "#f4d35e",
+      "best_for": "standards, connectors, protocols, consumer electronics"
+    },
+    "warm_retro_orange": {
+      "background": "dark brown archive room",
+      "accent": "#ffb454",
+      "secondary": "#ff6b4a",
+      "best_for": "old devices, product nostalgia, brand stories"
+    },
+    "blue_lab_document": {
+      "background": "navy lab board",
+      "accent": "#77b7ff",
+      "secondary": "#dfe9ff",
+      "best_for": "research papers, patents, engineering breakdowns"
+    }
+  }
+}

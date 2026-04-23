@@ -1,0 +1,225 @@
+{
+  "template_id": "new_signals",
+  "example_id": "volume_divergence",
+  "orientation": "horizontal",
+  "fps": 30,
+  "audio_file": "video-app/public/audio/new-signals/volume-divergence-voiceover-aligned.mp3",
+  "timing_status": "aligned",
+  "alignment_method": "elevenlabs_with_timestamps",
+  "cues": [
+    {
+      "voice_id": "v01",
+      "visual_section_id": "news_context",
+      "start_sec": 0.0,
+      "end_sec": 3.999,
+      "startFrame": 0,
+      "endFrame": 120,
+      "text": "一段行情最容易让人误判的时候，\n往往不是下跌之后。",
+      "emphasisWords": [
+        "误判"
+      ]
+    },
+    {
+      "voice_id": "v02",
+      "visual_section_id": "news_context",
+      "start_sec": 4.119,
+      "end_sec": 6.798,
+      "startFrame": 124,
+      "endFrame": 204,
+      "text": "而是价格还在创新高的时候。",
+      "emphasisWords": [
+        "创新高"
+      ]
+    },
+    {
+      "voice_id": "v03",
+      "visual_section_id": "case_shock",
+      "start_sec": 6.878,
+      "end_sec": 10.878,
+      "startFrame": 206,
+      "endFrame": 326,
+      "text": "如果价格继续往上走，\n但成交量却一波比一波低。",
+      "emphasisWords": [
+        "价格",
+        "成交量"
+      ]
+    },
+    {
+      "voice_id": "v04",
+      "visual_section_id": "case_shock",
+      "start_sec": 10.958,
+      "end_sec": 15.598,
+      "startFrame": 329,
+      "endFrame": 468,
+      "text": "这通常不是健康加速，\n而是推动行情的人正在变少。",
+      "emphasisWords": [
+        "不是健康加速",
+        "正在变少"
+      ]
+    },
+    {
+      "voice_id": "v05",
+      "visual_section_id": "indicator_mechanism",
+      "start_sec": 15.678,
+      "end_sec": 19.438,
+      "startFrame": 470,
+      "endFrame": 583,
+      "text": "成交量背离真正有用的地方，\n不是让你立刻做空。",
+      "emphasisWords": [
+        "成交量背离",
+        "不是立刻做空"
+      ]
+    },
+    {
+      "voice_id": "v06",
+      "visual_section_id": "indicator_mechanism",
+      "start_sec": 19.518,
+      "end_sec": 21.998,
+      "startFrame": 586,
+      "endFrame": 660,
+      "text": "而是提醒你先暂停追高。",
+      "emphasisWords": [
+        "暂停追高"
+      ]
+    },
+    {
+      "voice_id": "v07",
+      "visual_section_id": "indicator_mechanism",
+      "start_sec": 22.158,
+      "end_sec": 25.118,
+      "startFrame": 665,
+      "endFrame": 754,
+      "text": "观察突破是不是还有真实买盘支撑。",
+      "emphasisWords": [
+        "真实买盘支撑"
+      ]
+    },
+    {
+      "voice_id": "v08",
+      "visual_section_id": "chart_case_1",
+      "start_sec": 25.238,
+      "end_sec": 28.398,
+      "startFrame": 757,
+      "endFrame": 852,
+      "text": "更稳的顺序是，先看价格有没有新高。",
+      "emphasisWords": [
+        "先看价格"
+      ]
+    },
+    {
+      "voice_id": "v09",
+      "visual_section_id": "chart_case_1",
+      "start_sec": 28.558,
+      "end_sec": 30.958,
+      "startFrame": 857,
+      "endFrame": 929,
+      "text": "再看成交量有没有同步放大。",
+      "emphasisWords": [
+        "成交量",
+        "同步放大"
+      ]
+    },
+    {
+      "voice_id": "v10",
+      "visual_section_id": "chart_case_2",
+      "start_sec": 31.118,
+      "end_sec": 34.398,
+      "startFrame": 934,
+      "endFrame": 1032,
+      "text": "然后看回踩时能不能守住关键位置。",
+      "emphasisWords": [
+        "回踩",
+        "关键位置"
+      ]
+    },
+    {
+      "voice_id": "v11",
+      "visual_section_id": "chart_case_2",
+      "start_sec": 34.505,
+      "end_sec": 37.039,
+      "startFrame": 1035,
+      "endFrame": 1111,
+      "text": "如果价格创新高，量能缩小。",
+      "emphasisWords": [
+        "价格创新高",
+        "量能缩小"
+      ]
+    },
+    {
+      "voice_id": "v12",
+      "visual_section_id": "chart_case_3",
+      "start_sec": 37.159,
+      "end_sec": 39.519,
+      "startFrame": 1115,
+      "endFrame": 1186,
+      "text": "回踩又跌回突破位下方。",
+      "emphasisWords": [
+        "跌回突破位"
+      ]
+    },
+    {
+      "voice_id": "v13",
+      "visual_section_id": "chart_case_3",
+      "start_sec": 39.599,
+      "end_sec": 43.439,
+      "startFrame": 1188,
+      "endFrame": 1303,
+      "text": "这种突破就更像诱多，\n而不是趋势确认。",
+      "emphasisWords": [
+        "诱多",
+        "不是趋势确认"
+      ]
+    },
+    {
+      "voice_id": "v14",
+      "visual_section_id": "checklist",
+      "start_sec": 43.479,
+      "end_sec": 45.759,
+      "startFrame": 1304,
+      "endFrame": 1373,
+      "text": "所以成交量背离不是买卖按钮。",
+      "emphasisWords": [
+        "不是买卖按钮"
+      ]
+    },
+    {
+      "voice_id": "v15",
+      "visual_section_id": "checklist",
+      "start_sec": 45.919,
+      "end_sec": 47.599,
+      "startFrame": 1378,
+      "endFrame": 1428,
+      "text": "它更像一个风险灯。",
+      "emphasisWords": [
+        "风险灯"
+      ]
+    },
+    {
+      "voice_id": "v16",
+      "visual_section_id": "risk_close",
+      "start_sec": 47.679,
+      "end_sec": 50.959,
+      "startFrame": 1430,
+      "endFrame": 1529,
+      "text": "当价格很漂亮，但参与的人越来越少。",
+      "emphasisWords": [
+        "价格很漂亮",
+        "参与的人越来越少"
+      ]
+    },
+    {
+      "voice_id": "v17",
+      "visual_section_id": "risk_close",
+      "start_sec": 50.999,
+      "end_sec": 55.119,
+      "startFrame": 1530,
+      "endFrame": 1654,
+      "text": "你就需要把仓位、\n止损和追高冲动重新检查一遍。",
+      "emphasisWords": [
+        "仓位",
+        "止损",
+        "追高冲动"
+      ]
+    }
+  ]
+}

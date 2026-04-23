@@ -1,0 +1,190 @@
+{
+  "template_id": "ai_concept_analyse",
+  "example_id": "skill",
+  "composition_id": "skill-horizontal-preview",
+  "mapping_version": "v1",
+  "global": {
+    "data_source": "example_data.json",
+    "shot_source": "shot_script.horizontal.md",
+    "fx_source": "fx_script.horizontal.md",
+    "asset_source": "asset_requirements.json",
+    "subtitle_source": "subtitle_timeline.horizontal.json",
+    "audio_alignment_protocol": "../../audio_alignment_protocol.json",
+    "voiceover_units_source": "../../example_voiceover_units.json",
+    "audio_sync_mapping": "../../render_mapping.audio_sync.json",
+    "subtitle_timing_status": "estimated_until_rebuilt_from_final_audio"
+  },
+  "audio_sync": {
+    "final_subtitle_source": "aligned_subtitle_timeline",
+    "tts_output": "video-app/public/audio/ai-concept-analyse/skill-horizontal-voiceover.mp3",
+    "fallback_timing_status": "estimated_after_audio_duration_fit",
+    "hard_rule": "Do not render final voiceover videos from hand-estimated subtitle frames unless explicitly requested as a rough preview."
+  },
+  "scene_component_mapping": [
+    {
+      "scene_id": "hook",
+      "component_name": "ReferenceHookScene",
+      "component_path": "video-app/src/scenes/reference/ReferenceHookScene.tsx",
+      "data_path": "hook_frames",
+      "props": {
+        "frames": "hook_frames"
+      },
+      "related_shots": ["H01", "H02", "H03"],
+      "related_fx": ["FX01", "FX02", "FX03"],
+      "render_notes": [
+        "按 2 秒为一个内部节拍切换 frame。",
+        "主标题和 ghost 字在组件内部完成分层。"
+      ]
+    },
+    {
+      "scene_id": "document_definition",
+      "component_name": "ReferenceDocScene",
+      "component_path": "video-app/src/scenes/reference/ReferenceDocScene.tsx",
+      "data_path": "doc_scene",
+      "props": {
+        "path": "doc_scene.path",
+        "filename": "doc_scene.filename",
+        "headline": "doc_scene.headline",
+        "cards": "doc_scene.cards"
+      },
+      "related_shots": ["D01", "D02", "D03", "D04"],
+      "related_fx": ["FX05", "FX07", "FX08"],
+      "render_notes": [
+        "左侧文件卡是主识别物，右侧四卡解释结构。",
+        "卡片连锁入场由组件内部 spring + stagger 实现。"
+      ]
+    },
+    {
+      "scene_id": "compare_basic",
+      "component_name": "ReferenceCompareScene",
+      "component_path": "video-app/src/scenes/reference/ReferenceCompareScene.tsx",
+      "data_path": "compare_scene",
+      "props": {
+        "leftTitle": "compare_scene.left_title",
+        "rightTitle": "compare_scene.right_title",
+        "leftPoints": "compare_scene.left_points",
+        "rightPoints": "compare_scene.right_points",
+        "footer": "compare_scene.footer"
+      },
+      "related_shots": ["C01", "C02", "C03"],
+      "related_fx": ["FX06", "FX10", "FX15"],
+      "render_notes": [
+        "左右双栏保持结构对称。",
+        "中间箭头只能辅助引导，不能抢视觉主位。"
+      ]
+    },
+    {
+      "scene_id": "scenario_1",
+      "component_name": "ReferenceScenarioScene",
+      "component_path": "video-app/src/scenes/reference/ReferenceScenarioScene.tsx",
+      "data_path": "scenarios[0]",
+      "props": {
+        "badge": "scenarios[0].badge",
+        "title": "scenarios[0].title",
+        "description": "scenarios[0].description",
+        "bullets": "scenarios[0].bullets",
+        "imageSrc": "assets/images/scenario_video_breakdown.jpg"
+      },
+      "related_shots": ["S11", "S12"],
+      "related_fx": ["FX07", "FX14"],
+      "render_notes": [
+        "场景图左，说明右，是固定母版。",
+        "若图片缺失，可先用占位 panel。"
+      ]
+    },
+    {
+      "scene_id": "scenario_2",
+      "component_name": "ReferenceScenarioScene",
+      "component_path": "video-app/src/scenes/reference/ReferenceScenarioScene.tsx",
+      "data_path": "scenarios[1]",
+      "props": {
+        "badge": "scenarios[1].badge",
+        "title": "scenarios[1].title",
+        "description": "scenarios[1].description",
+        "bullets": "scenarios[1].bullets",
+        "imageSrc": "assets/images/scenario_ppt.jpg"
+      },
+      "related_shots": ["S21", "S22"],
+      "related_fx": ["FX03", "FX07", "FX14"],
+      "render_notes": [
+        "和 scenario_1 共用组件，只替换内容和图片。"
+      ]
+    },
+    {
+      "scene_id": "scenario_3",
+      "component_name": "ReferenceScenarioScene",
+      "component_path": "video-app/src/scenes/reference/ReferenceScenarioScene.tsx",
+      "data_path": "scenarios[2]",
+      "props": {
+        "badge": "scenarios[2].badge",
+        "title": "scenarios[2].title",
+        "description": "scenarios[2].description",
+        "bullets": "scenarios[2].bullets",
+        "imageSrc": "assets/images/scenario_batch_content.jpg"
+      },
+      "related_shots": ["S31", "S32"],
+      "related_fx": ["FX03", "FX07", "FX14"],
+      "render_notes": [
+        "第三场景应更偏“规模化”与“变量替换”。"
+      ]
+    },
+    {
+      "scene_id": "flow",
+      "component_name": "ReferenceFlowScene",
+      "component_path": "video-app/src/scenes/reference/ReferenceFlowScene.tsx",
+      "data_path": "flow_scene",
+      "props": {
+        "title": "flow_scene.title",
+        "steps": "flow_scene.steps"
+      },
+      "related_shots": ["F01", "F02"],
+      "related_fx": ["FX07", "FX09"],
+      "render_notes": [
+        "默认按 3 个 step 设计。",
+        "箭头和 step label 共同承担顺序感。"
+      ]
+    },
+    {
+      "scene_id": "concept_compare",
+      "component_name": "ReferenceCompareScene",
+      "component_path": "video-app/src/scenes/reference/ReferenceCompareScene.tsx",
+      "data_path": "concept_compare",
+      "props": {
+        "title": "concept_compare.title",
+        "leftTitle": "concept_compare.left_label",
+        "rightTitle": "concept_compare.right_label",
+        "leftPoints": "concept_compare.left_points",
+        "rightPoints": "concept_compare.right_points",
+        "footer": "concept_compare.footer"
+      },
+      "related_shots": ["M01", "M02"],
+      "related_fx": ["FX09", "FX10", "FX11"],
+      "render_notes": [
+        "这里只放边界定义，不展开细节。"
+      ]
+    },
+    {
+      "scene_id": "close",
+      "component_name": "ReferenceCloseScene",
+      "component_path": "video-app/src/scenes/reference/ReferenceCloseScene.tsx",
+      "data_path": "close_scene",
+      "props": {
+        "headline": "close_scene.headline",
+        "subheadline": "close_scene.subheadline"
+      },
+      "related_shots": ["CL01", "CL02"],
+      "related_fx": ["FX01", "FX11", "FX15"],
+      "render_notes": [
+        "结尾图标列阵用于制造轻微包装感。",
+        "结论句必须是唯一视觉焦点。"
+      ]
+    }
+  ],
+  "timeline_binding": {
+    "source": "video-app/src/compositions/SkillHorizontalComposition.tsx",
+    "binding_notes": [
+      "当前 composition 通过 Sequence 手动绑定 scene 时长。",
+      "后续可升级为从 data + shot config 自动生成 timeline。"
+    ]
+  }
+}

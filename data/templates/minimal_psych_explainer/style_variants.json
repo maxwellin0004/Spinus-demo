@@ -1,0 +1,77 @@
+{
+  "default_variant": "clean_white",
+  "variants": {
+    "clean_white": {
+      "name": "Clean White",
+      "description": "最接近当前样片的白底极简心理解释风格。",
+      "background": "#fcfcfb",
+      "line": "#111111",
+      "muted": "#8b929e",
+      "accent": "#4d78c3",
+      "secondary_accent": "#e8b84e",
+      "border": "rgba(17,17,17,0.12)",
+      "card_background": "rgba(255,255,255,0.94)",
+      "shadow": "0 14px 38px rgba(20, 34, 60, 0.11)",
+      "subtitle": {
+        "background": "transparent",
+        "text": "#ffffff",
+        "stroke": "rgba(0,0,0,0.68)",
+        "highlight": "#e8b84e"
+      }
+    },
+    "soft_blue": {
+      "name": "Soft Blue",
+      "description": "更冷静、更学术的浅蓝白底风格。",
+      "background": "#f7fbff",
+      "line": "#10223b",
+      "muted": "#7b8aa0",
+      "accent": "#3f75c7",
+      "secondary_accent": "#d9a742",
+      "border": "rgba(63,117,199,0.16)",
+      "card_background": "rgba(255,255,255,0.96)",
+      "shadow": "0 16px 42px rgba(31, 76, 138, 0.12)",
+      "subtitle": {
+        "background": "transparent",
+        "text": "#ffffff",
+        "stroke": "rgba(0,0,0,0.7)",
+        "highlight": "#d9a742"
+      }
+    },
+    "warm_paper": {
+      "name": "Warm Paper",
+      "description": "更温和、更像心理手账的暖纸色风格。",
+      "background": "#fbf6ee",
+      "line": "#15120e",
+      "muted": "#8d8172",
+      "accent": "#b86b43",
+      "secondary_accent": "#d9a441",
+      "border": "rgba(80,52,30,0.14)",
+      "card_background": "rgba(255,250,242,0.96)",
+      "shadow": "0 14px 36px rgba(80, 52, 30, 0.12)",
+      "subtitle": {
+        "background": "transparent",
+        "text": "#ffffff",
+        "stroke": "rgba(0,0,0,0.72)",
+        "highlight": "#d9a441"
+      }
+    },
+    "gray_academic": {
+      "name": "Gray Academic",
+      "description": "更克制、更像知识黑板反色的灰白说明风格。",
+      "background": "#f2f3f4",
+      "line": "#101214",
+      "muted": "#747b84",
+      "accent": "#5a78a8",
+      "secondary_accent": "#caa24a",
+      "border": "rgba(16,18,20,0.13)",
+      "card_background": "rgba(255,255,255,0.92)",
+      "shadow": "0 14px 38px rgba(16, 18, 20, 0.10)",
+      "subtitle": {
+        "background": "transparent",
+        "text": "#ffffff",
+        "stroke": "rgba(0,0,0,0.68)",
+        "highlight": "#caa24a"
+      }
+    }
+  }
+}

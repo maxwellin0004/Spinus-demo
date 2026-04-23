@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "bikini_margin_theater data schema",
+  "type": "object",
+  "required": [
+    "video_id",
+    "orientation",
+    "style_variant",
+    "hook",
+    "sections",
+    "close"
+  ],
+  "properties": {
+    "video_id": {
+      "type": "string"
+    },
+    "orientation": {
+      "type": "string",
+      "enum": [
+        "horizontal"
+      ]
+    },
+    "style_variant": {
+      "type": "string"
+    },
+    "hook": {
+      "type": "object",
+      "required": [
+        "headline_lines",
+        "subline"
+      ],
+      "properties": {
+        "headline_lines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subline": {
+          "type": "string"
+        }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "scene_type",
+          "title",
+          "beats"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "scene_type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "beats": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "board_items": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "character_blocks": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "close": {
+      "type": "object",
+      "required": [
+        "slogan",
+        "cta"
+      ],
+      "properties": {
+        "slogan": {
+          "type": "string"
+        },
+        "cta": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

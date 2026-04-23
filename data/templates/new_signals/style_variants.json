@@ -1,0 +1,53 @@
+{
+  "template_id": "new_signals",
+  "default_variant": "dark_warning_orange",
+  "variants": [
+    {
+      "variant_id": "dark_warning_orange",
+      "label": "Dark Warning Orange",
+      "description": "默认交易预警风格，深色背景、橙红强调、案例和图表主导。",
+      "audio_profile": {
+        "voice_style": "warning_anchor",
+        "pace": "medium_fast",
+        "bgm_style": "financial_tension_low",
+        "sfx_density": "medium"
+      }
+    },
+    {
+      "variant_id": "dark_warning_red",
+      "label": "Dark Warning Red",
+      "description": "更偏强风险和强后果感的变体，适合暴跌、踩踏和假突破内容。",
+      "audio_profile": {
+        "voice_style": "urgent_anchor",
+        "pace": "fast",
+        "bgm_style": "risk_alarm_pulse",
+        "sfx_density": "medium_high"
+      }
+    },
+    {
+      "variant_id": "chart_blue_orange",
+      "label": "Chart Blue Orange",
+      "description": "偏冷蓝的专业图表分析版，仍保留橙色强调。",
+      "audio_profile": {
+        "voice_style": "calm_analyst",
+        "pace": "medium",
+        "bgm_style": "clean_chart_pulse",
+        "sfx_density": "low"
+      }
+    }
+  ],
+  "editable_runtime_fields": [
+    "style_variant",
+    "accent",
+    "accent_secondary",
+    "background_base",
+    "background_soft",
+    "frame",
+    "text_primary",
+    "text_muted",
+    "voice_style",
+    "pace",
+    "bgm_style",
+    "sfx_density"
+  ]
+}

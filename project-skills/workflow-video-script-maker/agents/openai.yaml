@@ -1,0 +1,4 @@
+version: 1
+display_name: Workflow Video Script Maker
+short_description: Build a fuller production script package for this repository.
+default_prompt: Use this skill to build a production-ready script package for the workflow repository.

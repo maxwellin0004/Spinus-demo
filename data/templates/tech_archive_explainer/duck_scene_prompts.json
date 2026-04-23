@@ -1,0 +1,58 @@
+{
+  "version": "v1",
+  "usage_rule": "每个场景的鸭子都单独生成，不复用同一张。先保持统一角色设定，再根据当前镜头动作和情绪写单独 prompt。",
+  "shared_base_prompt": {
+    "use_case": "illustration-story",
+    "asset_type": "transparent character cutout for remotion video compositing",
+    "primary_request": "Create one cute yellow duck mascot illustration for a tech explainer video. Transparent background only.",
+    "subject": "a lovable small yellow duck mascot with big round head, compact body, tiny wings, orange beak, pink cheek blush, playful face, clean readable silhouette",
+    "style_medium": "high-quality cute 2D digital illustration, soft shading, smooth color transitions, polished creator-channel mascot art",
+    "composition_framing": "single full-body character, centered, enough padding around silhouette, readable from thumbnail size and video overlay size",
+    "lighting_mood": "bright, soft, cheerful, warm, friendly",
+    "color_palette": "warm yellow, cream yellow, orange beak, subtle pink blush, clean white highlights",
+    "constraints": [
+      "transparent background",
+      "no card behind the character",
+      "no square frame",
+      "no text",
+      "no watermark",
+      "consistent character identity across all scene variants",
+      "cute content-creator mascot quality"
+    ],
+    "avoid": [
+      "ugly placeholder vector look",
+      "corporate ppt mascot style",
+      "realistic duck anatomy",
+      "messy background",
+      "stiff pose",
+      "oversized props hiding the face"
+    ]
+  },
+  "scene_prompts": [
+    {
+      "scene_id": "hook_question",
+      "purpose": "开场提问，鸭子作为主持人提出问题",
+      "prompt": "Create a cute yellow duck mascot for the hook scene of a tech explainer video. Transparent background. The duck is facing slightly left, raising one wing as if asking a question, with an alert curious expression, small sparkle bubbles near the head, energetic but still adorable. Keep the body compact and the head large. Make it look like a polished creator mascot illustration, not a flat icon."
+    },
+    {
+      "scene_id": "archive_research",
+      "purpose": "历史资料段，鸭子在翻资料或阅读文档",
+      "prompt": "Create a cute yellow duck mascot for a research scene in a tech history explainer video. Transparent background. The duck is holding or leaning toward a document board, looking focused and slightly serious, as if checking archives. Keep the face cute and readable, with one big expressive eye, pink blush, warm yellow colors, and soft shading. No background card. No text."
+    },
+    {
+      "scene_id": "pointing_explain",
+      "purpose": "讲解标准、协议、节点时，鸭子指向画面重点",
+      "prompt": "Create a cute yellow duck mascot for an explanation scene in a technology explainer video. Transparent background. The duck is pointing upward or to the side with one wing, mouth slightly open in an excited teaching expression, as if explaining a key concept. Keep the shape very round and lovable, with a clean silhouette that works well when placed on the right side of a video frame."
+    },
+    {
+      "scene_id": "power_growth",
+      "purpose": "能力扩展段，鸭子带一点兴奋和推进感",
+      "prompt": "Create a cute yellow duck mascot for a momentum scene in a tech explainer video. Transparent background. The duck looks excited and slightly leaning forward, as if presenting a big upgrade or growth moment. The expression should feel lively, proud, and upbeat. Keep a soft bright illustration style with smooth shading and strong readability."
+    },
+    {
+      "scene_id": "final_present",
+      "purpose": "结尾总结，鸭子像收尾主持人",
+      "prompt": "Create a cute yellow duck mascot for the final summary scene of a tech explainer video. Transparent background. The duck has a confident, happy, presenter-like pose, with both wings slightly open as if wrapping up the story. Make it warm, charming, and polished, suitable as the final hero mascot of the video."
+    }
+  ]
+}

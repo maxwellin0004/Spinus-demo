@@ -1,0 +1,18 @@
+{
+  "template_id": "new_signals",
+  "mapping_version": "audio_sync_v1.3",
+  "voiceover_units_source": "example_voiceover_units.json.voiceover_units",
+  "tts_output_pattern": "video-app/public/audio/new-signals/{video_id}-voiceover.mp3",
+  "subtitle_timeline_output_pattern": "data/templates/new_signals/{example_or_video_id}/subtitle_timeline.generated.{orientation}.json",
+  "render_subtitle_source": "generated_subtitle_timeline",
+  "scene_timing_source": "voiceover_units.visual_section_id",
+  "fallback_timing_status": "estimated_after_audio_duration_fit",
+  "required_render_check": [
+    "Every subtitle cue maps to voice_id.",
+    "Every subtitle cue maps to visual_section_id.",
+    "Every voice_id maps to visual_section_id.",
+    "Each subtitle cue is a short sentence or semantic clause, not a full paragraph.",
+    "Final render data imports generated subtitle_timeline, not script-estimated cue frames.",
+    "If timing_status is estimated_after_audio_duration_fit, mark the render as preview-quality instead of final publish-quality."
+  ]
+}

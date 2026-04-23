@@ -1,0 +1,38 @@
+{
+  "version": "v1",
+  "template_id": "ai_concept_analyse",
+  "purpose": "Define how voiceover, subtitles, and visual scenes are aligned after final TTS audio is generated.",
+  "source_of_truth_order": [
+    "voiceover_units",
+    "final_voiceover_audio",
+    "aligned_subtitle_timeline",
+    "remotion_render_data"
+  ],
+  "required_voiceover_unit_fields": [
+    "voice_id",
+    "section",
+    "text",
+    "target_duration_sec",
+    "intended_pause_after_sec",
+    "emphasis_words",
+    "visual_section_id",
+    "timing_status"
+  ],
+  "timing_status_values": [
+    "estimated",
+    "aligned",
+    "estimated_after_audio_duration_fit"
+  ],
+  "workflow": [
+    "Generate voiceover_units in video-script-maker.",
+    "Generate final TTS audio from voiceover_units.",
+    "Read real audio duration and run transcription or forced alignment when available.",
+    "Write subtitle_timeline.horizontal.json or subtitle_timeline.vertical.json from real audio timing.",
+    "Render video-app from aligned subtitle timeline, not hand-estimated script timing."
+  ],
+  "fallback_policy": {
+    "when_forced_alignment_unavailable": "Distribute cue durations from real audio duration and mark timing_status as estimated_after_audio_duration_fit.",
+    "rough_preview_allowed": true,
+    "final_render_requires_aligned_timeline": true
+  }
+}

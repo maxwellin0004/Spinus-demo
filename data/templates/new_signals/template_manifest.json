@@ -1,0 +1,326 @@
+{
+  "template_id": "new_signals",
+  "template_name": "new_signals",
+  "version": "v1.3",
+  "status": "draft",
+  "description": "用于交易指标、图表案例、趋势衰减和风险预警类短视频的模板。核心特征是新闻或热点引入、案例冲击、图表证据、判断清单和风险收束，而不是 AI 概念解释。",
+  "positioning": {
+    "tracks": [
+      "trading education",
+      "technical indicator",
+      "market warning",
+      "chart breakdown"
+    ],
+    "platforms": [
+      "YouTube",
+      "TikTok",
+      "Bilibili"
+    ],
+    "aspect_ratios": [
+      "16:9"
+    ],
+    "duration_sec_range": [
+      60,
+      90
+    ],
+    "video_types": [
+      "indicator warning",
+      "chart case breakdown",
+      "trading risk explainer"
+    ],
+    "target_audience": [
+      "对技术指标、交易风险和行情复盘感兴趣的用户",
+      "需要批量制作交易教育内容的内容团队",
+      "希望把指标讲解做成系列化短视频的人"
+    ],
+    "goals": [
+      "提高开场停留和案例代入感",
+      "让指标讲解从抽象定义变成真实风险判断",
+      "让同类指标内容可以重复套用同一套页面系统",
+      "在结尾建立风险边界，而不是给出机械交易命令"
+    ]
+  },
+  "template_decision": {
+    "belongs_to_ai_concept_analyse": false,
+    "reason": [
+      "参考视频不是 AI 概念解释，而是交易预警内容",
+      "开场更依赖新闻、热点或后果感，而不是概念词 Hook",
+      "主体依赖图表、指标机制、案例和风险边界，而不是文档页和场景页"
+    ],
+    "needs_new_scene_system": true,
+    "do_not_reuse_components": [
+      "ReferenceHookScene",
+      "ReferenceDocScene",
+      "ReferenceCompareScene",
+      "ReferenceScenarioScene",
+      "ReferenceFlowScene",
+      "ReferenceCloseScene"
+    ]
+  },
+  "fixed_rules": {
+    "visual_system": {
+      "background_style": "dark_financial_warning_board",
+      "accent_color": "#ff6c4a",
+      "secondary_accent": "#ffb04d",
+      "text_primary": "#f7f9ff",
+      "layout_style": "chart_led_warning_panels"
+    },
+    "editing_rhythm": {
+      "opening_style": "news_context_then_case_shock",
+      "primary_transition_types": [
+        "hard_cut",
+        "headline_punch_in",
+        "image_montage_swap",
+        "panel_slide_up",
+        "bullet_reveal",
+        "stat_card_pulse"
+      ],
+      "motion_character": "news_led_consequence_first_chart_proofed",
+      "recommended_scene_density": "medium_high"
+    },
+    "narrative_pattern": [
+      "News Context",
+      "Case Shock",
+      "Indicator Mechanism",
+      "Chart Case 1",
+      "Chart Case 2",
+      "Chart Case 3",
+      "Checklist",
+      "Risk Close"
+    ],
+    "audio_rules": [
+      "默认带口播音频，口播节奏服务于新闻快讯感和风险预警感",
+      "BGM 保持低音量张力，不能压过口播主体",
+      "headline、stat、panel 切换允许短促 SFX，但密度不能过高",
+      "字幕时间轴优先跟随口播而不是跟随视觉切换",
+      "关键判断句前允许 0.15 到 0.35 秒微停顿，强化提醒感"
+    ]
+  },
+  "audio_defaults": {
+    "voice_style": "warning_anchor",
+    "pace": "medium_fast",
+    "bgm_style": "financial_tension_low",
+    "sfx_density": "medium",
+    "subtitle_sync_mode": "voice_first",
+    "tts_provider": "elevenlabs",
+    "tts_model_id": "eleven_multilingual_v2"
+  },
+  "scene_modules": [
+    {
+      "scene_id": "news_context",
+      "component_name": "TradingNewsContextScene",
+      "purpose": "先给新闻、人物、市场情绪和后果感，建立现实锚点",
+      "duration_sec": 8,
+      "template_role": "opening_context",
+      "fixed_elements": [
+        "news_kicker",
+        "headline",
+        "quote_block",
+        "media_montage",
+        "bullet_cards",
+        "tags"
+      ],
+      "variable_fields": [
+        "news_pack",
+        "news_context"
+      ]
+    },
+    {
+      "scene_id": "case_shock",
+      "component_name": "TradingCaseShockScene",
+      "purpose": "用后果、跌幅或错判代价打出案例冲击",
+      "duration_sec": 8,
+      "template_role": "shock_hook",
+      "fixed_elements": [
+        "headline",
+        "subheadline",
+        "stat_card",
+        "date_label",
+        "chart_inset"
+      ],
+      "variable_fields": [
+        "hook"
+      ]
+    },
+    {
+      "scene_id": "indicator_mechanism",
+      "component_name": "TradingIndicatorMechanismScene",
+      "purpose": "把指标机制和判断逻辑讲清楚，但不说成机械按钮",
+      "duration_sec": 10,
+      "template_role": "mechanism",
+      "fixed_elements": [
+        "tag",
+        "title",
+        "formula_chip",
+        "description",
+        "4_cards",
+        "mechanism_chart"
+      ],
+      "variable_fields": [
+        "mechanism"
+      ]
+    },
+    {
+      "scene_id": "chart_case_1",
+      "component_name": "TradingChartCaseScene",
+      "purpose": "图表案例 1，强调风险识别",
+      "duration_sec": 7,
+      "template_role": "case",
+      "fixed_elements": [
+        "chart_panel",
+        "badge",
+        "title",
+        "takeaway",
+        "bullet_list"
+      ],
+      "variable_fields": [
+        "cases[0]"
+      ]
+    },
+    {
+      "scene_id": "chart_case_2",
+      "component_name": "TradingChartCaseScene",
+      "purpose": "图表案例 2，强调结构位或过滤条件",
+      "duration_sec": 7,
+      "template_role": "case",
+      "fixed_elements": [
+        "chart_panel",
+        "badge",
+        "title",
+        "takeaway",
+        "bullet_list"
+      ],
+      "variable_fields": [
+        "cases[1]"
+      ]
+    },
+    {
+      "scene_id": "chart_case_3",
+      "component_name": "TradingChartCaseScene",
+      "purpose": "图表案例 3，强调最容易误用的情境",
+      "duration_sec": 7,
+      "template_role": "case",
+      "fixed_elements": [
+        "chart_panel",
+        "badge",
+        "title",
+        "takeaway",
+        "bullet_list"
+      ],
+      "variable_fields": [
+        "cases[2]"
+      ]
+    },
+    {
+      "scene_id": "checklist",
+      "component_name": "TradingChecklistScene",
+      "purpose": "把指标放回真实判断顺序，给出更稳的执行框架",
+      "duration_sec": 11,
+      "template_role": "decision_process",
+      "fixed_elements": [
+        "title",
+        "subtitle",
+        "3_step_cards"
+      ],
+      "variable_fields": [
+        "checklist"
+      ]
+    },
+    {
+      "scene_id": "risk_close",
+      "component_name": "TradingRiskCloseScene",
+      "purpose": "结尾收束成风险边界，而不是绝对交易命令",
+      "duration_sec": 17,
+      "template_role": "closing_boundary",
+      "fixed_elements": [
+        "closing_title",
+        "closing_body",
+        "closing_tags"
+      ],
+      "variable_fields": [
+        "close"
+      ]
+    }
+  ],
+  "variables": {
+    "required": [
+      "topic_name",
+      "style_variant",
+      "news_pack",
+      "news_context",
+      "hook",
+      "mechanism",
+      "cases",
+      "checklist",
+      "close"
+    ],
+    "optional": [
+      "topic_alias",
+      "platform",
+      "language",
+      "duration_sec",
+      "audio_profile",
+      "input_assets",
+      "news_reference",
+      "market_event"
+    ]
+  },
+  "audio_alignment": {
+    "enabled": true,
+    "protocol_file": "audio_alignment_protocol.json",
+    "audio_schema_file": "template_data_audio_schema.json",
+    "example_voiceover_units_file": "example_voiceover_units.json",
+    "render_mapping_file": "render_mapping.audio_sync.json",
+    "final_subtitle_source": "subtitle_timeline.{orientation}.json",
+    "timing_rule": "voiceover_units are estimated until TTS audio is generated and subtitle_timeline.generated.{orientation}.json is rebuilt from real audio timing",
+    "subtitle_granularity_rule": "Subtitle cues must be split by short sentence or semantic clause, not by paragraph.",
+    "scene_sync_rule": "Scene timing should follow voiceover_units.visual_section_id boundaries whenever practical.",
+    "hard_rule": "Do not render final voiceover videos from hand-estimated subtitle frames unless the user explicitly asks for a rough preview.",
+    "preview_fallback": "If forced alignment is unavailable, read the real TTS duration and create a duration-fit generated timeline marked estimated_after_audio_duration_fit."
+  },
+  "output_contract": {
+    "primary_outputs": [
+      "content_script",
+      "storyboard_script",
+      "asset_script",
+      "subtitle_voice_script",
+      "voiceover_script",
+      "audio_plan",
+      "sfx_bgm_map",
+      "visual_script.horizontal",
+      "react_page_script.horizontal",
+      "timeline_script.horizontal",
+      "formal_script.horizontal"
+    ],
+    "extended_outputs": [
+      "shot_script.horizontal",
+      "fx_script.horizontal",
+      "visual_design_script.horizontal",
+      "asset_requirements.json",
+      "subtitle_timeline.horizontal.json",
+      "render_mapping.json",
+      "review_guide.md"
+    ],
+    "render_target": {
+      "engine": "React + Remotion",
+      "composition_id": "new-signals-preview",
+      "fps": 30,
+      "resolution": "1920x1080"
+    }
+  },
+  "execution_notes": {
+    "recommended_workflow": [
+      "先由 Codex 获取与主题相关的新闻素材并输出 news_pack",
+      "再把 news_pack 映射成 new_signals 模板数据",
+      "然后生成 8 个视觉脚本和 3 个音频脚本",
+      "使用 ElevenLabs 生成口播音频，并准备 BGM / SFX 资源",
+      "补齐本地图片、人物图、新闻配图和图表素材",
+      "最后映射到 trading scene system 并渲染横屏版本"
+    ],
+    "implementation_refs": [
+      "video-app/src/compositions/NewSignalsComposition.tsx",
+      "video-app/src/data/newSignalsData.ts",
+      "video-app/src/scenes/trading"
+    ]
+  }
+}

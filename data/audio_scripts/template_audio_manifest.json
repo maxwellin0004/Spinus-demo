@@ -1,0 +1,52 @@
+[
+  {
+    "id": "agent-horizontal-preview",
+    "text_file": "data/audio_scripts/agent_horizontal_voiceover.txt",
+    "output": "video-app/public/audio/ai-concept-analyse/agent-horizontal-voiceover.mp3"
+  },
+  {
+    "id": "mcp-horizontal-preview",
+    "text_file": "data/audio_scripts/mcp_horizontal_voiceover.txt",
+    "output": "video-app/public/audio/ai-concept-analyse/mcp-horizontal-voiceover.mp3"
+  },
+  {
+    "id": "mcp-vertical-preview",
+    "text_file": "data/audio_scripts/mcp_vertical_voiceover.txt",
+    "output": "video-app/public/audio/ai-concept-analyse/mcp-vertical-voiceover.mp3"
+  },
+  {
+    "id": "rag-horizontal-preview",
+    "text_file": "data/audio_scripts/rag_horizontal_voiceover.txt",
+    "output": "video-app/public/audio/ai-concept-analyse/rag-horizontal-voiceover.mp3"
+  },
+  {
+    "id": "skill-horizontal-preview",
+    "text_file": "data/audio_scripts/skill_horizontal_voiceover.txt",
+    "output": "video-app/public/audio/ai-concept-analyse/skill-horizontal-voiceover.mp3"
+  },
+  {
+    "id": "macd-indicator-preview",
+    "text_file": "data/audio_scripts/macd_indicator_voiceover.txt",
+    "output": "video-app/public/audio/new-signals/macd-indicator-voiceover.mp3"
+  },
+  {
+    "id": "new-signals-preview",
+    "text_file": "data/audio_scripts/new_signals_macd_voiceover.txt",
+    "output": "video-app/public/audio/new-signals/macd-warning-voiceover.mp3"
+  },
+  {
+    "id": "new-signals-rsi-preview",
+    "text_file": "data/audio_scripts/new_signals_rsi_voiceover.txt",
+    "output": "video-app/public/audio/new-signals/rsi-strategy-voiceover.mp3"
+  },
+  {
+    "id": "comic-habit-spiral-preview",
+    "text_file": "data/audio_scripts/comic_habit_spiral_voiceover.txt",
+    "output": "video-app/public/audio/comic-habit-spiral/procrastination-loop-voiceover.mp3"
+  },
+  {
+    "id": "comic-emotional-scroll-preview",
+    "text_file": "data/audio_scripts/comic_emotional_scroll_voiceover.txt",
+    "output": "video-app/public/audio/comic-emotional-insight/emotional-scroll-voiceover.mp3"
+  }
+]

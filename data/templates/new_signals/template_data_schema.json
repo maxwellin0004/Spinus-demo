@@ -1,0 +1,360 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "new_signals template data schema",
+  "type": "object",
+  "required": [
+    "template_id",
+    "topic_name",
+    "style_variant",
+    "news_pack",
+    "news_context",
+    "hook",
+    "mechanism",
+    "cases",
+    "checklist",
+    "close"
+  ],
+  "properties": {
+    "template_id": {
+      "type": "string",
+      "const": "new_signals"
+    },
+    "topic_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "topic_alias": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string",
+      "default": "zh-CN"
+    },
+    "platform": {
+      "type": "string"
+    },
+    "duration_sec": {
+      "type": "number",
+      "minimum": 45,
+      "maximum": 120
+    },
+    "style_variant": {
+      "type": "string",
+      "default": "dark_warning_orange"
+    },
+    "voiceover_units": {
+      "$ref": "template_data_audio_schema.json#/properties/voiceover_units"
+    },
+    "audio_alignment": {
+      "$ref": "template_data_audio_schema.json#/properties/audio_alignment"
+    },
+    "news_pack": {
+      "type": "object",
+      "required": [
+        "headline",
+        "source",
+        "date",
+        "event_summary",
+        "why_it_matters",
+        "image_leads"
+      ],
+      "properties": {
+        "headline": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        },
+        "quote": {
+          "type": "string"
+        },
+        "event_summary": {
+          "type": "string"
+        },
+        "why_it_matters": {
+          "type": "string"
+        },
+        "image_leads": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 6,
+          "items": {
+            "type": "string"
+          }
+        },
+        "image_urls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "people_or_entities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "news_context": {
+      "type": "object",
+      "required": [
+        "kicker",
+        "title",
+        "quote",
+        "sourceLabel",
+        "bullets",
+        "tags",
+        "mediaCards"
+      ],
+      "properties": {
+        "kicker": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "quote": {
+          "type": "string"
+        },
+        "sourceLabel": {
+          "type": "string"
+        },
+        "bullets": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 4,
+          "items": {
+            "type": "string"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 5,
+          "items": {
+            "type": "string"
+          }
+        },
+        "mediaCards": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "required": [
+              "imageSrc",
+              "label",
+              "caption"
+            ],
+            "properties": {
+              "imageSrc": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "caption": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "hook": {
+      "type": "object",
+      "required": [
+        "kicker",
+        "headline",
+        "subheadline",
+        "stat",
+        "statLabel",
+        "dateLabel"
+      ],
+      "properties": {
+        "kicker": {
+          "type": "string"
+        },
+        "headline": {
+          "type": "string"
+        },
+        "subheadline": {
+          "type": "string"
+        },
+        "stat": {
+          "type": "string"
+        },
+        "statLabel": {
+          "type": "string"
+        },
+        "dateLabel": {
+          "type": "string"
+        },
+        "imageSrc": {
+          "type": "string"
+        },
+        "insetImageSrc": {
+          "type": "string"
+        },
+        "sourceLabel": {
+          "type": "string"
+        },
+        "boardLines": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 5,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "mechanism": {
+      "type": "object",
+      "required": [
+        "tag",
+        "title",
+        "formula",
+        "description",
+        "cards"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "formula": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "imageSrc": {
+          "type": "string"
+        },
+        "cards": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "required": [
+              "title",
+              "body"
+            ],
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "badge",
+          "title",
+          "takeaway",
+          "bullets"
+        ],
+        "properties": {
+          "badge": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "takeaway": {
+            "type": "string"
+          },
+          "bullets": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 4,
+            "items": {
+              "type": "string"
+            }
+          },
+          "imageSrc": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "checklist": {
+      "type": "object",
+      "required": [
+        "title",
+        "subtitle",
+        "steps"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "subtitle": {
+          "type": "string"
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": [
+              "title",
+              "body"
+            ],
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "close": {
+      "type": "object",
+      "required": [
+        "title",
+        "body",
+        "tags"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 5,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

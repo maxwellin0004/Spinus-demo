@@ -1,0 +1,66 @@
+{
+  "template_id": "new_signals",
+  "example_id": "macd_warning",
+  "assets": [
+    {
+      "asset_id": "hook_paul_tudor_jones",
+      "target_sections": ["news_context"],
+      "expected_asset_type": "news_image",
+      "local_source_path": "D:/program/ai_video/workflow/assets/images/hook_paul_tudor_jones.jpg",
+      "asset_status": "available",
+      "use_strategy": "新闻人物卡片图",
+      "fallback_plan": "程序生成引语卡",
+      "notes": "用于人物观点层"
+    },
+    {
+      "asset_id": "hook_occupy_wall_street",
+      "target_sections": ["news_context"],
+      "expected_asset_type": "news_image",
+      "local_source_path": "D:/program/ai_video/workflow/assets/images/hook_occupy_wall_street.jpg",
+      "asset_status": "available",
+      "use_strategy": "市场情绪素材",
+      "fallback_plan": "改成市场情绪文字卡",
+      "notes": "用于市场热度层"
+    },
+    {
+      "asset_id": "hook_financial_crisis_store",
+      "target_sections": ["news_context"],
+      "expected_asset_type": "consequence_image",
+      "local_source_path": "D:/program/ai_video/workflow/assets/images/hook_financial_crisis_store.jpg",
+      "asset_status": "available",
+      "use_strategy": "现实后果素材",
+      "fallback_plan": "改成大数字卡 + 文本",
+      "notes": "用于后果层"
+    },
+    {
+      "asset_id": "macd_ref_chart_1",
+      "target_sections": ["hook", "chart_case_1"],
+      "expected_asset_type": "chart_screenshot",
+      "local_source_path": "D:/program/ai_video/workflow/assets/images/macd_ref_chart_1.jpg",
+      "asset_status": "available",
+      "use_strategy": "Hook inset 与案例图表",
+      "fallback_plan": "程序生成空白图表占位",
+      "notes": "最重要的图表之一"
+    },
+    {
+      "asset_id": "macd_ref_chart_2",
+      "target_sections": ["mechanism", "chart_case_2"],
+      "expected_asset_type": "chart_screenshot",
+      "local_source_path": "D:/program/ai_video/workflow/assets/images/macd_ref_chart_2.jpg",
+      "asset_status": "available",
+      "use_strategy": "机制页与案例 2",
+      "fallback_plan": "程序生成图表占位",
+      "notes": "用于结构位和机制解释"
+    },
+    {
+      "asset_id": "macd_ref_chart_3",
+      "target_sections": ["chart_case_3"],
+      "expected_asset_type": "chart_screenshot",
+      "local_source_path": "D:/program/ai_video/workflow/assets/images/macd_ref_chart_3.jpg",
+      "asset_status": "available",
+      "use_strategy": "案例 3 图表",
+      "fallback_plan": "程序生成图表占位",
+      "notes": "用于假突破 / 追高提醒"
+    }
+  ]
+}

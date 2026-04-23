@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "bikini_margin_theater audio schema",
+  "type": "object",
+  "required": [
+    "voiceover_units",
+    "audio_alignment"
+  ],
+  "properties": {
+    "voiceover_units": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "audio_alignment": {
+      "type": "object",
+      "required": [
+        "tts_provider",
+        "voiceover_audio_path",
+        "subtitle_timeline_path",
+        "alignment_status"
+      ],
+      "properties": {
+        "tts_provider": {
+          "type": "string"
+        },
+        "voiceover_audio_path": {
+          "type": "string"
+        },
+        "subtitle_timeline_path": {
+          "type": "string"
+        },
+        "alignment_status": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

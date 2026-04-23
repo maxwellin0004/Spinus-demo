@@ -1,0 +1,85 @@
+{
+  "template_id": "ai_concept_analyse",
+  "orientation": "horizontal",
+  "purpose": "定义该模板在横屏模式下的默认字幕节奏规则，而不是某个主题的具体字幕文案。",
+  "default_rules": {
+    "position": "bottom_center",
+    "max_lines": 2,
+    "recommended_chars_per_chunk": [8, 20],
+    "chunk_duration_sec": [0.6, 2.4],
+    "highlight_strategy": "highlight emphasis words with accent color",
+    "hook_speed": "fast",
+    "body_speed": "medium",
+    "close_speed": "medium_slow"
+  },
+  "scene_presets": [
+    {
+      "scene_id": "hook",
+      "chunking_rule": "short punchy chunks",
+      "recommended_chunks_per_6s": 3,
+      "emphasis_word_count": [1, 2],
+      "notes": [
+        "优先切成判断句，不要用长整句。",
+        "重点词尽量与主标题一致。"
+      ]
+    },
+    {
+      "scene_id": "document_definition",
+      "chunking_rule": "one concept group per chunk",
+      "recommended_chunks_per_6s": 3,
+      "emphasis_word_count": [1, 3],
+      "notes": [
+        "和右侧规则卡同步出现更好。",
+        "目标、步骤、风格、输出是天然 emphasis 词。"
+      ]
+    },
+    {
+      "scene_id": "compare_basic",
+      "chunking_rule": "contrast-first chunking",
+      "recommended_chunks_per_6s": 3,
+      "emphasis_word_count": [1, 2],
+      "notes": [
+        "对比页字幕要帮助观众快速抓左右差异。",
+        "关键词优先放在句尾或 chunk 尾部。"
+      ]
+    },
+    {
+      "scene_id": "scenario",
+      "chunking_rule": "scene label + one value point",
+      "recommended_chunks_per_6s": 3,
+      "emphasis_word_count": [1, 2],
+      "notes": [
+        "每个场景页建议最多 3 个字幕块。",
+        "避免字幕过长压住右侧信息面板。"
+      ]
+    },
+    {
+      "scene_id": "flow",
+      "chunking_rule": "one process step per chunk",
+      "recommended_chunks_per_6s": 2,
+      "emphasis_word_count": [1, 2],
+      "notes": [
+        "字幕切点建议和 step 节点点亮同步。"
+      ]
+    },
+    {
+      "scene_id": "concept_compare",
+      "chunking_rule": "left concept one chunk, right concept one chunk",
+      "recommended_chunks_per_6s": 2,
+      "emphasis_word_count": [1, 2],
+      "notes": [
+        "这一页不适合长句。",
+        "优先让观众记住边界定义。"
+      ]
+    },
+    {
+      "scene_id": "close",
+      "chunking_rule": "statement first, explanation second",
+      "recommended_chunks_per_6s": 2,
+      "emphasis_word_count": [1, 2],
+      "notes": [
+        "结尾建议减速，给观众吸收空间。"
+      ]
+    }
+  ]
+}

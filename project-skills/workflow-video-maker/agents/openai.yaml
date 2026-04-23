@@ -1,0 +1,4 @@
+version: 1
+display_name: Workflow Video Maker
+short_description: Convert script packages into implementation-ready plans for this repository.
+default_prompt: Use this skill to turn a completed script package into an implementation-ready video plan for the workflow repository.

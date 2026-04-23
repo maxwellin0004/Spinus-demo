@@ -1,0 +1,78 @@
+{
+  "template_id": "minimal_psych_explainer",
+  "version": "v1.0",
+  "purpose": "Define the audio-first subtitle alignment protocol for minimal psychology explainer videos.",
+  "standard_flow": [
+    {
+      "step": 1,
+      "id": "generate_voiceover_units",
+      "owner": "video-script-maker",
+      "description": "Split narration into stable sentence-level voiceover_units. Each unit must include id, scene_id, text, target_duration_sec, intended_pause_after_sec, emphasis_words, and timing_status."
+    },
+    {
+      "step": 2,
+      "id": "generate_tts_audio",
+      "owner": "video-maker",
+      "description": "Generate one final voiceover audio file from voiceover_units. ElevenLabs is the default provider."
+    },
+    {
+      "step": 3,
+      "id": "measure_audio",
+      "owner": "video-app_or_codex",
+      "description": "Read real audio duration using media parser or ffprobe-compatible tooling."
+    },
+    {
+      "step": 4,
+      "id": "rebuild_subtitle_timeline",
+      "owner": "video-maker",
+      "description": "Rebuild subtitle_timeline.horizontal.json from the real audio duration or forced-alignment timestamps. Estimated timing is only allowed for rough previews."
+    },
+    {
+      "step": 5,
+      "id": "sync_composition_duration",
+      "owner": "video-app",
+      "description": "Set composition duration to cover the final audio duration. Add only a small tail buffer unless the video intentionally needs a silent outro."
+    },
+    {
+      "step": 6,
+      "id": "render_from_aligned_timeline",
+      "owner": "video-app",
+      "description": "Render SubtitleTrack from the rebuilt subtitle timeline instead of old hand-estimated frames."
+    }
+  ],
+  "timing_rules": {
+    "fps": 30,
+    "rough_preview_allowed": true,
+    "final_render_requires_real_audio": true,
+    "tail_buffer_sec_range": [
+      0.05,
+      0.5
+    ],
+    "max_subtitle_lines": 2,
+    "subtitle_safe_area": "bottom area below psych divider line is reserved for global subtitles only"
+  },
+  "fallback_alignment_methods": [
+    {
+      "method": "forced_alignment",
+      "preferred": true,
+      "description": "Use word or sentence timestamps from transcription/alignment when available."
+    },
+    {
+      "method": "audio_duration_scaled_units",
+      "preferred": false,
+      "description": "If forced alignment is unavailable, distribute timing by voiceover unit text length and target duration, then scale to real audio duration."
+    },
+    {
+      "method": "manual_review",
+      "preferred": false,
+      "description": "For production, inspect preview and manually adjust cues with obvious early/late subtitle issues."
+    }
+  ],
+  "hard_rules": [
+    "Do not render a final voiceover video using only hand-estimated subtitle frames.",
+    "If voiceover text changes, subtitle_timeline.horizontal.json must be regenerated.",
+    "If TTS voice, speed, or model changes, subtitle_timeline.horizontal.json must be regenerated.",
+    "Scene-local text must not overlap the bottom global subtitle area.",
+    "Transparent subtitle style is preferred for this template; do not reintroduce a black subtitle box unless explicitly requested."
+  ]
+}
