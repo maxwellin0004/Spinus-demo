@@ -19,7 +19,7 @@
           </div>
           <div>
             <h1>Codex Video Console</h1>
-            <p>D:\program\ai_video\workflow</p>
+            <p id="workspacePath">D:\program\ai_video\workflow</p>
           </div>
         </div>
         <div class="top-actions">
@@ -76,11 +76,7 @@
           </div>
 
           <form class="composer" id="composerForm">
-            <textarea
-              id="composerInput"
-              rows="4"
-              placeholder="输入视频需求，Codex 将读取本地模板、脚本和素材生成任务计划。"
-            ></textarea>
+            <textarea id="composerInput" rows="4" placeholder="写下这条视频要做什么，风格、时长和平台都可以一起说。"></textarea>
             <div class="composer-actions">
               <button class="ghost-button" type="button" id="attachButton">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -119,15 +115,15 @@
             </div>
             <div>
               <span>模板</span>
-              <strong>new_signals</strong>
+              <strong id="jobTemplateLabel">new_signals</strong>
             </div>
             <div>
               <span>比例</span>
-              <strong>9:16</strong>
+              <strong id="jobAspectLabel">9:16</strong>
             </div>
             <div>
               <span>输出</span>
-              <strong>data/jobs</strong>
+              <strong id="jobOutputLabel">data/jobs</strong>
             </div>
           </div>
 
@@ -137,43 +133,16 @@
             </div>
 
             <div class="view-page" id="resourcesView">
-              <div class="resource-grid">
-                <article class="resource-card">
-                  <img src="../assets/images/macd_ref_chart_1.jpg" alt="MACD 图表素材" />
-                  <div>
-                    <strong>macd_ref_chart_1.jpg</strong>
-                    <span>图表素材</span>
-                  </div>
-                </article>
-                <article class="resource-card">
-                  <img src="../assets/images/scenario_video_breakdown.jpg" alt="视频拆解场景素材" />
-                  <div>
-                    <strong>scenario_video_breakdown.jpg</strong>
-                    <span>场景素材</span>
-                  </div>
-                </article>
-                <article class="resource-card">
-                  <img src="../assets/images/hook_financial_crisis_newspaper.jpg" alt="金融危机报纸素材" />
-                  <div>
-                    <strong>financial_crisis_newspaper.jpg</strong>
-                    <span>Hook 素材</span>
-                  </div>
-                </article>
+              <div class="resource-grid" id="resourceGrid"></div>
+
+              <div class="template-section">
+                <h3>模板</h3>
+                <div class="template-list" id="templateList" aria-label="模板列表"></div>
               </div>
 
-              <div class="template-list" aria-label="模板列表">
-                <button type="button" class="template-item is-selected">
-                  <span>new_signals</span>
-                  <strong>交易信号 / 指标解释</strong>
-                </button>
-                <button type="button" class="template-item">
-                  <span>minimal_psych_explainer</span>
-                  <strong>心理机制 / 方法论</strong>
-                </button>
-                <button type="button" class="template-item">
-                  <span>comic_habit_spiral</span>
-                  <strong>漫画叙事 / 情绪洞察</strong>
-                </button>
+              <div class="template-section">
+                <h3>最近任务</h3>
+                <div class="template-list" id="jobHistoryList" aria-label="最近任务"></div>
               </div>
             </div>
 
@@ -222,11 +191,11 @@
 
           <div class="phone-frame">
             <div class="video-stage">
-              <img src="../assets/images/macd_ref_chart_2.jpg" alt="交易视频预览画面" />
+              <img src="/workspace/assets/images/macd_ref_chart_2.jpg" alt="交易视频预览画面" id="previewImage" />
               <div class="video-overlay">
-                <div class="episode-label">EP. 04 / Trading Signals</div>
-                <h3>假突破最危险的地方</h3>
-                <p>不是亏损，而是它会让你连续追错方向。</p>
+                <div class="episode-label" id="episodeLabel">EP. 04 / Trading Signals</div>
+                <h3 id="previewHeadline">假突破最危险的地方</h3>
+                <p id="previewSummary">不是亏损，而是它会让你连续追错方向。</p>
               </div>
               <div class="subtitle-band" id="subtitleBand">先等回踩确认，再判断量能是否跟上</div>
               <div class="progress-rail" aria-hidden="true">
@@ -258,20 +227,7 @@
             </button>
           </div>
 
-          <div class="script-panel">
-            <div class="script-row">
-              <span>Hook</span>
-              <p>很多假突破不是信号失败，而是你进场太早。</p>
-            </div>
-            <div class="script-row">
-              <span>Body</span>
-              <p>先看突破后的回踩，再看成交量是否放大。</p>
-            </div>
-            <div class="script-row">
-              <span>Close</span>
-              <p>真正的确认，往往发生在你最想冲进去之后。</p>
-            </div>
-          </div>
+          <div class="script-panel" id="scriptPanel"></div>
         </aside>
       </main>
     </div>

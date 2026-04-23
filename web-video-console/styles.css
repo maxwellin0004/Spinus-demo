@@ -259,6 +259,16 @@ svg {
   background: var(--green-2);
 }
 
+.status-pill.is-ready {
+  border-color: rgba(66, 100, 216, 0.28);
+  background: rgba(66, 100, 216, 0.08);
+  color: var(--blue);
+}
+
+.status-pill.is-ready span {
+  background: var(--blue);
+}
+
 .thread-list {
   display: flex;
   overflow: auto;
@@ -606,6 +616,18 @@ svg {
   display: grid;
   gap: 8px;
   margin-top: 14px;
+}
+
+.template-section {
+  margin-top: 18px;
+}
+
+.template-section h3 {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .template-item {

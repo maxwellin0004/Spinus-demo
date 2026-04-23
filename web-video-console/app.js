@@ -1,101 +1,80 @@
-const threadList = document.querySelector("#threadList");
-const composerForm = document.querySelector("#composerForm");
-const composerInput = document.querySelector("#composerInput");
-const stepList = document.querySelector("#stepList");
-const logStream = document.querySelector("#logStream");
-const previewProgress = document.querySelector("#previewProgress");
-const previewStatus = document.querySelector("#previewStatus");
-const subtitleBand = document.querySelector("#subtitleBand");
-const jobStatusLabel = document.querySelector("#jobStatusLabel");
-
-const state = {
-  logs: [],
-  previewProgress: 36,
-  currentStep: 1,
-  steps: [
-    {
-      title: "解析视频需求",
-      detail: "提取平台、时长、比例、主题、语气和模板候选。",
-      status: "done",
-    },
-    {
-      title: "生成 video_plan.json",
-      detail: "Codex 基于本地模板和素材目录生成结构化任务计划。",
-      status: "running",
-    },
-    {
-      title: "生成口播与字幕",
-      detail: "拆出 Hook、主体、转场、结尾，并保留字幕高亮字段。",
-      status: "waiting",
-    },
-    {
-      title: "生成 TTS 与时间轴",
-      detail: "调用本地配音脚本，写入音频和 word timestamps。",
-      status: "waiting",
-    },
-    {
-      title: "绑定 Remotion Composition",
-      detail: "把计划和字幕注入 new_signals 竖屏模板。",
-      status: "waiting",
-    },
-    {
-      title: "渲染 MP4",
-      detail: "执行 Remotion 渲染并把产物写入 data/jobs。",
-      status: "waiting",
-    },
-  ],
+const els = {
+  workspacePath: document.querySelector("#workspacePath"),
+  threadList: document.querySelector("#threadList"),
+  composerForm: document.querySelector("#composerForm"),
+  composerInput: document.querySelector("#composerInput"),
+  stepList: document.querySelector("#stepList"),
+  logStream: document.querySelector("#logStream"),
+  previewProgress: document.querySelector("#previewProgress"),
+  previewStatus: document.querySelector("#previewStatus"),
+  subtitleBand: document.querySelector("#subtitleBand"),
+  jobStatusLabel: document.querySelector("#jobStatusLabel"),
+  activeJobTitle: document.querySelector("#activeJobTitle"),
+  jobTemplateLabel: document.querySelector("#jobTemplateLabel"),
+  jobAspectLabel: document.querySelector("#jobAspectLabel"),
+  jobOutputLabel: document.querySelector("#jobOutputLabel"),
+  resourceGrid: document.querySelector("#resourceGrid"),
+  templateList: document.querySelector("#templateList"),
+  jobHistoryList: document.querySelector("#jobHistoryList"),
+  previewImage: document.querySelector("#previewImage"),
+  episodeLabel: document.querySelector("#episodeLabel"),
+  previewHeadline: document.querySelector("#previewHeadline"),
+  previewSummary: document.querySelector("#previewSummary"),
+  scriptPanel: document.querySelector("#scriptPanel"),
+  refreshButton: document.querySelector("#refreshButton"),
+  generatePlanButton: document.querySelector("#generatePlanButton"),
+  ttsButton: document.querySelector("#ttsButton"),
+  renderButton: document.querySelector("#renderButton"),
+  playPreviewButton: document.querySelector("#playPreviewButton"),
+  attachButton: document.querySelector("#attachButton"),
 };
 
-const initialMessages = [
-  {
-    role: "assistant",
-    meta: "Codex",
-    text: "当前工作区已定位到 D:\\program\\ai_video\\workflow。可以把视频需求发给我，我会先生成任务计划，再进入配音和渲染。",
-  },
-  {
-    role: "user",
-    meta: "You",
-    text: "生成一个 60 秒竖屏交易教育视频，主题是假突破，节奏紧凑，适合小红书。",
-  },
-  {
-    role: "assistant",
-    meta: "Codex",
-    text: "已选择 new_signals 模板。下一步会生成 video_plan.json，并检查本地 assets、data/templates、video-app/src/compositions。",
-  },
-];
+const state = {
+  project: null,
+  templates: [],
+  assets: [],
+  jobs: [],
+  activeJob: null,
+  eventSource: null,
+};
 
-function renderMessages(messages) {
-  threadList.innerHTML = messages
-    .map(
-      (message) => `
-        <article class="message ${message.role === "user" ? "user" : "assistant"}">
-          <div class="meta">${message.meta}</div>
-          <div class="bubble">${escapeHtml(message.text)}</div>
-        </article>
-      `,
-    )
-    .join("");
-  threadList.scrollTop = threadList.scrollHeight;
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
-function renderSteps() {
-  stepList.innerHTML = state.steps
-    .map(
-      (step, index) => `
-        <li class="step-card is-${step.status}">
-          <div class="step-index">${step.status === "done" ? iconCheck() : String(index + 1).padStart(2, "0")}</div>
-          <div class="step-copy">
-            <strong>${step.title}</strong>
-            <p>${step.detail}</p>
-          </div>
-          <span class="step-state">${statusText(step.status)}</span>
-        </li>
-      `,
-    )
-    .join("");
+async function requestJson(url, options = {}) {
+  const response = await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
+    ...options,
+  });
+
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(payload.error || `Request failed: ${response.status}`);
+  }
+  return payload;
 }
 
-function statusText(status) {
+function localizeJobStatus(status) {
+  const map = {
+    planning: "规划中",
+    tts: "配音中",
+    completed: "已完成",
+    awaiting_review: "待审核",
+    unknown: "未知",
+  };
+  return map[status] || status;
+}
+
+function localizeStepStatus(status) {
   const map = {
     done: "完成",
     running: "执行中",
@@ -103,6 +82,43 @@ function statusText(status) {
     failed: "失败",
   };
   return map[status] || status;
+}
+
+function setPreviewStatus(job) {
+  const text = job.preview?.statusText || localizeJobStatus(job.status);
+  els.previewStatus.innerHTML = `<span></span>${escapeHtml(text)}`;
+  els.previewStatus.classList.toggle("is-ready", job.status === "completed");
+}
+
+function renderMessages(messages) {
+  els.threadList.innerHTML = messages
+    .map(
+      (message) => `
+        <article class="message ${message.role === "user" ? "user" : "assistant"}">
+          <div class="meta">${escapeHtml(message.meta || (message.role === "user" ? "You" : "Codex"))}</div>
+          <div class="bubble">${escapeHtml(message.text || "")}</div>
+        </article>
+      `,
+    )
+    .join("");
+  els.threadList.scrollTop = els.threadList.scrollHeight;
+}
+
+function renderSteps(steps) {
+  els.stepList.innerHTML = steps
+    .map(
+      (step, index) => `
+        <li class="step-card is-${escapeHtml(step.status || "waiting")}">
+          <div class="step-index">${step.status === "done" ? iconCheck() : String(index + 1).padStart(2, "0")}</div>
+          <div class="step-copy">
+            <strong>${escapeHtml(step.title || "Untitled")}</strong>
+            <p>${escapeHtml(step.detail || "")}</p>
+          </div>
+          <span class="step-state">${escapeHtml(localizeStepStatus(step.status || "waiting"))}</span>
+        </li>
+      `,
+    )
+    .join("");
 }
 
 function iconCheck() {
@@ -113,151 +129,288 @@ function iconCheck() {
   `;
 }
 
-function escapeHtml(value) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+function renderResources() {
+  els.resourceGrid.innerHTML = state.assets
+    .map(
+      (asset) => `
+        <article class="resource-card">
+          <img src="${escapeHtml(asset.url)}" alt="${escapeHtml(asset.name)}" />
+          <div>
+            <strong>${escapeHtml(asset.name)}</strong>
+            <span>${escapeHtml(asset.kind)}</span>
+          </div>
+        </article>
+      `,
+    )
+    .join("");
 }
 
-function addLog(line) {
-  const time = new Date().toLocaleTimeString("zh-CN", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
+function renderTemplates() {
+  const activeTemplate = state.activeJob?.templateId;
+  els.templateList.innerHTML = state.templates
+    .map(
+      (template) => `
+        <button type="button" class="template-item ${template.id === activeTemplate ? "is-selected" : ""}" data-template-id="${escapeHtml(template.id)}">
+          <span>${escapeHtml(template.id)}</span>
+          <strong>${escapeHtml(template.title)}</strong>
+        </button>
+      `,
+    )
+    .join("");
+}
+
+function renderJobHistory() {
+  els.jobHistoryList.innerHTML = state.jobs
+    .map(
+      (job) => `
+        <button type="button" class="template-item ${job.id === state.activeJob?.id ? "is-selected" : ""}" data-job-id="${escapeHtml(job.id)}">
+          <span>${escapeHtml(localizeJobStatus(job.status))} / ${escapeHtml(job.templateId || "runtime")}</span>
+          <strong>${escapeHtml(job.title)}</strong>
+        </button>
+      `,
+    )
+    .join("");
+}
+
+function renderScriptPanel(sections) {
+  els.scriptPanel.innerHTML = sections
+    .map(
+      (section) => `
+        <div class="script-row">
+          <span>${escapeHtml(section.label || "Section")}</span>
+          <p>${escapeHtml(section.text || "")}</p>
+        </div>
+      `,
+    )
+    .join("");
+}
+
+function renderLogs(logs) {
+  els.logStream.textContent = logs.join("\n");
+  els.logStream.scrollTop = els.logStream.scrollHeight;
+}
+
+function renderPreview(job) {
+  const preview = job.preview || {};
+  els.previewImage.src = preview.imageUrl || "/workspace/assets/images/macd_ref_chart_2.jpg";
+  els.episodeLabel.textContent = preview.episodeLabel || "Preview";
+  els.previewHeadline.textContent = preview.headline || "预览";
+  els.previewSummary.textContent = preview.summary || "";
+  els.subtitleBand.textContent = preview.subtitle || "";
+  els.previewProgress.style.width = `${Number(preview.progress || 0)}%`;
+  setPreviewStatus(job);
+}
+
+function renderProject() {
+  if (!state.project) return;
+  els.workspacePath.textContent = state.project.workspacePath;
+}
+
+function renderJob(job) {
+  state.activeJob = job;
+  els.activeJobTitle.textContent = job.title || "未命名任务";
+  els.jobStatusLabel.textContent = localizeJobStatus(job.status);
+  els.jobTemplateLabel.textContent = job.templateId || "runtime";
+  els.jobAspectLabel.textContent = job.aspectRatio || "9:16";
+  els.jobOutputLabel.textContent = job.outputDir || "data/jobs";
+
+  renderMessages(job.messages || []);
+  renderSteps(job.steps || []);
+  renderLogs(job.logs || []);
+  renderPreview(job);
+  renderScriptPanel(job.scriptSections || []);
+  renderTemplates();
+  renderJobHistory();
+}
+
+function bindDynamicLists() {
+  els.jobHistoryList.querySelectorAll("[data-job-id]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const jobId = button.dataset.jobId;
+      if (jobId) selectJob(jobId);
+    });
   });
-  state.logs.push(`[${time}] ${line}`);
-  logStream.textContent = state.logs.join("\n");
-  logStream.scrollTop = logStream.scrollHeight;
 }
 
-function advancePipeline() {
-  const runningIndex = state.steps.findIndex((step) => step.status === "running");
-  if (runningIndex >= 0) {
-    state.steps[runningIndex].status = "done";
+function refreshLayout() {
+  renderProject();
+  renderResources();
+  renderTemplates();
+  renderJobHistory();
+  bindDynamicLists();
+}
+
+async function loadJobs() {
+  const jobsPayload = await requestJson("/api/jobs");
+  state.jobs = jobsPayload.items || [];
+  renderJobHistory();
+  bindDynamicLists();
+}
+
+async function loadBootstrap() {
+  const [projectPayload, templatePayload, assetPayload, jobsPayload] = await Promise.all([
+    requestJson("/api/projects"),
+    requestJson("/api/templates"),
+    requestJson("/api/assets"),
+    requestJson("/api/jobs"),
+  ]);
+
+  state.project = projectPayload;
+  state.templates = templatePayload.items || [];
+  state.assets = assetPayload.items || [];
+  state.jobs = jobsPayload.items || [];
+
+  refreshLayout();
+  const preferredJob = state.jobs.find((job) => job.source === "runtime") || state.jobs[0];
+  if (preferredJob) {
+    await selectJob(preferredJob.id);
+  }
+}
+
+function connectToEvents(jobId) {
+  if (state.eventSource) {
+    state.eventSource.close();
+    state.eventSource = null;
   }
 
-  const nextIndex = state.steps.findIndex((step) => step.status === "waiting");
-  if (nextIndex >= 0) {
-    state.steps[nextIndex].status = "running";
-    state.currentStep = nextIndex;
-    jobStatusLabel.textContent = state.steps[nextIndex].title.replace("生成 ", "").replace("绑定 ", "");
-    addLog(`pipeline: ${state.steps[nextIndex].title}`);
-  } else {
-    jobStatusLabel.textContent = "已完成";
-    previewStatus.innerHTML = "<span></span> Ready";
-    previewStatus.classList.add("is-ready");
-    addLog("render: output written to data/jobs/job_demo/output.mp4");
+  const eventSource = new EventSource(`/api/jobs/${encodeURIComponent(jobId)}/events`);
+  eventSource.addEventListener("snapshot", (event) => {
+    const job = JSON.parse(event.data);
+    renderJob(job);
+    bindDynamicLists();
+  });
+  eventSource.addEventListener("log", (event) => {
+    const payload = JSON.parse(event.data);
+    if (!state.activeJob) return;
+    state.activeJob.logs = [...(state.activeJob.logs || []), payload.line];
+    renderLogs(state.activeJob.logs);
+  });
+  eventSource.onerror = () => {
+    eventSource.close();
+  };
+  state.eventSource = eventSource;
+}
+
+async function selectJob(jobId) {
+  const job = await requestJson(`/api/jobs/${encodeURIComponent(jobId)}`);
+  renderJob(job);
+  bindDynamicLists();
+  connectToEvents(jobId);
+}
+
+async function createJob(prompt) {
+  const job = await requestJson("/api/jobs", {
+    method: "POST",
+    body: JSON.stringify({prompt}),
+  });
+  await loadJobs();
+  await selectJob(job.id);
+}
+
+async function sendMessage(message) {
+  if (!state.activeJob || state.activeJob.source !== "runtime") {
+    await createJob(message);
+    return;
   }
 
-  state.previewProgress = Math.min(100, state.previewProgress + 13);
-  previewProgress.style.width = `${state.previewProgress}%`;
-  renderSteps();
+  await requestJson(`/api/jobs/${encodeURIComponent(state.activeJob.id)}/codex/message`, {
+    method: "POST",
+    body: JSON.stringify({message}),
+  });
 }
 
-function addUserMessage(text) {
-  const message = document.createElement("article");
-  message.className = "message user";
-  message.innerHTML = `
-    <div class="meta">You</div>
-    <div class="bubble">${escapeHtml(text)}</div>
-  `;
-  threadList.appendChild(message);
-  threadList.scrollTop = threadList.scrollHeight;
-}
-
-function addAssistantMessage(text) {
-  const message = document.createElement("article");
-  message.className = "message assistant";
-  message.innerHTML = `
-    <div class="meta">Codex</div>
-    <div class="bubble">${escapeHtml(text)}</div>
-  `;
-  threadList.appendChild(message);
-  threadList.scrollTop = threadList.scrollHeight;
+async function runAction(action) {
+  if (!state.activeJob) return;
+  await requestJson(`/api/jobs/${encodeURIComponent(state.activeJob.id)}/actions/${action}`, {
+    method: "POST",
+  });
+  await loadJobs();
 }
 
 document.querySelectorAll(".prompt-toolbar button").forEach((button) => {
   button.addEventListener("click", () => {
-    composerInput.value = button.dataset.prompt || "";
-    composerInput.focus();
+    els.composerInput.value = button.dataset.prompt || "";
+    els.composerInput.focus();
   });
 });
 
 document.querySelectorAll(".segmented-control button").forEach((button) => {
   button.addEventListener("click", () => {
     document.querySelectorAll(".segmented-control button").forEach((item) => item.classList.remove("is-active"));
-    button.classList.add("is-active");
-
     document.querySelectorAll(".view-page").forEach((page) => page.classList.remove("is-active"));
+    button.classList.add("is-active");
     document.querySelector(`#${button.dataset.view}View`).classList.add("is-active");
   });
 });
 
-composerForm.addEventListener("submit", (event) => {
+els.composerForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const text = composerInput.value.trim();
+  const text = els.composerInput.value.trim();
   if (!text) return;
 
-  addUserMessage(text);
-  composerInput.value = "";
-  addLog(`codex: received prompt "${text.slice(0, 36)}${text.length > 36 ? "..." : ""}"`);
-
-  window.setTimeout(() => {
-    addAssistantMessage("收到。我会先更新任务计划，再检查本地模板和素材绑定关系。");
-    advancePipeline();
-  }, 420);
+  try {
+    await sendMessage(text);
+    els.composerInput.value = "";
+    await loadJobs();
+  } catch (error) {
+    console.error(error);
+  }
 });
 
-document.querySelector("#generatePlanButton").addEventListener("click", () => {
-  addLog("codex: writing data/jobs/job_demo/video_plan.json");
-  advancePipeline();
+els.generatePlanButton.addEventListener("click", async () => {
+  try {
+    await runAction("generate-plan");
+  } catch (error) {
+    console.error(error);
+  }
 });
 
-document.querySelector("#ttsButton").addEventListener("click", () => {
-  addLog("tts: generating voiceover and timestamps");
-  advancePipeline();
-  subtitleBand.textContent = "突破后的第一根回踩，才是你要等的信号";
+els.ttsButton.addEventListener("click", async () => {
+  try {
+    await runAction("tts");
+  } catch (error) {
+    console.error(error);
+  }
 });
 
-document.querySelector("#renderButton").addEventListener("click", () => {
-  addLog("remotion: render queued for NewSignalsComposition");
-  const timer = window.setInterval(() => {
-    state.previewProgress = Math.min(100, state.previewProgress + 8);
-    previewProgress.style.width = `${state.previewProgress}%`;
-    if (state.previewProgress >= 100) {
-      window.clearInterval(timer);
-      while (state.steps.some((step) => step.status !== "done")) {
-        advancePipeline();
-      }
-    }
-  }, 280);
+els.renderButton.addEventListener("click", async () => {
+  try {
+    await runAction("render");
+  } catch (error) {
+    console.error(error);
+  }
 });
 
-document.querySelector("#playPreviewButton").addEventListener("click", () => {
+els.playPreviewButton.addEventListener("click", () => {
+  if (!state.activeJob) return;
   const subtitles = [
     "先等回踩确认，再判断量能是否跟上",
     "突破不是入场理由，确认才是",
     "真正的风险，来自连续追错方向",
   ];
   const next = subtitles[Math.floor(Math.random() * subtitles.length)];
-  subtitleBand.textContent = next;
-  addLog("preview: subtitle frame updated");
+  els.subtitleBand.textContent = next;
 });
 
-document.querySelector("#refreshButton").addEventListener("click", () => {
-  addLog("system: refreshed project state");
+els.refreshButton.addEventListener("click", async () => {
+  try {
+    await loadBootstrap();
+  } catch (error) {
+    console.error(error);
+  }
 });
 
-document.querySelector("#attachButton").addEventListener("click", () => {
-  addAssistantMessage("素材入口已预留。接入本地服务后会打开 assets 和 data/source_videos 的文件选择。");
+els.attachButton.addEventListener("click", () => {
+  els.composerInput.focus();
+  els.composerInput.setAttribute("placeholder", "后续这里可以接本地素材选择器，指向 assets 和 data/source_videos。");
 });
 
-renderMessages(initialMessages);
-renderSteps();
-addLog("system: workspace D:\\program\\ai_video\\workflow");
-addLog("codex: bridge adapter pending");
-addLog("remotion: video-app package detected");
+loadBootstrap().catch((error) => {
+  console.error(error);
+  els.threadList.innerHTML = `
+    <article class="message assistant">
+      <div class="meta">System</div>
+      <div class="bubble">本地 API 未连接。请先运行 <code>node web-video-console/server.js</code>。</div>
+    </article>
+  `;
+});
