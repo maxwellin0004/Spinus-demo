@@ -1,0 +1,37 @@
+﻿{
+  "composition_id": "philosophy-montage-validation-preview",
+  "react_component": "PhilosophyMontageValidationComposition",
+  "orientation": "horizontal",
+  "fps": 30,
+  "resolution": "1920x1080",
+  "data_source": "video-app/src/data/PhilosophyMontageValidationData.ts",
+  "audio_source": "video-app/src/data/philosophyMontageAudio.ts",
+  "mapping": {
+    "opener.intro_title": "OpenerConceptSwitch intro title node",
+    "opener.concept_terms[]": "OPENER_TERMS array",
+    "opener.concept_images[]": "OPENER_BG_IMAGES array",
+    "scenes[].duration_frames": "Sequence durationInFrames",
+    "scenes[].image": "SceneCard background image",
+    "scenes[].palette": "scene grading / future style token input",
+    "audio.voiceover_audio_path": "AudioTrackLayer voiceover src",
+    "audio.subtitle_timeline_path": "SubtitleTrack cue source"
+  },
+  "scene_binding": [
+    {
+      "scene_type": "opener_concept_switch_scene",
+      "component": "OpenerConceptSwitch",
+      "fixed_props": ["intro_title", "concept_terms", "concept_images", "switch_every_frames"]
+    },
+    {
+      "scene_type": "titleStack | conceptBoard | ruminationExample | controlSplit | decisionPrompt | axiomWall | cityOutro",
+      "component": "SceneCard",
+      "repeat_source": "scenes[]",
+      "mapped_props": ["image", "duration_frames", "palette"]
+    }
+  ],
+  "asset_slots": {
+    "opener_images": "video-app/public/images/philosophy-montage/opener-style/opener_*.jpg",
+    "body_images": "video-app/public/images/philosophy-montage/*.png",
+    "voiceover": "video-app/public/audio/philosophy-montage/digital-minimalism-elevenlabs-cn.mp3"
+  }
+}

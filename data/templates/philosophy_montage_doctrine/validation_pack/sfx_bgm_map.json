@@ -1,0 +1,38 @@
+﻿{
+  "bgm": [
+    {
+      "id": "bgm_stoic_pad",
+      "section": "all",
+      "style": "minimal ambient philosophy pad",
+      "start_sec": 0,
+      "end_sec": 48,
+      "volume": 0.16,
+      "required": false
+    }
+  ],
+  "sfx": [
+    {
+      "id": "sfx_opener_flash",
+      "section": "hook",
+      "trigger": "first white flash",
+      "start_sec": 0.1,
+      "volume": 0.28,
+      "required": false
+    },
+    {
+      "id": "sfx_term_hit",
+      "section": "hook",
+      "trigger": "concept term switch",
+      "start_sec": 1.2,
+      "volume": 0.18,
+      "required": false
+    }
+  ],
+  "ducking_rules": [
+    {
+      "target": "bgm",
+      "when": "voiceover_active",
+      "gain": 0.35
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+﻿{
+  "subtitle_timeline_status": "pending_final_audio_alignment",
+  "plan": [
+    "Generate ElevenLabs audio from sentence-level units.",
+    "Read returned timestamps.",
+    "Backfill bilingual subtitle cues into LiteraryEmbersValidationAudio.ts.",
+    "Render final preview from aligned timeline."
+  ]
+}

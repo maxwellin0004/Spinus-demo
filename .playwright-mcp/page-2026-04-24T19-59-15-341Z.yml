@@ -1,0 +1,1104 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - link "登录/注册" [ref=e5] [cursor=pointer]:
+      - /url: https://accounts.douban.com/passport/login?source=book
+    - link "下载豆瓣客户端" [ref=e7] [cursor=pointer]:
+      - /url: https://www.douban.com/doubanapp/app?channel=top-nav
+    - list [ref=e9]:
+      - listitem [ref=e10]:
+        - link "豆瓣" [ref=e11] [cursor=pointer]:
+          - /url: https://www.douban.com
+      - listitem [ref=e12]:
+        - link "读书" [ref=e13] [cursor=pointer]:
+          - /url: https://book.douban.com
+      - listitem [ref=e14]:
+        - link "电影" [ref=e15] [cursor=pointer]:
+          - /url: https://movie.douban.com
+      - listitem [ref=e16]:
+        - link "音乐" [ref=e17] [cursor=pointer]:
+          - /url: https://music.douban.com
+      - listitem [ref=e18]:
+        - link "播客" [ref=e19] [cursor=pointer]:
+          - /url: https://www.douban.com/podcast/
+      - listitem [ref=e20]:
+        - link "同城" [ref=e21] [cursor=pointer]:
+          - /url: https://www.douban.com/location
+      - listitem [ref=e22]:
+        - link "小组" [ref=e23] [cursor=pointer]:
+          - /url: https://www.douban.com/group
+      - listitem [ref=e24]:
+        - link "阅读" [ref=e25] [cursor=pointer]:
+          - /url: https://read.douban.com/?dcs=top-nav&dcm=douban
+      - listitem [ref=e26]:
+        - link "FM" [ref=e27] [cursor=pointer]:
+          - /url: https://fm.douban.com/?from_=shire_top_nav
+      - listitem [ref=e28]:
+        - link "时间" [ref=e29] [cursor=pointer]:
+          - /url: https://time.douban.com/?dt_time_source=douban-web_top_nav
+      - listitem [ref=e30]:
+        - link "豆品" [ref=e31] [cursor=pointer]:
+          - /url: https://market.douban.com/?utm_campaign=douban_top_nav&utm_source=douban&utm_medium=pc_web
+  - generic [ref=e32]:
+    - generic [ref=e34]:
+      - link "豆瓣读书" [ref=e36] [cursor=pointer]:
+        - /url: https://book.douban.com
+      - group "搜索：" [ref=e39]:
+        - textbox [ref=e41]:
+          - /placeholder: 书名、作者、ISBN
+        - button "搜索" [ref=e43] [cursor=pointer]
+    - generic [ref=e44]:
+      - list [ref=e46]:
+        - listitem [ref=e47]:
+          - link "购书单" [ref=e48] [cursor=pointer]:
+            - /url: https://book.douban.com/cart/
+        - listitem [ref=e49]:
+          - link "电子图书" [ref=e50] [cursor=pointer]:
+            - /url: https://read.douban.com/ebooks/?dcs=book-nav&dcm=douban
+        - listitem [ref=e51]:
+          - link "2025年度榜单" [ref=e52] [cursor=pointer]:
+            - /url: https://book.douban.com/annual/2025/?fullscreen=1&dt_from=navigation
+        - listitem [ref=e53]:
+          - link "2025年度报告" [ref=e54] [cursor=pointer]:
+            - /url: https://c9.douban.com/app/standbyme-2025/?autorotate=false&fullscreen=true&hidenav=true&monitor_screenshot=true&dt_from=web_navigation
+      - link [ref=e55] [cursor=pointer]:
+        - /url: https://book.douban.com/annual/2025/?fullscreen=1&&dt_from=book_navigation
+  - generic [ref=e56]:
+    - heading "活着" [level=1] [ref=e57]: 活着
+    - generic [ref=e59]:
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - generic [ref=e63]:
+              - link "活着" [ref=e65] [cursor=pointer]:
+                - /url: https://img1.doubanio.com/view/subject/l/public/s29652928.jpg
+                - img "活着" [ref=e66]
+              - generic [ref=e67]:
+                - generic [ref=e68]:
+                  - text: "作者:"
+                  - link "余华" [ref=e69] [cursor=pointer]:
+                    - /url: /author/4503668
+                - text: "出版社:"
+                - link "北京十月文艺出版社" [ref=e70] [cursor=pointer]:
+                  - /url: https://book.douban.com/press/2194
+                - text: "出品方:"
+                - link "新经典文化" [ref=e71] [cursor=pointer]:
+                  - /url: https://book.douban.com/producers/3
+                - text: "出版年: 2017-6-1"
+                - text: "ISBN: 9787530215593"
+                - text: "页数: 224"
+                - text: "装帧: 精装"
+                - text: "定价: 35.00元"
+                - text: "丛书:"
+                - link "新经典文库：余华作品" [ref=e72] [cursor=pointer]:
+                  - /url: https://book.douban.com/series/39660
+            - generic [ref=e74]:
+              - generic [ref=e75]: 豆瓣评分
+              - generic [ref=e76]:
+                - strong [ref=e77]: "9.4"
+                - link "51213人评价" [ref=e82] [cursor=pointer]:
+                  - /url: comments
+              - generic "力荐" [ref=e83]: 5星
+              - text: 76.3%
+              - generic "推荐" [ref=e85]: 4星
+              - text: 20.5%
+              - generic "还行" [ref=e87]: 3星
+              - text: 2.8%
+              - generic "较差" [ref=e89]: 2星
+              - text: 0.3%
+              - generic "很差" [ref=e90]: 1星
+              - text: 0.2%
+          - generic [ref=e91]:
+            - link "想读" [ref=e92] [cursor=pointer]:
+              - /url: "#"
+              - button "想读" [ref=e95]
+            - link "在读" [ref=e96] [cursor=pointer]:
+              - /url: "#"
+              - button "在读" [ref=e99]
+            - link "读过" [ref=e100] [cursor=pointer]:
+              - /url: "#"
+              - button "读过" [ref=e103]
+            - generic [ref=e106]:
+              - text: "评价:"
+              - generic [ref=e107]:
+                - generic:
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e108] [cursor=pointer]
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e109] [cursor=pointer]
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e110] [cursor=pointer]
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e111] [cursor=pointer]
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e112] [cursor=pointer]
+          - list [ref=e114]:
+            - listitem [ref=e115]:
+              - img [ref=e116]
+              - link "写笔记" [ref=e117] [cursor=pointer]:
+                - /url: https://www.douban.com/topic/create?subtype=annotation&subject_id=27064488
+            - listitem [ref=e118]:
+              - img [ref=e119]
+              - link "写书评" [ref=e120] [cursor=pointer]:
+                - /url: https://book.douban.com/subject/27064488/new_review
+            - listitem [ref=e121]:
+              - generic [ref=e122]:
+                - img [ref=e123]
+                - link "加入购书单" [ref=e124] [cursor=pointer]:
+                  - /url: https://www.douban.com/accounts/passport/login?source=book
+            - listitem [ref=e125]:
+              - link "分享到" [ref=e126] [cursor=pointer]:
+                - /url: "#"
+          - link "推荐" [ref=e129] [cursor=pointer]:
+            - /url: https://www.douban.com/accounts/register?reason=collect
+        - generic [ref=e130]:
+          - heading "内容简介 · · · · · ·" [level=2] [ref=e131]
+          - generic [ref=e134]:
+            - paragraph [ref=e135]: 【内容简介】
+            - paragraph [ref=e136]: 《活着》是当代作家余华的代表作，讲述了一个人历尽世间沧桑和磨难的一生，亦将中国大半个世纪的社会变迁凝缩其间。《活着》还讲述了眼泪的宽广和丰富；讲述了绝望的不存在；讲述了人是为了活着本身而活着的，而不是为了活着之外的任何事物而活着。
+            - paragraph [ref=e137]: 《活着》出版25年来打动了无数读者，经过时间的沉淀，已成为20世纪中国文学当之无愧的经典之作。到今天，已被译介至英、法、德、意、日、韩、俄等30多个国家和地区，获得国内外多个文学大奖，余华也凭借这部作品于2004年获得法兰西艺术和骑士文化勋章。
+            - paragraph [ref=e138]: 25年后重新修订出版，相信《活着》仍然会以超越时间与空间的精神内核，击中我们每个人的心。
+            - paragraph [ref=e139]: 【获奖情况】
+            - paragraph [ref=e140]: 意大利格林扎纳·卡佛文学奖最高奖项
+            - paragraph [ref=e141]: 台湾“中国时报”十大好书奖
+            - paragraph [ref=e142]: 《亚洲周刊》二十世纪中文小说一百强
+            - paragraph [ref=e143]: 【媒体推荐】
+            - paragraph [ref=e144]: 中国过去六十年所发生的一切灾难，都一一发生在福贵和...
+            - paragraph [ref=e145]:
+              - link "(展开全部)" [ref=e146] [cursor=pointer]:
+                - /url: javascript:void(0)
+          - heading [level=2]
+          - heading "活着的创作者 · · · · · ·" [level=2] [ref=e147]
+          - generic [ref=e148]:
+            - paragraph
+            - list [ref=e150]:
+              - listitem [ref=e151]:
+                - link "余华" [ref=e152] [cursor=pointer]:
+                  - /url: https://book.douban.com/author/4503668/
+                  - img "余华" [ref=e153]
+                - generic [ref=e154]:
+                  - link "余华" [ref=e155] [cursor=pointer]:
+                    - /url: https://book.douban.com/author/4503668/
+                  - generic [ref=e156]: 作者
+              - listitem
+          - heading "作者简介 · · · · · ·" [level=2] [ref=e157]
+          - generic [ref=e160]:
+            - paragraph [ref=e161]: 余华
+            - paragraph [ref=e162]: 1960年4月出生，曾经从事过5年的牙医工作，1983年开始写作，主要作品有《活着》《许三观卖血记》《在细雨中呼喊》《兄弟》《第七天》等。作品已被翻译成35种语言，在美国、英国、法国、德国、意大利、西班牙、俄罗斯、日本等37个国家和地区出版。曾获意大利格林扎纳·卡佛文学奖（1998年）,法国文学和艺术骑士勋章（2004年），法国国际信使外国小说奖（2008年），意大利朱塞佩·阿切尔比国际文学奖（2014年）等。
+          - heading "\"活着\"试读 · · · · · ·" [level=2] [ref=e163]
+          - generic [ref=e164]:
+            - paragraph [ref=e165]: 我比现在年轻十岁的时候，获得了一个游手好闲的职业，去乡间收集民间歌谣。那一年的整个夏天，我如同一只乱飞的麻雀，游荡在知了和阳光充斥的农村。我喜欢喝农民那种带有苦味的茶水，他们的茶桶就放在田埂的树下，我毫无顾忌地拿起积满茶垢的茶碗舀水喝，还把自己的水壶灌满，与田里干活的男人说上几句废话，在姑娘因我而起的窃窃私笑里扬长而去。我曾经和一位守着瓜田的老人聊了整..
+            - list [ref=e166]:
+              - listitem [ref=e167]:
+                - link "活着（节选）" [ref=e168] [cursor=pointer]:
+                  - /url: https://book.douban.com/reading/45273308/
+            - generic [ref=e169]:
+              - text: · · · · · · (
+              - link "查看全部试读" [ref=e170] [cursor=pointer]:
+                - /url: https://book.douban.com/subject/27064488/reading/
+              - text: )
+          - generic [ref=e172]:
+            - heading "原文摘录 · · · · · · ( 全部 )" [level=2] [ref=e173]:
+              - text: 原文摘录 · · · · · ·
+              - generic [ref=e174]:
+                - text: (
+                - link "全部" [ref=e175] [cursor=pointer]:
+                  - /url: blockquotes
+                - text: )
+            - list [ref=e176]:
+              - listitem [ref=e177]:
+                - figure [ref=e178]:
+                  - text: 作为一个词语，“活着”在我们中国的语言中充满了力量，它的力量不是来自于喊叫，也不是来自于进攻，而是忍受，去忍受生命赋予我们的责任，去忍受现实给予我们的幸福和苦难、无聊和平庸。 (
+                  - link "查看原文" [ref=e179] [cursor=pointer]:
+                    - /url: https://book.douban.com/annotation/23739105/
+                  - text: )
+                  - generic [ref=e180]:
+                    - generic [ref=e181]:
+                      - link [ref=e182] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/SUER1984/
+                        - img [ref=e183]
+                      - link "苏二" [ref=e184] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/SUER1984/
+                      - text: 62 回复 569赞 2013-01-08 14:33:44
+                    - generic "引自第5页" [ref=e185]: —— 引自第5页
+              - listitem [ref=e186]:
+                - figure [ref=e187]:
+                  - text: “年轻时靠着祖上留下的钱风光了一阵子， 往后就越过越落魄了，这样反倒好，看看我身边的人，龙二和春生，他们也只是风光了一阵子， 到头来命都丢了。做人还是平常点好，争这个争那个，争来争去赔了自己的命。像我这样， 说起来是越混越没出息，可寿命长， 我认识的人一个挨着一个死去， 我还活着。” (
+                  - link "查看原文" [ref=e188] [cursor=pointer]:
+                    - /url: https://book.douban.com/annotation/43510901/
+                  - text: )
+                  - generic [ref=e189]:
+                    - generic [ref=e190]:
+                      - link [ref=e191] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/18823250/
+                        - img [ref=e192]
+                      - link "Sarah" [ref=e193] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/18823250/
+                      - text: 12 回复 162赞 2017-05-01 14:49:45
+                    - generic "引自第55页" [ref=e194]: —— 引自第55页
+            - paragraph [ref=e195]:
+              - text: ">"
+              - link "全部原文摘录" [ref=e196] [cursor=pointer]:
+                - /url: blockquotes
+          - generic [ref=e197]:
+            - heading [level=2]
+            - heading "丛书信息 · · · · · ·" [level=2] [ref=e198]
+            - generic [ref=e199]:
+              - link "新经典文库：余华作品" [ref=e200] [cursor=pointer]:
+                - /url: https://book.douban.com/series/39660
+              - text: (共16册)， 这套丛书还有 《我们生活在巨大的差距里（增订版）》《第七天》《第七天》《活着》《兄弟》 等 。
+          - generic [ref=e201]:
+            - heading "喜欢读\"活着\"的人也喜欢的电子书 · · · · · ·" [level=2] [ref=e202]
+            - generic [ref=e203]: 支持 Web、iPhone、iPad、Android 阅读器
+            - generic [ref=e204]:
+              - generic [ref=e205]:
+                - term [ref=e206]:
+                  - link [ref=e207] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/18361552/?dcs=subject-rec&dcm=douban&dct=27064488
+                    - img [ref=e209]
+                - definition [ref=e210]:
+                  - link "呐喊" [ref=e212] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/18361552/
+                  - generic [ref=e213]: 32.00元
+              - generic [ref=e214]:
+                - term [ref=e215]:
+                  - link [ref=e216] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/115774505/?dcs=subject-rec&dcm=douban&dct=27064488
+                    - img [ref=e218]
+                - definition [ref=e219]:
+                  - link "罗生门：读客三个圈经典文库" [ref=e221] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/115774505/
+                  - generic [ref=e222]: 59.90元
+              - generic [ref=e223]:
+                - term [ref=e224]:
+                  - link [ref=e225] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/650262171/?dcs=subject-rec&dcm=douban&dct=27064488
+                    - img [ref=e227]
+                - definition [ref=e228]:
+                  - link "生死疲劳" [ref=e230] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/650262171/
+                  - generic [ref=e231]: 20.90元
+          - generic [ref=e232]:
+            - heading "喜欢读\"活着\"的人也喜欢 · · · · · ·" [level=2] [ref=e233]
+            - generic [ref=e234]:
+              - generic [ref=e235]:
+                - term [ref=e236]:
+                  - link [ref=e237] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/27141102/
+                    - img [ref=e238]
+                - definition [ref=e239]:
+                  - link "许三观卖血记" [ref=e240] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/27141102/
+                  - text: "9.2"
+              - generic [ref=e241]:
+                - term [ref=e242]:
+                  - link [ref=e243] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1043815/
+                    - img [ref=e244]
+                - definition [ref=e245]:
+                  - link "骆驼祥子" [ref=e246] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1043815/
+                  - text: "8.6"
+              - generic [ref=e247]:
+                - term [ref=e248]:
+                  - link [ref=e249] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1449352/
+                    - img [ref=e250]
+                - definition [ref=e251]:
+                  - link "朝花夕拾" [ref=e252] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1449352/
+                  - text: "9.1"
+              - generic [ref=e253]:
+                - term [ref=e254]:
+                  - link [ref=e255] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/2046909/
+                    - img [ref=e256]
+                - definition [ref=e257]:
+                  - link "故事新编" [ref=e258] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/2046909/
+                  - text: "9.5"
+              - generic [ref=e259]:
+                - term [ref=e260]:
+                  - link [ref=e261] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1893466/
+                    - img [ref=e262]
+                - definition [ref=e263]:
+                  - link "鲁滨孙历险记" [ref=e264] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1893466/
+                  - text: "8.2"
+              - generic [ref=e265]:
+                - term [ref=e266]:
+                  - link [ref=e267] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/24745649/
+                    - img [ref=e268]
+                - definition [ref=e269]:
+                  - link "围城" [ref=e270] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/24745649/
+                  - text: "9.2"
+              - generic [ref=e271]:
+                - term [ref=e272]:
+                  - link [ref=e273] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/2308408/
+                    - img [ref=e274]
+                - definition [ref=e275]:
+                  - link "唐吉诃德" [ref=e276] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/2308408/
+                  - text: "8.3"
+              - generic [ref=e277]:
+                - term [ref=e278]:
+                  - link [ref=e279] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1398395/
+                    - img [ref=e280]
+                - definition [ref=e281]:
+                  - link "狂人日记" [ref=e282] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1398395/
+                  - text: "8.9"
+              - generic [ref=e283]:
+                - term [ref=e284]:
+                  - link [ref=e285] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1057244/
+                    - img [ref=e286]
+                - definition [ref=e287]:
+                  - link "边城" [ref=e288] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1057244/
+                  - text: "8.7"
+              - generic [ref=e289]:
+                - term [ref=e290]:
+                  - link [ref=e291] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/30162553/
+                    - img [ref=e292]
+                - definition [ref=e293]:
+                  - link "兄弟" [ref=e294] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/30162553/
+                  - text: "8.6"
+          - generic [ref=e295]:
+            - generic [ref=e296]:
+              - link "我来说两句" [ref=e297] [cursor=pointer]:
+                - /url: https://www.douban.com/register?reason=review
+              - heading "短评 · · · · · · ( 全部 13752 条 )" [level=2] [ref=e298]:
+                - text: 短评 · · · · · ·
+                - generic [ref=e299]:
+                  - text: (
+                  - link "全部 13752 条" [ref=e300] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/27064488/comments/
+                  - text: )
+            - link "热门" [ref=e303]:
+              - /url: https://book.douban.com/subject/27064488/comments?sort=score
+            - list [ref=e306]:
+              - listitem [ref=e307]:
+                - generic [ref=e308]:
+                  - heading "25 有用 豬不鳴🇺🇦 力荐 2017-12-20 10:18:40" [level=3] [ref=e309]:
+                    - generic [ref=e310]:
+                      - text: "25"
+                      - link "有用" [ref=e311] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e312]:
+                      - link "豬不鳴🇺🇦" [ref=e313] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/buddha8811/
+                      - generic "力荐" [ref=e314]
+                      - link "2017-12-20 10:18:40" [ref=e315] [cursor=pointer]:
+                        - /url: /comment/1289347975
+                  - paragraph [ref=e316]: 十万多字的作品 看哭了两次
+              - listitem [ref=e317]:
+                - generic [ref=e318]:
+                  - heading "14 有用 翡玉 力荐 2018-01-22 18:23:01" [level=3] [ref=e319]:
+                    - generic [ref=e320]:
+                      - text: "14"
+                      - link "有用" [ref=e321] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e322]:
+                      - link "翡玉" [ref=e323] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/63981139/
+                      - generic "力荐" [ref=e324]
+                      - link "2018-01-22 18:23:01" [ref=e325] [cursor=pointer]:
+                        - /url: /comment/1311067478
+                  - paragraph [ref=e326]: 2018年完成的第一本，寻求释然。工作以后明显感到生活的不易，不，是才开始感受到那种饭来张口衣来伸手的日子终于一去不复返了。要自己刻苦的活着了，是的，to survive
+              - listitem [ref=e327]:
+                - generic [ref=e328]:
+                  - heading "13 有用 文曲星 力荐 2021-05-03 22:19:14" [level=3] [ref=e329]:
+                    - generic [ref=e330]:
+                      - text: "13"
+                      - link "有用" [ref=e331] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e332]:
+                      - link "文曲星" [ref=e333] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/208501923/
+                      - generic "力荐" [ref=e334]
+                      - link "2021-05-03 22:19:14" [ref=e335] [cursor=pointer]:
+                        - /url: /comment/2862932614
+                  - paragraph [ref=e336]: 有庆死了、凤霞死了、家珍死了、二喜死了、苦根死了，只剩福贵了…… 生活是属于每个人自己的感受，不属于任何别人的看法…… 这不就是小时候看的电视剧《福贵》么！
+              - listitem [ref=e337]:
+                - generic [ref=e338]:
+                  - heading "395 有用 Wednesday晴 还行 2018-06-15 16:57:51" [level=3] [ref=e339]:
+                    - generic [ref=e340]:
+                      - text: "395"
+                      - link "有用" [ref=e341] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e342]:
+                      - link "Wednesday晴" [ref=e343] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/52781505/
+                      - generic "还行" [ref=e344]
+                      - link "2018-06-15 16:57:51" [ref=e345] [cursor=pointer]:
+                        - /url: /comment/1381578379
+                  - paragraph [ref=e346]:
+                    - text: 盛名之下，其实难副。作者在福贵身上堆砌的苦难实在太多了，福贵身边的亲人一个接一个的都以各种离奇的理由死亡，刚开始看还会揪心不忍，看到后面就麻木了。面对接下来的情节进展，如王德威对《骆驼祥子》的评论，读者的心理逐渐变为看客般的“福贵还能惨到何种地步？”的期待。小说叙述福贵在经历了如山般深重的苦难后，还能不抱怨生活，感受到幸福，更是让我不可理解。面对这么多的不幸，难道就只能默默忍受吗？难道连一声痛苦的...
+                    - generic [ref=e347]:
+                      - text: (
+                      - link "展开" [ref=e348] [cursor=pointer]:
+                        - /url: javascript:;
+                      - text: )
+              - listitem [ref=e349]:
+                - generic [ref=e350]:
+                  - heading "31 有用 / 力荐 2020-08-04 02:00:04" [level=3] [ref=e351]:
+                    - generic [ref=e352]:
+                      - text: "31"
+                      - link "有用" [ref=e353] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e354]:
+                      - link / [ref=e355] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/136893623/
+                      - generic "力荐" [ref=e356]
+                      - link "2020-08-04 02:00:04" [ref=e357] [cursor=pointer]:
+                        - /url: /comment/2477630062
+                  - paragraph [ref=e358]: 读这本书的时候大二，记得那天用了一上午加中午的时间读完，下午有一节体育课，老师蛮严厉，但我还是宁愿迟到也要把这本书读完，然后骑着电瓶车一边狂飙到体育场一边大哭，一边想完蛋了要被老师骂了。
+          - generic [ref=e359]:
+            - generic [ref=e360]:
+              - link "我要写书评" [ref=e361] [cursor=pointer]:
+                - /url: new_review
+              - heading "活着的书评 · · · · · · ( 全部 12838 条 )" [level=2] [ref=e362]:
+                - text: 活着的书评 · · · · · ·
+                - generic [ref=e363]:
+                  - text: (
+                  - link "全部 12838 条" [ref=e364] [cursor=pointer]:
+                    - /url: reviews
+                  - text: )
+            - generic [ref=e365]:
+              - generic [ref=e366]:
+                - link "热门" [ref=e367] [cursor=pointer]:
+                  - /url: javascript:;;
+                - text: /
+              - link "只看本版本的评论" [ref=e368] [cursor=pointer]:
+                - /url: /subject/27064488/reviews?version=1
+            - generic [ref=e369]:
+              - generic [ref=e371]:
+                - generic [ref=e372]:
+                  - link:
+                    - /url: https://www.douban.com/people/63250571/
+                    - img [ref=e373] [cursor=pointer]
+                  - link "陈莫尼" [ref=e374] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/63250571/
+                  - generic "力荐" [ref=e375]
+                  - text: 2013-03-29 14:10:26
+                  - link "作家出版社2012版" [ref=e377] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/4913064/
+                - generic [ref=e378]:
+                  - heading "生命不能承受之轻，能接受之痛" [level=2] [ref=e379]:
+                    - link "生命不能承受之轻，能接受之痛" [ref=e380] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/5825853/
+                  - generic [ref=e382] [cursor=pointer]:
+                    - text: 当我跳进那个世界之前，我依然暗示着自己要怀着理智来阐述自己想说的心情，客观地评价这部作品。直到我翻完最后一页，我在余华沉静的笔墨中渐渐失去了耐心，我甚至迫不及待地想要写点什么，不需要充满张力的语言却也能让别人感受到此时此刻我的满腔热情。 我记得有人说过；当... (
+                    - link "展开" [ref=e383]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e384]:
+                    - link "6352" [ref=e385] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "243" [ref=e386] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "282回应" [ref=e387] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/5825853/#comments
+              - generic [ref=e389]:
+                - generic [ref=e390]:
+                  - link:
+                    - /url: https://www.douban.com/people/SilentX/
+                    - img [ref=e391] [cursor=pointer]
+                  - link "子不語" [ref=e392] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/SilentX/
+                  - generic "力荐" [ref=e393]
+                  - text: 2007-12-01 19:26:00
+                  - link "南海出版公司1998版" [ref=e395] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1082154/
+                - generic [ref=e396]:
+                  - heading "沉浮如光。唯有夕阳斜。" [level=2] [ref=e397]:
+                    - link "沉浮如光。唯有夕阳斜。" [ref=e398] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1250809/
+                  - generic [ref=e400] [cursor=pointer]:
+                    - paragraph [ref=e401]: 这篇书评可能有关键情节透露
+                    - text: 好吧。我突然想起来还有这么一本书。 在去年炎热夏季。从成都到南宁的火车上。36个小时。我突然想起来还有这么一本书在我的背包里。 对面是吃瓜子喝啤酒恩爱的年轻男女。男子高瘦英俊。法学本科。女子温暖小巧。垂下眼有着美丽的睫毛。 突然觉得无聊。于是聊到有什么杂志看。 ... (
+                    - link "展开" [ref=e402]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e403]:
+                    - link "6830" [ref=e404] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "684" [ref=e405] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "713回应" [ref=e406] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1250809/#comments
+              - generic [ref=e408]:
+                - generic [ref=e409]:
+                  - link:
+                    - /url: https://www.douban.com/people/bighead/
+                    - img [ref=e410] [cursor=pointer]
+                  - link "大头绿豆" [ref=e411] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/bighead/
+                  - generic "力荐" [ref=e412]
+                  - text: 2005-04-06 11:35:33
+                  - link "上海文艺出版社2004版" [ref=e414] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1061118/
+                - generic [ref=e415]:
+                  - heading "像福贵那样《活着》" [level=2] [ref=e416]:
+                    - link "像福贵那样《活着》" [ref=e417] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1000103/
+                  - generic [ref=e419] [cursor=pointer]:
+                    - text: 人们纷纷在这个叫做活着的故事里一一死去。 作为一个冷酷的作者，余华不动声色地让我们跟随他的冰冷笔调，目睹少爷福贵的荒诞、破产和艰难；继而又假惺惺地给我们一点点美好的希望，让有庆得到长跑第一名，让凤霞嫁了人怀了孩子，让某些时刻有了温情脉脉，有了简陋的欢乐。然而... (
+                    - link "展开" [ref=e420]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e421]:
+                    - link "3244" [ref=e422] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "130" [ref=e423] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "262回应" [ref=e424] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1000103/#comments
+              - generic [ref=e426]:
+                - generic [ref=e427]:
+                  - link:
+                    - /url: https://www.douban.com/people/106127984/
+                    - img [ref=e428] [cursor=pointer]
+                  - link "夏之风" [ref=e429] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/106127984/
+                  - generic "力荐" [ref=e430]
+                  - text: 2015-01-02 11:10:18
+                  - link "作家出版社2012版" [ref=e432] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/4913064/
+                - generic [ref=e433]:
+                  - heading "读来虽苦，却莫名的苦中带暖" [level=2] [ref=e434]:
+                    - link "读来虽苦，却莫名的苦中带暖" [ref=e435] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/7312643/
+                  - generic [ref=e437] [cursor=pointer]:
+                    - paragraph [ref=e438]: 这篇书评可能有关键情节透露
+                    - text: 我文笔不好，读这本书虽有所感，却堆砌不出大段的读后感。整体来讲，这本书给我的感觉是，很是苦涩，却莫名地带有一种温暖。 最近总在抱怨生活，抱怨自己境遇坎坷，事事不顺，抱怨运气从来就没有站在我这一边。看完这本书，我哑然，虽是小说中的人物，可是富贵的人生，也过得太... (
+                    - link "展开" [ref=e439]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e440]:
+                    - link "3133" [ref=e441] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "94" [ref=e442] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "153回应" [ref=e443] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/7312643/#comments
+              - generic [ref=e445]:
+                - generic [ref=e446]:
+                  - link:
+                    - /url: https://www.douban.com/people/Britney.Ren/
+                    - img [ref=e447] [cursor=pointer]
+                  - link "简了爱了" [ref=e448] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/Britney.Ren/
+                  - generic "力荐" [ref=e449]
+                  - text: 2013-12-10 14:54:36
+                  - link "作家出版社2012版" [ref=e451] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/4913064/
+                - generic [ref=e452]:
+                  - heading "少年去游荡 中年想掘藏 老年做和尚" [level=2] [ref=e453]:
+                    - link "少年去游荡 中年想掘藏 老年做和尚" [ref=e454] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/6455747/
+                  - generic [ref=e456] [cursor=pointer]:
+                    - text: 死了，全他妈死了！’这是早上看完这本书后心中唯一的声音。 我不理解为什么还会有那么一个年代，却离我们很近很近，但我们又无法触及那段血雨腥风的历史。 这故事看完几度流泪，几度抓狂，真的很想把心中所想恰当的记录下来，可是，当手敲打键盘时，一切的泪水与言语都显得那... (
+                    - link "展开" [ref=e457]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e458]:
+                    - link "1815" [ref=e459] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "123" [ref=e460] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "198回应" [ref=e461] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/6455747/#comments
+              - generic [ref=e463]:
+                - generic [ref=e464]:
+                  - link:
+                    - /url: https://www.douban.com/people/Pariscatzi/
+                    - img [ref=e465] [cursor=pointer]
+                  - link "猫子" [ref=e466] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/Pariscatzi/
+                  - generic "推荐" [ref=e467]
+                  - text: 2006-11-17 10:46:53
+                  - link "上海文艺出版社2004版" [ref=e469] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1061118/
+                - generic [ref=e470]:
+                  - heading "《命中注定终需有，命中没有莫强求。》" [level=2] [ref=e471]:
+                    - link "《命中注定终需有，命中没有莫强求。》" [ref=e472] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1091139/
+                  - generic [ref=e474] [cursor=pointer]:
+                    - text: 一气呵成地看完，当一个人一生的命运、故事，让旁人用几个小时浏览，会有些喘不过气的。 尤其这个故事讲述了眼泪，所以总觉得有种无形的东西压迫着自己，直至合上书，头疼欲裂。 然后系统死机，让刚刚开始的书评夭折，所以决定，还是找一个清醒的时间来写，免得糟蹋了这本好书... (
+                    - link "展开" [ref=e475]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e476]:
+                    - link "982" [ref=e477] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "58" [ref=e478] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "107回应" [ref=e479] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1091139/#comments
+              - generic [ref=e481]:
+                - generic [ref=e482]:
+                  - link:
+                    - /url: https://www.douban.com/people/margin/
+                    - img [ref=e483] [cursor=pointer]
+                  - link "边缘" [ref=e484] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/margin/
+                  - generic "力荐" [ref=e485]
+                  - text: 2005-12-23 14:08:18
+                  - link "南海出版公司1998版" [ref=e487] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1082154/
+                - generic [ref=e488]:
+                  - heading "人之所以活着，人之只好活着" [level=2] [ref=e489]:
+                    - link "人之所以活着，人之只好活着" [ref=e490] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1016514/
+                  - generic [ref=e492] [cursor=pointer]:
+                    - text: “人之所以活着，人之只好活着”这一句话道出了人活着的无奈和悲哀。关于偶然和必然、命运与意志、生与死、理性与情感、价值与非价值，在这里都变成无意义。人活着就是活着，只是为活着本身而活着，而不是为活着之外的任何事物而活着的。福贵告诉了我们怎样去理解生命的尊严... (
+                    - link "展开" [ref=e493]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e494]:
+                    - link "673" [ref=e495] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "70" [ref=e496] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "65回应" [ref=e497] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1016514/#comments
+              - generic [ref=e499]:
+                - generic [ref=e500]:
+                  - link:
+                    - /url: https://www.douban.com/people/47867324/
+                    - img [ref=e501] [cursor=pointer]
+                  - link "张帆帆" [ref=e502] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/47867324/
+                  - generic "力荐" [ref=e503]
+                  - text: 2012-11-11 18:24:43
+                  - link "作家出版社2010版" [ref=e505] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/5350303/
+                - generic [ref=e506]:
+                  - heading "莫言获奖了，我却想说说余华" [level=2] [ref=e507]:
+                    - link "莫言获奖了，我却想说说余华" [ref=e508] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/5650399/
+                  - generic [ref=e510] [cursor=pointer]:
+                    - text: 是的，这篇文章是想说说余华，说说他的活着。用一下午的时间，一口气读完了余华的活着，好的文学作品就是有这样的一种魔力，让读者不忍放下的魔力。《活着》讲述了福贵的一生，富家少爷福贵嗜赌成性，最后赌光了家产。贫困之中，因为母亲生病，在福贵为母亲求医的路上，又被国... (
+                    - link "展开" [ref=e511]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e512]:
+                    - link "554" [ref=e513] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "38" [ref=e514] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "72回应" [ref=e515] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/5650399/#comments
+              - generic [ref=e517]:
+                - generic [ref=e518]:
+                  - link:
+                    - /url: https://www.douban.com/people/summeronion/
+                    - img [ref=e519] [cursor=pointer]
+                  - link "令糊葱" [ref=e520] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/summeronion/
+                  - generic "推荐" [ref=e521]
+                  - text: 2008-08-25 13:59:11
+                  - link "上海文艺出版社2004版" [ref=e523] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1061118/
+                - generic [ref=e524]:
+                  - heading "命运是婊子，绝望不存在。" [level=2] [ref=e525]:
+                    - link "命运是婊子，绝望不存在。" [ref=e526] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1479509/
+                  - generic [ref=e528] [cursor=pointer]:
+                    - paragraph [ref=e529]: 这篇书评可能有关键情节透露
+                    - text: 上周去逛书店，发现《活着》出了新的封面，水果味儿，一本顶过去五本，结果没忍住……就又买了一本，余华对我有着不可阻挡的杀伤力，回家又再看了一遍。第一次读完是在高一，那时日子过的无忧无虑，鸟语花香，生活灿烂无比，前途一片光明，读了本这么悲剧的书（当时是这么认为... (
+                    - link "展开" [ref=e530]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e531]:
+                    - link "479" [ref=e532] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "13" [ref=e533] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "55回应" [ref=e534] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1479509/#comments
+              - generic [ref=e536]:
+                - generic [ref=e537]:
+                  - link:
+                    - /url: https://www.douban.com/people/morningglory/
+                    - img [ref=e538] [cursor=pointer]
+                  - link "晨光荣耀" [ref=e539] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/morningglory/
+                  - generic "推荐" [ref=e540]
+                  - text: 2009-05-23 14:38:22
+                  - link "南海出版公司1998版" [ref=e542] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1082154/
+                - generic [ref=e543]:
+                  - heading "人活着的世界" [level=2] [ref=e544]:
+                    - link "人活着的世界" [ref=e545] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/2035984/
+                  - generic [ref=e547] [cursor=pointer]:
+                    - text: 记得当年看《活着》这本书的时候，印象最深的一点就是它归纳出据说是中国人的一个很重要的美德：忍耐。从那以后，每次在公车上被人踩了脚却听不到一声抱歉时，每次测试考砸了要面对家长时，我都会自我安慰地说：人活着就是忍耐。人既然来到这个世界，有不顺心的事情，首先要忍... (
+                    - link "展开" [ref=e548]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e549]:
+                    - link "426" [ref=e550] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "98" [ref=e551] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "95回应" [ref=e552] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/2035984/#comments
+            - paragraph [ref=e553]:
+              - text: ">"
+              - link "更多书评 12838篇" [ref=e554] [cursor=pointer]:
+                - /url: reviews
+          - generic [ref=e556]:
+            - generic [ref=e557]:
+              - heading "读书笔记 · · · · · · ( 共 385 篇 )" [level=2] [ref=e558]:
+                - text: 读书笔记 · · · · · ·
+                - generic [ref=e559]:
+                  - text: (
+                  - link "共 385 篇" [ref=e560] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/27064488/annotation
+                  - text: )
+              - link "我来写笔记" [ref=e561] [cursor=pointer]:
+                - /url: https://www.douban.com/register?reason=annotate
+            - generic [ref=e562]:
+              - list [ref=e563]:
+                - listitem [ref=e564]:
+                  - link "按有用程度" [ref=e565] [cursor=pointer]:
+                    - /url: "#rank"
+                - listitem [ref=e566]:
+                  - link "按页码先后" [ref=e567] [cursor=pointer]:
+                    - /url: "#page"
+                - listitem [ref=e568]:
+                  - link "最新笔记" [ref=e569] [cursor=pointer]:
+                    - /url: "#time"
+              - list [ref=e570]:
+                - listitem [ref=e571]:
+                  - link "莱蒙莱蒙" [ref=e573] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/232629881/
+                    - img "莱蒙莱蒙" [ref=e574]
+                  - generic [ref=e575]:
+                    - heading "展开 活着" [level=3] [ref=e577]:
+                      - link "展开" [ref=e579] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/108317717/
+                      - link "活着" [ref=e580] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/108317717/
+                    - generic [ref=e581]:
+                      - paragraph [ref=e582]:
+                        - link "莱蒙莱蒙" [ref=e583] [cursor=pointer]:
+                          - /url: https://www.douban.com/people/232629881/
+                      - generic [ref=e585]:
+                        - text: 写读后感前看了张艺谋的《活着》，这部戛纳电影节获奖的电影已经被禁播了。 甚至都没有看完，电影中的角色和心中的角色差别太大了，当然不能否认这部电影，想要拍摄肯定需要一定程度的改编。 看到二喜迎娶凤霞时...
+                        - paragraph [ref=e586]: 2021-07-03 21:38:58 13人喜欢
+                - listitem [ref=e587]:
+                  - link "可爱毛毛" [ref=e589] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/138469955/
+                    - img "可爱毛毛" [ref=e590]
+                  - generic [ref=e591]:
+                    - heading "展开 自序" [level=3] [ref=e593]:
+                      - link "展开" [ref=e595] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/47909802/
+                      - link "自序" [ref=e596] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/47909802/
+                    - generic [ref=e597]:
+                      - paragraph [ref=e598]:
+                        - link "可爱毛毛" [ref=e599] [cursor=pointer]:
+                          - /url: https://www.douban.com/people/138469955/
+                        - text: (Alles zu seiner Zeit.)
+                      - generic [ref=e601]:
+                        - text: 人是为活着本身而活着的，而不是为了活着之外的任何事物所活着。
+                        - paragraph [ref=e602]: 2017-09-21 13:38:33 12人喜欢
+                - listitem [ref=e603]:
+                  - link "👑偏见小姐" [ref=e605] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/200549925/
+                    - img "👑偏见小姐" [ref=e606]
+                  - generic [ref=e607]:
+                    - heading "展开 全书" [level=3] [ref=e609]:
+                      - link "展开" [ref=e611] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/121948837/
+                      - link "全书" [ref=e612] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/121948837/
+                    - generic [ref=e613]:
+                      - paragraph [ref=e614]:
+                        - link "👑偏见小姐" [ref=e615] [cursor=pointer]:
+                          - /url: https://www.douban.com/people/200549925/
+                      - generic [ref=e617]:
+                        - link [ref=e619] [cursor=pointer]:
+                          - /url: https://book.douban.com/annotation/121948837/
+                          - img [ref=e620]
+                        - text: 1.做人不要忘记四条，话不要说错，床不要睡错，门槛不要踏错，口袋不要摸错。 2.做人还是平常点好，争这个争那个，争来争去赔了自己的命。像我这样，说起来是越混越没出息，可寿命长，我认识的人一个挨着一个死去...
+                        - paragraph [ref=e621]: 2023-01-26 21:19:52 5人喜欢
+                - listitem [ref=e622]:
+                  - link "赵鱼鱼、" [ref=e624] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/195851944/
+                    - img "赵鱼鱼、" [ref=e625]
+                  - generic [ref=e626]:
+                    - heading "展开 216" [level=3] [ref=e628]:
+                      - link "展开" [ref=e630] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/91281919/
+                      - link "216" [ref=e631] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/91281919/
+                    - generic [ref=e632]:
+                      - paragraph [ref=e633]:
+                        - link "赵鱼鱼、" [ref=e634] [cursor=pointer]:
+                          - /url: https://www.douban.com/people/195851944/
+                      - generic [ref=e636]:
+                        - text: 为何我当初的写作突然从第三人称的角度转化为第一人称？现在，当写作《活着》的经历成为过去，当我可以回首往事了我宁愿十分现实地将此理解为一种人生态度的选择，而不愿去确认所谓命运的神秘借口。为什么？因为...
+                        - paragraph [ref=e637]: 2020-01-03 00:55:37 5人喜欢
+            - paragraph [ref=e639]:
+              - text: ">"
+              - link "更多读书笔记（ 共385篇 ）" [ref=e640] [cursor=pointer]:
+                - /url: https://book.douban.com/subject/27064488/annotation
+          - generic [ref=e641]:
+            - heading "论坛 · · · · · ·" [level=2] [ref=e642]
+            - table [ref=e643]:
+              - rowgroup [ref=e644]:
+                - row [ref=e645]:
+                  - cell [ref=e646]
+                  - cell [ref=e647]
+                  - cell [ref=e648]
+                  - cell [ref=e649]
+                - row "活着 来自平安战战 1 回应 2026-04-03 15:24:46" [ref=e650]:
+                  - cell "活着" [ref=e651]:
+                    - link "活着" [ref=e652] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/27064488/discussion/637809591/
+                  - cell "来自平安战战" [ref=e653]:
+                    - text: 来自
+                    - link "平安战战" [ref=e654] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/fhl2025/
+                  - cell "1 回应" [ref=e655]
+                  - cell "2026-04-03 15:24:46" [ref=e656]
+                - row "生命 来自奇奇怪怪小天才 2025-11-26 19:38:09" [ref=e657]:
+                  - cell "生命" [ref=e658]:
+                    - link "生命" [ref=e659] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/27064488/discussion/637936840/
+                  - cell "来自奇奇怪怪小天才" [ref=e660]:
+                    - text: 来自
+                    - link "奇奇怪怪小天才" [ref=e661] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/282605869/
+                  - cell [ref=e662]
+                  - cell "2025-11-26 19:38:09" [ref=e663]
+                - row "为什么家珍会那么好，刚看开头，不太懂。她还喜欢... 来自zqx 3 回应 2025-08-21 05:09:15" [ref=e664]:
+                  - cell "为什么家珍会那么好，刚看开头，不太懂。她还喜欢..." [ref=e665]:
+                    - link "为什么家珍会那么好，刚看开头，不太懂。她还喜欢..." [ref=e666] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/27064488/discussion/637515669/
+                  - cell "来自zqx" [ref=e667]:
+                    - text: 来自
+                    - link "zqx" [ref=e668] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/zqx15/
+                  - cell "3 回应" [ref=e669]
+                  - cell "2025-08-21 05:09:15" [ref=e670]
+                - row "想了解新版修订了哪些内容 来自云墨桐 10 回应 2025-07-26 21:15:30" [ref=e671]:
+                  - cell "想了解新版修订了哪些内容" [ref=e672]:
+                    - link "想了解新版修订了哪些内容" [ref=e673] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/27064488/discussion/614863886/
+                  - cell "来自云墨桐" [ref=e674]:
+                    - text: 来自
+                    - link "云墨桐" [ref=e675] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/46292375/
+                  - cell "10 回应" [ref=e676]
+                  - cell "2025-07-26 21:15:30" [ref=e677]
+                - row "余华《活着》免费下载 来自飞鸿 1 回应 2025-05-24 22:21:45" [ref=e678]:
+                  - cell "余华《活着》免费下载" [ref=e679]:
+                    - link "余华《活着》免费下载" [ref=e680] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/27064488/discussion/637787834/
+                  - cell "来自飞鸿" [ref=e681]:
+                    - text: 来自
+                    - link "飞鸿" [ref=e682] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/140567820/
+                  - cell "1 回应" [ref=e683]
+                  - cell "2025-05-24 22:21:45" [ref=e684]
+            - paragraph [ref=e685]:
+              - text: ">"
+              - link "浏览更多话题" [ref=e686] [cursor=pointer]:
+                - /url: https://book.douban.com/subject/27064488/discussion/
+      - generic [ref=e687]:
+        - generic [ref=e688]:
+          - generic [ref=e689]:
+            - heading "当前版本有售 · · · · · ·" [level=2] [ref=e690]
+            - list [ref=e691]:
+              - listitem [ref=e692]:
+                - generic [ref=e693]:
+                  - link "京东商城" [ref=e695] [cursor=pointer]:
+                    - /url: https://book.douban.com/link2/?lowest=5380&pre=0&vendor=jingdong&srcpage=subject&price=5380&pos=1&url=https%3A%2F%2Funion-click.jd.com%2Fjdc%3Fe%3Disbn9787530215593uid%26p%3DJF8BARoJK1olWAcBUlpdAEMTBl8IGVkWXAcHUW4ZVxNJXF9RXh5UHw0cSgYYXBcIWDoXSQVJQwYAVl1cCU4SHDZNRwYlH1FUNAM8TgJ1aGx9HAdDCFgHFjUYTkcbM2gNHF0SVAUFZF5ZCU8TM18IGmtHMw4KXF1cDEMRC20IK1kVXAcHVFZaC0onA2kOHVoWVQABV1ZaDnsXC2s4wtuii6SQjcDX3cOAM184GGtNH1VdXFhUDk8VAmwIH18dX0JaAW5tCHsUMzFmGggcCQ8DVwwzVBVFRjMMRRx7WgYKXFlcCnsVAm4KGWslbU8HNh0YTkNAeD8NXAlOCWVUNxUOVwleBClmWR1BKUFBERwBDxheBChpf1hMbQYyVFhdCns&cntvendor=1&srcsubj=27064488&type=bkbuy&subject=27064488
+                  - generic [ref=e696]:
+                    - link "53.80元" [ref=e698] [cursor=pointer]:
+                      - /url: https://book.douban.com/link2/?lowest=5380&pre=0&vendor=jingdong&srcpage=subject&price=5380&pos=1&url=https%3A%2F%2Funion-click.jd.com%2Fjdc%3Fe%3Disbn9787530215593uid%26p%3DJF8BARoJK1olWAcBUlpdAEMTBl8IGVkWXAcHUW4ZVxNJXF9RXh5UHw0cSgYYXBcIWDoXSQVJQwYAVl1cCU4SHDZNRwYlH1FUNAM8TgJ1aGx9HAdDCFgHFjUYTkcbM2gNHF0SVAUFZF5ZCU8TM18IGmtHMw4KXF1cDEMRC20IK1kVXAcHVFZaC0onA2kOHVoWVQABV1ZaDnsXC2s4wtuii6SQjcDX3cOAM184GGtNH1VdXFhUDk8VAmwIH18dX0JaAW5tCHsUMzFmGggcCQ8DVwwzVBVFRjMMRRx7WgYKXFlcCnsVAm4KGWslbU8HNh0YTkNAeD8NXAlOCWVUNxUOVwleBClmWR1BKUFBERwBDxheBChpf1hMbQYyVFhdCns&cntvendor=1&srcsubj=27064488&type=bkbuy&subject=27064488
+                    - link "购买纸质书" [ref=e700] [cursor=pointer]:
+                      - /url: https://book.douban.com/link2/?lowest=5380&pre=0&vendor=jingdong&srcpage=subject&price=5380&pos=1&url=https%3A%2F%2Funion-click.jd.com%2Fjdc%3Fe%3Disbn9787530215593uid%26p%3DJF8BARoJK1olWAcBUlpdAEMTBl8IGVkWXAcHUW4ZVxNJXF9RXh5UHw0cSgYYXBcIWDoXSQVJQwYAVl1cCU4SHDZNRwYlH1FUNAM8TgJ1aGx9HAdDCFgHFjUYTkcbM2gNHF0SVAUFZF5ZCU8TM18IGmtHMw4KXF1cDEMRC20IK1kVXAcHVFZaC0onA2kOHVoWVQABV1ZaDnsXC2s4wtuii6SQjcDX3cOAM184GGtNH1VdXFhUDk8VAmwIH18dX0JaAW5tCHsUMzFmGggcCQ8DVwwzVBVFRjMMRRx7WgYKXFlcCnsVAm4KGWslbU8HNh0YTkNAeD8NXAlOCWVUNxUOVwleBClmWR1BKUFBERwBDxheBChpf1hMbQYyVFhdCns&cntvendor=1&srcsubj=27064488&type=bkbuy&subject=27064488
+          - link "+ 加入购书单" [ref=e703] [cursor=pointer]:
+            - /url: https://www.douban.com/accounts/passport/login?source=book
+        - generic [ref=e704]:
+          - heading "这本书的其他版本 · · · · · · ( 全部33 )" [level=2] [ref=e705]:
+            - text: 这本书的其他版本 · · · · · ·
+            - generic [ref=e706]:
+              - text: (
+              - link "全部33" [ref=e707] [cursor=pointer]:
+                - /url: https://book.douban.com/works/1006599
+              - text: )
+          - list [ref=e708]:
+            - listitem [ref=e709]:
+              - generic [ref=e710]:
+                - generic [ref=e711]:
+                  - link "作家出版社 （2012）" [ref=e712] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/4913064/
+                  - generic [ref=e713]: 9.4分 1425118人读过
+                - link "展开有售 (1)" [ref=e715] [cursor=pointer]:
+                  - /url: javascript:void(0);
+            - listitem [ref=e716]:
+              - generic [ref=e718]:
+                - link "Anchor （2003）" [ref=e719] [cursor=pointer]:
+                  - /url: https://book.douban.com/subject/1484922/
+                - generic [ref=e720]: 9.0分 135人读过
+            - listitem [ref=e721]:
+              - generic [ref=e722]:
+                - generic [ref=e723]:
+                  - link "南海出版公司 （1998）" [ref=e724] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1082154/
+                  - generic [ref=e725]: 9.2分 362808人读过
+                - link "展开有售 (1)" [ref=e727] [cursor=pointer]:
+                  - /url: javascript:void(0);
+            - listitem [ref=e728]:
+              - generic [ref=e729]:
+                - generic [ref=e730]:
+                  - link "上海文艺出版社 （2004）" [ref=e731] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1061118/
+                  - generic [ref=e732]: 9.1分 112787人读过
+                - link "展开有售 (1)" [ref=e734] [cursor=pointer]:
+                  - /url: javascript:void(0);
+        - heading "以下书单推荐 · · · · · · ( 全部 )" [level=2] [ref=e735]:
+          - text: 以下书单推荐 · · · · · ·
+          - generic [ref=e736]:
+            - text: (
+            - link "全部" [ref=e737] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/27064488/doulists
+            - text: )
+        - list [ref=e739]:
+          - listitem [ref=e740]:
+            - link "评分9.0~9.7(1000+人参与评价)" [ref=e741] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/1757387/
+            - text: (第五顾尘ᕦ)
+          - listitem [ref=e742]:
+            - link "书单 | 千评9分书（一）" [ref=e743] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/38391562/
+            - text: (Sheryl)
+          - listitem [ref=e744]:
+            - link "2010-2019年9分以上图书" [ref=e745] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/4036458/
+            - text: (晚安，本杰明)
+          - listitem [ref=e746]:
+            - link "①这列火车载满了书籍,将在夜晚途经你梦里" [ref=e747] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/46537632/
+            - text: (Z)
+          - listitem [ref=e748]:
+            - link "37°暖书单（一）" [ref=e749] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/41155218/
+            - text: (37°暖)
+        - generic [ref=e751]:
+          - iframe [ref=e752]:
+            - generic [active] [ref=f36e1]:
+              - generic [ref=f36e2]:
+                - link [ref=f36e3] [cursor=pointer]:
+                  - /url: https://erebor.douban.com/redirect/?action=&ad=268567&ad_type=7&al=3&bid=1BMsX9Vf6s8&brand=&chicken=9f19bbfa56378f41251afb2737ef6488&creative=unknown_300x100&crtr=7%3A%E4%BD%99%E5%8D%8E%7C7%3A%E6%B4%BB%E7%9D%80%7C7%3A%E7%BB%8F%E5%85%B8%7C7%3A%E5%A5%BD%E4%B9%A6%EF%BC%8C%E5%80%BC%E5%BE%97%E4%B8%80%E8%AF%BB%7C7%3A%E4%B8%AD%E5%9B%BD%E6%96%87%E5%AD%A6%7C7%3A%E5%B0%8F%E8%AF%B4%7C7%3A%E5%BD%93%E4%BB%A3%E6%96%87%E5%AD%A6%7C7%3A%E6%96%87%E5%AD%A6%7C7%3A%E9%95%BF%E7%AF%87%E5%B0%8F%E8%AF%B4%7C7%3A%E6%88%91%E6%83%B3%E8%AF%BB%E8%BF%99%E6%9C%AC%E4%B9%A6%7C3%3A%2Fsubject%2F27064488%2F&device=0&disable_creative=false&disable_third=false&high_value=false&hn=sam37&imp_type=2&is_cache=false&is_cmp=false&is_core=false&is_ht=false&is_short=false&item_type=COMPLEMENT&mark=&model=&net=&os=52&osv=NT+10.0&p=0&posid=&priority=2&region=68972b8f49b28cf6&sig=ed39265b7ff5e5ec0bbc2e04f45134aaa7aa2dc94476fd536ac19fc236451cf6&sigt=hmac&t_mode=&target=aHR0cHM6Ly9zaGlqaS5kb3ViYW4uY29tL2RldGFpbC8xODA5Mjkv&ts=__TIMESTAMP__&ts_ms=__TIMESTAMP_MS__&uid=&unit=dale_book_subject_middle_mini&vendor=
+                - generic [ref=f36e4]:
+                  - paragraph [ref=f36e5]:
+                    - link "豆瓣豆品 | “思想者系列”小书包" [ref=f36e6] [cursor=pointer]:
+                      - /url: https://erebor.douban.com/redirect/?action=&ad=268567&ad_type=7&al=3&bid=1BMsX9Vf6s8&brand=&chicken=9f19bbfa56378f41251afb2737ef6488&creative=unknown_300x100&crtr=7%3A%E4%BD%99%E5%8D%8E%7C7%3A%E6%B4%BB%E7%9D%80%7C7%3A%E7%BB%8F%E5%85%B8%7C7%3A%E5%A5%BD%E4%B9%A6%EF%BC%8C%E5%80%BC%E5%BE%97%E4%B8%80%E8%AF%BB%7C7%3A%E4%B8%AD%E5%9B%BD%E6%96%87%E5%AD%A6%7C7%3A%E5%B0%8F%E8%AF%B4%7C7%3A%E5%BD%93%E4%BB%A3%E6%96%87%E5%AD%A6%7C7%3A%E6%96%87%E5%AD%A6%7C7%3A%E9%95%BF%E7%AF%87%E5%B0%8F%E8%AF%B4%7C7%3A%E6%88%91%E6%83%B3%E8%AF%BB%E8%BF%99%E6%9C%AC%E4%B9%A6%7C3%3A%2Fsubject%2F27064488%2F&device=0&disable_creative=false&disable_third=false&high_value=false&hn=sam37&imp_type=2&is_cache=false&is_cmp=false&is_core=false&is_ht=false&is_short=false&item_type=COMPLEMENT&mark=&model=&net=&os=52&osv=NT+10.0&p=0&posid=&priority=2&region=68972b8f49b28cf6&sig=ed39265b7ff5e5ec0bbc2e04f45134aaa7aa2dc94476fd536ac19fc236451cf6&sigt=hmac&t_mode=&target=aHR0cHM6Ly9zaGlqaS5kb3ViYW4uY29tL2RldGFpbC8xODA5Mjkv&ts=__TIMESTAMP__&ts_ms=__TIMESTAMP_MS__&uid=&unit=dale_book_subject_middle_mini&vendor=
+                  - paragraph [ref=f36e7]: 豆瓣豆品
+              - img
+          - generic [ref=e753]: 广告
+        - heading "谁读这本书? · · · · · ·" [level=2] [ref=e754]
+        - generic [ref=e755]:
+          - generic [ref=e756]:
+            - link "豆友huUz_c6XNo" [ref=e758] [cursor=pointer]:
+              - /url: https://www.douban.com/people/266363367/
+              - img "豆友huUz_c6XNo" [ref=e759]
+            - generic [ref=e760]:
+              - link "豆友huUz_c6XNo" [ref=e761] [cursor=pointer]:
+                - /url: https://www.douban.com/people/266363367/
+              - generic [ref=e762]: 9分钟前 读过
+          - generic [ref=e764]:
+            - link "Baki" [ref=e766] [cursor=pointer]:
+              - /url: https://www.douban.com/people/294791201/
+              - img "Baki" [ref=e767]
+            - generic [ref=e768]:
+              - link "Baki" [ref=e769] [cursor=pointer]:
+                - /url: https://www.douban.com/people/294791201/
+              - generic [ref=e770]: 2小时前 读过
+          - generic [ref=e772]:
+            - link "豆友OI7kIb3Fbw" [ref=e774] [cursor=pointer]:
+              - /url: https://www.douban.com/people/290656780/
+              - img "豆友OI7kIb3Fbw" [ref=e775]
+            - generic [ref=e776]:
+              - link "豆友OI7kIb3Fbw" [ref=e777] [cursor=pointer]:
+                - /url: https://www.douban.com/people/290656780/
+              - generic [ref=e778]: 今天凌晨 读过
+          - generic [ref=e780]:
+            - link "槽杰爱肘🐔" [ref=e782] [cursor=pointer]:
+              - /url: https://www.douban.com/people/293445270/
+              - img "槽杰爱肘🐔" [ref=e783]
+            - generic [ref=e784]:
+              - link "槽杰爱肘🐔" [ref=e785] [cursor=pointer]:
+                - /url: https://www.douban.com/people/293445270/
+              - generic [ref=e786]: 今天凌晨 想读
+          - paragraph [ref=e788]:
+            - text: ">"
+            - link "1509人在读" [ref=e789] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/27064488/comments?status=N
+          - paragraph [ref=e790]:
+            - text: ">"
+            - link "144888人读过" [ref=e791] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/27064488/comments?status=P
+          - paragraph [ref=e792]:
+            - text: ">"
+            - link "21145人想读" [ref=e793] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/27064488/comments?status=F
+        - heading [level=2]
+        - heading "二手市场 · · · · · ·" [level=2] [ref=e794]
+        - list [ref=e796]:
+          - listitem [ref=e797]:
+            - link "4本二手书欲转让" [ref=e798] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/27064488/offers
+            - text: (1.00 至 18.00元)
+          - listitem [ref=e799]:
+            - link "在豆瓣转让" [ref=e800] [cursor=pointer]:
+              - /url: https://www.douban.com/register?reason=secondhand-offer&cat=book
+            - text: 有21145人想读，手里有一本闲着?
+        - paragraph [ref=e801]:
+          - text: "订阅关于活着的评论:"
+          - 'link "feed: rss 2.0" [ref=e803] [cursor=pointer]':
+            - /url: https://book.douban.com/feed/subject/27064488/reviews
+    - generic [ref=e804]:
+      - generic [ref=e805]: © 2005－2026 douban.com, all rights reserved 北京豆网科技有限公司
+      - generic [ref=e806]:
+        - link "关于豆瓣" [ref=e807] [cursor=pointer]:
+          - /url: https://www.douban.com/about
+        - text: ·
+        - link "在豆瓣工作" [ref=e808] [cursor=pointer]:
+          - /url: https://www.douban.com/jobs
+        - text: ·
+        - link "联系我们" [ref=e809] [cursor=pointer]:
+          - /url: https://www.douban.com/about?topic=contactus
+        - text: ·
+        - link "法律声明" [ref=e810] [cursor=pointer]:
+          - /url: https://www.douban.com/about/legal
+        - text: ·
+        - link "帮助中心" [ref=e811] [cursor=pointer]:
+          - /url: https://help.douban.com/?app=book
+        - text: ·
+        - link "图书馆合作" [ref=e812] [cursor=pointer]:
+          - /url: https://book.douban.com/library_invitation
+        - text: ·
+        - link "移动应用" [ref=e813] [cursor=pointer]:
+          - /url: https://www.douban.com/doubanapp/

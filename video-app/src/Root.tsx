@@ -16,6 +16,18 @@ import {
   TechArchiveExplainerComposition,
   TECH_ARCHIVE_DURATION_IN_FRAMES,
 } from "./compositions/TechArchiveExplainerComposition";
+import {
+  PhilosophyMontageValidationComposition,
+  PHILOSOPHY_MONTAGE_DURATION_IN_FRAMES,
+} from "./compositions/PhilosophyMontageValidationComposition";
+import {
+  PhilosophyMontageStoicBoundaryComposition,
+  STOIC_BOUNDARY_DURATION_IN_FRAMES,
+} from "./compositions/PhilosophyMontageStoicBoundaryComposition";
+import {
+  LiteraryEmbersValidationComposition,
+  LITERARY_EMBERS_VERTICAL_DURATION_IN_FRAMES,
+} from "./compositions/LiteraryEmbersValidationComposition";
 import { VIDEO_PROFILES } from "./theme/videoProfiles";
 
 const AGENT_DURATION_IN_FRAMES = 70 * VIDEO_PROFILES.youtubeHorizontal.fps;
@@ -134,6 +146,30 @@ export const RemotionRoot: React.FC = () => {
         fps={VIDEO_PROFILES.youtubeHorizontal.fps}
         width={VIDEO_PROFILES.youtubeHorizontal.width}
         height={VIDEO_PROFILES.youtubeHorizontal.height}
+      />
+      <Composition
+        id="philosophy-montage-validation-preview"
+        component={PhilosophyMontageValidationComposition}
+        durationInFrames={PHILOSOPHY_MONTAGE_DURATION_IN_FRAMES}
+        fps={VIDEO_PROFILES.youtubeHorizontal.fps}
+        width={VIDEO_PROFILES.youtubeHorizontal.width}
+        height={VIDEO_PROFILES.youtubeHorizontal.height}
+      />
+      <Composition
+        id="philosophy-montage-stoic-boundary-preview"
+        component={PhilosophyMontageStoicBoundaryComposition}
+        durationInFrames={STOIC_BOUNDARY_DURATION_IN_FRAMES}
+        fps={VIDEO_PROFILES.youtubeHorizontal.fps}
+        width={VIDEO_PROFILES.youtubeHorizontal.width}
+        height={VIDEO_PROFILES.youtubeHorizontal.height}
+      />
+      <Composition
+        id="literary-embers-validation-preview"
+        component={LiteraryEmbersValidationComposition}
+        durationInFrames={LITERARY_EMBERS_VERTICAL_DURATION_IN_FRAMES}
+        fps={30}
+        width={720}
+        height={960}
       />
     </>
   );

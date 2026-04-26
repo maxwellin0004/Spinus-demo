@@ -1,0 +1,103 @@
+﻿{
+  "template_id": "literary_embers_quote_montage",
+  "video_id": "moon_sixpence_validation_v1",
+  "orientation": "vertical",
+  "voiceover_units": [
+    {
+      "voice_id": "le_v01",
+      "section": "hook",
+      "text": "\u8fd9\u53e5\u8bdd\u4f1a\u523a\u75db\u6240\u6709\u4e0d\u7518\u5fc3\u5374\u4e00\u76f4\u66ff\u522b\u4eba\u6d3b\u7684\u4eba\u3002",
+      "subtitle_zh": "\u8fd9\u53e5\u8bdd\u4f1a\u523a\u75db\u6240\u6709\n\u4e0d\u7518\u5fc3\u5374\u4e00\u76f4\u66ff\u522b\u4eba\u6d3b\u7684\u4eba",
+      "subtitle_en": "This line hits everyone\nwho keeps living for other eyes.",
+      "target_duration_sec": 4.6,
+      "intended_pause_after_sec": 0.2,
+      "emphasis_words": ["\u66ff\u522b\u4eba\u6d3b"],
+      "visual_section_id": "le_s01",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "le_v02",
+      "section": "bridge",
+      "text": "\u4eca\u5929\u5206\u4eab\u300a\u6708\u4eae\u4e0e\u516d\u4fbf\u58eb\u300b\u3002",
+      "subtitle_zh": "\u4eca\u5929\u5206\u4eab\u300a\u6708\u4eae\u4e0e\u516d\u4fbf\u58eb\u300b",
+      "subtitle_en": "Today: The Moon and Sixpence.",
+      "target_duration_sec": 2.6,
+      "intended_pause_after_sec": 0.2,
+      "emphasis_words": ["\u300a\u6708\u4eae\u4e0e\u516d\u4fbf\u58eb\u300b"],
+      "visual_section_id": "le_s02",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "le_v03",
+      "section": "body",
+      "text": "\u5f88\u591a\u4eba\u4e0d\u662f\u6ca1\u6709\u5929\u8d4b\uff0c\u53ea\u662f\u4ece\u6765\u6ca1\u66ff\u81ea\u5df1\u6d3b\u8fc7\u3002",
+      "subtitle_zh": "\u5f88\u591a\u4eba\u4e0d\u662f\u6ca1\u6709\u5929\u8d4b\uff0c\n\u53ea\u662f\u4ece\u6765\u6ca1\u66ff\u81ea\u5df1\u6d3b\u8fc7",
+      "subtitle_en": "Many people lack not talent,\nbut the courage to live for themselves.",
+      "target_duration_sec": 5.1,
+      "intended_pause_after_sec": 0.28,
+      "emphasis_words": ["\u66ff\u81ea\u5df1\u6d3b\u8fc7"],
+      "visual_section_id": "le_s03",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "le_v04",
+      "section": "body",
+      "text": "\u4f60\u62b1\u6028\u751f\u6d3b\u6c89\u95f7\uff0c\u5374\u628a\u6bcf\u6b21\u9009\u62e9\u90fd\u4ea4\u7ed9\u4f53\u9762\u548c\u76ee\u5149\u3002",
+      "subtitle_zh": "\u4f60\u62b1\u6028\u751f\u6d3b\u6c89\u95f7\uff0c\n\u5374\u628a\u6bcf\u6b21\u9009\u62e9\u90fd\u4ea4\u7ed9\u4f53\u9762\u548c\u76ee\u5149",
+      "subtitle_en": "You resent a dull life,\nyet hand every choice to approval and safety.",
+      "target_duration_sec": 5.3,
+      "intended_pause_after_sec": 0.28,
+      "emphasis_words": ["\u4f53\u9762", "\u76ee\u5149"],
+      "visual_section_id": "le_s04",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "le_v05",
+      "section": "body",
+      "text": "\u4e8e\u662f\u5de5\u4f5c\u662f\u4e3a\u4e86\u4ea4\u4ee3\uff0c\u52aa\u529b\u662f\u4e3a\u4e86\u6bd4\u8f83\u3002",
+      "subtitle_zh": "\u4e8e\u662f\u5de5\u4f5c\u662f\u4e3a\u4e86\u4ea4\u4ee3\uff0c\n\u52aa\u529b\u662f\u4e3a\u4e86\u6bd4\u8f83",
+      "subtitle_en": "Work becomes explanation,\nand effort becomes comparison.",
+      "target_duration_sec": 4.6,
+      "intended_pause_after_sec": 0.25,
+      "emphasis_words": ["\u4ea4\u4ee3", "\u6bd4\u8f83"],
+      "visual_section_id": "le_s05",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "le_v06",
+      "section": "body",
+      "text": "\u771f\u6b63\u56f0\u4f4f\u4eba\u7684\u4e0d\u662f\u8d77\u70b9\uff0c\u800c\u662f\u542c\u89c1\u5185\u5fc3\u540e\u53c8\u628a\u5b83\u6309\u56de\u53bb\u3002",
+      "subtitle_zh": "\u771f\u6b63\u56f0\u4f4f\u4eba\u7684\u4e0d\u662f\u8d77\u70b9\uff0c\n\u800c\u662f\u542c\u89c1\u5185\u5fc3\u540e\u53c8\u628a\u5b83\u6309\u56de\u53bb",
+      "subtitle_en": "What traps you is not the start,\nbut silencing what you already heard inside.",
+      "target_duration_sec": 5.8,
+      "intended_pause_after_sec": 0.28,
+      "emphasis_words": ["\u6309\u56de\u53bb"],
+      "visual_section_id": "le_s06",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "le_v07",
+      "section": "body",
+      "text": "\u4e0d\u662f\u6bcf\u4e2a\u4eba\u90fd\u8981\u79bb\u5f00\u73b0\u5b9e\uff0c\u4f46\u6bcf\u4e2a\u4eba\u90fd\u8be5\u6709\u4e00\u6b21\u4e3a\u81ea\u5df1\u8d1f\u8d23\u7684\u51b3\u5b9a\u3002",
+      "subtitle_zh": "\u4e0d\u662f\u6bcf\u4e2a\u4eba\u90fd\u8981\u79bb\u5f00\u73b0\u5b9e\uff0c\n\u4f46\u6bcf\u4e2a\u4eba\u90fd\u8be5\u6709\u4e00\u6b21\u4e3a\u81ea\u5df1\u8d1f\u8d23\u7684\u51b3\u5b9a",
+      "subtitle_en": "Not everyone must flee reality,\nbut everyone deserves one decision owned by the self.",
+      "target_duration_sec": 6.0,
+      "intended_pause_after_sec": 0.32,
+      "emphasis_words": ["\u4e3a\u81ea\u5df1\u8d1f\u8d23"],
+      "visual_section_id": "le_s07",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "le_v08",
+      "section": "outro",
+      "text": "\u5982\u679c\u4f60\u603b\u6015\u5931\u53bb\u638c\u58f0\uff0c\u6700\u540e\u5931\u53bb\u7684\u5f80\u5f80\u5c31\u662f\u81ea\u5df1\u3002",
+      "subtitle_zh": "\u5982\u679c\u4f60\u603b\u6015\u5931\u53bb\u638c\u58f0\uff0c\n\u6700\u540e\u5931\u53bb\u7684\u5f80\u5f80\u5c31\u662f\u81ea\u5df1",
+      "subtitle_en": "If you fear losing applause,\nyou may end up losing yourself.",
+      "target_duration_sec": 5.2,
+      "intended_pause_after_sec": 0.25,
+      "emphasis_words": ["\u81ea\u5df1"],
+      "visual_section_id": "le_s08",
+      "timing_status": "estimated"
+    }
+  ]
+}

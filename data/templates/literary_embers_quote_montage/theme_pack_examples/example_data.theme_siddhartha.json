@@ -1,0 +1,35 @@
+﻿{
+  "theme_id": "book_siddhartha_inner_path",
+  "meta": {
+    "video_id": "validation_siddhartha_path_v1",
+    "book_title": "《悉达多》",
+    "author_line": "赫尔曼·黑塞 | 著",
+    "topic_statement": "人最难走的路，是不再复制别人的答案",
+    "duration_sec": 37,
+    "style_variant": "painterly_oil",
+    "voiceover_enabled": true
+  },
+  "hook": {
+    "scene_type": "burnHook",
+    "symbolic_metaphor": "夜色河面上燃烧又熄灭的纸灯",
+    "hook_line_zh": "你反复焦虑，往往不是因为路难，而是因为那不是你的路",
+    "hook_line_en": "Anxiety repeats not because the road is hard, but because it is not yours.",
+    "hook_image": "/images/literary-embers/opener-siddhartha-lamp.png"
+  },
+  "cover_bridge": {
+    "scene_type": "bookCascade",
+    "flash_books": [
+      {"title": "《悉达多》", "author": "黑塞", "palette": ["#1f2b35", "#55707d", "#d7e4ea"], "cover_image": "/images/literary-embers/covers/siddhartha-real.png", "source": "public_book_cover"},
+      {"title": "《瓦尔登湖》", "author": "梭罗", "palette": ["#2a4834", "#6b9a7b", "#dcebdc"], "cover_image": "/images/literary-embers/covers/walden-real.png", "source": "public_book_cover"},
+      {"title": "《禅与摩托车维修艺术》", "author": "波西格", "palette": ["#3d2e22", "#8e6a4d", "#eedecf"], "cover_image": "/images/literary-embers/covers/zen-real.png", "source": "public_book_cover"}
+    ]
+  },
+  "scenes": [
+    {"scene_id": "le_s03", "scene_type": "deskPanel", "duration_frames": 124, "accent_text": "你抄了太多答案", "subtitle_zh": "你读了很多道理，却总在原地打转", "subtitle_en": "You learned many truths, yet kept circling in place.", "scene_image": "/images/literary-embers/panel-siddhartha-desk.png", "illustration_note": "纸页与停笔动作"},
+    {"scene_id": "le_s04", "scene_type": "streetPanel", "duration_frames": 156, "accent_text": "路看起来都对", "subtitle_zh": "别人走得快的方向，不一定适合你走", "subtitle_en": "The direction others take fastest may not fit your path.", "scene_image": "/images/literary-embers/panel-siddhartha-street.png", "illustration_note": "人群流动感"},
+    {"scene_id": "le_s05", "scene_type": "windowPanel", "duration_frames": 128, "accent_text": "安静地听一次自己", "subtitle_zh": "真正的答案，常常出现在你停止比较之后", "subtitle_en": "Your real answer often appears after comparison stops.", "scene_image": "/images/literary-embers/panel-siddhartha-window.png", "illustration_note": "窗边停顿"},
+    {"scene_id": "le_s06", "scene_type": "crossroadPanel", "duration_frames": 156, "accent_text": "慢一点也没关系", "subtitle_zh": "成长不是更像别人，而是更像你自己", "subtitle_en": "Growth is not becoming others, but becoming yourself.", "scene_image": "/images/literary-embers/panel-siddhartha-crossroad.png", "illustration_note": "岔路选择"},
+    {"scene_id": "le_s07", "scene_type": "collapsePanel", "duration_frames": 173, "accent_text": "不必立刻正确", "subtitle_zh": "你可以试错，但不要再背叛内心", "subtitle_en": "You may fail, but stop betraying what you know within.", "scene_image": "/images/literary-embers/panel-siddhartha-room.png", "illustration_note": "低谷回缩"},
+    {"scene_id": "le_s08", "scene_type": "walkawayPanel", "duration_frames": 129, "accent_text": "走自己的路", "subtitle_zh": "当你不再复制答案，你的人生才会开始回答你", "subtitle_en": "When you stop copying answers, life starts answering you.", "scene_image": "/images/literary-embers/panel-siddhartha-walk.png", "illustration_note": "向光收束"}
+  ]
+}

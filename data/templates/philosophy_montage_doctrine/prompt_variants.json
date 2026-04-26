@@ -1,0 +1,18 @@
+﻿{
+  "template_id": "philosophy_montage_doctrine",
+  "variant_version": "1.0.0",
+  "styles": ["cinematic_realism", "mythic_painterly", "neo_noir"],
+  "scene_variant_prompts": {
+    "opener_general": {
+      "cinematic_realism": "cinematic philosophical concept art, realistic lighting, deep depth, no text",
+      "mythic_painterly": "mythic painterly atmosphere, epic clouds and symbolic composition, no text",
+      "neo_noir": "high-contrast neo-noir philosophical frame, selective highlights, no text"
+    },
+    "problem_doctrine_method_close": {
+      "cinematic_realism": "human-centered cinematic realism, bright controlled highlights, emotional clarity, no text",
+      "mythic_painterly": "rich painterly texture + realistic anatomy, philosophical melancholy, no text",
+      "neo_noir": "clean noir contrast, restrained color accents, atmospheric haze, no text"
+    }
+  },
+  "negative_shared": "lowres, blurry, watermark, logo, UI, subtitles, readable text, deformed anatomy"
+}

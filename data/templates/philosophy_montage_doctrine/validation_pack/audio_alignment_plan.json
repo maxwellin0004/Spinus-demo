@@ -1,0 +1,6 @@
+﻿{
+  "tts_provider": "elevenlabs",
+  "alignment_requirement": "required_for_final_render",
+  "fallback": "estimated_after_audio_duration_fit",
+  "notes": "Do not use estimated voiceover unit timing as final subtitle timing in the released video."
+}

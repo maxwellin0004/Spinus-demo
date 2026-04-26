@@ -1,0 +1,12 @@
+﻿{
+  "bgm": [
+    {"id": "bgm_01", "time_range": "0.0-39.2", "style": "very low-density ambient drone", "source": "missing_but_replaceable", "volume": 0.12, "enabled_for_preview": false}
+  ],
+  "sfx": [
+    {"id": "sfx_01", "target_section": "hook", "style": "soft white flash hit", "start_sec": 0.15, "volume": 0.24, "enabled_for_preview": false},
+    {"id": "sfx_02", "target_section": "bridge", "style": "paper card whoosh", "start_sec": 4.9, "volume": 0.22, "enabled_for_preview": false}
+  ],
+  "ducking_rules": [
+    {"target": "bgm", "when": "voiceover_active", "gain": 0.35}
+  ]
+}

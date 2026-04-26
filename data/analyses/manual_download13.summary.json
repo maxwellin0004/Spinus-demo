@@ -1,0 +1,32 @@
+{
+  "summary": {
+    "top_template_rules": [
+      "Lead with a corrective warning in the first 3 seconds",
+      "Keep the first visual change hard and high contrast",
+      "Use claim-first script organization before explanation",
+      "Tie description hashtags to both broad and niche discovery terms",
+      "Keep hard subtitle rhythm faster in the hook than in the body"
+    ],
+    "key_packaging_features": [
+      "Primary title pattern centers on risk-warning",
+      "Description acts as a short thesis plus discovery hashtags",
+      "Hard subtitles support the spoken hook with compressed pacing"
+    ],
+    "best_variable_candidates": [
+      "topic",
+      "risk_phrase",
+      "background_asset",
+      "hashtags"
+    ],
+    "best_fixed_rules": [
+      "warning-first hook",
+      "high-contrast headline opening",
+      "claim-first structure"
+    ]
+  },
+  "_engine": {
+    "mode": "mock_fallback",
+    "model": "gpt-5.4-nano",
+    "reason": "Network error calling https://api.bltcy.ai/v1/chat/completions: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。"
+  }
+}

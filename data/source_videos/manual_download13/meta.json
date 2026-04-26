@@ -1,0 +1,18 @@
+{
+  "source_video_id": "manual_download13",
+  "title": null,
+  "description": null,
+  "cover_text": null,
+  "first_frame_text": null,
+  "platform": "uncertain",
+  "track": "uncertain",
+  "language": "uncertain",
+  "duration_sec": 161.98,
+  "created_at": "2026-04-24T15:49:12",
+  "_frame_index": {
+    "frames": []
+  },
+  "_frame_summaries": [],
+  "status": "analysis_ready",
+  "updated_at": "2026-04-24T15:49:14+0800"
+}

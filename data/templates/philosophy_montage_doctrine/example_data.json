@@ -1,0 +1,108 @@
+﻿{
+  "meta": {
+    "video_id": "digital_minimalism_validation_v2",
+    "topic": "Digital Minimalism",
+    "duration_sec": 63.5,
+    "tone": "direct contemplative practical",
+    "style_variant": "cosmic_doctrine",
+    "voiceover_enabled": true
+  },
+  "opener": {
+    "intro_title": "\u4eca\u5929\u6211\u4eec\u8981\u8bb2\u7684\u662f",
+    "concept_terms": [
+      "\u4eab\u4e50\u4e3b\u4e49",
+      "\u6d88\u8d39\u4e3b\u4e49",
+      "\u865a\u65e0\u4e3b\u4e49",
+      "\u5b8c\u7f8e\u4e3b\u4e49",
+      "\u72ac\u5112\u4e3b\u4e49",
+      "\u5de5\u5177\u7406\u6027",
+      "\u529f\u5229\u4e3b\u4e49",
+      "\u5b58\u5728\u4e3b\u4e49",
+      "\u65af\u591a\u845b\u4e3b\u4e49",
+      "\u6570\u5b57\u6781\u7b80\u4e3b\u4e49"
+    ],
+    "concept_images": [
+      "/images/philosophy-montage/opener-style/opener_01.jpg",
+      "/images/philosophy-montage/opener-style/opener_02.jpg",
+      "/images/philosophy-montage/opener-style/opener_03.jpg",
+      "/images/philosophy-montage/opener-style/opener_04.jpg",
+      "/images/philosophy-montage/opener-style/opener_05.jpg",
+      "/images/philosophy-montage/opener-style/opener_06.jpg",
+      "/images/philosophy-montage/opener-style/opener_07.jpg",
+      "/images/philosophy-montage/opener-style/opener_08.jpg",
+      "/images/philosophy-montage/opener-style/opener_09.jpg",
+      "/images/philosophy-montage/opener-style/opener_10.jpg"
+    ],
+    "switch_every_frames": 9
+  },
+  "scenes": [
+    {
+      "scene_id": "s01",
+      "scene_type": "titleStack",
+      "duration_frames": 210,
+      "image": "/images/philosophy-montage/focus_feed_trap.png",
+      "subtitle_lines": ["\u4f60\u4e0d\u662f\u6ca1\u65f6\u95f4\uff0c", "\u4f60\u662f\u88ab\u566a\u97f3\u5077\u8d70\u4e86\u6ce8\u610f\u529b\u3002"],
+      "palette": ["#0f172a", "#1e3a8a", "#0ea5e9"],
+      "intent": "Establish the emotional problem immediately with one cinematic hero image."
+    },
+    {
+      "scene_id": "s02",
+      "scene_type": "conceptBoard",
+      "duration_frames": 225,
+      "image": "/images/philosophy-montage/screen_overload_wall.png",
+      "subtitle_lines": ["\u5237\u5230\u5f88\u591a\uff0c", "\u4e0d\u7b49\u4e8e\u601d\u8003\u5f88\u591a\u3002"],
+      "palette": ["#0f172a", "#334155", "#60a5fa"],
+      "intent": "Shift from emotion to doctrine: input volume is not thinking depth."
+    },
+    {
+      "scene_id": "s03",
+      "scene_type": "ruminationExample",
+      "duration_frames": 270,
+      "image": "/images/philosophy-montage/notification_burst_desk.png",
+      "subtitle_lines": ["\u901a\u77e5\u6bcf\u54cd\u4e00\u6b21\uff0c", "\u4f60\u7684\u5927\u8111\u5c31\u8981\u91cd\u542f\u4e00\u6b21\u3002", "\u8fd9\u4e0d\u662f\u653e\u677e\uff0c\u662f\u5207\u6362\u6210\u672c\u3002"],
+      "palette": ["#1e1b4b", "#1f2937", "#f59e0b"],
+      "intent": "Show cognitive cost through one interruption-heavy image."
+    },
+    {
+      "scene_id": "s04",
+      "scene_type": "controlSplit",
+      "duration_frames": 285,
+      "image": "/images/philosophy-montage/control_vs_chaos.png",
+      "subtitle_lines": ["\u53ef\u63a7\uff1a\u6253\u5f00\u9891\u6b21\u3001\u505c\u7559\u65f6\u957f\u3001\u63d0\u9192\u5f00\u5173\u3002", "\u4e0d\u53ef\u63a7\uff1a\u63a8\u8350\u673a\u5236\u3001\u70ed\u70b9\u8282\u594f\u3002"],
+      "palette": ["#0f172a", "#0c4a6e", "#22d3ee"],
+      "intent": "Split controllable behavior from uncontrollable platform logic."
+    },
+    {
+      "scene_id": "s05",
+      "scene_type": "decisionPrompt",
+      "duration_frames": 225,
+      "image": "/images/philosophy-montage/pause_before_unlock.png",
+      "subtitle_lines": ["\u5148\u95ee\u4e00\u53e5\uff1a\u6211\u73b0\u5728\u6253\u5f00\u5b83\u662f\u4e3a\u4e86\u4ec0\u4e48\uff1f", "\u76ee\u7684\u4e0d\u6e05\uff0c\u5c31\u5148\u522b\u6253\u5f00\u3002"],
+      "palette": ["#0f172a", "#4c1d95", "#f472b6"],
+      "intent": "Turn doctrine into a repeatable decision prompt."
+    },
+    {
+      "scene_id": "s06",
+      "scene_type": "axiomWall",
+      "duration_frames": 270,
+      "image": "/images/philosophy-montage/focus_budget_workspace.png",
+      "subtitle_lines": ["\u6bcf\u5929\u7ed9\u9ad8\u4ef7\u503c\u4fe1\u606f 90 \u5206\u949f\u9884\u7b97\u3002", "\u5a31\u4e50\u5ef6\u540e\uff0c\u4e0d\u662f\u7981\u6b62\u3002"],
+      "palette": ["#052e16", "#14532d", "#86efac"],
+      "intent": "Land the doctrine with one concrete operating rule."
+    },
+    {
+      "scene_id": "s07",
+      "scene_type": "cityOutro",
+      "duration_frames": 210,
+      "image": "/images/philosophy-montage/morning_control_city.png",
+      "subtitle_lines": ["\u5f53\u4f60\u638c\u63a7\u5165\u53e3\uff0c", "\u7126\u8651\u5148\u4e0b\u964d\uff0c\u6548\u7387\u624d\u4f1a\u4e0a\u5347\u3002"],
+      "palette": ["#0f172a", "#334155", "#c084fc"],
+      "intent": "Close on emotional release and regained control."
+    }
+  ],
+  "audio": {
+    "voiceover_audio_path": "video-app/public/audio/philosophy-montage/digital-minimalism-elevenlabs-cn.mp3",
+    "subtitle_timeline_path": "data/audio_scripts/philosophy_montage_subtitle_timeline.horizontal.json",
+    "alignment_status": "aligned"
+  }
+}

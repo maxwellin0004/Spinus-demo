@@ -1,0 +1,42 @@
+﻿[
+  {
+    "time_range": "00:00-00:08",
+    "section": "hook",
+    "voice_strategy": "中文男声，中速，哲学感但不要播音腔。",
+    "bgm_strategy": "极轻氛围底，前2秒可以近乎无BGM。",
+    "sfx_strategy": "开场白闪、概念切换轻冲击。",
+    "silence_pauses": "主题词落点后短停。",
+    "mix_relation": "voiceover 为主，BGM 低于 -18dB 感知。",
+    "notes": "hook 重点是开场气质。"
+  },
+  {
+    "time_range": "00:08-00:26",
+    "section": "problem_doctrine",
+    "voice_strategy": "保持清晰，语气不要太重。",
+    "bgm_strategy": "轻压迫感 pad，随后转向更稳。",
+    "sfx_strategy": "不密集，只在切镜点给很弱提示。",
+    "silence_pauses": "事件/判断分层处可留短停顿。",
+    "mix_relation": "保持字幕与口播同步优先。",
+    "notes": "这一段不要做成鸡汤。"
+  },
+  {
+    "time_range": "00:26-00:39",
+    "section": "method",
+    "voice_strategy": "略放慢，让“先停一秒”真正成立。",
+    "bgm_strategy": "减配，给思考空间。",
+    "sfx_strategy": "停顿点可加极轻空气吸附感。",
+    "silence_pauses": "提问句前后都可以留空。",
+    "mix_relation": "method 段允许更安静。",
+    "notes": "执行感要强。"
+  },
+  {
+    "time_range": "00:39-00:48",
+    "section": "close",
+    "voice_strategy": "稳定收束，不拉高情绪。",
+    "bgm_strategy": "柔和收尾 pad。",
+    "sfx_strategy": "无必须 SFX。",
+    "silence_pauses": "最后一句前微停。",
+    "mix_relation": "结尾让 voiceover 独占空间。",
+    "notes": "不要做励志广告感。"
+  }
+]

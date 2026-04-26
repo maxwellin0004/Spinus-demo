@@ -1,0 +1,119 @@
+﻿{
+  "meta": {
+    "video_id": "moon_sixpence_validation_v1",
+    "book_title": "《月亮与六便士》",
+    "author_line": "毛姆 | 著",
+    "topic_statement": "最可怕的不是离群，而是一直替别人活",
+    "duration_sec": 36.8,
+    "style_variant": "ink_noir_vertical",
+    "voiceover_enabled": true
+  },
+  "hook": {
+    "scene_type": "burnHook",
+    "symbolic_metaphor": "被火焰包裹的灰白手部雕塑",
+    "hook_line_zh": "这句话会刺痛所有不甘心却一直替别人活的人",
+    "hook_line_en": "This line hits everyone who keeps living for other eyes.",
+    "hook_image": "/images/literary-embers/opener-moon-manuscript.png"
+  },
+  "cover_bridge": {
+    "scene_type": "bookCascade",
+    "flash_books": [
+      {
+        "title": "《活着》",
+        "author": "余华",
+        "palette": ["#70605b", "#cfbfaf", "#efe2d0"],
+        "cover_image": "/images/literary-embers/covers/huozhe-douban.png",
+        "source": "douban_book_page_capture"
+      },
+      {
+        "title": "《百年孤独》",
+        "author": "加西亚·马尔克斯",
+        "palette": ["#1d7860", "#5fd1a5", "#f5e6b8"],
+        "cover_image": "/images/literary-embers/covers/one-hundred-years-douban.png",
+        "source": "douban_book_page_capture"
+      },
+      {
+        "title": "《不做告别》",
+        "author": "韩江",
+        "palette": ["#f1f5f9", "#d6e4ff", "#8ec5fc"],
+        "cover_image": "/images/literary-embers/covers/no-goodbye-douban.png",
+        "source": "douban_book_page_capture"
+      },
+      {
+        "title": "《月亮与六便士》",
+        "author": "毛姆",
+        "palette": ["#c98531", "#f0b96f", "#2e1d15"],
+        "cover_image": "/images/literary-embers/covers/moon-sixpence-douban.png",
+        "source": "douban_book_page_capture"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "scene_id": "le_s03",
+      "scene_type": "deskPanel",
+      "duration_frames": 126,
+      "accent_text": "不是没想过",
+      "subtitle_zh": "很多人不是没有天赋，只是从来没替自己活过",
+      "subtitle_en": "Many people lack not talent, but the courage to live for themselves.",
+      "scene_image": "/images/literary-embers/panel-trapped-desk.png",
+      "illustration_note": "书堆、办公桌、沉默人物"
+    },
+    {
+      "scene_id": "le_s04",
+      "scene_type": "streetPanel",
+      "duration_frames": 150,
+      "accent_text": "而是不敢偏离",
+      "subtitle_zh": "你抱怨生活沉闷，却把每次选择都交给体面和目光",
+      "subtitle_en": "You resent a dull life, yet hand every choice to approval and safety.",
+      "scene_image": "/images/literary-embers/panel-gaze-window.png",
+      "illustration_note": "路过橱窗的人物和旁观人群"
+    },
+    {
+      "scene_id": "le_s05",
+      "scene_type": "windowPanel",
+      "duration_frames": 112,
+      "accent_text": "沉默地向内坍塌",
+      "subtitle_zh": "于是工作是为了交代，努力是为了比较",
+      "subtitle_en": "Work becomes explanation, and effort becomes comparison.",
+      "scene_image": "/images/literary-embers/panel-comparison-machine.png",
+      "illustration_note": "高处窗边、远景城市、坐姿人物"
+    },
+    {
+      "scene_id": "le_s06",
+      "scene_type": "crossroadPanel",
+      "duration_frames": 156,
+      "accent_text": "把决定还给自己",
+      "subtitle_zh": "真正困住人的不是起点，而是听见内心后又把它按回去",
+      "subtitle_en": "What traps you is not the start, but silencing what you already heard inside.",
+      "scene_image": "/images/literary-embers/panel-crossroad-shadow.png",
+      "illustration_note": "岔路、巨大阴影、站立人物"
+    },
+    {
+      "scene_id": "le_s07",
+      "scene_type": "collapsePanel",
+      "duration_frames": 164,
+      "accent_text": "听见内心却一次次按回去",
+      "subtitle_zh": "不是每个人都要离开现实，但每个人都该有一次为自己负责的决定",
+      "subtitle_en": "Not everyone must flee reality, but everyone deserves one decision owned by the self.",
+      "scene_image": "/images/literary-embers/panel-collapse-room.png",
+      "illustration_note": "室内角落、蜷缩人物、极简黑白"
+    },
+    {
+      "scene_id": "le_s08",
+      "scene_type": "walkawayPanel",
+      "duration_frames": 142,
+      "accent_text": "如果总怕失去掌声",
+      "subtitle_zh": "如果你总怕失去掌声，最后失去的往往就是自己",
+      "subtitle_en": "If you fear losing applause, you may end up losing yourself.",
+      "scene_image": "/images/literary-embers/panel-walkaway-light.png",
+      "illustration_note": "空白远路、背影、向亮处走"
+    }
+  ],
+  "audio": {
+    "tts_provider": "elevenlabs",
+    "voiceover_audio_path": "video-app/public/audio/literary-embers/moon-sixpence-elevenlabs-cn.mp3",
+    "subtitle_timeline_path": "data/templates/literary_embers_quote_montage/subtitle_timeline.generated.vertical.json",
+    "alignment_status": "aligned"
+  }
+}

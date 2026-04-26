@@ -196,7 +196,7 @@ module.exports = function (url, options) {
 
 /***/ },
 
-/***/ 4665
+/***/ 4947
 (__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) {
 
 
@@ -251,6 +251,37 @@ var update = injectStylesIntoStyleTag_default()(index_js_src/* default */.A, opt
 
        /* harmony default export */ const src = (index_js_src/* default */.A && index_js_src/* default */.A.locals ? index_js_src/* default */.A.locals : undefined);
 
+;// ./src/components/video/AudioTrackLayer.tsx
+
+
+
+const renderClip = (clip, key) => {
+  if (!clip.enabled || !clip.src) {
+    return null;
+  }
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: clip.startFrame, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+    esm.Audio,
+    {
+      src: (0,esm.staticFile)(clip.src.replace(/^\/+/, "")),
+      volume: () => clip.volume ?? 1,
+      playbackRate: clip.playbackRate ?? 1,
+      ...clip.loop ? { loop: true } : {},
+      ...clip.trimBefore ? { trimBefore: clip.trimBefore } : {},
+      ...clip.trimAfter ? { trimAfter: clip.trimAfter } : {}
+    }
+  ) }, key);
+};
+const AudioTrackLayer = ({ config }) => {
+  var _a;
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
+    config.voiceover ? renderClip(config.voiceover, "voiceover") : null,
+    config.bgm ? renderClip(config.bgm, "bgm") : null,
+    (_a = config.sfx) == null ? void 0 : _a.map((clip, index) => renderClip(clip, `sfx-${index}`))
+  ] });
+};
+
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(6540);
 ;// ./src/theme/tokens.ts
 
 const THEME = {
@@ -278,6 +309,151 @@ const THEME = {
     safeY: 96
   }
 };
+
+;// ./src/components/video/SubtitleTrack.tsx
+
+
+
+
+
+const renderHighlightedText = (text, emphasisWords = []) => {
+  if (!emphasisWords.length) {
+    return text;
+  }
+  const escaped = emphasisWords.filter(Boolean).map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  if (!escaped.length) {
+    return text;
+  }
+  const regex = new RegExp(`(${escaped.join("|")})`, "g");
+  const parts = text.split(regex);
+  return parts.map(
+    (part, index) => emphasisWords.includes(part) ? /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { color: "#ffd166" }, children: part }, `${part}-${index}`) : /* @__PURE__ */ (0,jsx_runtime.jsx)(react.Fragment, { children: part }, `${part}-${index}`)
+  );
+};
+const SubtitleTrack = ({ cues }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps, width, height } = (0,esm.useVideoConfig)();
+  const cue = cues.find((item) => frame >= item.startFrame && frame <= item.endFrame);
+  if (!cue) {
+    return null;
+  }
+  const localFrame = frame - cue.startFrame;
+  const intro = (0,esm.spring)({
+    fps,
+    frame: localFrame,
+    config: { damping: 18, stiffness: 140 }
+  });
+  const isVertical = height > width;
+  const subtitleWidth = isVertical ? Math.min(width * 0.88, 860) : Math.min(width * 0.82, 1280);
+  const fontSize = isVertical ? 28 : 34;
+  const bottom = isVertical ? 84 : 24;
+  const padding = isVertical ? "6px 12px" : "6px 16px";
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: { pointerEvents: "none" }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+    "div",
+    {
+      style: {
+        position: "absolute",
+        left: "50%",
+        bottom,
+        transform: `translateX(-50%) translateY(${(1 - intro) * 16}px)`,
+        opacity: intro,
+        width: subtitleWidth,
+        padding,
+        borderRadius: 0,
+        background: "transparent",
+        border: "none",
+        boxShadow: "none",
+        textAlign: "center",
+        fontFamily: THEME.fonts.bodyZh,
+        fontSize,
+        lineHeight: 1.28,
+        fontWeight: 800,
+        color: "#ffffff",
+        WebkitTextStroke: "1.5px rgba(0,0,0,0.68)",
+        paintOrder: "stroke fill",
+        textShadow: "0 2px 5px rgba(0,0,0,0.46), 0 0 2px rgba(0,0,0,0.62)"
+      },
+      children: cue.text.split("\n").map((line, lineIndex) => /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { children: renderHighlightedText(line, cue.emphasisWords) }, `${cue.startFrame}-${lineIndex}`))
+    }
+  ) });
+};
+
+;// ./src/data/audioPresets.ts
+
+const createVoiceOnlyAudioConfig = ({
+  voiceoverSrc,
+  subtitles,
+  voiceoverEnabled = false,
+  bgmSrc,
+  bgmEnabled = false,
+  bgmVolume = 0.2,
+  sfx = []
+}) => {
+  return {
+    voiceover: {
+      src: voiceoverSrc,
+      startFrame: 0,
+      volume: 1,
+      enabled: voiceoverEnabled
+    },
+    bgm: bgmSrc ? {
+      src: bgmSrc,
+      startFrame: 0,
+      volume: bgmVolume,
+      loop: true,
+      enabled: bgmEnabled
+    } : null,
+    sfx,
+    duckingRules: bgmSrc ? [
+      {
+        target: "bgm",
+        when: "voiceover_active",
+        gain: 0.35
+      }
+    ] : [],
+    subtitles
+  };
+};
+
+;// ./src/data/agentReferenceCloneAudio.ts
+
+
+const agentReferenceCloneAudio = createVoiceOnlyAudioConfig({
+  voiceoverSrc: "/audio/ai-concept-analyse/agent-horizontal-voiceover.mp3",
+  voiceoverEnabled: true,
+  subtitles: [
+    {
+      startFrame: 0,
+      endFrame: 389,
+      text: "Agent \u4E0D\u662F\u804A\u5929\u6846\u5347\u7EA7\u7248\uFF0C\n\u5B83\u66F4\u50CF\u4E00\u4E2A\u4F1A\u6301\u7EED\u63A8\u8FDB\u4EFB\u52A1\u7684 AI \u6267\u884C\u4F53\u3002",
+      emphasisWords: ["\u4E0D\u662F\u804A\u5929\u6846\u5347\u7EA7\u7248", "AI \u6267\u884C\u4F53"]
+    },
+    {
+      startFrame: 390,
+      endFrame: 839,
+      text: "\u5B83\u7684\u5173\u952E\uFF0C\u4E0D\u53EA\u662F\u56DE\u7B54\u95EE\u9898\uFF0C\n\u800C\u662F\u5E26\u7740\u76EE\u6807\u3001\u72B6\u6001\u548C\u5DE5\u5177\u7EE7\u7EED\u5F80\u4E0B\u505A\u3002",
+      emphasisWords: ["\u76EE\u6807", "\u72B6\u6001", "\u5DE5\u5177"]
+    },
+    {
+      startFrame: 840,
+      endFrame: 1289,
+      text: "\u5F53\u4EFB\u52A1\u9700\u8981\u641C\u96C6\u4FE1\u606F\u3001\u62C6\u6B65\u9AA4\u3001\u4E32\u5DE5\u5177\u3001\u4EA4\u7ED3\u679C\u65F6\uFF0C\nAgent \u6BD4\u666E\u901A\u95EE\u7B54\u6A21\u578B\u66F4\u9002\u5408\u3002",
+      emphasisWords: ["\u62C6\u6B65\u9AA4", "\u4E32\u5DE5\u5177", "\u4EA4\u7ED3\u679C"]
+    },
+    {
+      startFrame: 1290,
+      endFrame: 1709,
+      text: "\u4E00\u6761\u5178\u578B\u7684 Agent \u94FE\u8DEF\uFF0C\u662F\u5148\u63A5\u6536\u76EE\u6807\uFF0C\n\u518D\u5224\u65AD\u52A8\u4F5C\uFF0C\u8C03\u7528\u5DE5\u5177\uFF0C\u6700\u540E\u6574\u5408\u7ED3\u679C\u7EE7\u7EED\u63A8\u8FDB\u3002",
+      emphasisWords: ["\u63A5\u6536\u76EE\u6807", "\u8C03\u7528\u5DE5\u5177", "\u7EE7\u7EED\u63A8\u8FDB"]
+    },
+    {
+      startFrame: 1710,
+      endFrame: 2099,
+      text: "\u6240\u4EE5\u7406\u89E3 Agent\uFF0C\u91CD\u70B9\u4E0D\u5728\u5B83\u4F1A\u4E0D\u4F1A\u8BF4\uFF0C\n\u800C\u5728\u5B83\u80FD\u4E0D\u80FD\u56F4\u7ED5\u76EE\u6807\u628A\u4E8B\u60C5\u4E00\u6B65\u6B65\u505A\u5B8C\u3002",
+      emphasisWords: ["\u56F4\u7ED5\u76EE\u6807", "\u4E00\u6B65\u6B65\u505A\u5B8C"]
+    }
+  ]
+});
 
 ;// ./src/lib/referencePalette.ts
 
@@ -1339,6 +1515,9 @@ const ReferenceScenarioScene = ({
 
 
 
+
+
+
 const TIMELINE = {
   hook: 180,
   doc: 300,
@@ -1362,6 +1541,7 @@ const AgentHorizontalComposition = () => {
   const conceptCompareFrom = flowFrom + TIMELINE.flow;
   const closeFrom = conceptCompareFrom + TIMELINE.conceptCompare;
   return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#07111f" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AudioTrackLayer, { config: agentReferenceCloneAudio }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: hookFrom, durationInFrames: TIMELINE.hook, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
       ReferenceHookScene,
       {
@@ -1450,9 +1630,50 @@ const AgentHorizontalComposition = () => {
         subheadline: agentReferenceCloneData.closeScene.subheadline,
         palette
       }
-    ) })
+    ) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(SubtitleTrack, { cues: agentReferenceCloneAudio.subtitles ?? [] })
   ] });
 };
+
+;// ./src/data/comicEmotionalScrollAudio.ts
+
+
+const comicEmotionalScrollAudio = createVoiceOnlyAudioConfig({
+  voiceoverSrc: "/audio/comic-emotional-insight/emotional-scroll-voiceover.mp3",
+  voiceoverEnabled: true,
+  subtitles: [
+    {
+      startFrame: 0,
+      endFrame: 329,
+      text: "\u4F60\u4E0D\u662F\u79BB\u4E0D\u5F00\u624B\u673A\uFF0C\n\u4F60\u662F\u5728\u501F\u5B83\u6B62\u75DB\u3002",
+      emphasisWords: ["\u501F\u5B83\u6B62\u75DB"]
+    },
+    {
+      startFrame: 330,
+      endFrame: 689,
+      text: "\u4E00\u6761\u6D88\u606F\u3001\u4E00\u6B21\u7A7A\u4E0B\u6765\u3001\u4E00\u6B21\u4E0D\u8212\u670D\uFF0C\n\u624B\u5C31\u4F1A\u5148\u53BB\u78B0\u624B\u673A\uFF0C\u56E0\u4E3A\u90A3\u662F\u6700\u5FEB\u7684\u60C5\u7EEA\u7F13\u51B2\u3002",
+      emphasisWords: ["\u6700\u5FEB\u7684\u60C5\u7EEA\u7F13\u51B2"]
+    },
+    {
+      startFrame: 690,
+      endFrame: 1139,
+      text: "\u95EE\u9898\u662F\uFF0C\u5237\u5B8C\u4EE5\u540E\u60C5\u7EEA\u6CA1\u6709\u771F\u6B63\u88AB\u63A5\u4F4F\uFF0C\n\u4F60\u53EA\u4F1A\u66F4\u7A7A\u3001\u66F4\u7D2F\uFF0C\u4E5F\u66F4\u96BE\u505C\u4E0B\u6765\u3002",
+      emphasisWords: ["\u6CA1\u6709\u771F\u6B63\u88AB\u63A5\u4F4F", "\u66F4\u7A7A", "\u66F4\u7D2F"]
+    },
+    {
+      startFrame: 1140,
+      endFrame: 1499,
+      text: "\u6539\u53D8\u4E0D\u662F\u7ACB\u523B\u6212\u6389\u624B\u673A\uFF0C\n\u800C\u662F\u5148\u6253\u65AD\u2018\u96BE\u53D7\u5C31\u5237\u2019\u8FD9\u4E2A\u81EA\u52A8\u52A8\u4F5C\u3002",
+      emphasisWords: ["\u6253\u65AD", "\u81EA\u52A8\u52A8\u4F5C"]
+    },
+    {
+      startFrame: 1500,
+      endFrame: 1799,
+      text: "\u4E0B\u4E00\u6B21\u5148\u522B\u6025\u7740\u5237\uFF0C\u505C\u4E00\u4E2A\u547C\u5438\uFF0C\n\u8BA9\u81EA\u5DF1\u5148\u56DE\u5230\u73B0\u5B9E\uFF0C\u518D\u51B3\u5B9A\u8981\u4E0D\u8981\u62FF\u8D77\u624B\u673A\u3002",
+      emphasisWords: ["\u505C\u4E00\u4E2A\u547C\u5438", "\u56DE\u5230\u73B0\u5B9E"]
+    }
+  ]
+});
 
 ;// ./src/data/comicEmotionalScrollData.ts
 
@@ -2107,6 +2328,9 @@ const ComicTriptychScene = ({ title, cards, caption }) => {
 
 
 
+
+
+
 const ComicEmotionalScrollComposition_TIMELINE = {
   hook: 180,
   storyA: 240,
@@ -2125,15 +2349,57 @@ const ComicEmotionalScrollComposition = () => {
   const triptychFrom = storyCFrom + ComicEmotionalScrollComposition_TIMELINE.storyC;
   const closeFrom = triptychFrom + ComicEmotionalScrollComposition_TIMELINE.triptych;
   return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#101424" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AudioTrackLayer, { config: comicEmotionalScrollAudio }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: hookFrom, durationInFrames: ComicEmotionalScrollComposition_TIMELINE.hook, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ComicSplitHookScene, { ...comicEmotionalScrollData.hook }) }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: storyAFrom, durationInFrames: ComicEmotionalScrollComposition_TIMELINE.storyA, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ComicStoryScene, { ...comicEmotionalScrollData.storyA }) }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: mechanismFrom, durationInFrames: ComicEmotionalScrollComposition_TIMELINE.mechanism, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ComicMechanismScene, { ...comicEmotionalScrollData.mechanism }) }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: storyBFrom, durationInFrames: ComicEmotionalScrollComposition_TIMELINE.storyB, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ComicStoryScene, { ...comicEmotionalScrollData.storyB }) }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: storyCFrom, durationInFrames: ComicEmotionalScrollComposition_TIMELINE.storyC, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ComicStoryScene, { ...comicEmotionalScrollData.storyC }) }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: triptychFrom, durationInFrames: ComicEmotionalScrollComposition_TIMELINE.triptych, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ComicTriptychScene, { ...comicEmotionalScrollData.triptych }) }),
-    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: closeFrom, durationInFrames: ComicEmotionalScrollComposition_TIMELINE.close, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ComicCloseScene, { ...comicEmotionalScrollData.close }) })
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: closeFrom, durationInFrames: ComicEmotionalScrollComposition_TIMELINE.close, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ComicCloseScene, { ...comicEmotionalScrollData.close }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(SubtitleTrack, { cues: comicEmotionalScrollAudio.subtitles ?? [] })
   ] });
 };
+
+;// ./src/data/comicHabitSpiralAudio.ts
+
+
+const comicHabitSpiralAudio = createVoiceOnlyAudioConfig({
+  voiceoverSrc: "/audio/comic-habit-spiral/procrastination-loop-voiceover.mp3",
+  voiceoverEnabled: true,
+  subtitles: [
+    {
+      startFrame: 0,
+      endFrame: 329,
+      text: "\u4F60\u771F\u6B63\u8981\u6253\u65AD\u7684\uFF0C\u4E0D\u662F\u62D6\u5EF6\u672C\u8EAB\uFF0C\n\u800C\u662F\u538B\u529B\u4E00\u6765\u5C31\u5148\u9003\u7684\u9ED8\u8BA4\u53CD\u5E94\u3002",
+      emphasisWords: ["\u4E0D\u662F\u62D6\u5EF6\u672C\u8EAB", "\u9ED8\u8BA4\u53CD\u5E94"]
+    },
+    {
+      startFrame: 330,
+      endFrame: 689,
+      text: "\u5F88\u591A\u62D6\u5EF6\u4E0D\u662F\u56E0\u4E3A\u4F60\u6CA1\u6709\u76EE\u6807\uFF0C\n\u800C\u662F\u56E0\u4E3A\u8EAB\u4F53\u5148\u5B66\u4F1A\u4E86\uFF1A\u5148\u8EB2\u5F00\uFF0C\u9A6C\u4E0A\u4F1A\u8212\u670D\u4E00\u70B9\u3002",
+      emphasisWords: ["\u5148\u8EB2\u5F00", "\u8212\u670D\u4E00\u70B9"]
+    },
+    {
+      startFrame: 690,
+      endFrame: 1139,
+      text: "\u95EE\u9898\u5728\u4E8E\uFF0C\u77ED\u6682\u8F7B\u677E\u4E4B\u540E\uFF0C\u4EFB\u52A1\u8FD8\u5728\uFF0C\n\u7F6A\u6076\u611F\u66F4\u91CD\uFF0C\u4E0B\u6B21\u53EA\u4F1A\u66F4\u96BE\u5F00\u59CB\u3002",
+      emphasisWords: ["\u7F6A\u6076\u611F\u66F4\u91CD", "\u66F4\u96BE\u5F00\u59CB"]
+    },
+    {
+      startFrame: 1140,
+      endFrame: 1499,
+      text: "\u771F\u6B63\u6709\u6548\u7684\u6539\u53D8\uFF0C\u4E0D\u662F\u9760\u66F4\u72E0\u7684\u51B3\u5FC3\uFF0C\n\u800C\u662F\u8BA9\u5F00\u59CB\u8FD9\u4EF6\u4E8B\u53D8\u5F97\u66F4\u5C0F\u3001\u66F4\u5BB9\u6613\u3002",
+      emphasisWords: ["\u66F4\u5C0F", "\u66F4\u5BB9\u6613"]
+    },
+    {
+      startFrame: 1500,
+      endFrame: 1799,
+      text: "\u4E0B\u4E00\u6B21\u522B\u8981\u6C42\u81EA\u5DF1\u7ACB\u523B\u53D8\u5F3A\uFF0C\n\u53EA\u8981\u5148\u522B\u81EA\u52A8\u9003\u5F00\uFF0C\u4ECE\u4E00\u4E2A\u5C0F\u52A8\u4F5C\u91CD\u65B0\u8BAD\u7EC3\u81EA\u5DF1\u3002",
+      emphasisWords: ["\u522B\u81EA\u52A8\u9003\u5F00", "\u5C0F\u52A8\u4F5C"]
+    }
+  ]
+});
 
 ;// ./src/data/comicHabitSpiralData.ts
 
@@ -2239,6 +2505,9 @@ const comicHabitSpiralData = {
 
 
 
+
+
+
 const ComicHabitSpiralComposition_TIMELINE = {
   hook: 180,
   storyA: 240,
@@ -2257,15 +2526,57 @@ const ComicHabitSpiralComposition = () => {
   const triptychFrom = storyCFrom + ComicHabitSpiralComposition_TIMELINE.storyC;
   const closeFrom = triptychFrom + ComicHabitSpiralComposition_TIMELINE.triptych;
   return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#101424" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AudioTrackLayer, { config: comicHabitSpiralAudio }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: hookFrom, durationInFrames: ComicHabitSpiralComposition_TIMELINE.hook, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ComicSplitHookScene, { ...comicHabitSpiralData.hook }) }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: storyAFrom, durationInFrames: ComicHabitSpiralComposition_TIMELINE.storyA, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ComicStoryScene, { ...comicHabitSpiralData.storyA }) }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: mechanismFrom, durationInFrames: ComicHabitSpiralComposition_TIMELINE.mechanism, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ComicMechanismScene, { ...comicHabitSpiralData.mechanism }) }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: storyBFrom, durationInFrames: ComicHabitSpiralComposition_TIMELINE.storyB, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ComicStoryScene, { ...comicHabitSpiralData.storyB }) }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: storyCFrom, durationInFrames: ComicHabitSpiralComposition_TIMELINE.storyC, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ComicStoryScene, { ...comicHabitSpiralData.storyC }) }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: triptychFrom, durationInFrames: ComicHabitSpiralComposition_TIMELINE.triptych, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ComicTriptychScene, { ...comicHabitSpiralData.triptych }) }),
-    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: closeFrom, durationInFrames: ComicHabitSpiralComposition_TIMELINE.close, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ComicCloseScene, { ...comicHabitSpiralData.close }) })
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: closeFrom, durationInFrames: ComicHabitSpiralComposition_TIMELINE.close, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ComicCloseScene, { ...comicHabitSpiralData.close }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(SubtitleTrack, { cues: comicHabitSpiralAudio.subtitles ?? [] })
   ] });
 };
+
+;// ./src/data/macdIndicatorAudio.ts
+
+
+const macdIndicatorAudio = createVoiceOnlyAudioConfig({
+  voiceoverSrc: "/audio/new-signals/macd-indicator-voiceover.mp3",
+  voiceoverEnabled: true,
+  subtitles: [
+    {
+      startFrame: 0,
+      endFrame: 329,
+      text: "\u6700\u5371\u9669\u7684\u65F6\u5019\uFF0C\u5F80\u5F80\u4E0D\u662F\u65B0\u95FB\u5728\u8BF4\u4EC0\u4E48\uFF0C\n\u800C\u662F\u4EF7\u683C\u8FD8\u5728\u6DA8\uFF0C\u5185\u90E8\u52A8\u80FD\u5374\u5DF2\u7ECF\u5148\u8D70\u5F31\u3002",
+      emphasisWords: ["\u5185\u90E8\u52A8\u80FD", "\u5148\u8D70\u5F31"]
+    },
+    {
+      startFrame: 330,
+      endFrame: 719,
+      text: "\u5F88\u591A\u4EBA\u53EA\u770B\u4EF7\u683C\u521B\u65B0\u9AD8\uFF0C\n\u5374\u6CA1\u770B\u5230 MACD \u5DF2\u7ECF\u5F00\u59CB\u7F29\u91CF\u3001\u80CC\u79BB\u6216\u8005\u949D\u5316\u3002",
+      emphasisWords: ["\u4EF7\u683C\u521B\u65B0\u9AD8", "MACD", "\u80CC\u79BB"]
+    },
+    {
+      startFrame: 720,
+      endFrame: 1139,
+      text: "MACD \u7684\u4EF7\u503C\uFF0C\u4E0D\u662F\u66FF\u4F60\u4E00\u952E\u5F00\u4ED3\uFF0C\n\u800C\u662F\u66F4\u65E9\u544A\u8BC9\u4F60\u8D8B\u52BF\u5185\u90E8\u6CA1\u6709\u8868\u9762\u770B\u8D77\u6765\u90A3\u4E48\u5F3A\u3002",
+      emphasisWords: ["\u4E0D\u662F\u66FF\u4F60\u4E00\u952E\u5F00\u4ED3", "\u8D8B\u52BF\u5185\u90E8"]
+    },
+    {
+      startFrame: 1140,
+      endFrame: 1499,
+      text: "\u66F4\u7A33\u7684\u7528\u6CD5\uFF0C\u662F\u5148\u770B\u7ED3\u6784\uFF0C\u518D\u770B\u52A8\u80FD\uFF0C\n\u6700\u540E\u7B49\u4EF7\u683C\u786E\u8BA4\u52A8\u4F5C\uFF0C\u800C\u4E0D\u662F\u53EA\u76EF\u4E00\u4E2A\u91D1\u53C9\u6B7B\u53C9\u3002",
+      emphasisWords: ["\u5148\u770B\u7ED3\u6784", "\u7B49\u4EF7\u683C\u786E\u8BA4"]
+    },
+    {
+      startFrame: 1500,
+      endFrame: 1799,
+      text: "\u6240\u4EE5 MACD \u771F\u6B63\u9002\u5408\u505A\u7684\uFF0C\u662F\u8D8B\u52BF\u5065\u5EB7\u5EA6\u5224\u65AD\u548C\u98CE\u9669\u9884\u8B66\uFF0C\n\u4E0D\u662F\u60C5\u7EEA\u4E0A\u5934\u65F6\u7684\u51B2\u52A8\u6309\u94AE\u3002",
+      emphasisWords: ["\u98CE\u9669\u9884\u8B66", "\u51B2\u52A8\u6309\u94AE"]
+    }
+  ]
+});
 
 ;// ./src/data/macdIndicatorData.ts
 
@@ -2397,6 +2708,9 @@ const macdIndicatorData = {
 
 
 
+
+
+
 const MacdIndicatorComposition_TIMELINE = {
   hook: 150,
   doc: 240,
@@ -2419,6 +2733,7 @@ const MacdIndicatorComposition = () => {
   const conceptCompareFrom = flowFrom + MacdIndicatorComposition_TIMELINE.flow;
   const closeFrom = conceptCompareFrom + MacdIndicatorComposition_TIMELINE.conceptCompare;
   return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#080808" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AudioTrackLayer, { config: macdIndicatorAudio }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: hookFrom, durationInFrames: MacdIndicatorComposition_TIMELINE.hook, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ReferenceHookScene, { frames: macdIndicatorData.hookFrames }) }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: docFrom, durationInFrames: MacdIndicatorComposition_TIMELINE.doc, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
       ReferenceDocScene,
@@ -2500,110 +2815,631 @@ const MacdIndicatorComposition = () => {
         headline: macdIndicatorData.closeScene.headline,
         subheadline: macdIndicatorData.closeScene.subheadline
       }
-    ) })
+    ) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(SubtitleTrack, { cues: macdIndicatorAudio.subtitles ?? [] })
   ] });
 };
 
-;// ./src/components/video/AudioTrackLayer.tsx
+;// ./src/data/minimalPsychExplainerAudio.ts
 
-
-
-const renderClip = (clip, key) => {
-  if (!clip.enabled || !clip.src) {
-    return null;
-  }
-  return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: clip.startFrame, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
-    esm.Audio,
+const minimalPsychVoiceoverText = [
+  "\u4E3A\u4EC0\u4E48\u4E00\u4EF6\u4E8B\u5DF2\u7ECF\u8FC7\u53BB\u4E86\uFF0C\u4F60\u7684\u8111\u5B50\u91CC\u5374\u8FD8\u5728\u4E00\u904D\u904D replay\u3002",
+  "\u4F60\u4E0D\u662F\u4E0D\u77E5\u9053\u522B\u60F3\u4E86\uFF0C\u800C\u662F\u603B\u89C9\u5F97\uFF0C\u53EA\u8981\u518D\u60F3\u4E00\u4F1A\u513F\uFF0C\u5C31\u80FD\u628A\u5B83\u60F3\u660E\u767D\u3002",
+  "\u5FC3\u7406\u5B66\u91CC\uFF0C\u8FD9\u66F4\u50CF\u4E00\u79CD\u53CD\u520D\u601D\u7EF4\u3002\u5B83\u770B\u8D77\u6765\u50CF\u5206\u6790\uFF0C\u5B9E\u9645\u4E0A\u5374\u8BA9\u4F60\u505C\u5728\u539F\u5730\u3002",
+  "\u5B83\u4E5F\u50CF\u4E00\u4E2A\u8D8A\u62C9\u8D8A\u7D27\u7684\u7EF3\u7ED3\u3002\u4F60\u8D8A\u60F3\u4E00\u6B21\u89E3\u51B3\uFF0C\u5B83\u53CD\u800C\u8D8A\u96BE\u677E\u5F00\u3002",
+  "\u60F3\u6253\u65AD\u8FD9\u79CD\u5FAA\u73AF\uFF0C\u4E0D\u662F\u903C\u81EA\u5DF1\u7ACB\u523B\u60F3\u901A\uFF0C\u800C\u662F\u5148\u6682\u505C\u8FFD\u95EE\u4E3A\u4EC0\u4E48\uFF0C\u628A\u8111\u4E2D\u7684\u5185\u5BB9\u5199\u4E0B\u6765\uFF0C\u518D\u505A\u4E00\u4E2A\u73B0\u5B9E\u91CC\u7684\u5C0F\u52A8\u4F5C\u3002",
+  "\u5F53\u4F60\u4E0D\u518D\u903C\u81EA\u5DF1\u7ACB\u523B\u60F3\u660E\u767D\uFF0C\u8111\u5B50\u53CD\u800C\u4F1A\u6162\u6162\u5B89\u9759\u4E0B\u6765\u3002"
+].join(" ");
+const minimalPsychExplainerAudio = {
+  voiceover: {
+    src: "/audio/minimal-psych/rumination-preview-voiceover.mp3",
+    startFrame: 0,
+    volume: 1,
+    enabled: true
+  },
+  subtitles: [
     {
-      src: (0,esm.staticFile)(clip.src.replace(/^\/+/, "")),
-      volume: () => clip.volume ?? 1,
-      playbackRate: clip.playbackRate ?? 1,
-      ...clip.loop ? { loop: true } : {},
-      ...clip.trimBefore ? { trimBefore: clip.trimBefore } : {},
-      ...clip.trimAfter ? { trimAfter: clip.trimAfter } : {}
+      startFrame: 0,
+      endFrame: 158,
+      text: "\u4E3A\u4EC0\u4E48\u4E00\u4EF6\u4E8B\u5DF2\u7ECF\u8FC7\u53BB\u4E86\uFF0C\n\u4F60\u7684\u8111\u5B50\u91CC\u5374\u8FD8\u5728\u4E00\u904D\u904D replay\u3002",
+      emphasisWords: ["replay"]
+    },
+    {
+      startFrame: 159,
+      endFrame: 343,
+      text: "\u4F60\u4E0D\u662F\u4E0D\u77E5\u9053\u522B\u60F3\u4E86\uFF0C\n\u800C\u662F\u603B\u89C9\u5F97\uFF0C\u53EA\u8981\u518D\u60F3\u4E00\u4F1A\u513F\uFF0C\u5C31\u80FD\u628A\u5B83\u60F3\u660E\u767D\u3002",
+      emphasisWords: ["\u60F3\u660E\u767D"]
+    },
+    {
+      startFrame: 344,
+      endFrame: 528,
+      text: "\u5FC3\u7406\u5B66\u91CC\uFF0C\u8FD9\u66F4\u50CF\u4E00\u79CD\u53CD\u520D\u601D\u7EF4\u3002\n\u5B83\u770B\u8D77\u6765\u50CF\u5206\u6790\uFF0C\u5B9E\u9645\u4E0A\u5374\u8BA9\u4F60\u505C\u5728\u539F\u5730\u3002",
+      emphasisWords: ["\u53CD\u520D\u601D\u7EF4", "\u505C\u5728\u539F\u5730"]
+    },
+    {
+      startFrame: 529,
+      endFrame: 713,
+      text: "\u5B83\u4E5F\u50CF\u4E00\u4E2A\u8D8A\u62C9\u8D8A\u7D27\u7684\u7EF3\u7ED3\u3002\n\u4F60\u8D8A\u60F3\u4E00\u6B21\u89E3\u51B3\uFF0C\u5B83\u53CD\u800C\u8D8A\u96BE\u677E\u5F00\u3002",
+      emphasisWords: ["\u8D8A\u62C9\u8D8A\u7D27"]
+    },
+    {
+      startFrame: 714,
+      endFrame: 978,
+      text: "\u60F3\u6253\u65AD\u8FD9\u79CD\u5FAA\u73AF\uFF0C\u4E0D\u662F\u903C\u81EA\u5DF1\u7ACB\u523B\u60F3\u901A\uFF0C\n\u800C\u662F\u5148\u6682\u505C\u8FFD\u95EE\u4E3A\u4EC0\u4E48\uFF0C\u628A\u8111\u4E2D\u7684\u5185\u5BB9\u5199\u4E0B\u6765\uFF0C\u518D\u505A\u4E00\u4E2A\u73B0\u5B9E\u91CC\u7684\u5C0F\u52A8\u4F5C\u3002",
+      emphasisWords: ["\u6682\u505C", "\u5199\u4E0B\u6765", "\u5C0F\u52A8\u4F5C"]
+    },
+    {
+      startFrame: 979,
+      endFrame: 1136,
+      text: "\u5F53\u4F60\u4E0D\u518D\u903C\u81EA\u5DF1\u7ACB\u523B\u60F3\u660E\u767D\uFF0C\n\u8111\u5B50\u53CD\u800C\u4F1A\u6162\u6162\u5B89\u9759\u4E0B\u6765\u3002",
+      emphasisWords: ["\u5B89\u9759\u4E0B\u6765"]
     }
-  ) }, key);
+  ]
 };
-const AudioTrackLayer = ({ config }) => {
-  var _a;
-  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
-    config.voiceover ? renderClip(config.voiceover, "voiceover") : null,
-    config.bgm ? renderClip(config.bgm, "bgm") : null,
-    (_a = config.sfx) == null ? void 0 : _a.map((clip, index) => renderClip(clip, `sfx-${index}`))
+
+;// ./src/data/minimalPsychExplainerData.ts
+
+const minimalPsychExplainerData = {
+  title: {
+    seriesLabel: "\u5E38\u89C1\u5FC3\u7406\u7CFB\u5217",
+    title: "\u5FC3\u7406\u5B66\u4E2D\u7684",
+    accent: "\u53CD\u520D\u601D\u7EF4",
+    footer: "\u55B5\u7684\u5FC3\u7406\u8BFE"
+  },
+  reelWords: ["\u53CD\u590D\u56DE\u60F3", "\u505C\u4E0D\u4E0B\u6765", "\u5185\u8017\u5FAA\u73AF"],
+  scenes: [
+    {
+      header: "\u4F60\u4E0D\u662F\u4E0D\u77E5\u9053\u522B\u60F3\u4E86",
+      zh: "\u4E3A\u4EC0\u4E48\u4E00\u4EF6\u4E8B\u5DF2\u7ECF\u8FC7\u53BB\u4E86 / \u4F60\u7684\u8111\u5B50\u91CC\u5374\u8FD8\u5728\u4E00\u904D\u904D replay",
+      en: "Why does your mind keep replaying / something that already ended?",
+      icon: "replay",
+      bubble: "\u518D\u60F3\u4E00\u904D"
+    },
+    {
+      header: "\u770B\u8D77\u6765\u50CF\u5728\u5206\u6790",
+      zh: "\u4F60\u4F1A\u4E0D\u65AD\u56DE\u60F3\u4E00\u53E5\u8BDD\u3001\u4E00\u4E2A\u8868\u60C5\u3001\u4E00\u6B21\u5931\u8BEF / \u50CF\u5728\u8111\u6D77\u91CC\u53CD\u590D\u5012\u5E26",
+      en: "You keep replaying a sentence, a look, or a mistake / as if your brain is constantly rewinding it.",
+      icon: "desk",
+      bubble: "\u6211\u662F\u4E0D\u662F\u8BF4\u9519\u4E86"
+    },
+    {
+      header: "\u5176\u5B9E\u8FD8\u505C\u5728\u539F\u5730",
+      zh: "\u53CD\u520D\u66F4\u50CF\u4E00\u53F0\u8DD1\u6B65\u673A / \u770B\u8D77\u6765\u5728\u524D\u8FDB \u5B9E\u9645\u4E0A\u8FD8\u505C\u5728\u539F\u5730",
+      en: "Rumination is more like a treadmill / it feels active, but you are still stuck in place.",
+      icon: "treadmill"
+    },
+    {
+      header: "\u8D8A\u62C9\u8D8A\u7D27",
+      zh: "\u4F60\u8D8A\u60F3\u4E00\u6B21\u6027\u628A\u5B83\u60F3\u900F / \u5B83\u53CD\u800C\u4F1A\u50CF\u7EF3\u7ED3\u4E00\u6837\u8D8A\u62C9\u8D8A\u7D27",
+      en: "The more you try to solve it in one go / the tighter it becomes, like a knot.",
+      icon: "knot"
+    }
+  ],
+  method: {
+    title: "\u6253\u65AD\u53CD\u520D\u7684 3 \u4E2A\u66F4\u5C0F\u52A8\u4F5C",
+    zh: "\u4E0D\u8981\u8981\u6C42\u81EA\u5DF1\u4E00\u6B21\u60F3\u900F / \u5148\u8BA9\u8111\u5B50\u79BB\u5F00\u5FAA\u73AF \u518D\u56DE\u5230\u73B0\u5B9E",
+    en: "Do not force one perfect insight / first break the loop, then return to reality.",
+    steps: [
+      {
+        label: "\u52A8\u4F5C 1",
+        body: "\u5148\u6682\u505C\u8FFD\u95EE\u4E3A\u4EC0\u4E48",
+        icon: "person"
+      },
+      {
+        label: "\u52A8\u4F5C 2",
+        body: "\u628A\u5FAA\u73AF\u5185\u5BB9\u5199\u4E0B\u6765",
+        icon: "write"
+      },
+      {
+        label: "\u52A8\u4F5C 3",
+        body: "\u53EA\u505A\u4E00\u4E2A\u73B0\u5B9E\u91CC\u7684\u5C0F\u52A8\u4F5C",
+        icon: "step"
+      }
+    ]
+  },
+  close: {
+    header: "\u4E0D\u662F\u903C\u81EA\u5DF1\u7ACB\u523B\u60F3\u660E\u767D",
+    zh: "\u5F53\u4F60\u4E0D\u518D\u903C\u81EA\u5DF1\u7ACB\u523B\u60F3\u660E\u767D / \u8111\u5B50\u53CD\u800C\u4F1A\u6162\u6162\u5B89\u9759\u4E0B\u6765",
+    en: "When you stop forcing instant clarity / your mind can finally begin to settle.",
+    icon: "calm"
+  }
+};
+
+;// ./src/scenes/psych/PsychKeywordReelScene.tsx
+
+
+
+const pickWord = (frame, words) => {
+  const idx = Math.min(words.length - 1, Math.floor(frame / 18));
+  return words[idx] ?? "";
+};
+const PsychKeywordReelScene = ({ words }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const word = pickWord(frame, words);
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { background: "#080808", justifyContent: "center", alignItems: "center" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          inset: 16,
+          border: "18px solid #191817",
+          boxShadow: "inset 0 0 0 2px rgba(202,137,61,0.35)",
+          borderRadius: 24
+        }
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          fontSize: 118,
+          fontWeight: 700,
+          color: "white",
+          letterSpacing: 6,
+          opacity: (0,esm.interpolate)(frame, [0, 8, 42, 54], [0, 1, 1, 0])
+        },
+        children: word
+      }
+    )
   ] });
 };
 
-// EXTERNAL MODULE: ./node_modules/react/index.js
-var react = __webpack_require__(6540);
-;// ./src/components/video/SubtitleTrack.tsx
+;// ./src/scenes/psych/psychTheme.ts
+
+const PSYCH_THEME = {
+  background: "#fcfcfb",
+  panel: "#ffffff",
+  line: "#101010",
+  muted: "#5b6270",
+  accent: "#6f9cd8",
+  softAccent: "#dbe8fb",
+  paper: "#f3f0ea",
+  border: "rgba(0,0,0,0.14)",
+  shadow: "0 16px 40px rgba(17, 20, 28, 0.08)"
+};
+
+;// ./src/scenes/psych/PsychPrimitives.tsx
 
 
 
 
 
-const renderHighlightedText = (text, emphasisWords = []) => {
-  if (!emphasisWords.length) {
-    return text;
-  }
-  const escaped = emphasisWords.filter(Boolean).map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-  if (!escaped.length) {
-    return text;
-  }
-  const regex = new RegExp(`(${escaped.join("|")})`, "g");
-  const parts = text.split(regex);
-  return parts.map(
-    (part, index) => emphasisWords.includes(part) ? /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { color: "#ffd166" }, children: part }, `${part}-${index}`) : /* @__PURE__ */ (0,jsx_runtime.jsx)(react.Fragment, { children: part }, `${part}-${index}`)
+const PsychBaseScene = ({
+  titleLeft,
+  titleRight = "\u5FC3\u7406\u77E5\u8BC6\u5206\u4EAB \u65E0\u4E0D\u826F\u5F15\u5BFC",
+  children
+}) => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    esm.AbsoluteFill,
+    {
+      style: {
+        background: PSYCH_THEME.background,
+        color: PSYCH_THEME.line,
+        fontFamily: THEME.fonts.bodyZh,
+        overflow: "hidden"
+      },
+      children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              left: 38,
+              right: 38,
+              top: 28,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              fontSize: 24,
+              zIndex: 4
+            },
+            children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 16, fontWeight: 700 }, children: [
+                /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                  "div",
+                  {
+                    style: {
+                      width: 36,
+                      height: 36,
+                      borderRadius: 999,
+                      background: "linear-gradient(180deg, #77a6e6 0%, #4d78c3 100%)",
+                      boxShadow: "inset 0 0 0 3px rgba(255,255,255,0.58)"
+                    }
+                  }
+                ),
+                /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: titleLeft })
+              ] }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { fontSize: 18, color: PSYCH_THEME.muted }, children: titleRight })
+            ]
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              left: 0,
+              right: 0,
+              bottom: 166,
+              height: 3,
+              background: "rgba(0,0,0,0.84)",
+              zIndex: 2
+            }
+          }
+        ),
+        children
+      ]
+    }
   );
 };
-const SubtitleTrack = ({ cues }) => {
+const PsychTitleBlock = ({
+  eyebrow,
+  title,
+  accent
+}) => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { textAlign: "center" }, children: [
+    eyebrow ? /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { fontSize: 30, color: PSYCH_THEME.muted, marginBottom: 18 }, children: eyebrow }) : null,
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          fontFamily: THEME.fonts.headlineZh,
+          fontWeight: 700,
+          fontSize: 78,
+          lineHeight: 1.08
+        },
+        children: title
+      }
+    ),
+    accent ? /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          fontFamily: THEME.fonts.headlineZh,
+          fontWeight: 700,
+          fontSize: 74,
+          lineHeight: 1.08,
+          color: PSYCH_THEME.accent
+        },
+        children: accent
+      }
+    ) : null
+  ] });
+};
+const IntroCard = ({ text }) => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+    "div",
+    {
+      style: {
+        padding: "18px 26px",
+        borderRadius: 999,
+        border: `2px solid ${PSYCH_THEME.border}`,
+        background: "rgba(255,255,255,0.93)",
+        boxShadow: PSYCH_THEME.shadow,
+        fontSize: 28,
+        fontWeight: 700
+      },
+      children: text
+    }
+  );
+};
+const RevealContainer = ({
+  children,
+  delay = 0,
+  y = 24
+}) => {
   const frame = (0,esm.useCurrentFrame)();
   const { fps } = (0,esm.useVideoConfig)();
-  const cue = cues.find((item) => frame >= item.startFrame && frame <= item.endFrame);
-  if (!cue) {
-    return null;
-  }
-  const localFrame = frame - cue.startFrame;
-  const intro = (0,esm.spring)({
-    fps,
-    frame: localFrame,
-    config: { damping: 18, stiffness: 140 }
-  });
-  return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: { pointerEvents: "none" }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+  const intro = (0,esm.spring)({ fps, frame: frame - delay, config: { damping: 18, stiffness: 110 } });
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { opacity: intro, transform: `translateY(${(1 - intro) * y}px)` }, children });
+};
+const ZhEnCaption = ({ zh, en }) => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
     "div",
     {
       style: {
         position: "absolute",
-        left: "50%",
-        bottom: 54,
-        transform: `translateX(-50%) translateY(${(1 - intro) * 16}px)`,
-        opacity: intro,
-        width: 1280,
-        padding: "18px 28px",
-        borderRadius: 30,
-        background: "rgba(7, 10, 18, 0.82)",
-        border: "2px solid rgba(255,255,255,0.14)",
-        boxShadow: "0 16px 40px rgba(0,0,0,0.25)",
+        left: 0,
+        right: 0,
+        bottom: 34,
         textAlign: "center",
-        fontFamily: THEME.fonts.bodyZh,
-        fontSize: 42,
-        lineHeight: 1.28,
-        fontWeight: 800,
-        color: "#ffffff",
-        textShadow: "0 2px 10px rgba(0,0,0,0.36)"
+        zIndex: 3
       },
-      children: cue.text.split("\n").map((line, lineIndex) => /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { children: renderHighlightedText(line, cue.emphasisWords) }, `${cue.startFrame}-${lineIndex}`))
+      children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { fontSize: 34, fontWeight: 700, marginBottom: 8 }, children: zh }),
+        en ? /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { fontSize: 26, color: PSYCH_THEME.muted, fontFamily: THEME.fonts.bodyEn }, children: en }) : null
+      ]
     }
-  ) });
+  );
+};
+const SvgStage = ({ children }) => /* @__PURE__ */ (0,jsx_runtime.jsx)("svg", { width: "620", height: "360", viewBox: "0 0 620 360", role: "img", style: { overflow: "visible" }, children });
+const PersonIcon = ({
+  x = 260,
+  y = 36,
+  scale = 1,
+  pose = "stand"
+}) => {
+  const transform = `translate(${x} ${y}) scale(${scale})`;
+  if (pose === "sit") {
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)("g", { transform, fill: "#111", children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: "60", cy: "36", r: "32" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "28", y: "78", width: "72", height: "92", rx: "34" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "-8", y: "112", width: "76", height: "20", rx: "10", transform: "rotate(-18 30 122)" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "82", y: "108", width: "88", height: "20", rx: "10", transform: "rotate(16 126 118)" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "30", y: "160", width: "22", height: "94", rx: "11", transform: "rotate(8 41 207)" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "76", y: "160", width: "22", height: "94", rx: "11", transform: "rotate(-8 87 207)" })
+    ] });
+  }
+  if (pose === "walk") {
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)("g", { transform, fill: "#111", children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: "60", cy: "34", r: "30" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "32", y: "74", width: "66", height: "96", rx: "30" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "-4", y: "100", width: "92", height: "18", rx: "9", transform: "rotate(24 42 109)" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "68", y: "106", width: "96", height: "18", rx: "9", transform: "rotate(-20 116 115)" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "32", y: "154", width: "22", height: "102", rx: "11", transform: "rotate(22 43 205)" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "78", y: "154", width: "22", height: "104", rx: "11", transform: "rotate(-18 89 206)" })
+    ] });
+  }
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)("g", { transform, fill: "#111", children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: "60", cy: "34", r: "30" }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "30", y: "72", width: "66", height: "104", rx: "32" }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "-8", y: "96", width: "90", height: "18", rx: "9", transform: "rotate(25 37 105)" }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "72", y: "94", width: "94", height: "18", rx: "9", transform: "rotate(-25 119 103)" }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "34", y: "160", width: "22", height: "104", rx: "11", transform: "rotate(8 45 212)" }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "76", y: "160", width: "22", height: "104", rx: "11", transform: "rotate(-8 87 212)" })
+  ] });
+};
+const PsychIconFigure = ({ type }) => {
+  switch (type) {
+    case "desk":
+      return /* @__PURE__ */ (0,jsx_runtime.jsxs)(SvgStage, { children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "86", y: "236", width: "230", height: "16", rx: "8", fill: "#111" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "102", y: "248", width: "18", height: "86", rx: "9", fill: "#111" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "276", y: "248", width: "18", height: "86", rx: "9", fill: "#111" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "120", y: "170", width: "90", height: "44", rx: "6", fill: "#111", transform: "rotate(-8 165 192)" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "400", y: "94", width: "88", height: "62", rx: "8", fill: "#111" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "438", y: "156", width: "10", height: "86", rx: "5", fill: "#111" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(PersonIcon, { x: 246, y: 68, scale: 0.82, pose: "sit" })
+      ] });
+    case "replay":
+      return /* @__PURE__ */ (0,jsx_runtime.jsxs)(SvgStage, { children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(PersonIcon, { x: 250, y: 50, scale: 0.88 }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M190 88a116 116 0 0 1 214-14", fill: "none", stroke: "#111", strokeWidth: "18", strokeLinecap: "round" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M407 74l-16-54 58 10z", fill: "#111" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M430 236a116 116 0 0 1-224 10", fill: "none", stroke: "#111", strokeWidth: "18", strokeLinecap: "round" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M204 246l20 52-59-6z", fill: "#111" })
+      ] });
+    case "person":
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(SvgStage, { children: /* @__PURE__ */ (0,jsx_runtime.jsx)(PersonIcon, { x: 250, y: 40, scale: 1 }) });
+    case "treadmill":
+      return /* @__PURE__ */ (0,jsx_runtime.jsxs)(SvgStage, { children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "90", y: "278", width: "332", height: "18", rx: "9", fill: "#111", transform: "rotate(-10 256 287)" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "420", y: "88", width: "18", height: "198", rx: "9", fill: "#111" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "430", y: "80", width: "132", height: "18", rx: "9", fill: "#111", transform: "rotate(-24 496 89)" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M176 84h92", stroke: "#111", strokeWidth: "16", strokeLinecap: "round" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M256 48l52 44-52 44z", fill: "#111" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(PersonIcon, { x: 238, y: 88, scale: 0.74, pose: "walk" })
+      ] });
+    case "knot":
+      return /* @__PURE__ */ (0,jsx_runtime.jsxs)(SvgStage, { children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "path",
+          {
+            d: "M70 206C164 54 286 306 376 176C452 66 518 234 568 132",
+            stroke: "#111",
+            strokeWidth: "24",
+            fill: "none",
+            strokeLinecap: "round"
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "path",
+          {
+            d: "M72 140C170 270 258 74 354 202C438 318 508 116 564 224",
+            stroke: "#111",
+            strokeWidth: "24",
+            fill: "none",
+            strokeLinecap: "round"
+          }
+        )
+      ] });
+    case "write":
+      return /* @__PURE__ */ (0,jsx_runtime.jsxs)(SvgStage, { children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "156", y: "106", width: "220", height: "160", rx: "22", fill: "#fff", stroke: "#111", strokeWidth: "14" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "196", y: "150", width: "126", height: "11", rx: "5", fill: "#111" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "196", y: "184", width: "94", height: "11", rx: "5", fill: "#111" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "324", y: "198", width: "142", height: "17", rx: "8", fill: "#111", transform: "rotate(-36 395 206)" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "450", y: "164", width: "30", height: "36", rx: "4", fill: "#111", transform: "rotate(-36 465 182)" })
+      ] });
+    case "step":
+      return /* @__PURE__ */ (0,jsx_runtime.jsxs)(SvgStage, { children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "78", y: "262", width: "120", height: "18", rx: "9", fill: "#111" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "228", y: "212", width: "130", height: "18", rx: "9", fill: "#111" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "388", y: "154", width: "138", height: "18", rx: "9", fill: "#111" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M270 74h92", stroke: "#111", strokeWidth: "16", strokeLinecap: "round" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M350 38l52 44-52 44z", fill: "#111" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(PersonIcon, { x: 284, y: 38, scale: 0.76, pose: "walk" })
+      ] });
+    case "calm":
+      return /* @__PURE__ */ (0,jsx_runtime.jsxs)(SvgStage, { children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(PersonIcon, { x: 250, y: 42, scale: 0.92 }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M118 200c26-24 52-24 78 0s52 24 78 0", stroke: "#4d78c3", strokeWidth: "13", fill: "none", strokeLinecap: "round" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M352 200c26-24 52-24 78 0s52 24 78 0", stroke: "#4d78c3", strokeWidth: "13", fill: "none", strokeLinecap: "round" })
+      ] });
+    default:
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)("div", {});
+  }
+};
+
+;// ./src/scenes/psych/PsychMethodScene.tsx
+
+
+
+
+
+const PsychMethodScene = ({ title, steps }) => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(PsychBaseScene, { titleLeft: "\u5FC3\u7406\u5B66\u4E2D\u7684\u53CD\u520D\u601D\u7EF4", children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: 136,
+          textAlign: "center",
+          fontSize: 52,
+          fontWeight: 700,
+          fontFamily: THEME.fonts.headlineZh
+        },
+        children: title
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: 90,
+          right: 90,
+          top: 280,
+          display: "grid",
+          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+          gap: 26
+        },
+        children: steps.map((step, index) => /* @__PURE__ */ (0,jsx_runtime.jsx)(RevealContainer, { delay: index * 10, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+          "div",
+          {
+            style: {
+              minHeight: 430,
+              borderRadius: 30,
+              background: "rgba(255,255,255,0.92)",
+              border: `2px solid ${PSYCH_THEME.border}`,
+              boxShadow: PSYCH_THEME.shadow,
+              padding: "28px 24px 26px",
+              textAlign: "center"
+            },
+            children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { color: PSYCH_THEME.accent, fontSize: 22, fontWeight: 700, marginBottom: 10 }, children: step.label }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { transform: "scale(.5)", transformOrigin: "center top", height: 170, marginTop: 8 }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(PsychIconFigure, { type: step.icon }) }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { fontSize: 30, fontWeight: 700, lineHeight: 1.3, marginBottom: 12 }, children: step.body })
+            ]
+          }
+        ) }, step.label))
+      }
+    )
+  ] });
+};
+
+;// ./src/scenes/psych/PsychSeriesTitleScene.tsx
+
+
+
+
+const PsychSeriesTitleScene = ({
+  seriesLabel,
+  title,
+  accent,
+  footer
+}) => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(PsychBaseScene, { titleLeft: seriesLabel, titleRight: "", children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { justifyContent: "center", alignItems: "center" }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(RevealContainer, { children: /* @__PURE__ */ (0,jsx_runtime.jsx)(PsychTitleBlock, { title, accent }) }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(RevealContainer, { delay: 8, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { position: "absolute", right: 420, bottom: 210, transform: "scale(.72)" }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(PsychIconFigure, { type: "desk" }) }) })
+    ] }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(ZhEnCaption, { zh: footer })
+  ] });
+};
+
+;// ./src/scenes/psych/PsychStatementScene.tsx
+
+
+
+
+
+const PsychStatementScene = ({ header, icon, bubble }) => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(PsychBaseScene, { titleLeft: "\u5FC3\u7406\u5B66\u4E2D\u7684\u53CD\u520D\u601D\u7EF4", children: /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { justifyContent: "center", alignItems: "center" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(RevealContainer, { children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { transform: "scale(1)" }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(PsychIconFigure, { type: icon }) }) }),
+    bubble ? /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { position: "absolute", right: 250, top: 214 }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(RevealContainer, { delay: 8, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          padding: "14px 24px",
+          borderRadius: 26,
+          border: `2px solid ${PSYCH_THEME.border}`,
+          background: "rgba(255,255,255,0.94)",
+          boxShadow: PSYCH_THEME.shadow,
+          fontSize: 28,
+          fontWeight: 700
+        },
+        children: bubble
+      }
+    ) }) }) : null,
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { position: "absolute", top: 170 }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(IntroCard, { text: header }) })
+  ] }) });
+};
+
+;// ./src/compositions/MinimalPsychExplainerComposition.tsx
+
+
+
+
+
+
+
+
+
+
+
+const MinimalPsychExplainerComposition_TIMELINE = {
+  title: 80,
+  reel: 53,
+  s1: 159,
+  s2: 186,
+  s3: 159,
+  s4: 159,
+  method: 212,
+  close: 132
+};
+const MinimalPsychExplainerComposition = () => {
+  const titleFrom = 0;
+  const reelFrom = titleFrom + MinimalPsychExplainerComposition_TIMELINE.title;
+  const s1From = reelFrom + MinimalPsychExplainerComposition_TIMELINE.reel;
+  const s2From = s1From + MinimalPsychExplainerComposition_TIMELINE.s1;
+  const s3From = s2From + MinimalPsychExplainerComposition_TIMELINE.s2;
+  const s4From = s3From + MinimalPsychExplainerComposition_TIMELINE.s3;
+  const methodFrom = s4From + MinimalPsychExplainerComposition_TIMELINE.s4;
+  const closeFrom = methodFrom + MinimalPsychExplainerComposition_TIMELINE.method;
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#fcfcfb" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AudioTrackLayer, { config: minimalPsychExplainerAudio }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: titleFrom, durationInFrames: MinimalPsychExplainerComposition_TIMELINE.title, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(PsychSeriesTitleScene, { ...minimalPsychExplainerData.title }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: reelFrom, durationInFrames: MinimalPsychExplainerComposition_TIMELINE.reel, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(PsychKeywordReelScene, { words: minimalPsychExplainerData.reelWords }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: s1From, durationInFrames: MinimalPsychExplainerComposition_TIMELINE.s1, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(PsychStatementScene, { ...minimalPsychExplainerData.scenes[0] }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: s2From, durationInFrames: MinimalPsychExplainerComposition_TIMELINE.s2, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(PsychStatementScene, { ...minimalPsychExplainerData.scenes[1] }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: s3From, durationInFrames: MinimalPsychExplainerComposition_TIMELINE.s3, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(PsychStatementScene, { ...minimalPsychExplainerData.scenes[2] }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: s4From, durationInFrames: MinimalPsychExplainerComposition_TIMELINE.s4, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(PsychStatementScene, { ...minimalPsychExplainerData.scenes[3] }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: methodFrom, durationInFrames: MinimalPsychExplainerComposition_TIMELINE.method, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(PsychMethodScene, { ...minimalPsychExplainerData.method }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: closeFrom, durationInFrames: MinimalPsychExplainerComposition_TIMELINE.close, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(PsychStatementScene, { ...minimalPsychExplainerData.close }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(SubtitleTrack, { cues: minimalPsychExplainerAudio.subtitles ?? [] })
+  ] });
 };
 
 ;// ./src/data/newSignalsAudio.ts
 
+const newSignalsMacdVoiceoverText = [
+  "\u6700\u5371\u9669\u7684\u65F6\u5019\uFF0C\u5F80\u5F80\u4E0D\u662F\u65B0\u95FB\u5728\u8BF4\u4EC0\u4E48\uFF0C\u800C\u662F\u4EF7\u683C\u8FD8\u5728\u6DA8\uFF0C\u5185\u90E8\u52A8\u80FD\u5374\u5DF2\u7ECF\u5148\u6389\u961F\u3002",
+  "\u5F88\u591A\u4EBA\u53EA\u770B\u89C1\u4EF7\u683C\u51B2\u9AD8\uFF0C\u5374\u6CA1\u770B\u89C1 MACD \u5DF2\u7ECF\u5F00\u59CB\u7F29\u91CF\u3001\u80CC\u79BB\u6216\u8005\u949D\u5316\u3002",
+  "MACD \u80CC\u79BB\u4E0D\u662F\u5F00\u4ED3\u6309\u94AE\uFF0C\u800C\u662F\u8D8B\u52BF\u5185\u90E8\u5F00\u59CB\u8D70\u5F31\u7684\u9884\u8B66\u3002",
+  "\u771F\u6B63\u6210\u719F\u7684\u7528\u6CD5\uFF0C\u662F\u5148\u770B\u7ED3\u6784\uFF0C\u518D\u770B\u52A8\u80FD\uFF0C\u6700\u540E\u7B49\u786E\u8BA4\u52A8\u4F5C\u3002",
+  "\u5B83\u7684\u4EF7\u503C\uFF0C\u662F\u8BA9\u4F60\u66F4\u65E9\u610F\u8BC6\u5230\u8FD9\u6BB5\u8D8B\u52BF\u6CA1\u6709\u8868\u9762\u770B\u8D77\u6765\u90A3\u4E48\u5065\u5EB7\u3002"
+].join(" ");
 const newSignalsAudio = {
   voiceover: {
     src: "/audio/new-signals/macd-warning-voiceover.mp3",
     startFrame: 0,
     volume: 1,
-    enabled: false
+    enabled: true
   },
   bgm: {
     src: "/audio/new-signals/financial-tension-low.mp3",
@@ -2655,14 +3491,14 @@ const newSignalsAudio = {
     {
       startFrame: 0,
       endFrame: 230,
-      text: "\u6700\u5371\u9669\u7684\u65F6\u5019\uFF0C\u5F80\u5F80\u4E0D\u662F\u65B0\u95FB\u5728\u8BF4\u4EC0\u4E48\uFF0C\n\u800C\u662F\u4EF7\u683C\u8FD8\u5728\u6DA8\u65F6\uFF0C\u5185\u90E8\u52A8\u80FD\u6709\u6CA1\u6709\u5148\u6389\u961F\u3002",
+      text: "\u6700\u5371\u9669\u7684\u65F6\u5019\uFF0C\u5F80\u5F80\u4E0D\u662F\u65B0\u95FB\u5728\u8BF4\u4EC0\u4E48\uFF0C\n\u800C\u662F\u4EF7\u683C\u8FD8\u5728\u6DA8\u65F6\uFF0C\u5185\u90E8\u52A8\u80FD\u5DF2\u7ECF\u5148\u6389\u961F\u3002",
       emphasisWords: ["\u5185\u90E8\u52A8\u80FD", "\u5148\u6389\u961F"]
     },
     {
       startFrame: 240,
       endFrame: 470,
-      text: "\u5F88\u591A\u4EBA\u53EA\u770B\u89C1\u4EF7\u683C\u51B2\u9AD8\uFF0C\n\u5374\u6CA1\u770B\u89C1\u52A8\u80FD\u5DF2\u7ECF\u5F00\u59CB\u8870\u51CF\u3002",
-      emphasisWords: ["\u4EF7\u683C\u51B2\u9AD8", "\u52A8\u80FD", "\u8870\u51CF"]
+      text: "\u5F88\u591A\u4EBA\u53EA\u770B\u89C1\u4EF7\u683C\u51B2\u9AD8\uFF0C\n\u5374\u6CA1\u770B\u89C1 MACD \u5DF2\u7ECF\u5F00\u59CB\u7F29\u91CF\u3001\u80CC\u79BB\u6216\u8005\u949D\u5316\u3002",
+      emphasisWords: ["\u4EF7\u683C\u51B2\u9AD8", "MACD", "\u80CC\u79BB"]
     },
     {
       startFrame: 480,
@@ -2679,8 +3515,8 @@ const newSignalsAudio = {
     {
       startFrame: 1360,
       endFrame: 1799,
-      text: "\u5B83\u7684\u4EF7\u503C\uFF0C\u662F\u8BA9\u4F60\u66F4\u65E9\u610F\u8BC6\u5230\n\u8FD9\u6BB5\u8D8B\u52BF\u6CA1\u8868\u9762\u770B\u8D77\u6765\u90A3\u4E48\u5065\u5EB7\u3002",
-      emphasisWords: ["\u66F4\u65E9\u610F\u8BC6\u5230", "\u6CA1\u90A3\u4E48\u5065\u5EB7"]
+      text: "\u5B83\u7684\u4EF7\u503C\uFF0C\u662F\u8BA9\u4F60\u66F4\u65E9\u610F\u8BC6\u5230\n\u8FD9\u6BB5\u8D8B\u52BF\u6CA1\u6709\u8868\u9762\u770B\u8D77\u6765\u90A3\u4E48\u5065\u5EB7\u3002",
+      emphasisWords: ["\u66F4\u65E9\u610F\u8BC6\u5230", "\u6CA1\u6709\u90A3\u4E48\u5065\u5EB7"]
     }
   ]
 };
@@ -3405,7 +4241,6 @@ const TradingNewsContextScene = ({
   kicker,
   title,
   quote,
-  sourceLabel,
   bullets,
   tags,
   mediaCards,
@@ -3425,23 +4260,6 @@ const TradingNewsContextScene = ({
         padding: "84px 88px"
       },
       children: [
-        /* @__PURE__ */ (0,jsx_runtime.jsx)(
-          "div",
-          {
-            style: {
-              position: "absolute",
-              top: 42,
-              right: 58,
-              padding: "10px 16px",
-              borderRadius: 999,
-              border: `1px solid ${palette.borderStrong}`,
-              fontSize: 18,
-              color: palette.textMuted,
-              background: palette.chipBackground
-            },
-            children: sourceLabel
-          }
-        ),
         /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { color: palette.accent, fontSize: 24, letterSpacing: 2, marginBottom: 18 }, children: kicker }),
         /* @__PURE__ */ (0,jsx_runtime.jsx)(
           "div",
@@ -3954,6 +4772,559 @@ const NewSignalsRsiComposition = () => {
   ] });
 };
 
+;// ./src/data/newSignalsVolumeAudio.ts
+
+const newSignalsVolumeVoiceoverUnits = [
+  {
+    "voiceId": "v01",
+    "visualSectionId": "news_context",
+    "text": "\u4E00\u6BB5\u884C\u60C5\u6700\u5BB9\u6613\u8BA9\u4EBA\u8BEF\u5224\u7684\u65F6\u5019\uFF0C\u5F80\u5F80\u4E0D\u662F\u4E0B\u8DCC\u4E4B\u540E\u3002",
+    "emphasisWords": [
+      "\u8BEF\u5224"
+    ]
+  },
+  {
+    "voiceId": "v02",
+    "visualSectionId": "news_context",
+    "text": "\u800C\u662F\u4EF7\u683C\u8FD8\u5728\u521B\u65B0\u9AD8\u7684\u65F6\u5019\u3002",
+    "emphasisWords": [
+      "\u521B\u65B0\u9AD8"
+    ]
+  },
+  {
+    "voiceId": "v03",
+    "visualSectionId": "case_shock",
+    "text": "\u5982\u679C\u4EF7\u683C\u7EE7\u7EED\u5F80\u4E0A\u8D70\uFF0C\u4F46\u6210\u4EA4\u91CF\u5374\u4E00\u6CE2\u6BD4\u4E00\u6CE2\u4F4E\u3002",
+    "emphasisWords": [
+      "\u4EF7\u683C",
+      "\u6210\u4EA4\u91CF"
+    ]
+  },
+  {
+    "voiceId": "v04",
+    "visualSectionId": "case_shock",
+    "text": "\u8FD9\u901A\u5E38\u4E0D\u662F\u5065\u5EB7\u52A0\u901F\uFF0C\u800C\u662F\u63A8\u52A8\u884C\u60C5\u7684\u4EBA\u6B63\u5728\u53D8\u5C11\u3002",
+    "emphasisWords": [
+      "\u4E0D\u662F\u5065\u5EB7\u52A0\u901F",
+      "\u6B63\u5728\u53D8\u5C11"
+    ]
+  },
+  {
+    "voiceId": "v05",
+    "visualSectionId": "indicator_mechanism",
+    "text": "\u6210\u4EA4\u91CF\u80CC\u79BB\u771F\u6B63\u6709\u7528\u7684\u5730\u65B9\uFF0C\u4E0D\u662F\u8BA9\u4F60\u7ACB\u523B\u505A\u7A7A\u3002",
+    "emphasisWords": [
+      "\u6210\u4EA4\u91CF\u80CC\u79BB",
+      "\u4E0D\u662F\u7ACB\u523B\u505A\u7A7A"
+    ]
+  },
+  {
+    "voiceId": "v06",
+    "visualSectionId": "indicator_mechanism",
+    "text": "\u800C\u662F\u63D0\u9192\u4F60\u5148\u6682\u505C\u8FFD\u9AD8\u3002",
+    "emphasisWords": [
+      "\u6682\u505C\u8FFD\u9AD8"
+    ]
+  },
+  {
+    "voiceId": "v07",
+    "visualSectionId": "indicator_mechanism",
+    "text": "\u89C2\u5BDF\u7A81\u7834\u662F\u4E0D\u662F\u8FD8\u6709\u771F\u5B9E\u4E70\u76D8\u652F\u6491\u3002",
+    "emphasisWords": [
+      "\u771F\u5B9E\u4E70\u76D8\u652F\u6491"
+    ]
+  },
+  {
+    "voiceId": "v08",
+    "visualSectionId": "chart_case_1",
+    "text": "\u66F4\u7A33\u7684\u987A\u5E8F\u662F\uFF0C\u5148\u770B\u4EF7\u683C\u6709\u6CA1\u6709\u65B0\u9AD8\u3002",
+    "emphasisWords": [
+      "\u5148\u770B\u4EF7\u683C"
+    ]
+  },
+  {
+    "voiceId": "v09",
+    "visualSectionId": "chart_case_1",
+    "text": "\u518D\u770B\u6210\u4EA4\u91CF\u6709\u6CA1\u6709\u540C\u6B65\u653E\u5927\u3002",
+    "emphasisWords": [
+      "\u6210\u4EA4\u91CF",
+      "\u540C\u6B65\u653E\u5927"
+    ]
+  },
+  {
+    "voiceId": "v10",
+    "visualSectionId": "chart_case_2",
+    "text": "\u7136\u540E\u770B\u56DE\u8E29\u65F6\u80FD\u4E0D\u80FD\u5B88\u4F4F\u5173\u952E\u4F4D\u7F6E\u3002",
+    "emphasisWords": [
+      "\u56DE\u8E29",
+      "\u5173\u952E\u4F4D\u7F6E"
+    ]
+  },
+  {
+    "voiceId": "v11",
+    "visualSectionId": "chart_case_2",
+    "text": "\u5982\u679C\u4EF7\u683C\u521B\u65B0\u9AD8\uFF0C\u91CF\u80FD\u7F29\u5C0F\u3002",
+    "emphasisWords": [
+      "\u4EF7\u683C\u521B\u65B0\u9AD8",
+      "\u91CF\u80FD\u7F29\u5C0F"
+    ]
+  },
+  {
+    "voiceId": "v12",
+    "visualSectionId": "chart_case_3",
+    "text": "\u56DE\u8E29\u53C8\u8DCC\u56DE\u7A81\u7834\u4F4D\u4E0B\u65B9\u3002",
+    "emphasisWords": [
+      "\u8DCC\u56DE\u7A81\u7834\u4F4D"
+    ]
+  },
+  {
+    "voiceId": "v13",
+    "visualSectionId": "chart_case_3",
+    "text": "\u8FD9\u79CD\u7A81\u7834\u5C31\u66F4\u50CF\u8BF1\u591A\uFF0C\u800C\u4E0D\u662F\u8D8B\u52BF\u786E\u8BA4\u3002",
+    "emphasisWords": [
+      "\u8BF1\u591A",
+      "\u4E0D\u662F\u8D8B\u52BF\u786E\u8BA4"
+    ]
+  },
+  {
+    "voiceId": "v14",
+    "visualSectionId": "checklist",
+    "text": "\u6240\u4EE5\u6210\u4EA4\u91CF\u80CC\u79BB\u4E0D\u662F\u4E70\u5356\u6309\u94AE\u3002",
+    "emphasisWords": [
+      "\u4E0D\u662F\u4E70\u5356\u6309\u94AE"
+    ]
+  },
+  {
+    "voiceId": "v15",
+    "visualSectionId": "checklist",
+    "text": "\u5B83\u66F4\u50CF\u4E00\u4E2A\u98CE\u9669\u706F\u3002",
+    "emphasisWords": [
+      "\u98CE\u9669\u706F"
+    ]
+  },
+  {
+    "voiceId": "v16",
+    "visualSectionId": "risk_close",
+    "text": "\u5F53\u4EF7\u683C\u5F88\u6F02\u4EAE\uFF0C\u4F46\u53C2\u4E0E\u7684\u4EBA\u8D8A\u6765\u8D8A\u5C11\u3002",
+    "emphasisWords": [
+      "\u4EF7\u683C\u5F88\u6F02\u4EAE",
+      "\u53C2\u4E0E\u7684\u4EBA\u8D8A\u6765\u8D8A\u5C11"
+    ]
+  },
+  {
+    "voiceId": "v17",
+    "visualSectionId": "risk_close",
+    "text": "\u4F60\u5C31\u9700\u8981\u628A\u4ED3\u4F4D\u3001\u6B62\u635F\u548C\u8FFD\u9AD8\u51B2\u52A8\u91CD\u65B0\u68C0\u67E5\u4E00\u904D\u3002",
+    "emphasisWords": [
+      "\u4ED3\u4F4D",
+      "\u6B62\u635F",
+      "\u8FFD\u9AD8\u51B2\u52A8"
+    ]
+  }
+];
+const newSignalsVolumeVoiceoverText = newSignalsVolumeVoiceoverUnits.map((unit) => unit.text).join(" ");
+const newSignalsVolumeAudio = {
+  voiceover: {
+    src: "/audio/new-signals/volume-divergence-voiceover-aligned.mp3",
+    startFrame: 0,
+    volume: 1,
+    enabled: true
+  },
+  bgm: {
+    src: "/audio/new-signals/financial-tension-low.mp3",
+    startFrame: 0,
+    volume: 0.18,
+    loop: true,
+    enabled: false
+  },
+  sfx: [
+    {
+      src: "/audio/sfx/headline-hit-01.mp3",
+      startFrame: 16,
+      volume: 0.62,
+      enabled: false
+    },
+    {
+      src: "/audio/sfx/chart-tick-01.mp3",
+      startFrame: 420,
+      volume: 0.32,
+      enabled: false
+    }
+  ],
+  subtitles: [
+    {
+      "startFrame": 0,
+      "endFrame": 120,
+      "text": "\u4E00\u6BB5\u884C\u60C5\u6700\u5BB9\u6613\u8BA9\u4EBA\u8BEF\u5224\u7684\u65F6\u5019\uFF0C\n\u5F80\u5F80\u4E0D\u662F\u4E0B\u8DCC\u4E4B\u540E\u3002",
+      "emphasisWords": [
+        "\u8BEF\u5224"
+      ]
+    },
+    {
+      "startFrame": 124,
+      "endFrame": 204,
+      "text": "\u800C\u662F\u4EF7\u683C\u8FD8\u5728\u521B\u65B0\u9AD8\u7684\u65F6\u5019\u3002",
+      "emphasisWords": [
+        "\u521B\u65B0\u9AD8"
+      ]
+    },
+    {
+      "startFrame": 206,
+      "endFrame": 326,
+      "text": "\u5982\u679C\u4EF7\u683C\u7EE7\u7EED\u5F80\u4E0A\u8D70\uFF0C\n\u4F46\u6210\u4EA4\u91CF\u5374\u4E00\u6CE2\u6BD4\u4E00\u6CE2\u4F4E\u3002",
+      "emphasisWords": [
+        "\u4EF7\u683C",
+        "\u6210\u4EA4\u91CF"
+      ]
+    },
+    {
+      "startFrame": 329,
+      "endFrame": 468,
+      "text": "\u8FD9\u901A\u5E38\u4E0D\u662F\u5065\u5EB7\u52A0\u901F\uFF0C\n\u800C\u662F\u63A8\u52A8\u884C\u60C5\u7684\u4EBA\u6B63\u5728\u53D8\u5C11\u3002",
+      "emphasisWords": [
+        "\u4E0D\u662F\u5065\u5EB7\u52A0\u901F",
+        "\u6B63\u5728\u53D8\u5C11"
+      ]
+    },
+    {
+      "startFrame": 470,
+      "endFrame": 583,
+      "text": "\u6210\u4EA4\u91CF\u80CC\u79BB\u771F\u6B63\u6709\u7528\u7684\u5730\u65B9\uFF0C\n\u4E0D\u662F\u8BA9\u4F60\u7ACB\u523B\u505A\u7A7A\u3002",
+      "emphasisWords": [
+        "\u6210\u4EA4\u91CF\u80CC\u79BB",
+        "\u4E0D\u662F\u7ACB\u523B\u505A\u7A7A"
+      ]
+    },
+    {
+      "startFrame": 586,
+      "endFrame": 660,
+      "text": "\u800C\u662F\u63D0\u9192\u4F60\u5148\u6682\u505C\u8FFD\u9AD8\u3002",
+      "emphasisWords": [
+        "\u6682\u505C\u8FFD\u9AD8"
+      ]
+    },
+    {
+      "startFrame": 665,
+      "endFrame": 754,
+      "text": "\u89C2\u5BDF\u7A81\u7834\u662F\u4E0D\u662F\u8FD8\u6709\u771F\u5B9E\u4E70\u76D8\u652F\u6491\u3002",
+      "emphasisWords": [
+        "\u771F\u5B9E\u4E70\u76D8\u652F\u6491"
+      ]
+    },
+    {
+      "startFrame": 757,
+      "endFrame": 852,
+      "text": "\u66F4\u7A33\u7684\u987A\u5E8F\u662F\uFF0C\u5148\u770B\u4EF7\u683C\u6709\u6CA1\u6709\u65B0\u9AD8\u3002",
+      "emphasisWords": [
+        "\u5148\u770B\u4EF7\u683C"
+      ]
+    },
+    {
+      "startFrame": 857,
+      "endFrame": 929,
+      "text": "\u518D\u770B\u6210\u4EA4\u91CF\u6709\u6CA1\u6709\u540C\u6B65\u653E\u5927\u3002",
+      "emphasisWords": [
+        "\u6210\u4EA4\u91CF",
+        "\u540C\u6B65\u653E\u5927"
+      ]
+    },
+    {
+      "startFrame": 934,
+      "endFrame": 1032,
+      "text": "\u7136\u540E\u770B\u56DE\u8E29\u65F6\u80FD\u4E0D\u80FD\u5B88\u4F4F\u5173\u952E\u4F4D\u7F6E\u3002",
+      "emphasisWords": [
+        "\u56DE\u8E29",
+        "\u5173\u952E\u4F4D\u7F6E"
+      ]
+    },
+    {
+      "startFrame": 1035,
+      "endFrame": 1111,
+      "text": "\u5982\u679C\u4EF7\u683C\u521B\u65B0\u9AD8\uFF0C\u91CF\u80FD\u7F29\u5C0F\u3002",
+      "emphasisWords": [
+        "\u4EF7\u683C\u521B\u65B0\u9AD8",
+        "\u91CF\u80FD\u7F29\u5C0F"
+      ]
+    },
+    {
+      "startFrame": 1115,
+      "endFrame": 1186,
+      "text": "\u56DE\u8E29\u53C8\u8DCC\u56DE\u7A81\u7834\u4F4D\u4E0B\u65B9\u3002",
+      "emphasisWords": [
+        "\u8DCC\u56DE\u7A81\u7834\u4F4D"
+      ]
+    },
+    {
+      "startFrame": 1188,
+      "endFrame": 1303,
+      "text": "\u8FD9\u79CD\u7A81\u7834\u5C31\u66F4\u50CF\u8BF1\u591A\uFF0C\n\u800C\u4E0D\u662F\u8D8B\u52BF\u786E\u8BA4\u3002",
+      "emphasisWords": [
+        "\u8BF1\u591A",
+        "\u4E0D\u662F\u8D8B\u52BF\u786E\u8BA4"
+      ]
+    },
+    {
+      "startFrame": 1304,
+      "endFrame": 1373,
+      "text": "\u6240\u4EE5\u6210\u4EA4\u91CF\u80CC\u79BB\u4E0D\u662F\u4E70\u5356\u6309\u94AE\u3002",
+      "emphasisWords": [
+        "\u4E0D\u662F\u4E70\u5356\u6309\u94AE"
+      ]
+    },
+    {
+      "startFrame": 1378,
+      "endFrame": 1428,
+      "text": "\u5B83\u66F4\u50CF\u4E00\u4E2A\u98CE\u9669\u706F\u3002",
+      "emphasisWords": [
+        "\u98CE\u9669\u706F"
+      ]
+    },
+    {
+      "startFrame": 1430,
+      "endFrame": 1529,
+      "text": "\u5F53\u4EF7\u683C\u5F88\u6F02\u4EAE\uFF0C\u4F46\u53C2\u4E0E\u7684\u4EBA\u8D8A\u6765\u8D8A\u5C11\u3002",
+      "emphasisWords": [
+        "\u4EF7\u683C\u5F88\u6F02\u4EAE",
+        "\u53C2\u4E0E\u7684\u4EBA\u8D8A\u6765\u8D8A\u5C11"
+      ]
+    },
+    {
+      "startFrame": 1530,
+      "endFrame": 1654,
+      "text": "\u4F60\u5C31\u9700\u8981\u628A\u4ED3\u4F4D\u3001\n\u6B62\u635F\u548C\u8FFD\u9AD8\u51B2\u52A8\u91CD\u65B0\u68C0\u67E5\u4E00\u904D\u3002",
+      "emphasisWords": [
+        "\u4ED3\u4F4D",
+        "\u6B62\u635F",
+        "\u8FFD\u9AD8\u51B2\u52A8"
+      ]
+    }
+  ]
+};
+
+;// ./src/data/newSignalsVolumeData.ts
+
+
+const newSignalsVolumeData_chartRef1 = (0,esm.staticFile)("images/new-signals-volume-web/aapl-time-price-chart.png");
+const newSignalsVolumeData_chartRef2 = (0,esm.staticFile)("images/new-signals-volume-web/us-stock-market-investing.jpg");
+const newSignalsVolumeData_chartRef3 = (0,esm.staticFile)("images/new-signals-volume-web/candlestick-chart.png");
+const marketCrowd = (0,esm.staticFile)("images/new-signals-volume-web/stock-exchange-trading-floor.jpg");
+const newSignalsVolumeData_crisisStore = (0,esm.staticFile)("images/new-signals-volume-web/stock-market-charts-illustration.jpg");
+const analystPortrait = (0,esm.staticFile)("images/new-signals-volume-web/us-stock-market-investing.jpg");
+const newSignalsVolumeData = {
+  variant: "dark",
+  newsContext: {
+    kicker: "MARKET SIGNAL / VOLUME",
+    title: "\u4EF7\u683C\u8FD8\u5728\u51B2\u9AD8\uFF0C\u771F\u6B63\u8981\u770B\u7684\u4E0D\u662F\u60C5\u7EEA\u6709\u591A\u70ED\uFF0C\u800C\u662F\u6210\u4EA4\u91CF\u6709\u6CA1\u6709\u8DDF\u4E0A",
+    quote: "\u5F53\u4E0A\u6DA8\u53EA\u5269\u4EF7\u683C\u5728\u8D70\uFF0C\u800C\u53C2\u4E0E\u7684\u4EBA\u8D8A\u6765\u8D8A\u5C11\uFF0C\u7A81\u7834\u5C31\u53EF\u80FD\u4ECE\u8D8B\u52BF\u786E\u8BA4\u53D8\u6210\u8BF1\u591A\u4FE1\u53F7\u3002",
+    sourceLabel: "new_signals / volume divergence",
+    bullets: [
+      "\u70ED\u95E8\u884C\u60C5\u4F1A\u653E\u5927\u201C\u8FD8\u4F1A\u7EE7\u7EED\u6DA8\u201D\u7684\u53D9\u4E8B\uFF0C\u8BA9\u4EBA\u5FFD\u7565\u5185\u90E8\u52A8\u80FD\u53D8\u5316",
+      "\u6210\u4EA4\u91CF\u4E0D\u8DDF\u968F\u4EF7\u683C\u653E\u5927\uFF0C\u8BF4\u660E\u65B0\u4E70\u76D8\u53EF\u80FD\u6B63\u5728\u51CF\u5C11",
+      "\u80CC\u79BB\u672C\u8EAB\u4E0D\u7B49\u4E8E\u53CD\u8F6C\uFF0C\u4F46\u5B83\u4F1A\u63D0\u9192\u4F60\u964D\u4F4E\u8FFD\u9AD8\u548C\u52A0\u4ED3\u51B2\u52A8"
+    ],
+    tags: ["\u6210\u4EA4\u91CF\u80CC\u79BB", "\u7A81\u7834\u9A8C\u8BC1", "\u8BF1\u591A\u98CE\u9669", "\u8D8B\u52BF\u8870\u51CF"],
+    mediaCards: [
+      {
+        imageSrc: marketCrowd,
+        label: "\u60C5\u7EEA\u6269\u6563",
+        caption: "\u8D8A\u591A\u4EBA\u53EA\u8BA8\u8BBA\u6DA8\u5E45\uFF0C\u8D8A\u5BB9\u6613\u5FFD\u7565\u771F\u6B63\u652F\u6491\u4EF7\u683C\u7684\u4E70\u76D8\u662F\u5426\u8FD8\u5728\u589E\u52A0\u3002"
+      },
+      {
+        imageSrc: analystPortrait,
+        label: "\u4EA4\u6613\u89C6\u89D2",
+        caption: "\u6210\u719F\u4EA4\u6613\u8005\u4E0D\u4F1A\u53EA\u770B\u4EF7\u683C\u65B0\u9AD8\uFF0C\u8FD8\u4F1A\u770B\u8FD9\u6B21\u65B0\u9AD8\u662F\u4E0D\u662F\u6709\u6210\u4EA4\u91CF\u786E\u8BA4\u3002"
+      },
+      {
+        imageSrc: newSignalsVolumeData_crisisStore,
+        label: "\u98CE\u9669\u540E\u679C",
+        caption: "\u5F53\u5047\u7A81\u7834\u56DE\u843D\uFF0C\u6700\u5BB9\u6613\u53D7\u4F24\u7684\u901A\u5E38\u662F\u6700\u540E\u4E00\u6279\u8FFD\u9AD8\u8FDB\u573A\u7684\u4EBA\u3002"
+      }
+    ]
+  },
+  hook: {
+    kicker: "new_signals / volume",
+    headline: "\u6210\u4EA4\u91CF\u80CC\u79BB",
+    subheadline: "\u5982\u679C\u4EF7\u683C\u7EE7\u7EED\u521B\u65B0\u9AD8\uFF0C\u4F46\u6210\u4EA4\u91CF\u4E00\u6CE2\u6BD4\u4E00\u6CE2\u4F4E\uFF0C\u8FD9\u4E0D\u4E00\u5B9A\u662F\u9A6C\u4E0A\u53CD\u8F6C\uFF0C\u5374\u8BF4\u660E\u8FD9\u6BB5\u4E0A\u6DA8\u53EF\u80FD\u5DF2\u7ECF\u5F00\u59CB\u7F3A\u5C11\u65B0\u7684\u63A8\u52A8\u529B\u3002",
+    stat: "\u4EF7\u6DA8\u91CF\u7F29",
+    statLabel: "\u4E0D\u662F\u770B\u5230\u65B0\u9AD8\u5C31\u8FFD\uFF0C\u800C\u662F\u5148\u5224\u65AD\u8FD9\u6B21\u7A81\u7834\u6709\u6CA1\u6709\u771F\u5B9E\u4E70\u76D8\u786E\u8BA4\u3002",
+    dateLabel: "\u5148\u770B\u98CE\u9669\u4FE1\u53F7\uFF0C\u518D\u5224\u65AD\u662F\u5426\u6267\u884C",
+    insetImageSrc: newSignalsVolumeData_chartRef1,
+    sourceLabel: "\u4FE1\u53F7\u91CD\u70B9\uFF1A\u4EF7\u683C\u65B0\u9AD8 + \u91CF\u80FD\u8870\u51CF + \u56DE\u8E29\u786E\u8BA4",
+    boardLines: ["PRICE", "UP", "VOLUME", "DOWN"]
+  },
+  mechanism: {
+    tag: "\u6307\u6807\u673A\u5236",
+    title: "\u6210\u4EA4\u91CF\u80CC\u79BB\u770B\u7684\u4E0D\u662F\u6DA8\u8DCC\u672C\u8EAB\uFF0C\u800C\u662F\u4EF7\u683C\u63A8\u8FDB\u80CC\u540E\u7684\u53C2\u4E0E\u5F3A\u5EA6",
+    formula: "\u4EF7\u683C\u65B9\u5411 + \u6210\u4EA4\u91CF\u53D8\u5316 + \u7A81\u7834\u4F4D\u7F6E + \u56DE\u8E29\u786E\u8BA4",
+    description: "\u4EF7\u683C\u53EF\u4EE5\u7EE7\u7EED\u521B\u65B0\u9AD8\uFF0C\u4F46\u5982\u679C\u6210\u4EA4\u91CF\u6CA1\u6709\u540C\u6B65\u653E\u5927\uFF0C\u8BF4\u660E\u63A8\u52A8\u4EF7\u683C\u7EE7\u7EED\u4E0A\u884C\u7684\u65B0\u589E\u529B\u91CF\u53EF\u80FD\u5728\u53D8\u5F31\u3002\u5B83\u4E0D\u662F\u72EC\u7ACB\u4EA4\u6613\u547D\u4EE4\uFF0C\u800C\u662F\u98CE\u9669\u9884\u8B66\u548C\u7A81\u7834\u8D28\u91CF\u8FC7\u6EE4\u5668\u3002",
+    cards: [
+      {
+        title: "\u5148\u770B\u4EF7\u683C",
+        body: "\u4EF7\u683C\u662F\u5426\u771F\u7684\u7A81\u7834\u524D\u9AD8\uFF0C\u8FD8\u662F\u53EA\u662F\u5728\u9AD8\u4F4D\u7A84\u5E45\u62C9\u626F\u3002\u6CA1\u6709\u7ED3\u6784\u7A81\u7834\uFF0C\u80CC\u79BB\u610F\u4E49\u4F1A\u53D8\u5F31\u3002"
+      },
+      {
+        title: "\u518D\u770B\u91CF\u80FD",
+        body: "\u5065\u5EB7\u7A81\u7834\u901A\u5E38\u4F34\u968F\u91CF\u80FD\u6269\u5F20\uFF1B\u5982\u679C\u4EF7\u683C\u8D70\u9AD8\u4F46\u91CF\u80FD\u840E\u7F29\uFF0C\u8BF4\u660E\u8FFD\u968F\u4E70\u76D8\u4E0D\u8DB3\u3002"
+      },
+      {
+        title: "\u770B\u56DE\u8E29",
+        body: "\u7A81\u7834\u540E\u7684\u56DE\u8E29\u80FD\u5426\u5B88\u4F4F\u5173\u952E\u4F4D\uFF0C\u51B3\u5B9A\u8FD9\u6B21\u65B0\u9AD8\u662F\u8D8B\u52BF\u5EF6\u7EED\uFF0C\u8FD8\u662F\u77ED\u6682\u8BF1\u591A\u3002"
+      },
+      {
+        title: "\u770B\u6267\u884C",
+        body: "\u80CC\u79BB\u53EA\u63D0\u793A\u98CE\u9669\uFF0C\u4E0D\u76F4\u63A5\u66FF\u4EE3\u6B62\u635F\u3001\u4ED3\u4F4D\u548C\u5165\u573A\u786E\u8BA4\u3002"
+      }
+    ],
+    imageSrc: newSignalsVolumeData_chartRef2
+  },
+  cases: [
+    {
+      badge: "\u6848\u4F8B 1",
+      title: "\u4EF7\u683C\u521B\u65B0\u9AD8\uFF0C\u4F46\u6210\u4EA4\u91CF\u6CA1\u6709\u521B\u65B0\u9AD8",
+      takeaway: "\u8FD9\u662F\u6700\u5178\u578B\u7684\u91CF\u4EF7\u80CC\u79BB\u3002\u5B83\u4E0D\u4EE3\u8868\u9A6C\u4E0A\u4E0B\u8DCC\uFF0C\u4F46\u8BF4\u660E\u65B0\u9AD8\u80CC\u540E\u7684\u4E70\u76D8\u5F3A\u5EA6\u4E0D\u8DB3\uFF0C\u7EE7\u7EED\u8FFD\u9AD8\u7684\u6027\u4EF7\u6BD4\u5F00\u59CB\u4E0B\u964D\u3002",
+      bullets: [
+        "\u4EF7\u683C\u7A81\u7834\u524D\u9AD8",
+        "\u6210\u4EA4\u91CF\u4F4E\u4E8E\u4E0A\u4E00\u6CE2\u4E0A\u6DA8",
+        "\u5148\u964D\u4F4E\u8FFD\u9AD8\u51B2\u52A8\uFF0C\u800C\u4E0D\u662F\u7ACB\u523B\u53CD\u624B\u505A\u7A7A"
+      ],
+      imageSrc: newSignalsVolumeData_chartRef1
+    },
+    {
+      badge: "\u6848\u4F8B 2",
+      title: "\u7A81\u7834\u540E\u7F29\u91CF\u6A2A\u76D8\uFF0C\u98CE\u9669\u5F00\u59CB\u96C6\u4E2D\u5728\u56DE\u8E29",
+      takeaway: "\u5982\u679C\u7A81\u7834\u4E4B\u540E\u6CA1\u6709\u7EE7\u7EED\u653E\u91CF\uFF0C\u8BF4\u660E\u5E02\u573A\u8FD8\u6CA1\u6709\u7ED9\u51FA\u5F3A\u786E\u8BA4\u3002\u771F\u6B63\u5173\u952E\u7684\u662F\u56DE\u8E29\u65F6\u80FD\u4E0D\u80FD\u5B88\u4F4F\u7A81\u7834\u4F4D\u3002",
+      bullets: [
+        "\u7F29\u91CF\u6A2A\u76D8\u8BF4\u660E\u5206\u6B67\u8FD8\u6CA1\u89E3\u51B3",
+        "\u5B88\u4F4F\u7A81\u7834\u4F4D\u624D\u7B97\u521D\u6B65\u786E\u8BA4",
+        "\u8DCC\u56DE\u7A81\u7834\u4F4D\u4E0B\u65B9\u8981\u91CD\u65B0\u8BC4\u4F30\u4FE1\u53F7"
+      ],
+      imageSrc: newSignalsVolumeData_chartRef2
+    },
+    {
+      badge: "\u6848\u4F8B 3",
+      title: "\u653E\u91CF\u8DCC\u56DE\u7A81\u7834\u4F4D\uFF0C\u5047\u7A81\u7834\u6982\u7387\u4E0A\u5347",
+      takeaway: "\u4EF7\u683C\u8DCC\u56DE\u7A81\u7834\u4F4D\u5E76\u4F34\u968F\u653E\u91CF\uFF0C\u8BF4\u660E\u524D\u9762\u7684\u7A81\u7834\u53EF\u80FD\u5438\u5F15\u4E86\u8FFD\u9AD8\u8D44\u91D1\uFF0C\u968F\u540E\u88AB\u66F4\u5F3A\u7684\u5356\u76D8\u53CD\u5411\u541E\u6CA1\u3002",
+      bullets: [
+        "\u8DCC\u56DE\u7A81\u7834\u4F4D\u4E0B\u65B9",
+        "\u4E0B\u8DCC\u91CF\u80FD\u660E\u663E\u653E\u5927",
+        "\u4F18\u5148\u63A7\u5236\u98CE\u9669\uFF0C\u800C\u4E0D\u662F\u7EE7\u7EED\u89E3\u91CA\u4E3A\u6D17\u76D8"
+      ],
+      imageSrc: newSignalsVolumeData_chartRef3
+    }
+  ],
+  checklist: {
+    title: "\u66F4\u7A33\u7684\u6210\u4EA4\u91CF\u80CC\u79BB\u5224\u65AD\uFF0C\u662F\u5148\u786E\u8BA4\u65B0\u9AD8\uFF0C\u518D\u786E\u8BA4\u91CF\u80FD\uFF0C\u6700\u540E\u7B49\u56DE\u8E29\u7ED9\u7B54\u6848",
+    subtitle: "\u4E0D\u8981\u628A\u6210\u4EA4\u91CF\u80CC\u79BB\u5F53\u6210\u5355\u72EC\u7684\u4E70\u5356\u6309\u94AE\u3002\u5B83\u6700\u9002\u5408\u7528\u6765\u8FC7\u6EE4\u5047\u7A81\u7834\u3001\u63D0\u9192\u8FFD\u9AD8\u98CE\u9669\uFF0C\u5E76\u5E2E\u52A9\u4F60\u51B3\u5B9A\u662F\u5426\u8981\u6536\u7D27\u4ED3\u4F4D\u3002",
+    steps: [
+      {
+        title: "\u5148\u786E\u8BA4\u4EF7\u683C\u7ED3\u6784",
+        body: "\u6CA1\u6709\u7A81\u7834\u524D\u9AD8\uFF0C\u5C31\u4E0D\u8981\u6025\u7740\u8C08\u80CC\u79BB\u3002\u5148\u786E\u8BA4\u4EF7\u683C\u662F\u5426\u771F\u7684\u8D70\u5230\u4E86\u9700\u8981\u9A8C\u8BC1\u7684\u4F4D\u7F6E\u3002"
+      },
+      {
+        title: "\u518D\u6BD4\u8F83\u6210\u4EA4\u91CF",
+        body: "\u770B\u8FD9\u4E00\u6CE2\u4E0A\u6DA8\u7684\u6210\u4EA4\u91CF\uFF0C\u662F\u5426\u4F4E\u4E8E\u4E0A\u4E00\u6CE2\u540C\u7EA7\u522B\u4E0A\u6DA8\u3002\u5982\u679C\u91CF\u80FD\u6CA1\u8DDF\u4E0A\uFF0C\u98CE\u9669\u706F\u5F00\u59CB\u4EAE\u8D77\u3002"
+      },
+      {
+        title: "\u6700\u540E\u7B49\u56DE\u8E29\u9A8C\u8BC1",
+        body: "\u56DE\u8E29\u5B88\u4F4F\u7A81\u7834\u4F4D\uFF0C\u4FE1\u53F7\u53EF\u4EE5\u7EE7\u7EED\u89C2\u5BDF\uFF1B\u8DCC\u56DE\u7A81\u7834\u4F4D\u4E0B\u65B9\uFF0C\u5C31\u8981\u4F18\u5148\u8003\u8651\u5047\u7A81\u7834\u98CE\u9669\u3002"
+      }
+    ]
+  },
+  close: {
+    title: "\u6210\u4EA4\u91CF\u80CC\u79BB\u771F\u6B63\u63D0\u9192\u4F60\u7684\uFF0C\u4E0D\u662F\u9A6C\u4E0A\u53CD\u8F6C\uFF0C\u800C\u662F\u8FD9\u6BB5\u4E0A\u6DA8\u53EF\u80FD\u6CA1\u6709\u770B\u8D77\u6765\u90A3\u4E48\u5F3A",
+    body: "\u4EF7\u683C\u65B0\u9AD8\u4F1A\u8BA9\u4EBA\u5174\u594B\uFF0C\u4F46\u91CF\u80FD\u8870\u51CF\u4F1A\u544A\u8BC9\u4F60\uFF1A\u53C2\u4E0E\u8005\u53EF\u80FD\u6B63\u5728\u51CF\u5C11\u3002\u628A\u5B83\u5F53\u6210\u98CE\u9669\u706F\uFF0C\u800C\u4E0D\u662F\u4EA4\u6613\u6309\u94AE\uFF0C\u4F60\u5C31\u66F4\u5BB9\u6613\u5728\u6700\u70ED\u7684\u65F6\u5019\u5C11\u8FFD\u4E00\u70B9\uFF0C\u5728\u6700\u5371\u9669\u7684\u4F4D\u7F6E\u591A\u7B49\u4E00\u4E2A\u786E\u8BA4\u3002",
+    tags: ["\u91CF\u4EF7\u5173\u7CFB", "\u5047\u7A81\u7834\u8FC7\u6EE4", "\u8FFD\u9AD8\u98CE\u9669", "\u56DE\u8E29\u786E\u8BA4"]
+  }
+};
+
+;// ./src/compositions/NewSignalsVolumeComposition.tsx
+
+
+
+
+
+
+
+
+
+
+
+
+
+const NewSignalsVolumeComposition_TIMELINE = {
+  news: 210,
+  hook: 210,
+  mechanism: 270,
+  case1: 180,
+  case2: 180,
+  case3: 180,
+  checklist: 270,
+  close: 300
+};
+const NewSignalsVolumeComposition = () => {
+  const variant = newSignalsVolumeData.variant;
+  const newsFrom = 0;
+  const hookFrom = newsFrom + NewSignalsVolumeComposition_TIMELINE.news;
+  const mechanismFrom = hookFrom + NewSignalsVolumeComposition_TIMELINE.hook;
+  const case1From = mechanismFrom + NewSignalsVolumeComposition_TIMELINE.mechanism;
+  const case2From = case1From + NewSignalsVolumeComposition_TIMELINE.case1;
+  const case3From = case2From + NewSignalsVolumeComposition_TIMELINE.case2;
+  const checklistFrom = case3From + NewSignalsVolumeComposition_TIMELINE.case3;
+  const closeFrom = checklistFrom + NewSignalsVolumeComposition_TIMELINE.checklist;
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#04060b" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AudioTrackLayer, { config: newSignalsVolumeAudio }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: newsFrom, durationInFrames: NewSignalsVolumeComposition_TIMELINE.news, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(TradingNewsContextScene, { ...newSignalsVolumeData.newsContext, variant }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: hookFrom, durationInFrames: NewSignalsVolumeComposition_TIMELINE.hook, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(TradingCaseShockScene, { ...newSignalsVolumeData.hook, variant }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: mechanismFrom, durationInFrames: NewSignalsVolumeComposition_TIMELINE.mechanism, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(TradingIndicatorMechanismScene, { ...newSignalsVolumeData.mechanism, variant }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: case1From, durationInFrames: NewSignalsVolumeComposition_TIMELINE.case1, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(TradingChartCaseScene, { ...newSignalsVolumeData.cases[0], variant }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: case2From, durationInFrames: NewSignalsVolumeComposition_TIMELINE.case2, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(TradingChartCaseScene, { ...newSignalsVolumeData.cases[1], variant }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: case3From, durationInFrames: NewSignalsVolumeComposition_TIMELINE.case3, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(TradingChartCaseScene, { ...newSignalsVolumeData.cases[2], variant }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: checklistFrom, durationInFrames: NewSignalsVolumeComposition_TIMELINE.checklist, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(TradingChecklistScene, { ...newSignalsVolumeData.checklist, variant }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: closeFrom, durationInFrames: NewSignalsVolumeComposition_TIMELINE.close, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(TradingRiskCloseScene, { ...newSignalsVolumeData.close, variant }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(SubtitleTrack, { cues: newSignalsVolumeAudio.subtitles ?? [] })
+  ] });
+};
+
+;// ./src/data/mcpReferenceCloneAudio.ts
+
+
+const mcpReferenceCloneAudio = createVoiceOnlyAudioConfig({
+  voiceoverSrc: "/audio/ai-concept-analyse/mcp-horizontal-voiceover.mp3",
+  voiceoverEnabled: true,
+  subtitles: [
+    {
+      startFrame: 0,
+      endFrame: 359,
+      text: "MCP \u7684\u91CD\u70B9\uFF0C\u4E0D\u662F\u591A\u4E00\u4E2A AI \u540D\u8BCD\uFF0C\n\u800C\u662F\u7ED9\u6A21\u578B\u4E00\u5C42\u7A33\u5B9A\u7684\u5DE5\u5177\u8FDE\u63A5\u65B9\u5F0F\u3002",
+      emphasisWords: ["\u5DE5\u5177\u8FDE\u63A5\u65B9\u5F0F"]
+    },
+    {
+      startFrame: 360,
+      endFrame: 809,
+      text: "\u5B83\u8BA9\u6A21\u578B\u4E0D\u53EA\u662F\u4F1A\u8BF4\uFF0C\n\u800C\u662F\u80FD\u66F4\u89C4\u8303\u5730\u63A5\u8D44\u6E90\u3001\u8C03\u5DE5\u5177\u3001\u62FF\u7ED3\u679C\u3002",
+      emphasisWords: ["\u63A5\u8D44\u6E90", "\u8C03\u5DE5\u5177", "\u62FF\u7ED3\u679C"]
+    },
+    {
+      startFrame: 810,
+      endFrame: 1259,
+      text: "\u6240\u4EE5 MCP \u66F4\u50CF\u8FDE\u63A5\u5C42\uFF0C\n\u9002\u5408\u628A\u641C\u7D22\u3001\u6587\u4EF6\u3001\u6570\u636E\u5E93\u548C\u5916\u90E8\u670D\u52A1\u4E32\u8D77\u6765\u3002",
+      emphasisWords: ["\u8FDE\u63A5\u5C42", "\u4E32\u8D77\u6765"]
+    },
+    {
+      startFrame: 1260,
+      endFrame: 1649,
+      text: "\u5982\u679C Prompt \u8D1F\u8D23\u53D1\u6307\u4EE4\uFF0CAgent \u8D1F\u8D23\u6301\u7EED\u6267\u884C\uFF0C\n\u90A3 MCP \u8D1F\u8D23\u628A\u8FD9\u4E9B\u80FD\u529B\u771F\u6B63\u63A5\u5230\u5916\u90E8\u7CFB\u7EDF\u3002",
+      emphasisWords: ["Prompt", "Agent", "MCP"]
+    },
+    {
+      startFrame: 1650,
+      endFrame: 1949,
+      text: "\u5B83\u6700\u6709\u4EF7\u503C\u7684\u5730\u65B9\uFF0C\u662F\u8BA9 AI \u5DE5\u4F5C\u6D41\u4ECE\u96F6\u6563\u8C03\u7528\uFF0C\n\u8D70\u5411\u53EF\u590D\u7528\u3001\u53EF\u6269\u5C55\u3001\u53EF\u7EF4\u62A4\u7684\u7CFB\u7EDF\u8FDE\u63A5\u3002",
+      emphasisWords: ["\u53EF\u590D\u7528", "\u53EF\u6269\u5C55", "\u53EF\u7EF4\u62A4"]
+    }
+  ]
+});
+
 ;// ./src/data/mcpReferenceCloneData.ts
 
 
@@ -4084,6 +5455,9 @@ const mcpReferenceCloneData = {
 
 
 
+
+
+
 const McpHorizontalComposition_TIMELINE = {
   hook: 180,
   doc: 300,
@@ -4106,6 +5480,7 @@ const McpHorizontalComposition = () => {
   const skillCompareFrom = flowFrom + McpHorizontalComposition_TIMELINE.flow;
   const closeFrom = skillCompareFrom + McpHorizontalComposition_TIMELINE.skillCompare;
   return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#050816" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AudioTrackLayer, { config: mcpReferenceCloneAudio }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: hookFrom, durationInFrames: McpHorizontalComposition_TIMELINE.hook, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ReferenceHookScene, { frames: mcpReferenceCloneData.hookFrames }) }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: docFrom, durationInFrames: McpHorizontalComposition_TIMELINE.doc, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
       ReferenceDocScene,
@@ -4180,7 +5555,530 @@ const McpHorizontalComposition = () => {
         headline: mcpReferenceCloneData.closeScene.headline,
         subheadline: mcpReferenceCloneData.closeScene.subheadline
       }
-    ) })
+    ) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(SubtitleTrack, { cues: mcpReferenceCloneAudio.subtitles ?? [] })
+  ] });
+};
+
+;// ./src/data/mcpVerticalAudio.ts
+
+
+const mcpVerticalAudio = createVoiceOnlyAudioConfig({
+  voiceoverSrc: "/audio/ai-concept-analyse/mcp-vertical-voiceover.mp3",
+  voiceoverEnabled: true,
+  subtitles: [
+    {
+      startFrame: 0,
+      endFrame: 89,
+      text: "MCP \u7ED9 AI \u7684\uFF0C\n\u4E0D\u662F\u66F4\u591A\u5E9F\u8BDD\uFF0C\u800C\u662F\u771F\u6B63\u53EF\u6267\u884C\u7684\u8FDE\u63A5\u65B9\u5F0F\u3002",
+      emphasisWords: ["\u771F\u6B63\u53EF\u6267\u884C"]
+    },
+    {
+      startFrame: 90,
+      endFrame: 224,
+      text: "\u5B83\u8BA9\u6A21\u578B\u53EF\u4EE5\u6807\u51C6\u5316\u5730\u8FDE\u63A5\u5DE5\u5177\u3001\u8D44\u6E90\u548C\u52A8\u4F5C\uFF0C\n\u9002\u5408\u5DE5\u4F5C\u6D41\u7F16\u6392\u3002",
+      emphasisWords: ["\u6807\u51C6\u5316", "\u5DE5\u4F5C\u6D41\u7F16\u6392"]
+    },
+    {
+      startFrame: 225,
+      endFrame: 314,
+      text: "\u6240\u4EE5\u5B83\u4E0D\u662F\u4E00\u4E2A\u82B1\u54E8\u6982\u5FF5\uFF0C\n\u800C\u662F AI \u63A5\u5165\u5916\u90E8\u7CFB\u7EDF\u7684\u91CD\u8981\u6865\u6881\u3002",
+      emphasisWords: ["\u91CD\u8981\u6865\u6881"]
+    }
+  ]
+});
+
+;// ./node_modules/clsx/dist/clsx.mjs
+function r(e){var t,f,n="";if("string"==typeof e||"number"==typeof e)n+=e;else if("object"==typeof e)if(Array.isArray(e)){var o=e.length;for(t=0;t<o;t++)e[t]&&(f=r(e[t]))&&(n&&(n+=" "),n+=f)}else for(f in e)e[f]&&(n&&(n+=" "),n+=f);return n}function clsx(){for(var e,t,f=0,n="",o=arguments.length;f<o;f++)(e=arguments[f])&&(t=r(e))&&(n&&(n+=" "),n+=t);return n}/* harmony default export */ const dist_clsx = ((/* unused pure expression or super */ null && (clsx)));
+;// ./src/components/HeadlineBlock.tsx
+
+
+
+
+const HeadlineBlock = ({
+  eyebrow,
+  headline,
+  supportingText,
+  align = "center"
+}) => {
+  const alignmentStyle = {
+    alignItems: align === "center" ? "center" : "flex-start",
+    textAlign: align
+  };
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    "div",
+    {
+      className: clsx("flex max-w-[880px] flex-col gap-4", {
+        "mx-auto": align === "center"
+      }),
+      style: alignmentStyle,
+      children: [
+        eyebrow ? /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              color: THEME.colors.accent,
+              fontSize: 28,
+              fontWeight: 700,
+              letterSpacing: 1.5,
+              textTransform: "uppercase",
+              fontFamily: THEME.fonts.ui
+            },
+            children: eyebrow
+          }
+        ) : null,
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              color: THEME.colors.textPrimary,
+              fontSize: 92,
+              lineHeight: 1,
+              fontWeight: 800,
+              fontFamily: THEME.fonts.headlineZh
+            },
+            children: headline
+          }
+        ),
+        supportingText ? /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              color: THEME.colors.textMuted,
+              fontSize: 34,
+              lineHeight: 1.35,
+              maxWidth: 780,
+              fontFamily: THEME.fonts.bodyZh
+            },
+            children: supportingText
+          }
+        ) : null
+      ]
+    }
+  );
+};
+
+;// ./src/lib/highlightText.tsx
+
+
+
+const highlightText = (text, accentWords) => {
+  if (accentWords.length === 0) {
+    return text;
+  }
+  const escaped = accentWords.filter(Boolean).map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  if (escaped.length === 0) {
+    return text;
+  }
+  const matcher = new RegExp(`(${escaped.join("|")})`, "gi");
+  const parts = text.split(matcher);
+  return parts.map((part, index) => {
+    const isAccent = accentWords.some(
+      (word) => word.toLowerCase() === part.toLowerCase()
+    );
+    if (!isAccent) {
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: part }, `${part}-${index}`);
+    }
+    return /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { color: THEME.colors.accent }, children: part }, `${part}-${index}`);
+  });
+};
+
+;// ./src/scenes/hook/ImpactHookScene.tsx
+
+
+
+
+
+
+
+const ImpactHookScene = ({
+  eyebrow,
+  headline,
+  supportingText,
+  accentWords = [],
+  rightPanelTitle,
+  rightPanelLines = []
+}) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps } = (0,esm.useVideoConfig)();
+  const panelScale = (0,esm.spring)({
+    fps,
+    frame,
+    config: {
+      damping: 18,
+      stiffness: 120
+    }
+  });
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(SceneFrame, { children: /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    esm.AbsoluteFill,
+    {
+      style: {
+        justifyContent: "center",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 72
+      },
+      children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { flex: 1 }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          HeadlineBlock,
+          {
+            eyebrow,
+            headline: highlightText(headline, accentWords),
+            supportingText,
+            align: "left"
+          }
+        ) }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              flex: 0.8,
+              alignSelf: "stretch",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transform: `scale(${0.92 + panelScale * 0.08})`
+            },
+            children: /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+              "div",
+              {
+                style: {
+                  width: "100%",
+                  border: `1px solid ${THEME.colors.frame}`,
+                  borderRadius: 36,
+                  padding: "36px 34px",
+                  background: "linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03))",
+                  boxShadow: "0 30px 80px rgba(0,0,0,0.35)"
+                },
+                children: [
+                  rightPanelTitle ? /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                    "div",
+                    {
+                      style: {
+                        color: THEME.colors.accent,
+                        fontFamily: THEME.fonts.ui,
+                        fontSize: 22,
+                        letterSpacing: 1.4,
+                        textTransform: "uppercase",
+                        marginBottom: 18
+                      },
+                      children: rightPanelTitle
+                    }
+                  ) : null,
+                  /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                    "div",
+                    {
+                      style: {
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 16
+                      },
+                      children: rightPanelLines.map((line, index) => /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                        "div",
+                        {
+                          style: {
+                            color: index === 1 ? THEME.colors.textPrimary : THEME.colors.textMuted,
+                            fontFamily: THEME.fonts.bodyZh,
+                            fontSize: index === 1 ? 36 : 28,
+                            lineHeight: 1.35,
+                            fontWeight: index === 1 ? 700 : 500
+                          },
+                          children: line
+                        },
+                        `${line}-${index}`
+                      ))
+                    }
+                  )
+                ]
+              }
+            )
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              right: 96,
+              bottom: 112,
+              color: THEME.colors.textMuted,
+              fontFamily: THEME.fonts.ui,
+              fontSize: 22,
+              maxWidth: 420,
+              lineHeight: 1.35
+            },
+            children: "Hook scene: conflict first, outcome visible, UI panel reinforces what a skill actually stores."
+          }
+        )
+      ]
+    }
+  ) });
+};
+
+;// ./src/scenes/explain/DefinitionScene.tsx
+
+
+
+
+
+const DefinitionScene = ({
+  eyebrow = "Definition",
+  term,
+  definition,
+  bullets
+}) => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(SceneFrame, { children: /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    esm.AbsoluteFill,
+    {
+      style: {
+        justifyContent: "center",
+        gap: 40,
+        flexDirection: "row",
+        alignItems: "center"
+      },
+      children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+          "div",
+          {
+            style: {
+              flex: 0.95,
+              display: "flex",
+              flexDirection: "column",
+              gap: 24
+            },
+            children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                "div",
+                {
+                  style: {
+                    color: THEME.colors.accent,
+                    fontSize: 24,
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: 1.4,
+                    fontFamily: THEME.fonts.ui
+                  },
+                  children: eyebrow
+                }
+              ),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                "div",
+                {
+                  style: {
+                    color: THEME.colors.textPrimary,
+                    fontSize: 116,
+                    lineHeight: 0.95,
+                    fontWeight: 800,
+                    fontFamily: THEME.fonts.headlineZh
+                  },
+                  children: term
+                }
+              ),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                "div",
+                {
+                  style: {
+                    color: THEME.colors.textPrimary,
+                    fontSize: 34,
+                    lineHeight: 1.35,
+                    maxWidth: 780,
+                    fontFamily: THEME.fonts.bodyZh
+                  },
+                  children: definition
+                }
+              )
+            ]
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              flex: 1.05,
+              display: "grid",
+              gridTemplateColumns: "1fr",
+              gap: 18
+            },
+            children: bullets.map((bullet, index) => /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+              "div",
+              {
+                style: {
+                  border: `1px solid ${THEME.colors.frame}`,
+                  borderRadius: 28,
+                  padding: "22px 24px",
+                  background: "rgba(255,255,255,0.04)"
+                },
+                children: [
+                  /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+                    "div",
+                    {
+                      style: {
+                        color: THEME.colors.accent,
+                        fontSize: 18,
+                        letterSpacing: 1.2,
+                        textTransform: "uppercase",
+                        marginBottom: 10,
+                        fontFamily: THEME.fonts.ui
+                      },
+                      children: [
+                        "0",
+                        index + 1
+                      ]
+                    }
+                  ),
+                  /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                    "div",
+                    {
+                      style: {
+                        color: THEME.colors.textMuted,
+                        fontSize: 28,
+                        lineHeight: 1.35,
+                        fontFamily: THEME.fonts.bodyZh
+                      },
+                      children: bullet
+                    }
+                  )
+                ]
+              },
+              bullet
+            ))
+          }
+        )
+      ]
+    }
+  ) });
+};
+
+;// ./src/scenes/close/CloseStatementScene.tsx
+
+
+
+
+
+const CloseStatementScene = ({
+  eyebrow,
+  headline,
+  subheadline
+}) => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(SceneFrame, { children: /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    esm.AbsoluteFill,
+    {
+      style: {
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
+        gap: 24
+      },
+      children: [
+        eyebrow ? /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              color: THEME.colors.accent,
+              fontSize: 24,
+              letterSpacing: 1.4,
+              textTransform: "uppercase",
+              fontWeight: 700,
+              fontFamily: THEME.fonts.ui
+            },
+            children: eyebrow
+          }
+        ) : null,
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              color: THEME.colors.textPrimary,
+              fontSize: 86,
+              lineHeight: 1,
+              fontWeight: 800,
+              maxWidth: 860,
+              fontFamily: THEME.fonts.headlineZh
+            },
+            children: headline
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              color: THEME.colors.textMuted,
+              fontSize: 34,
+              lineHeight: 1.35,
+              maxWidth: 720,
+              fontFamily: THEME.fonts.bodyZh
+            },
+            children: subheadline
+          }
+        )
+      ]
+    }
+  ) });
+};
+
+;// ./src/data/mcpVerticalSample.ts
+
+const mcpVerticalSample = {
+  hook: {
+    eyebrow: "Episode 01",
+    headline: "MCP gives AI real ways to act, not just talk.",
+    supportingText: "Use this sample composition as the first bridge between your script workflow and Remotion scenes.",
+    accentWords: ["MCP", "AI"]
+  },
+  definition: {
+    term: "MCP",
+    definition: "A standard layer that lets models connect to tools, resources, and structured actions in a reusable way.",
+    bullets: [
+      "Good fit for tool calling and workflow orchestration",
+      "Useful when one model needs access to multiple external systems",
+      "Should later be fed by generated content_script and visual_script data"
+    ]
+  },
+  close: {
+    headline: "From workflow draft to reusable video system.",
+    subheadline: "Next step: replace this sample data with your MCP topic script and scene payloads."
+  }
+};
+
+;// ./src/compositions/McpVerticalComposition.tsx
+
+
+
+
+
+
+
+
+
+
+const McpVerticalComposition = () => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#050816" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AudioTrackLayer, { config: mcpVerticalAudio }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { durationInFrames: 75, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      ImpactHookScene,
+      {
+        eyebrow: mcpVerticalSample.hook.eyebrow,
+        headline: mcpVerticalSample.hook.headline,
+        supportingText: mcpVerticalSample.hook.supportingText,
+        accentWords: mcpVerticalSample.hook.accentWords
+      }
+    ) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: 75, durationInFrames: 150, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      DefinitionScene,
+      {
+        term: mcpVerticalSample.definition.term,
+        definition: mcpVerticalSample.definition.definition,
+        bullets: mcpVerticalSample.definition.bullets
+      }
+    ) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: 225, durationInFrames: 90, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      CloseStatementScene,
+      {
+        headline: mcpVerticalSample.close.headline,
+        subheadline: mcpVerticalSample.close.subheadline
+      }
+    ) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(SubtitleTrack, { cues: mcpVerticalAudio.subtitles ?? [] })
   ] });
 };
 
@@ -4303,7 +6201,50 @@ const ragReferenceCloneData = {
   }
 };
 
+;// ./src/data/ragReferenceCloneAudio.ts
+
+
+const ragReferenceCloneAudio = createVoiceOnlyAudioConfig({
+  voiceoverSrc: "/audio/ai-concept-analyse/rag-horizontal-voiceover.mp3",
+  voiceoverEnabled: true,
+  subtitles: [
+    {
+      startFrame: 0,
+      endFrame: 329,
+      text: "RAG \u7684\u4EF7\u503C\uFF0C\u4E0D\u662F\u7ED9\u6A21\u578B\u591A\u585E\u4E00\u70B9\u8D44\u6599\uFF0C\n\u800C\u662F\u8BA9\u56DE\u7B54\u5EFA\u7ACB\u5728\u53EF\u53D6\u56DE\u7684\u4E0A\u4E0B\u6587\u4E4B\u4E0A\u3002",
+      emphasisWords: ["\u53EF\u53D6\u56DE\u7684\u4E0A\u4E0B\u6587"]
+    },
+    {
+      startFrame: 330,
+      endFrame: 719,
+      text: "\u6CA1\u6709 RAG\uFF0C\u6A21\u578B\u66F4\u5BB9\u6613\u53EA\u9760\u53C2\u6570\u8BB0\u5FC6\u7EC4\u7EC7\u7B54\u6848\uFF1B\n\u6709\u4E86 RAG\uFF0C\u7B54\u6848\u53EF\u4EE5\u5148\u67E5\uFF0C\u518D\u7B54\uFF0C\u518D\u5F15\u7528\u3002",
+      emphasisWords: ["\u5148\u67E5\uFF0C\u518D\u7B54\uFF0C\u518D\u5F15\u7528"]
+    },
+    {
+      startFrame: 720,
+      endFrame: 1139,
+      text: "\u5B83\u9002\u5408\u77E5\u8BC6\u5E93\u95EE\u7B54\u3001\u6587\u6863\u68C0\u7D22\u3001\u5185\u90E8\u8D44\u6599\u52A9\u624B\uFF0C\n\u5C24\u5176\u9002\u5408\u9700\u8981\u66F4\u7A33\u548C\u66F4\u65B0\u9C9C\u4FE1\u606F\u7684\u573A\u666F\u3002",
+      emphasisWords: ["\u77E5\u8BC6\u5E93\u95EE\u7B54", "\u66F4\u7A33", "\u66F4\u65B0\u9C9C\u4FE1\u606F"]
+    },
+    {
+      startFrame: 1140,
+      endFrame: 1499,
+      text: "\u771F\u6B63\u6210\u719F\u7684\u505A\u6CD5\uFF0C\u4E0D\u662F\u53EA\u52A0\u4E00\u4E2A\u68C0\u7D22\u6B65\u9AA4\uFF0C\n\u800C\u662F\u628A\u53EC\u56DE\u3001\u7B5B\u9009\u3001\u538B\u7F29\u548C\u56DE\u7B54\u4E32\u6210\u5B8C\u6574\u94FE\u8DEF\u3002",
+      emphasisWords: ["\u53EC\u56DE", "\u7B5B\u9009", "\u5B8C\u6574\u94FE\u8DEF"]
+    },
+    {
+      startFrame: 1500,
+      endFrame: 1799,
+      text: "\u6240\u4EE5 RAG \u8BB2\u7684\u4E0D\u662F\u6A21\u578B\u66F4\u806A\u660E\uFF0C\n\u800C\u662F\u8BA9\u7B54\u6848\u66F4\u53EF\u8FFD\u6EAF\u3001\u66F4\u8D34\u8FD1\u771F\u5B9E\u8D44\u6599\u3002",
+      emphasisWords: ["\u53EF\u8FFD\u6EAF", "\u771F\u5B9E\u8D44\u6599"]
+    }
+  ]
+});
+
 ;// ./src/compositions/RagHorizontalComposition.tsx
+
+
+
 
 
 
@@ -4336,6 +6277,7 @@ const RagHorizontalComposition = () => {
   const conceptCompareFrom = flowFrom + RagHorizontalComposition_TIMELINE.flow;
   const closeFrom = conceptCompareFrom + RagHorizontalComposition_TIMELINE.conceptCompare;
   return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#080808" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AudioTrackLayer, { config: ragReferenceCloneAudio }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: hookFrom, durationInFrames: RagHorizontalComposition_TIMELINE.hook, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ReferenceHookScene, { frames: ragReferenceCloneData.hookFrames }) }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: docFrom, durationInFrames: RagHorizontalComposition_TIMELINE.doc, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
       ReferenceDocScene,
@@ -4417,9 +6359,50 @@ const RagHorizontalComposition = () => {
         headline: ragReferenceCloneData.closeScene.headline,
         subheadline: ragReferenceCloneData.closeScene.subheadline
       }
-    ) })
+    ) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(SubtitleTrack, { cues: ragReferenceCloneAudio.subtitles ?? [] })
   ] });
 };
+
+;// ./src/data/skillReferenceCloneAudio.ts
+
+
+const skillReferenceCloneAudio = createVoiceOnlyAudioConfig({
+  voiceoverSrc: "/audio/ai-concept-analyse/skill-horizontal-voiceover.mp3",
+  voiceoverEnabled: true,
+  subtitles: [
+    {
+      startFrame: 0,
+      endFrame: 359,
+      text: "Skill \u4E0D\u662F\u4E00\u53E5 prompt \u98CE\u683C\uFF0C\n\u800C\u662F\u628A\u4E00\u7C7B\u4EFB\u52A1\u7684\u7ECF\u9A8C\u56FA\u5316\u6210\u53EF\u91CD\u590D\u8C03\u7528\u7684\u80FD\u529B\u6A21\u5757\u3002",
+      emphasisWords: ["\u53EF\u91CD\u590D\u8C03\u7528", "\u80FD\u529B\u6A21\u5757"]
+    },
+    {
+      startFrame: 360,
+      endFrame: 809,
+      text: "\u5B83\u628A\u7ED3\u6784\u3001\u89C4\u5219\u3001\u8F93\u5165\u8F93\u51FA\u3001\u6CE8\u610F\u4E8B\u9879\u6253\u5305\u8D77\u6765\uFF0C\n\u8BA9\u6A21\u578B\u5728\u540C\u7C7B\u4EFB\u52A1\u4E0A\u66F4\u7A33\u5B9A\u3002",
+      emphasisWords: ["\u7ED3\u6784", "\u8F93\u5165\u8F93\u51FA", "\u66F4\u7A33\u5B9A"]
+    },
+    {
+      startFrame: 810,
+      endFrame: 1259,
+      text: "\u6240\u4EE5 Skill \u7279\u522B\u9002\u5408\u5185\u5BB9\u751F\u4EA7\u3001\u5206\u6790\u62C6\u89E3\u3001\u4EE3\u7801\u6D41\u7A0B\u8FD9\u7C7B\n\u4F1A\u91CD\u590D\u53D1\u751F\u3001\u53C8\u5E0C\u671B\u8D28\u91CF\u4E00\u81F4\u7684\u573A\u666F\u3002",
+      emphasisWords: ["\u91CD\u590D\u53D1\u751F", "\u8D28\u91CF\u4E00\u81F4"]
+    },
+    {
+      startFrame: 1260,
+      endFrame: 1619,
+      text: "\u5982\u679C Prompt \u8D1F\u8D23\u5355\u6B21\u8868\u8FBE\uFF0C\nSkill \u66F4\u50CF\u628A\u4E00\u6574\u5957\u505A\u4E8B\u65B9\u6CD5\u6C89\u6DC0\u4E0B\u6765\u3002",
+      emphasisWords: ["\u5355\u6B21\u8868\u8FBE", "\u505A\u4E8B\u65B9\u6CD5"]
+    },
+    {
+      startFrame: 1620,
+      endFrame: 1949,
+      text: "\u771F\u6B63\u7684\u4EF7\u503C\uFF0C\u4E0D\u662F\u8BA9\u6A21\u578B\u66F4\u6709\u7075\u611F\uFF0C\n\u800C\u662F\u8BA9\u4F60\u53CD\u590D\u505A\u540C\u7C7B\u4EFB\u52A1\u65F6\uFF0C\u901F\u5EA6\u66F4\u5FEB\u3001\u7ED3\u679C\u66F4\u7A33\u3002",
+      emphasisWords: ["\u901F\u5EA6\u66F4\u5FEB", "\u7ED3\u679C\u66F4\u7A33"]
+    }
+  ]
+});
 
 ;// ./src/data/skillReferenceCloneData.ts
 
@@ -4551,6 +6534,9 @@ const skillReferenceCloneData = {
 
 
 
+
+
+
 const SkillHorizontalComposition_TIMELINE = {
   hook: 180,
   doc: 300,
@@ -4573,6 +6559,7 @@ const SkillHorizontalComposition = () => {
   const mcpCompareFrom = flowFrom + SkillHorizontalComposition_TIMELINE.flow;
   const closeFrom = mcpCompareFrom + SkillHorizontalComposition_TIMELINE.mcpCompare;
   return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#050816" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AudioTrackLayer, { config: skillReferenceCloneAudio }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: hookFrom, durationInFrames: SkillHorizontalComposition_TIMELINE.hook, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(ReferenceHookScene, { frames: skillReferenceCloneData.hookFrames }) }),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: docFrom, durationInFrames: SkillHorizontalComposition_TIMELINE.doc, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
       ReferenceDocScene,
@@ -4647,7 +6634,1925 @@ const SkillHorizontalComposition = () => {
         headline: skillReferenceCloneData.closeScene.headline,
         subheadline: skillReferenceCloneData.closeScene.subheadline
       }
-    ) })
+    ) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(SubtitleTrack, { cues: skillReferenceCloneAudio.subtitles ?? [] })
+  ] });
+};
+
+;// ./src/data/techArchiveData.ts
+
+
+const duckQuestion = (0,esm.staticFile)("images/tech-archive/duck-ai/duck-question.png");
+const duckArchive = (0,esm.staticFile)("images/tech-archive/duck-ai/duck-archive.png");
+const duckPoint = (0,esm.staticFile)("images/tech-archive/duck-ai/duck-point.png");
+const duckPower = (0,esm.staticFile)("images/tech-archive/duck-ai/duck-power.png");
+const duckPresent = (0,esm.staticFile)("images/tech-archive/duck-ai/duck-present.png");
+const usbCLaptop = (0,esm.staticFile)("images/tech-archive/usb-c-laptop.jpg");
+const legacyUsbConnectors = (0,esm.staticFile)("images/tech-archive/legacy-usb-connectors.jpg");
+const multiUsbCharger = (0,esm.staticFile)("images/tech-archive/multi-usb-charger.jpg");
+const euCommonCharger = (0,esm.staticFile)("images/tech-archive/eu-common-charger.jpg");
+const threePortUsbCharger = (0,esm.staticFile)("images/tech-archive/three-port-usb-charger.png");
+const duckPoseMap = {
+  question: duckQuestion,
+  archive: duckArchive,
+  point: duckPoint,
+  power: duckPower,
+  present: duckPresent
+};
+const techArchiveData = {
+  templateId: "tech_archive_explainer",
+  topic: "USB-C \u4E3A\u4EC0\u4E48\u80FD\u7EDF\u4E00\u63A5\u53E3",
+  kicker: "TECH ARCHIVE / CONNECTOR HISTORY",
+  hook: {
+    leftMetric: "1 \u4E2A\u53E3",
+    rightMetric: "\u5145\u7535 / \u6570\u636E / \u663E\u793A / \u6269\u5C55",
+    question: "\u4E3A\u4EC0\u4E48\u4E00\u4E2A\u5C0F\u5C0F\u7684 USB-C\uFF0C\u6700\u540E\u80FD\u903C\u7740\u6574\u4E2A\u884C\u4E1A\u7EDF\u4E00\u63A5\u53E3\uFF1F",
+    answer: "\u5B83\u4E0D\u662F\u5355\u7EAF\u6362\u4E86\u4E00\u4E2A\u5F62\u72B6\uFF0C\u800C\u662F\u628A\u534F\u8BAE\u3001\u529F\u7387\u3001\u751F\u6001\u548C\u76D1\u7BA1\u538B\u529B\u90FD\u538B\u8FDB\u4E86\u540C\u4E00\u4E2A\u63A5\u53E3\u91CC\u3002",
+    mediaCards: [
+      {
+        imageSrc: usbCLaptop,
+        label: "\u73B0\u5728\u7684\u63A5\u53E3",
+        caption: "\u540C\u4E00\u4E2A Type-C \u53E3\uFF0C\u5F00\u59CB\u627F\u62C5\u5145\u7535\u3001\u6570\u636E\u4F20\u8F93\u548C\u663E\u793A\u8F93\u51FA\u3002",
+        objectPosition: "center center"
+      },
+      {
+        imageSrc: multiUsbCharger,
+        label: "\u8FC7\u53BB\u7684\u6DF7\u4E71",
+        caption: "\u63A5\u53E3\u548C\u5145\u7535\u5934\u8D8A\u505A\u8D8A\u591A\uFF0C\u7528\u6237\u4F53\u9A8C\u548C\u914D\u4EF6\u7BA1\u7406\u6210\u672C\u4E00\u8D77\u4E0A\u5347\u3002"
+      }
+    ],
+    duckPose: "question"
+  },
+  chapters: [
+    {
+      id: "messy_ports",
+      year: "2000s",
+      title: "\u5148\u662F\u63A5\u53E3\u6DF7\u6218",
+      subtitle: "\u624B\u673A\u3001\u76F8\u673A\u3001MP3\u3001\u638C\u673A\uFF0C\u5404\u6709\u5404\u7684\u7EBF\uFF0C\u8FDE\u63A5\u80FD\u529B\u88AB\u5207\u5F97\u5F88\u788E\u3002",
+      evidence: [
+        {
+          label: "\u65E7\u63A5\u53E3",
+          title: "Mini / Micro / \u4E13\u6709 DC \u53E3\u5E76\u5B58",
+          detail: "\u8BBE\u5907\u8D8A\u591A\uFF0C\u7EBF\u8D8A\u591A\uFF0C\u7528\u6237\u9700\u8981\u8BB0\u4F4F\u4E0D\u540C\u63A5\u53E3\u548C\u4E0D\u540C\u5145\u7535\u5934\u7684\u7EC4\u5408\u3002"
+        },
+        {
+          label: "\u95EE\u9898",
+          title: "\u5145\u7535\u3001\u6570\u636E\u3001\u6269\u5C55\u5404\u8BF4\u5404\u8BDD",
+          detail: "\u63A5\u53E3\u66F4\u50CF\u96F6\u6563\u914D\u4EF6\uFF0C\u4E0D\u50CF\u7EDF\u4E00\u57FA\u7840\u8BBE\u65BD\u3002"
+        }
+      ],
+      mediaCards: [
+        {
+          imageSrc: legacyUsbConnectors,
+          label: "\u63A5\u53E3\u6837\u672C",
+          caption: "\u65E7\u65F6\u4EE3\u7684 USB \u5BB6\u65CF\u548C\u4E13\u6709\u8FDE\u63A5\u5668\u957F\u76F8\u4E0D\u540C\u3001\u80FD\u529B\u4E5F\u4E0D\u540C\u3002",
+          objectFit: "contain",
+          objectPosition: "center center"
+        },
+        {
+          imageSrc: multiUsbCharger,
+          label: "\u914D\u4EF6\u8D1F\u62C5",
+          caption: "\u63A5\u53E3\u8D8A\u788E\u7247\u5316\uFF0C\u7528\u6237\u9700\u8981\u7EF4\u62A4\u7684\u7EBF\u6750\u548C\u5145\u7535\u5668\u5C31\u8D8A\u591A\u3002"
+        }
+      ],
+      duckPose: "archive"
+    },
+    {
+      id: "standard_push",
+      year: "2014",
+      title: "\u771F\u6B63\u7684\u53D8\u5316\uFF0C\u662F\u6807\u51C6\u5F00\u59CB\u8BF4\u540C\u4E00\u79CD\u8BED\u8A00",
+      subtitle: "USB-C \u4E0D\u53EA\u662F\u53EF\u6B63\u53CD\u63D2\uFF0C\u5B83\u628A\u63A5\u53E3\u5F62\u6001\u548C\u534F\u8BAE\u6269\u5C55\u5F00\u59CB\u7ED1\u5728\u4E00\u8D77\u3002",
+      evidence: [
+        {
+          label: "\u534F\u8BAE",
+          title: "USB-C + USB PD \u6210\u4E3A\u4E00\u7EC4\u7CFB\u7EDF",
+          detail: "\u8FDE\u63A5\u5668\u5F62\u6001\u3001\u529F\u7387\u534F\u5546\u548C\u529F\u80FD\u6269\u5C55\u88AB\u653E\u8FDB\u540C\u4E00\u5957\u89C4\u5219\u91CC\u3002"
+        },
+        {
+          label: "\u4F53\u9A8C",
+          title: "\u7528\u6237\u7B2C\u4E00\u6B21\u660E\u663E\u611F\u5230\u63A5\u53E3\u7EDF\u4E00\u5E26\u6765\u7684\u597D\u5904",
+          detail: "\u4E0D\u7528\u518D\u8BD5\u65B9\u5411\uFF0C\u4E0D\u7528\u53CD\u590D\u731C\u6D4B\u8FD9\u6839\u7EBF\u5230\u5E95\u80FD\u505A\u4EC0\u4E48\u3002"
+        }
+      ],
+      mediaCards: [
+        {
+          imageSrc: usbCLaptop,
+          label: "\u7EDF\u4E00\u63A5\u53E3",
+          caption: "Type-C \u6210\u4E3A\u8DE8\u8BBE\u5907\u7684\u5171\u540C\u5165\u53E3\uFF0C\u5F00\u59CB\u8131\u79BB\u5355\u4E00\u624B\u673A\u914D\u4EF6\u5B9A\u4F4D\u3002"
+        },
+        {
+          imageSrc: threePortUsbCharger,
+          label: "\u80FD\u529B\u53E0\u52A0",
+          caption: "\u7528\u6237\u9010\u6E10\u4E60\u60EF\u4E00\u4E2A\u5145\u7535\u5668\u9002\u914D\u66F4\u591A\u8BBE\u5907\u7684\u903B\u8F91\u3002",
+          objectFit: "contain",
+          objectPosition: "center center"
+        }
+      ],
+      duckPose: "point"
+    },
+    {
+      id: "power_jump",
+      year: "2017-2021",
+      title: "\u529F\u7387\u5347\u7EA7\uFF0C\u628A\u5B83\u63A8\u6210\u4E3B\u63A5\u53E3",
+      subtitle: "\u5F53\u5145\u7535\u529F\u7387\u548C\u6269\u5C55\u80FD\u529B\u4E00\u8D77\u4E0A\u6DA8\uFF0CType-C \u624D\u771F\u6B63\u4ECE\u624B\u673A\u53E3\u8FDB\u5165 PC \u548C\u684C\u9762\u751F\u6001\u3002",
+      evidence: [
+        {
+          label: "\u4F9B\u7535",
+          title: "\u4ECE\u624B\u673A\u5FEB\u5145\u8D70\u5411\u7B14\u8BB0\u672C\u548C\u663E\u793A\u5668",
+          detail: "\u9AD8\u529F\u7387\u534F\u5546\u8BA9\u63A5\u53E3\u7B2C\u4E00\u6B21\u5177\u5907\u8DE8\u8BBE\u5907\u7EA7\u522B\u7684\u7EDF\u4E00\u4EF7\u503C\u3002"
+        },
+        {
+          label: "\u751F\u6001",
+          title: "\u5382\u5546\u5F00\u59CB\u51CF\u5C11\u79C1\u6709\u5145\u7535\u7EBF",
+          detail: "\u7EDF\u4E00\u63A5\u53E3\u964D\u4F4E\u4E86\u914D\u4EF6 SKU\u3001\u552E\u540E\u548C\u4ED3\u50A8\u590D\u6742\u5EA6\u3002"
+        }
+      ],
+      mediaCards: [
+        {
+          imageSrc: usbCLaptop,
+          label: "\u8FDB\u5165\u7535\u8111",
+          caption: "\u63A5\u53E3\u80FD\u529B\u8D8A\u5F3A\uFF0C\u8D8A\u5BB9\u6613\u6210\u4E3A\u9AD8\u9891\u8BBE\u5907\u7684\u9ED8\u8BA4\u5165\u53E3\u3002"
+        },
+        {
+          imageSrc: threePortUsbCharger,
+          label: "\u9AD8\u529F\u7387\u6269\u5C55",
+          caption: "\u591A\u53E3\u5145\u7535\u5668\u548C\u6269\u5C55\u575E\u51FA\u73B0\u540E\uFF0CType-C \u5F00\u59CB\u627F\u63A5\u684C\u9762\u5DE5\u4F5C\u6D41\u3002",
+          objectFit: "contain",
+          objectPosition: "center center"
+        }
+      ],
+      duckPose: "power"
+    },
+    {
+      id: "regulation",
+      year: "2024+",
+      title: "\u6700\u540E\u4E00\u63A8\uFF0C\u6765\u81EA\u76D1\u7BA1\u548C\u73AF\u4FDD\u538B\u529B",
+      subtitle: "\u5F53\u76D1\u7BA1\u3001\u73AF\u4FDD\u548C\u6D88\u8D39\u8005\u4FBF\u5229\u7AD9\u5230\u4E00\u8D77\uFF0C\u7EDF\u4E00\u63A5\u53E3\u5C31\u4E0D\u518D\u53EA\u662F\u5382\u5546\u504F\u597D\u3002",
+      evidence: [
+        {
+          label: "\u76D1\u7BA1",
+          title: "\u901A\u7528\u5145\u7535\u5668\u89C4\u5219\u538B\u5B9E\u4E86\u7EDF\u4E00\u8D8B\u52BF",
+          detail: "\u51CF\u5C11\u7535\u5B50\u5783\u573E\u3001\u964D\u4F4E\u91CD\u590D\u8D2D\u4E70\uFF0C\u8BA9\u63A5\u53E3\u95EE\u9898\u4E0D\u518D\u53EA\u662F\u6280\u672F\u90E8\u95E8\u7684\u5185\u90E8\u9009\u62E9\u3002"
+        },
+        {
+          label: "\u7ED3\u8BBA",
+          title: "\u63A5\u53E3\u53D8\u6210\u516C\u5171\u89C4\u5219",
+          detail: "\u8C01\u80FD\u63A5\u5165\u5171\u540C\u751F\u6001\uFF0C\u8C01\u5C31\u66F4\u5BB9\u6613\u88AB\u6D88\u8D39\u8005\u548C\u5E02\u573A\u63A5\u53D7\u3002"
+        }
+      ],
+      mediaCards: [
+        {
+          imageSrc: euCommonCharger,
+          label: "\u5916\u90E8\u63A8\u52A8",
+          caption: "\u7EDF\u4E00\u63A5\u53E3\u4ECE\u5DE5\u7A0B\u9009\u62E9\uFF0C\u8FDB\u4E00\u6B65\u53D8\u6210\u5E02\u573A\u89C4\u5219\u548C\u6D88\u8D39\u8005\u9884\u671F\u3002"
+        },
+        {
+          imageSrc: multiUsbCharger,
+          label: "\u73AF\u4FDD\u80CC\u666F",
+          caption: "\u51CF\u5C11\u91CD\u590D\u5145\u7535\u5934\u548C\u91CD\u590D\u7EBF\u6750\uFF0C\u672C\u8D28\u4E0A\u662F\u5728\u538B\u4F4E\u7535\u5B50\u5783\u573E\u603B\u91CF\u3002"
+        }
+      ],
+      duckPose: "present"
+    }
+  ],
+  close: {
+    title: "\u6240\u4EE5 USB-C \u7684\u80DC\u5229\uFF0C\u4E0D\u662F\u56E0\u4E3A\u5B83\u66F4\u5C0F\uFF0C\u800C\u662F\u56E0\u4E3A\u5B83\u628A\u4F53\u9A8C\u3001\u6807\u51C6\u3001\u529F\u7387\u548C\u89C4\u5219\u538B\u8FDB\u4E86\u4E00\u4E2A\u53E3\u91CC\u3002",
+    body: "\u771F\u6B63\u7EDF\u4E00\u884C\u4E1A\u7684\uFF0C\u4ECE\u6765\u4E0D\u662F\u4E00\u4E2A\u6F02\u4EAE\u5F62\u72B6\uFF0C\u800C\u662F\u8FD9\u4E2A\u5F62\u72B6\u80CC\u540E\u80FD\u4E0D\u80FD\u627F\u63A5\u534F\u8BAE\u3001\u751F\u6001\u3001\u6210\u672C\u548C\u76D1\u7BA1\u56DB\u79CD\u529B\u91CF\u3002",
+    tags: ["\u79D1\u6280\u53F2", "\u63A5\u53E3\u7EDF\u4E00", "\u6807\u51C6\u6218\u4E89", "\u4EA7\u54C1\u6F14\u8FDB"],
+    mediaCards: [
+      {
+        imageSrc: usbCLaptop,
+        label: "\u7EDF\u4E00\u5165\u53E3",
+        caption: "\u63A5\u53E3\u4E00\u65E6\u53D8\u6210\u57FA\u7840\u8BBE\u65BD\uFF0C\u4EA7\u54C1\u8BBE\u8BA1\u5C31\u4F1A\u56F4\u7ED5\u5B83\u91CD\u6784\u3002"
+      },
+      {
+        imageSrc: euCommonCharger,
+        label: "\u89C4\u5219\u5B8C\u6210\u95ED\u73AF",
+        caption: "\u5F53\u5916\u90E8\u89C4\u5219\u786E\u8BA4\u5B83\u7684\u4EF7\u503C\uFF0C\u6807\u51C6\u5C31\u4ECE\u9009\u9879\u53D8\u6210\u9ED8\u8BA4\u3002"
+      }
+    ],
+    duckPose: "present"
+  }
+};
+const techArchiveSubtitles = [
+  { startFrame: 0, endFrame: 150, text: "\u4E3A\u4EC0\u4E48\u4E00\u4E2A\u5C0F\u5C0F\u7684 USB-C\uFF0C\u6700\u540E\u80FD\u903C\u7740\u6574\u4E2A\u884C\u4E1A\u7EDF\u4E00\u63A5\u53E3\uFF1F" },
+  { startFrame: 151, endFrame: 300, text: "\u7B54\u6848\u4E0D\u662F\u5B83\u66F4\u597D\u770B\uFF0C\u800C\u662F\u5B83\u628A\u5F62\u6001\u3001\u534F\u8BAE\u3001\u529F\u7387\u548C\u76D1\u7BA1\u538B\u529B\u538B\u8FDB\u4E86\u540C\u4E00\u4E2A\u53E3\u91CC\u3002" },
+  { startFrame: 301, endFrame: 510, text: "\u5728\u66F4\u65E9\u7684\u65F6\u5019\uFF0C\u8BBE\u5907\u63A5\u53E3\u957F\u671F\u5904\u5728\u6DF7\u6218\u72B6\u6001\uFF0C\u7528\u6237\u8981\u9762\u5BF9\u4E00\u5806\u4E0D\u540C\u7684\u7EBF\u548C\u4E0D\u540C\u7684\u5145\u7535\u5934\u3002" },
+  { startFrame: 511, endFrame: 720, text: "USB-C \u771F\u6B63\u5389\u5BB3\u7684\u5730\u65B9\uFF0C\u662F\u628A\u53EF\u6B63\u53CD\u63D2\u3001\u6570\u636E\u3001\u4F9B\u7535\u548C\u6269\u5C55\uFF0C\u653E\u8FDB\u540C\u4E00\u5957\u6807\u51C6\u8BED\u8A00\u91CC\u3002" },
+  { startFrame: 721, endFrame: 960, text: "\u5F53\u529F\u7387\u7EE7\u7EED\u62AC\u5347\uFF0C\u5B83\u5C31\u4E0D\u518D\u53EA\u662F\u624B\u673A\u63A5\u53E3\uFF0C\u800C\u662F\u5F00\u59CB\u8FDB\u5165\u7B14\u8BB0\u672C\u3001\u663E\u793A\u5668\u548C\u684C\u9762\u6269\u5C55\u751F\u6001\u3002" },
+  { startFrame: 961, endFrame: 1230, text: "\u6700\u540E\uFF0C\u76D1\u7BA1\u548C\u73AF\u4FDD\u76EE\u6807\u8FDB\u4E00\u6B65\u538B\u5B9E\u4E86\u7EDF\u4E00\u8D8B\u52BF\uFF0C\u8BA9\u901A\u7528\u63A5\u53E3\u4ECE\u6280\u672F\u9009\u62E9\u53D8\u6210\u5E02\u573A\u89C4\u5219\u3002" },
+  { startFrame: 1231, endFrame: 1500, text: "\u6240\u4EE5 USB-C \u7684\u80DC\u5229\uFF0C\u672C\u8D28\u4E0A\u662F\u4F53\u9A8C\u3001\u6807\u51C6\u3001\u751F\u6001\u548C\u89C4\u5219\u4E00\u8D77\u63A8\u52A8\u51FA\u6765\u7684\u7ED3\u679C\u3002" }
+];
+
+;// ./src/scenes/techArchive/TechArchiveScenes.tsx
+
+
+
+
+const palette = {
+  bg: "#07090d",
+  panel: "rgba(18, 22, 28, 0.78)",
+  panelStrong: "rgba(24, 29, 36, 0.92)",
+  line: "rgba(126, 255, 179, 0.22)",
+  green: "#62ff9f",
+  text: "#f3f7f4",
+  muted: "rgba(230, 239, 233, 0.68)",
+  amber: "#f4d35e",
+  red: "#ff5b5b"
+};
+const archiveBackground = {
+  background: "radial-gradient(circle at 18% 12%, rgba(98,255,159,0.18), transparent 24%), radial-gradient(circle at 80% 8%, rgba(244,211,94,0.12), transparent 20%), linear-gradient(180deg, #080b10 0%, #05070a 100%)"
+};
+const gridOverlay = {
+  backgroundImage: "linear-gradient(rgba(126,255,179,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(126,255,179,0.08) 1px, transparent 1px)",
+  backgroundSize: "42px 42px",
+  opacity: 0.45
+};
+const Mascot = ({ x = 0, y = 0, scale = 1 }) => /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+  "div",
+  {
+    style: {
+      position: "absolute",
+      right: 72 + x,
+      bottom: 72 + y,
+      width: 126 * scale,
+      height: 94 * scale,
+      transform: `rotate(-6deg) scale(${scale})`,
+      filter: "drop-shadow(0 18px 28px rgba(0,0,0,0.5))"
+    },
+    children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        "div",
+        {
+          style: {
+            position: "absolute",
+            width: 92,
+            height: 62,
+            borderRadius: "48% 52% 46% 54%",
+            background: "#f7f5e8",
+            bottom: 0,
+            left: 10
+          }
+        }
+      ),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        "div",
+        {
+          style: {
+            position: "absolute",
+            width: 52,
+            height: 44,
+            borderRadius: "50%",
+            background: "#f7f5e8",
+            top: 6,
+            right: 2
+          }
+        }
+      ),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { position: "absolute", right: -20, top: 28, width: 34, height: 14, background: "#ffbe3d", clipPath: "polygon(0 0, 100% 50%, 0 100%)" } }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { position: "absolute", right: 18, top: 23, width: 7, height: 7, borderRadius: 99, background: "#10151a" } }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { position: "absolute", left: 0, bottom: 22, width: 44, height: 32, borderRadius: "60% 40% 55% 45%", background: "#e8e5d5", transform: "rotate(-18deg)" } })
+    ]
+  }
+);
+const ConnectorDiagram = ({ active = "both" }) => /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }, children: ["left", "right"].map((side) => {
+  const on = active === "both" || active === side;
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { textAlign: "center" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          margin: "0 auto 18px",
+          width: 120,
+          height: 156,
+          borderRadius: 18,
+          background: on ? "linear-gradient(180deg, #f6fff9, #c8ffd9)" : "#d7dbe0",
+          boxShadow: on ? "0 0 34px rgba(98,255,159,0.45)" : "none",
+          border: `2px solid ${on ? palette.green : "rgba(255,255,255,0.2)"}`,
+          position: "relative"
+        },
+        children: /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { position: "absolute", left: 24, right: 24, top: 46, height: 48, borderRadius: 14, background: on ? "#102818" : "#8d9499" } })
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { color: on ? palette.green : palette.muted, fontFamily: THEME.fonts.numbers, fontSize: 30 }, children: "120W" })
+  ] }, side);
+}) });
+const DocCard = ({ title, highlight = "USB Power Delivery" }) => /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+  "div",
+  {
+    style: {
+      width: 520,
+      height: 340,
+      background: "#f4f2e8",
+      color: "#121417",
+      borderRadius: 10,
+      padding: 34,
+      transform: "rotate(-3deg)",
+      boxShadow: "0 22px 45px rgba(0,0,0,0.38)",
+      fontFamily: THEME.fonts.bodyZh
+    },
+    children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { fontFamily: THEME.fonts.numbers, fontSize: 18, color: "#666", marginBottom: 22 }, children: "ARCHIVE DOCUMENT" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { fontSize: 34, fontWeight: 900, marginBottom: 24 }, children: title }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { height: 12, background: "#d8d3c7", marginBottom: 14 } }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { height: 12, background: "#d8d3c7", marginBottom: 14, width: "78%" } }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { height: 34, background: "rgba(98,255,159,0.52)", marginTop: 22, display: "flex", alignItems: "center", paddingLeft: 12, fontWeight: 900 }, children: highlight }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { height: 12, background: "#d8d3c7", marginTop: 22, width: "88%" } })
+    ]
+  }
+);
+const TechArchiveHookScene = ({ kicker, leftMetric, rightMetric, question, answer }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps } = (0,esm.useVideoConfig)();
+  const intro = (0,esm.spring)({ frame, fps, config: { damping: 18, stiffness: 120 } });
+  const pulse = (0,esm.interpolate)(frame % 60, [0, 30, 60], [0.65, 1, 0.65]);
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { ...archiveBackground, color: palette.text, padding: "70px 78px", fontFamily: THEME.fonts.bodyZh }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: gridOverlay }),
+    /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "relative", zIndex: 2 }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { color: palette.green, fontFamily: THEME.fonts.numbers, fontSize: 28, letterSpacing: 2, marginBottom: 44 }, children: kicker }),
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "grid", gridTemplateColumns: "1fr 0.9fr", gap: 72, alignItems: "center" }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { transform: `translateY(${(1 - intro) * 24}px)`, opacity: intro }, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { fontFamily: THEME.fonts.headlineZh, fontSize: 84, lineHeight: 1.04, fontWeight: 900, maxWidth: 760 }, children: question }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { marginTop: 34, maxWidth: 860, color: palette.muted, fontSize: 32, lineHeight: 1.5 }, children: answer })
+        ] }),
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { padding: 42, borderRadius: 34, background: palette.panel, border: `1px solid ${palette.line}`, boxShadow: "0 0 60px rgba(98,255,159,0.08)" }, children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)(ConnectorDiagram, {}),
+          /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", justifyContent: "space-between", marginTop: 30, color: palette.text, fontSize: 34, fontWeight: 900 }, children: [
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { children: leftMetric }),
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { color: palette.green, opacity: pulse }, children: rightMetric })
+          ] })
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(Mascot, {})
+  ] });
+};
+const TechArchiveChapterScene = ({ chapter, index }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps } = (0,esm.useVideoConfig)();
+  const intro = (0,esm.spring)({ fps, frame, config: { damping: 16, stiffness: 110 } });
+  const x = (0,esm.interpolate)(frame, [0, 260], [28, -20], { extrapolateRight: "clamp" });
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { ...archiveBackground, color: palette.text, padding: "64px 72px", fontFamily: THEME.fonts.bodyZh }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: gridOverlay }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { position: "absolute", inset: 0, opacity: 0.16, fontFamily: THEME.fonts.numbers, fontSize: 260, fontWeight: 900, color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center" }, children: chapter.year }),
+    /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "relative", zIndex: 2, display: "grid", gridTemplateColumns: "0.95fr 1.05fr", gap: 54 }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { transform: `translateX(${x}px)`, opacity: intro }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { color: palette.green, fontFamily: THEME.fonts.numbers, fontSize: 86, fontWeight: 900 }, children: chapter.year }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { marginTop: 28, fontSize: 62, lineHeight: 1.08, fontWeight: 900 }, children: chapter.title }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { marginTop: 24, color: palette.muted, fontSize: 30, lineHeight: 1.5 }, children: chapter.subtitle }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { marginTop: 42 }, children: index === 1 ? /* @__PURE__ */ (0,jsx_runtime.jsx)(DocCard, { title: "USB Type-C Specification" }) : /* @__PURE__ */ (0,jsx_runtime.jsx)(ConnectorDiagram, { active: index === 0 ? "left" : "both" }) })
+      ] }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { display: "grid", gap: 22, alignContent: "center" }, children: chapter.evidence.map((item, itemIndex) => {
+        const itemIntro = (0,esm.spring)({ fps, frame: frame - itemIndex * 15, config: { damping: 16, stiffness: 120 } });
+        return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+          "div",
+          {
+            style: {
+              padding: "28px 30px",
+              minHeight: 164,
+              borderRadius: 26,
+              border: `1px solid ${palette.line}`,
+              background: itemIndex === 0 ? palette.panelStrong : palette.panel,
+              boxShadow: "0 18px 42px rgba(0,0,0,0.26)",
+              opacity: itemIntro,
+              transform: `translateY(${(1 - itemIntro) * 24}px)`
+            },
+            children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { color: itemIndex === 0 ? palette.green : palette.amber, fontFamily: THEME.fonts.numbers, fontSize: 24, marginBottom: 12 }, children: [
+                "0",
+                itemIndex + 1,
+                " / ",
+                item.label
+              ] }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { fontSize: 34, fontWeight: 900, marginBottom: 12 }, children: item.title }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { color: palette.muted, fontSize: 25, lineHeight: 1.46 }, children: item.detail })
+            ]
+          },
+          item.title
+        );
+      }) })
+    ] }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(Mascot, { scale: 0.85 })
+  ] });
+};
+const TechArchiveCloseScene = ({ title, body, tags }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps } = (0,esm.useVideoConfig)();
+  const intro = (0,esm.spring)({ frame, fps, config: { damping: 18, stiffness: 110 } });
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { ...archiveBackground, color: palette.text, padding: "86px 92px", fontFamily: THEME.fonts.bodyZh }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: gridOverlay }),
+    /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "relative", zIndex: 2, height: "100%", display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 50, alignItems: "center" }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { opacity: intro, transform: `translateY(${(1 - intro) * 30}px)` }, children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { color: palette.green, fontFamily: THEME.fonts.numbers, fontSize: 26, letterSpacing: 2, marginBottom: 28 }, children: "FINAL ARCHIVE NOTE" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { fontFamily: THEME.fonts.headlineZh, fontSize: 76, lineHeight: 1.1, fontWeight: 900 }, children: title }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { color: palette.muted, fontSize: 34, lineHeight: 1.5, marginTop: 30 }, children: body }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { display: "flex", gap: 14, marginTop: 42 }, children: tags.map((tag) => /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { border: `1px solid ${palette.line}`, borderRadius: 999, padding: "12px 18px", color: palette.green, fontSize: 22 }, children: tag }, tag)) })
+      ] }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { borderRadius: 34, border: `1px solid ${palette.line}`, background: palette.panel, padding: 40 }, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(DocCard, { title: "Interface becomes infrastructure", highlight: "STANDARD + ECOSYSTEM" }) })
+    ] }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(Mascot, { scale: 1.1 })
+  ] });
+};
+
+;// ./src/compositions/TechArchiveExplainerComposition.tsx
+
+
+
+
+
+
+const TechArchiveExplainerComposition_TIMELINE = {
+  hook: 300,
+  chapter: 270,
+  close: 420
+};
+const TECH_ARCHIVE_DURATION_IN_FRAMES = TechArchiveExplainerComposition_TIMELINE.hook + techArchiveData.chapters.length * TechArchiveExplainerComposition_TIMELINE.chapter + TechArchiveExplainerComposition_TIMELINE.close;
+const TechArchiveExplainerComposition = () => {
+  const chapterStart = TechArchiveExplainerComposition_TIMELINE.hook;
+  const closeStart = chapterStart + techArchiveData.chapters.length * TechArchiveExplainerComposition_TIMELINE.chapter;
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#05070a" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { durationInFrames: TechArchiveExplainerComposition_TIMELINE.hook, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      TechArchiveHookScene,
+      {
+        kicker: techArchiveData.kicker,
+        leftMetric: techArchiveData.hook.leftMetric,
+        rightMetric: techArchiveData.hook.rightMetric,
+        question: techArchiveData.hook.question,
+        answer: techArchiveData.hook.answer
+      }
+    ) }),
+    techArchiveData.chapters.map((chapter, index) => /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: chapterStart + index * TechArchiveExplainerComposition_TIMELINE.chapter, durationInFrames: TechArchiveExplainerComposition_TIMELINE.chapter, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(TechArchiveChapterScene, { chapter, index }) }, chapter.id)),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: closeStart, durationInFrames: TechArchiveExplainerComposition_TIMELINE.close, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(TechArchiveCloseScene, { title: techArchiveData.close.title, body: techArchiveData.close.body, tags: techArchiveData.close.tags }) }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(SubtitleTrack, { cues: techArchiveSubtitles })
+  ] });
+};
+
+;// ./src/data/philosophyMontageAudio.ts
+
+
+const philosophyMontageSubtitleCues = [
+  {
+    startFrame: 0,
+    endFrame: 101,
+    text: "\u4ECA\u5929\u6211\u4EEC\u8981\u8BB2\u7684\u662F\n\u6570\u5B57\u6781\u7B80\u4E3B\u4E49\u3002",
+    emphasisWords: ["\u6570\u5B57\u6781\u7B80\u4E3B\u4E49"]
+  },
+  {
+    startFrame: 102,
+    endFrame: 226,
+    text: "\u4F60\u4E0D\u662F\u6CA1\u65F6\u95F4\uFF0C\n\u4F60\u662F\u88AB\u566A\u97F3\u5077\u8D70\u4E86\u6CE8\u610F\u529B\u3002",
+    emphasisWords: ["\u566A\u97F3", "\u6CE8\u610F\u529B"]
+  },
+  {
+    startFrame: 230,
+    endFrame: 319,
+    text: "\u5237\u5230\u5F88\u591A\uFF0C\n\u4E0D\u7B49\u4E8E\u601D\u8003\u5F88\u591A\u3002",
+    emphasisWords: ["\u4E0D\u7B49\u4E8E", "\u601D\u8003"]
+  },
+  {
+    startFrame: 324,
+    endFrame: 442,
+    text: "\u901A\u77E5\u6BCF\u54CD\u4E00\u6B21\uFF0C\n\u4F60\u7684\u5927\u8111\u5C31\u8981\u91CD\u542F\u4E00\u6B21\u3002",
+    emphasisWords: ["\u901A\u77E5", "\u91CD\u542F"]
+  },
+  {
+    startFrame: 444,
+    endFrame: 535,
+    text: "\u8FD9\u4E0D\u662F\u653E\u677E\uFF0C\n\u662F\u5207\u6362\u6210\u672C\u3002",
+    emphasisWords: ["\u5207\u6362\u6210\u672C"]
+  },
+  {
+    startFrame: 539,
+    endFrame: 679,
+    text: "\u53EF\u63A7\u7684\u662F\u6253\u5F00\u9891\u6B21\u3001\n\u505C\u7559\u65F6\u957F\u3001\u63D0\u9192\u5F00\u5173\u3002",
+    emphasisWords: ["\u53EF\u63A7", "\u505C\u7559\u65F6\u957F", "\u63D0\u9192\u5F00\u5173"]
+  },
+  {
+    startFrame: 682,
+    endFrame: 797,
+    text: "\u4E0D\u53EF\u63A7\u7684\u662F\n\u63A8\u8350\u673A\u5236\u3001\u70ED\u70B9\u8282\u594F\u3002",
+    emphasisWords: ["\u4E0D\u53EF\u63A7", "\u63A8\u8350\u673A\u5236", "\u70ED\u70B9\u8282\u594F"]
+  },
+  {
+    startFrame: 800,
+    endFrame: 917,
+    text: "\u5148\u95EE\u4E00\u53E5\uFF0C\n\u6211\u73B0\u5728\u6253\u5F00\u5B83\u662F\u4E3A\u4E86\u4EC0\u4E48\uFF1F",
+    emphasisWords: ["\u4E3A\u4E86\u4EC0\u4E48"]
+  },
+  {
+    startFrame: 920,
+    endFrame: 1006,
+    text: "\u76EE\u7684\u4E0D\u6E05\uFF0C\n\u5C31\u5148\u522B\u6253\u5F00\u3002",
+    emphasisWords: ["\u76EE\u7684\u4E0D\u6E05"]
+  },
+  {
+    startFrame: 1008,
+    endFrame: 1118,
+    text: "\u6BCF\u5929\u7ED9\u9AD8\u4EF7\u503C\u4FE1\u606F\n\u4E5D\u5341\u5206\u949F\u9884\u7B97\u3002",
+    emphasisWords: ["\u9AD8\u4EF7\u503C\u4FE1\u606F", "\u4E5D\u5341\u5206\u949F"]
+  },
+  {
+    startFrame: 1126,
+    endFrame: 1188,
+    text: "\u5A31\u4E50\u5EF6\u540E\uFF0C\n\u4E0D\u662F\u7981\u6B62\u3002",
+    emphasisWords: ["\u5A31\u4E50\u5EF6\u540E"]
+  },
+  {
+    startFrame: 1190,
+    endFrame: 1291,
+    text: "\u5F53\u4F60\u638C\u63A7\u5165\u53E3\uFF0C\n\u7126\u8651\u5148\u4E0B\u964D\u3002",
+    emphasisWords: ["\u638C\u63A7\u5165\u53E3", "\u7126\u8651"]
+  },
+  {
+    startFrame: 1301,
+    endFrame: 1339,
+    text: "\u6548\u7387\u624D\u4F1A\u4E0A\u5347\u3002",
+    emphasisWords: ["\u6548\u7387"]
+  }
+];
+const philosophyMontageAudio = createVoiceOnlyAudioConfig({
+  voiceoverSrc: "/audio/philosophy-montage/digital-minimalism-elevenlabs-cn.mp3",
+  subtitles: philosophyMontageSubtitleCues,
+  voiceoverEnabled: true
+});
+
+;// ./src/data/PhilosophyMontageValidationData.ts
+
+const PHILOSOPHY_MONTAGE_FPS = 30;
+const philosophyMontageScenes = [
+  {
+    id: "s00",
+    type: "openerConcepts",
+    duration: 210,
+    subtitleLines: ["\u4ECA\u5929\u6211\u4EEC\u8981\u8BB2\u7684\u662F", "\u6570\u5B57\u6781\u7B80\u4E3B\u4E49\u3002"],
+    image: "/images/philosophy-montage/dramatic_sky_b.jpg",
+    palette: ["#0a2240", "#0f4c81", "#6ee7ff"]
+  },
+  {
+    id: "s01",
+    type: "titleStack",
+    duration: 210,
+    subtitleLines: ["\u4F60\u4E0D\u662F\u6CA1\u65F6\u95F4\uFF0C", "\u4F60\u662F\u88AB\u566A\u97F3\u5077\u8D70\u4E86\u6CE8\u610F\u529B\u3002"],
+    image: "/images/philosophy-montage/focus_feed_trap.png",
+    palette: ["#0f172a", "#1e3a8a", "#0ea5e9"]
+  },
+  {
+    id: "s02",
+    type: "conceptBoard",
+    duration: 225,
+    subtitleLines: ["\u5237\u5230\u5F88\u591A\uFF0C", "\u4E0D\u7B49\u4E8E\u601D\u8003\u5F88\u591A\u3002"],
+    image: "/images/philosophy-montage/screen_overload_wall.png",
+    palette: ["#0f172a", "#334155", "#60a5fa"]
+  },
+  {
+    id: "s03",
+    type: "ruminationExample",
+    duration: 270,
+    subtitleLines: ["\u901A\u77E5\u6BCF\u54CD\u4E00\u6B21\uFF0C", "\u4F60\u7684\u5927\u8111\u5C31\u8981\u91CD\u542F\u4E00\u6B21\u3002", "\u8FD9\u4E0D\u662F\u653E\u677E\uFF0C\u662F\u5207\u6362\u6210\u672C\u3002"],
+    image: "/images/philosophy-montage/notification_burst_desk.png",
+    palette: ["#1e1b4b", "#1f2937", "#f59e0b"]
+  },
+  {
+    id: "s04",
+    type: "controlSplit",
+    duration: 285,
+    subtitleLines: ["\u53EF\u63A7\uFF1A\u6253\u5F00\u9891\u6B21\u3001\u505C\u7559\u65F6\u957F\u3001\u63D0\u9192\u5F00\u5173\u3002", "\u4E0D\u53EF\u63A7\uFF1A\u63A8\u8350\u673A\u5236\u3001\u70ED\u70B9\u8282\u594F\u3002"],
+    image: "/images/philosophy-montage/control_vs_chaos.png",
+    palette: ["#0f172a", "#0c4a6e", "#22d3ee"]
+  },
+  {
+    id: "s05",
+    type: "decisionPrompt",
+    duration: 225,
+    subtitleLines: ["\u5148\u95EE\u4E00\u53E5\uFF1A\u6211\u73B0\u5728\u6253\u5F00\u5B83\u662F\u4E3A\u4E86\u4EC0\u4E48\uFF1F", "\u76EE\u7684\u4E0D\u6E05\uFF0C\u5C31\u5148\u522B\u6253\u5F00\u3002"],
+    image: "/images/philosophy-montage/pause_before_unlock.png",
+    palette: ["#0f172a", "#4c1d95", "#f472b6"]
+  },
+  {
+    id: "s06",
+    type: "axiomWall",
+    duration: 270,
+    subtitleLines: ["\u6BCF\u5929\u7ED9\u9AD8\u4EF7\u503C\u4FE1\u606F 90 \u5206\u949F\u9884\u7B97\u3002", "\u5A31\u4E50\u5EF6\u540E\uFF0C\u4E0D\u662F\u7981\u6B62\u3002"],
+    image: "/images/philosophy-montage/focus_budget_workspace.png",
+    palette: ["#052e16", "#14532d", "#86efac"]
+  },
+  {
+    id: "s07",
+    type: "cityOutro",
+    duration: 210,
+    subtitleLines: ["\u5F53\u4F60\u638C\u63A7\u5165\u53E3\uFF0C", "\u7126\u8651\u5148\u4E0B\u964D\uFF0C\u6548\u7387\u624D\u4F1A\u4E0A\u5347\u3002"],
+    image: "/images/philosophy-montage/morning_control_city.png",
+    palette: ["#0f172a", "#334155", "#c084fc"]
+  }
+];
+const PHILOSOPHY_MONTAGE_DURATION = philosophyMontageScenes.reduce(
+  (sum, scene) => sum + scene.duration,
+  0
+);
+const philosophyMontageOpenerConfig = {
+  introTitle: "\u4ECA\u5929\u6211\u4EEC\u8981\u8BB2\u7684\u662F",
+  terms: [
+    "\u4EAB\u4E50\u4E3B\u4E49",
+    "\u6D88\u8D39\u4E3B\u4E49",
+    "\u865A\u65E0\u4E3B\u4E49",
+    "\u5B8C\u7F8E\u4E3B\u4E49",
+    "\u72AC\u5112\u4E3B\u4E49",
+    "\u5DE5\u5177\u7406\u6027",
+    "\u529F\u5229\u4E3B\u4E49",
+    "\u5B58\u5728\u4E3B\u4E49",
+    "\u65AF\u591A\u845B\u4E3B\u4E49",
+    "\u6570\u5B57\u6781\u7B80\u4E3B\u4E49"
+  ],
+  bgImages: [
+    "/images/philosophy-montage/opener-style/opener_01.jpg",
+    "/images/philosophy-montage/opener-style/opener_02.jpg",
+    "/images/philosophy-montage/opener-style/opener_03.jpg",
+    "/images/philosophy-montage/opener-style/opener_04.jpg",
+    "/images/philosophy-montage/opener-style/opener_05.jpg",
+    "/images/philosophy-montage/opener-style/opener_06.jpg",
+    "/images/philosophy-montage/opener-style/opener_07.jpg",
+    "/images/philosophy-montage/opener-style/opener_08.jpg",
+    "/images/philosophy-montage/opener-style/opener_09.jpg",
+    "/images/philosophy-montage/opener-style/opener_10.jpg"
+  ],
+  introFrames: 24,
+  switchEvery: 9
+};
+
+;// ./src/scenes/philosophyMontage/PhilosophyMontageScenes.tsx
+
+
+
+
+const textBaseStyle = {
+  fontFamily: '"NotoSansSC", sans-serif',
+  fontWeight: 900,
+  letterSpacing: 3,
+  transform: "skewX(-8deg)",
+  color: "#ffffff",
+  WebkitTextStroke: "2px rgba(15,23,42,0.28)",
+  textShadow: "0 4px 10px rgba(0,0,0,0.45)"
+};
+const OpenerConceptSwitch = ({ openerConfig }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const introFrames = openerConfig.introFrames ?? 24;
+  const conceptFrame = Math.max(0, frame - introFrames);
+  const inIntro = frame < introFrames;
+  const terms = openerConfig.terms;
+  const switchEvery = openerConfig.switchEvery ?? 9;
+  const shockPhaseEnd = terms.length * switchEvery;
+  const lockPhaseEnd = shockPhaseEnd + 42;
+  const termIndex = Math.min(terms.length - 1, Math.floor(conceptFrame / switchEvery));
+  const isFinal = conceptFrame >= shockPhaseEnd;
+  const term = terms[termIndex];
+  const popScale = (0,esm.interpolate)(conceptFrame % switchEvery, [0, switchEvery - 1], [0.82, 1.1], {
+    extrapolateRight: "clamp"
+  });
+  const phaseTerm = conceptFrame < shockPhaseEnd ? term : terms[terms.length - 1];
+  const lockScale = (0,esm.interpolate)(conceptFrame, [shockPhaseEnd, lockPhaseEnd], [1.18, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp"
+  });
+  const lockOpacity = (0,esm.interpolate)(conceptFrame, [shockPhaseEnd - 2, shockPhaseEnd + 8, lockPhaseEnd], [0, 1, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp"
+  });
+  const shockOpacity = (0,esm.interpolate)(conceptFrame % switchEvery, [0, 2, switchEvery - 1], [0.15, 1, 0.2], {
+    extrapolateRight: "clamp"
+  });
+  const jitterX = Math.sin(conceptFrame * 0.85) * (conceptFrame < shockPhaseEnd ? 14 : 2);
+  const flashOpacity = (0,esm.interpolate)(frame, [0, 3, 7, 12, 18], [0.95, 0.1, 0.52, 0.1, 0], {
+    extrapolateRight: "clamp"
+  });
+  const barYOffset = (0,esm.interpolate)(conceptFrame, [0, 10, 26], [-70, -8, 0], {
+    extrapolateRight: "clamp"
+  });
+  const shutterTop = (0,esm.interpolate)(frame, [0, 14, 30], [0, -160, -190], {
+    extrapolateRight: "clamp"
+  });
+  const shutterBottom = (0,esm.interpolate)(frame, [0, 14, 30], [0, 160, 190], {
+    extrapolateRight: "clamp"
+  });
+  const scanOpacity = (0,esm.interpolate)(
+    conceptFrame,
+    [shockPhaseEnd - 14, shockPhaseEnd - 4, shockPhaseEnd + 24],
+    [0, 1, 0.65],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp"
+    }
+  );
+  const introOpacity = (0,esm.interpolate)(frame, [0, 4, introFrames - 4, introFrames], [0, 1, 1, 0], {
+    extrapolateRight: "clamp"
+  });
+  const introScale = (0,esm.interpolate)(frame, [0, introFrames], [1.08, 1], {
+    extrapolateRight: "clamp"
+  });
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          inset: 0,
+          background: "radial-gradient(circle at 50% 35%, rgba(255,255,255,0.25), transparent 62%)",
+          opacity: flashOpacity
+        }
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          top: shutterTop,
+          left: 0,
+          right: 0,
+          height: 200,
+          background: "linear-gradient(180deg, rgba(0,0,0,0.95), rgba(0,0,0,0.1))"
+        }
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          bottom: shutterBottom,
+          left: 0,
+          right: 0,
+          height: 220,
+          background: "linear-gradient(0deg, rgba(0,0,0,0.95), rgba(0,0,0,0.1))"
+        }
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: "50%",
+          top: "34%",
+          transform: `translate(-50%, ${barYOffset}px)`,
+          width: 860,
+          height: 10,
+          borderRadius: 99,
+          background: "linear-gradient(90deg, rgba(255,255,255,0), rgba(103,232,249,0.95), rgba(255,255,255,0))",
+          boxShadow: "0 0 20px rgba(103,232,249,0.9)",
+          opacity: inIntro ? 0 : 1
+        }
+      }
+    ),
+    inIntro ? /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: "50%",
+          top: "43%",
+          transform: `translate(-50%, -50%) scale(${introScale}) skewX(-8deg)`,
+          fontFamily: '"NotoSansSC", sans-serif',
+          fontWeight: 900,
+          fontSize: 150,
+          letterSpacing: 2,
+          color: "#ffffff",
+          opacity: introOpacity,
+          whiteSpace: "nowrap",
+          WebkitTextStroke: "2px rgba(17,24,39,0.3)",
+          textShadow: "0 13px 0 rgba(117,137,68,0.95), 0 6px 0 rgba(117,137,68,0.95), 0 18px 30px rgba(0,0,0,0.5)"
+        },
+        children: openerConfig.introTitle
+      }
+    ) : null,
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: "50%",
+          top: "50%",
+          transform: `translate(calc(-50% + ${jitterX}px), -50%) scale(${isFinal ? lockScale : popScale})`,
+          opacity: inIntro ? 0 : isFinal ? lockOpacity : shockOpacity,
+          fontSize: isFinal ? 146 : 132,
+          textShadow: isFinal ? "0 12px 0 rgba(117,137,68,0.9), 0 18px 28px rgba(0,0,0,0.6)" : "0 9px 0 rgba(117,137,68,0.85), 0 12px 24px rgba(0,0,0,0.6)",
+          paddingBottom: 10,
+          whiteSpace: "nowrap",
+          ...textBaseStyle
+        },
+        children: phaseTerm
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: "50%",
+          top: "61%",
+          transform: "translateX(-50%)",
+          width: 620,
+          height: 5,
+          borderRadius: 99,
+          background: "rgba(255,255,255,0.55)",
+          opacity: inIntro ? 0 : (0,esm.interpolate)(conceptFrame, [8, 24, 40], [0, 0.9, 0.7], {
+            extrapolateRight: "clamp"
+          })
+        }
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: "50%",
+          top: "43%",
+          transform: `translate(-50%, ${(0,esm.interpolate)(conceptFrame, [42, 90], [-100, 100], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp"
+          })}px)`,
+          width: 760,
+          height: 2,
+          background: "rgba(255,255,255,0.95)",
+          boxShadow: "0 0 20px rgba(255,255,255,0.9)",
+          opacity: inIntro ? 0 : scanOpacity
+        }
+      }
+    )
+  ] });
+};
+const SceneCard = ({
+  scene,
+  openerConfig
+}) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const isOpener = scene.type === "openerConcepts";
+  const introFrames = openerConfig.introFrames ?? 24;
+  const switchEvery = openerConfig.switchEvery ?? 9;
+  const openerConceptFrame = Math.max(0, frame - introFrames);
+  const openerBgIndex = Math.min(
+    openerConfig.bgImages.length - 1,
+    Math.floor(openerConceptFrame / switchEvery)
+  );
+  const openerImage = openerConfig.bgImages[openerBgIndex] ?? openerConfig.bgImages[openerConfig.bgImages.length - 1];
+  const activeImage = isOpener ? openerImage : scene.image;
+  const imageSrc = activeImage.startsWith("/") ? (0,esm.staticFile)(activeImage.slice(1)) : (0,esm.staticFile)(activeImage);
+  const zoom = (0,esm.interpolate)(frame, [0, scene.duration], [isOpener ? 1.18 : 1.06, 1.14], {
+    extrapolateRight: "clamp"
+  });
+  const driftX = (0,esm.interpolate)(frame, [0, scene.duration], [isOpener ? -48 : -22, 22], {
+    extrapolateRight: "clamp"
+  });
+  const driftY = (0,esm.interpolate)(frame, [0, scene.duration], [isOpener ? 28 : 12, -8], {
+    extrapolateRight: "clamp"
+  });
+  const openerFlash = isOpener ? (0,esm.interpolate)(frame, [0, 2, 6, 12, 18], [1, 0.12, 0.65, 0.12, 0], {
+    extrapolateRight: "clamp"
+  }) : 0;
+  const openerEndFade = isOpener ? (0,esm.interpolate)(frame, [98, 114, scene.duration], [0, 0.26, 0.5], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp"
+  }) : 0;
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#020617" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Img,
+      {
+        src: imageSrc,
+        style: {
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          transform: `translate(${driftX}px, ${driftY}px) scale(${zoom})`,
+          filter: isOpener ? "brightness(1.05) saturate(1.72) contrast(1.22) hue-rotate(-8deg)" : "brightness(1.08) saturate(1.5) contrast(1.12)"
+        }
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.AbsoluteFill,
+      {
+        style: {
+          background: "radial-gradient(circle at 50% 28%, rgba(255,255,255,0.26) 0%, transparent 50%), linear-gradient(180deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.2) 72%, rgba(0,0,0,0.38) 100%)"
+        }
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.AbsoluteFill,
+      {
+        style: {
+          opacity: 0.14,
+          backgroundImage: "linear-gradient(transparent 95%, rgba(255,255,255,0.18) 95%), linear-gradient(90deg, transparent 95%, rgba(255,255,255,0.16) 95%)",
+          backgroundSize: "120px 120px"
+        }
+      }
+    ),
+    isOpener ? /* @__PURE__ */ (0,jsx_runtime.jsx)(OpenerConceptSwitch, { openerConfig }) : null,
+    isOpener ? /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.AbsoluteFill,
+      {
+        style: {
+          background: "rgba(255,255,255,1)",
+          opacity: openerFlash
+        }
+      }
+    ) : null,
+    isOpener ? /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.AbsoluteFill,
+      {
+        style: {
+          background: "linear-gradient(180deg, rgba(8,47,73,0.0), rgba(8,47,73,0.55))",
+          opacity: openerEndFade
+        }
+      }
+    ) : null
+  ] });
+};
+const PhilosophyMontageScenes = ({
+  scenes = philosophyMontageScenes,
+  openerConfig = philosophyMontageOpenerConfig
+}) => {
+  let cursor = 0;
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: { backgroundColor: "#030712" }, children: scenes.map((scene) => {
+    const from = cursor;
+    cursor += scene.duration;
+    return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from, durationInFrames: scene.duration, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(SceneCard, { scene, openerConfig }) }, scene.id);
+  }) });
+};
+
+;// ./src/compositions/PhilosophyMontageValidationComposition.tsx
+
+
+
+
+
+
+
+
+const PHILOSOPHY_MONTAGE_DURATION_IN_FRAMES = PHILOSOPHY_MONTAGE_DURATION;
+const PhilosophyMontageValidationComposition = () => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#030712" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(PhilosophyMontageScenes, {}),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AudioTrackLayer, { config: philosophyMontageAudio }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(SubtitleTrack, { cues: philosophyMontageAudio.subtitles ?? [] })
+  ] });
+};
+
+;// ./src/data/PhilosophyMontageStoicBoundaryAudio.ts
+
+
+const stoicBoundarySubtitleCues = [
+  {
+    startFrame: 0,
+    endFrame: 115,
+    text: "\u4ECA\u5929\u6211\u4EEC\u8981\u8BB2\u7684\uFF0C\n\u662F\u65AF\u591A\u845B\u4E3B\u4E49\u3002",
+    emphasisWords: ["\u65AF\u591A\u845B\u4E3B\u4E49"]
+  },
+  {
+    startFrame: 120,
+    endFrame: 312,
+    text: "\u5B83\u4E0D\u662F\u8BA9\u4F60\u6CA1\u60C5\u7EEA\uFF0C\n\u800C\u662F\u8BA9\u4F60\u522B\u628A\u5916\u754C\u523A\u6FC0\u90FD\u8BF7\u8FDB\u5185\u5FC3\u3002",
+    emphasisWords: ["\u5916\u754C\u523A\u6FC0", "\u5185\u5FC3"]
+  },
+  {
+    startFrame: 316,
+    endFrame: 660,
+    text: "\u4E00\u53E5\u8BC4\u4EF7\u3001\u4E00\u6761\u6D88\u606F\u3001\u4E00\u6B21\u51B7\u8138\uFF0C\u672C\u6765\u53EA\u662F\u4E8B\u4EF6\u3002\n\u4F60\u4E00\u65E6\u53CD\u590D\u56DE\u653E\uFF0C\u5B83\u5C31\u4F1A\u53D8\u6210\u60C5\u7EEA\u5360\u9886\u3002",
+    emphasisWords: ["\u4E8B\u4EF6", "\u53CD\u590D\u56DE\u653E", "\u60C5\u7EEA\u5360\u9886"]
+  },
+  {
+    startFrame: 665,
+    endFrame: 970,
+    text: "\u65AF\u591A\u845B\u4E3B\u4E49\u6700\u6838\u5FC3\u7684\u4E00\u6B65\uFF0C\u4E0D\u662F\u538B\u4F4F\u60C5\u7EEA\u3002\n\u800C\u662F\u5148\u5207\u5F00\u4E24\u5C42\uFF1A\u5916\u754C\u53D1\u751F\u4E86\u4EC0\u4E48\uFF0C\u548C\u6211\u600E\u4E48\u89E3\u91CA\u5B83\u3002",
+    emphasisWords: ["\u4E24\u5C42", "\u89E3\u91CA\u5B83"]
+  },
+  {
+    startFrame: 972,
+    endFrame: 1130,
+    text: "\u51C6\u5907\u56DE\u590D\u3001\u4E89\u8FA9\u3001\u8BC1\u660E\u81EA\u5DF1\u4E4B\u524D\uFF0C\n\u5148\u505C\u4E00\u79D2\u3002",
+    emphasisWords: ["\u5148\u505C\u4E00\u79D2"]
+  },
+  {
+    startFrame: 1133,
+    endFrame: 1289,
+    text: "\u95EE\u4E00\u53E5\uFF1A\u8FD9\u4EF6\u4E8B\uFF0C\n\u5230\u5E95\u5C5E\u4E8E\u6211\u80FD\u63A7\u5236\u7684\u90E8\u5206\u5417\uFF1F",
+    emphasisWords: ["\u80FD\u63A7\u5236"]
+  },
+  {
+    startFrame: 1291,
+    endFrame: 1586,
+    text: "\u5F53\u4F60\u5B88\u4F4F\u5185\u5FC3\u5165\u53E3\uFF0C\u60C5\u7EEA\u4E0D\u4F1A\u7ACB\u523B\u6D88\u5931\u3002\n\u4F46\u5B83\u4E0D\u4F1A\u518D\u63A5\u7BA1\u4F60\u3002\u8FD9\uFF0C\u5C31\u662F\u65AF\u591A\u845B\u4E3B\u4E49\u771F\u6B63\u6709\u7528\u7684\u5730\u65B9\u3002",
+    emphasisWords: ["\u5185\u5FC3\u5165\u53E3", "\u4E0D\u4F1A\u518D\u63A5\u7BA1", "\u771F\u6B63\u6709\u7528"]
+  }
+];
+const stoicBoundaryAudio = createVoiceOnlyAudioConfig({
+  voiceoverSrc: "/audio/philosophy-montage/stoic-boundary-elevenlabs-cn.mp3",
+  subtitles: stoicBoundarySubtitleCues,
+  voiceoverEnabled: true
+});
+
+;// ./src/data/PhilosophyMontageStoicBoundaryData.ts
+
+const stoicBoundaryScenes = [
+  {
+    id: "s00",
+    type: "openerConcepts",
+    duration: 180,
+    subtitleLines: ["\u4ECA\u5929\u6211\u4EEC\u8981\u8BB2\u7684\u662F", "\u65AF\u591A\u845B\u4E3B\u4E49\u3002"],
+    image: "/images/philosophy-montage/opener-style/opener_09.jpg",
+    palette: ["#0f172a", "#1e293b", "#f8fafc"]
+  },
+  {
+    id: "s01",
+    type: "titleStack",
+    duration: 210,
+    subtitleLines: ["\u5B83\u4E0D\u662F\u8BA9\u4F60\u6CA1\u60C5\u7EEA\uFF0C", "\u800C\u662F\u522B\u628A\u5916\u754C\u523A\u6FC0\u90FD\u8BF7\u8FDB\u5185\u5FC3\u3002"],
+    image: "/images/philosophy-montage/stoic-boundary-pressure-crowd.png",
+    palette: ["#111827", "#1e293b", "#fb923c"]
+  },
+  {
+    id: "s02",
+    type: "conceptBoard",
+    duration: 240,
+    subtitleLines: ["\u4E00\u53E5\u8BC4\u4EF7\u3001\u4E00\u6761\u6D88\u606F\u3001\u4E00\u6B21\u51B7\u8138\uFF0C", "\u672C\u6765\u53EA\u662F\u4E8B\u4EF6\u3002", "\u4F60\u53CD\u590D\u56DE\u653E\uFF0C\u5B83\u624D\u53D8\u6210\u60C5\u7EEA\u5360\u9886\u3002"],
+    image: "/images/philosophy-montage/stoic-boundary-pressure-crowd.png",
+    palette: ["#0f172a", "#334155", "#f59e0b"]
+  },
+  {
+    id: "s03",
+    type: "ruminationExample",
+    duration: 240,
+    subtitleLines: ["\u5F88\u591A\u75DB\u82E6\u4E0D\u662F\u4E8B\u4EF6\u672C\u8EAB\uFF0C", "\u800C\u662F\u4F60\u7ACB\u523B\u63A5\u7BA1\u5B83\u3001\u89E3\u91CA\u5B83\u3001\u53CD\u520D\u5B83\u3002"],
+    image: "/images/philosophy-montage/stoic-boundary-pressure-crowd.png",
+    palette: ["#1f2937", "#374151", "#fb7185"]
+  },
+  {
+    id: "s04",
+    type: "controlSplit",
+    duration: 285,
+    subtitleLines: ["\u5148\u5207\u5F00\u4E24\u5C42\uFF1A", "\u5916\u754C\u53D1\u751F\u4E86\u4EC0\u4E48\uFF0C\u548C\u6211\u51C6\u5907\u600E\u4E48\u89E3\u91CA\u5B83\u3002"],
+    image: "/images/philosophy-montage/stoic-boundary-chaos-vs-order.png",
+    palette: ["#111827", "#0f766e", "#fbbf24"]
+  },
+  {
+    id: "s05",
+    type: "decisionPrompt",
+    duration: 225,
+    subtitleLines: ["\u51C6\u5907\u56DE\u590D\u3001\u4E89\u8FA9\u3001\u8BC1\u660E\u81EA\u5DF1\u4E4B\u524D\uFF0C", "\u5148\u505C\u4E00\u79D2\u3002"],
+    image: "/images/philosophy-montage/stoic-boundary-pause-before-reply.png",
+    palette: ["#1f2937", "#92400e", "#f59e0b"]
+  },
+  {
+    id: "s06",
+    type: "axiomWall",
+    duration: 225,
+    subtitleLines: ["\u518D\u95EE\u4E00\u53E5\uFF1A", "\u8FD9\u4EF6\u4E8B\u5C5E\u4E8E\u6211\u80FD\u63A7\u5236\u7684\u90E8\u5206\u5417\uFF1F"],
+    image: "/images/philosophy-montage/stoic-boundary-pause-before-reply.png",
+    palette: ["#052e16", "#14532d", "#86efac"]
+  },
+  {
+    id: "s07",
+    type: "cityOutro",
+    duration: 240,
+    subtitleLines: ["\u5B88\u4F4F\u5185\u5FC3\u5165\u53E3\uFF0C", "\u60C5\u7EEA\u4E0D\u4F1A\u7ACB\u523B\u6D88\u5931\uFF0C", "\u4F46\u5B83\u4E0D\u4F1A\u518D\u63A5\u7BA1\u4F60\u3002"],
+    image: "/images/philosophy-montage/stoic-boundary-morning-walk.png",
+    palette: ["#0f172a", "#0f766e", "#f8fafc"]
+  }
+];
+const stoicBoundaryOpenerConfig = {
+  introTitle: "\u4ECA\u5929\u6211\u4EEC\u8981\u8BB2\u7684\u662F",
+  terms: [
+    "\u4EAB\u4E50\u4E3B\u4E49",
+    "\u865A\u65E0\u4E3B\u4E49",
+    "\u53D7\u5BB3\u8005\u5FC3\u6001",
+    "\u60C5\u7EEA\u53CD\u5C04",
+    "\u81EA\u6211\u9632\u5FA1",
+    "\u4ED6\u4EBA\u8BC4\u4EF7",
+    "\u5916\u754C\u523A\u6FC0",
+    "\u5185\u5728\u5224\u65AD",
+    "\u65AF\u591A\u845B\u4E3B\u4E49",
+    "\u60C5\u7EEA\u8FB9\u754C"
+  ],
+  bgImages: [
+    "/images/philosophy-montage/opener-style/opener_01.jpg",
+    "/images/philosophy-montage/opener-style/opener_02.jpg",
+    "/images/philosophy-montage/opener-style/opener_03.jpg",
+    "/images/philosophy-montage/opener-style/opener_04.jpg",
+    "/images/philosophy-montage/opener-style/opener_05.jpg",
+    "/images/philosophy-montage/opener-style/opener_06.jpg",
+    "/images/philosophy-montage/opener-style/opener_07.jpg",
+    "/images/philosophy-montage/opener-style/opener_08.jpg",
+    "/images/philosophy-montage/opener-style/opener_09.jpg",
+    "/images/philosophy-montage/opener-style/opener_10.jpg"
+  ],
+  introFrames: 24,
+  switchEvery: 9
+};
+const STOIC_BOUNDARY_DURATION = stoicBoundaryScenes.reduce((sum, scene) => sum + scene.duration, 0);
+
+;// ./src/compositions/PhilosophyMontageStoicBoundaryComposition.tsx
+
+
+
+
+
+
+
+
+const STOIC_BOUNDARY_DURATION_IN_FRAMES = STOIC_BOUNDARY_DURATION;
+const PhilosophyMontageStoicBoundaryComposition = () => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#030712" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(PhilosophyMontageScenes, { scenes: stoicBoundaryScenes, openerConfig: stoicBoundaryOpenerConfig }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AudioTrackLayer, { config: stoicBoundaryAudio }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(SubtitleTrack, { cues: stoicBoundaryAudio.subtitles ?? [] })
+  ] });
+};
+
+;// ./src/components/video/BilingualQuoteTrack.tsx
+
+
+
+
+const highlightLine = (text, emphasisWords = []) => {
+  if (!emphasisWords.length) {
+    return text;
+  }
+  const escaped = emphasisWords.filter(Boolean).map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  if (!escaped.length) {
+    return text;
+  }
+  const regex = new RegExp(`(${escaped.join("|")})`, "g");
+  const parts = text.split(regex);
+  return parts.map(
+    (part, index) => emphasisWords.includes(part) ? /* @__PURE__ */ (0,jsx_runtime.jsx)("span", { style: { color: "#ffe082" }, children: part }, `${part}-${index}`) : /* @__PURE__ */ (0,jsx_runtime.jsx)(react.Fragment, { children: part }, `${part}-${index}`)
+  );
+};
+const BilingualQuoteTrack = ({ cues }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps, width, height } = (0,esm.useVideoConfig)();
+  const cue = cues.find((item) => frame >= item.startFrame && frame <= item.endFrame);
+  if (!cue) {
+    return null;
+  }
+  const localFrame = frame - cue.startFrame;
+  const intro = (0,esm.spring)({
+    fps,
+    frame: localFrame,
+    config: { damping: 18, stiffness: 160 }
+  });
+  const isVertical = height >= width;
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: { pointerEvents: "none" }, children: /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    "div",
+    {
+      style: {
+        position: "absolute",
+        left: "50%",
+        bottom: isVertical ? 56 : 40,
+        transform: `translateX(-50%) translateY(${(1 - intro) * 14}px)`,
+        opacity: intro,
+        width: isVertical ? Math.min(width * 0.84, 560) : Math.min(width * 0.72, 1120),
+        textAlign: "center"
+      },
+      children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              fontFamily: '"NotoSansSC", sans-serif',
+              fontWeight: 900,
+              fontSize: isVertical ? 38 : 42,
+              lineHeight: 1.18,
+              color: "#f4d03f",
+              WebkitTextStroke: "1.4px rgba(0,0,0,0.72)",
+              textShadow: "0 3px 10px rgba(0,0,0,0.58)"
+            },
+            children: cue.textZh.split("\n").map((line, index) => /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { children: highlightLine(line, cue.emphasisWords) }, `zh-${cue.startFrame}-${index}`))
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              marginTop: 6,
+              fontFamily: '"Georgia", "Times New Roman", serif',
+              fontWeight: 700,
+              fontStyle: "italic",
+              fontSize: isVertical ? 20 : 24,
+              lineHeight: 1.15,
+              color: "#ffffff",
+              textShadow: "0 2px 6px rgba(0,0,0,0.68)"
+            },
+            children: cue.textEn.split("\n").map((line, index) => /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { children: line }, `en-${cue.startFrame}-${index}`))
+          }
+        )
+      ]
+    }
+  ) });
+};
+
+;// ./src/data/LiteraryEmbersValidationAudio.ts
+
+
+const literaryEmbersSubtitleCues = [
+  {
+    "voiceId": "le_v01",
+    "startFrame": 0,
+    "endFrame": 139,
+    "textZh": "\u8FD9\u53E5\u8BDD\u4F1A\u523A\u75DB\u6240\u6709\n\u4E0D\n\u7518\u5FC3\u5374\u4E00\u76F4\u66FF\u522B\u4EBA\u6D3B\u7684\u4EBA",
+    "textEn": "This line hits everyone\nwho keeps living for other eyes.",
+    "emphasisWords": [
+      "\u66FF\u522B\u4EBA\u6D3B"
+    ]
+  },
+  {
+    "voiceId": "le_v02",
+    "startFrame": 144,
+    "endFrame": 233,
+    "textZh": "\u4ECA\u5929\u5206\u4EAB\u300A\u6708\u4EAE\u4E0E\u516D\u4FBF\u58EB\u300B",
+    "textEn": "Today: The Moon and Sixpence.",
+    "emphasisWords": [
+      "\u300A\u6708\u4EAE\u4E0E\u516D\u4FBF\u58EB\u300B"
+    ]
+  },
+  {
+    "voiceId": "le_v03",
+    "startFrame": 238,
+    "endFrame": 360,
+    "textZh": "\u5F88\u591A\u4EBA\u4E0D\u662F\u6CA1\u6709\u5929\u8D4B\uFF0C\n\n\u53EA\u662F\u4ECE\u6765\u6CA1\u66FF\u81EA\u5DF1\u6D3B\u8FC7",
+    "textEn": "Many people lack not talent,\nbut the courage to live for themselves.",
+    "emphasisWords": [
+      "\u66FF\u81EA\u5DF1\u6D3B\u8FC7"
+    ]
+  },
+  {
+    "voiceId": "le_v04",
+    "startFrame": 362,
+    "endFrame": 516,
+    "textZh": "\u4F60\u62B1\u6028\u751F\u6D3B\u6C89\u95F7\uFF0C\n\n\u5374\u628A\u6BCF\u6B21\u9009\u62E9\u90FD\u4EA4\u7ED9\u4F53\u9762\u548C\u76EE\u5149",
+    "textEn": "You resent a dull life,\nyet hand every choice to approval and safety.",
+    "emphasisWords": [
+      "\u4F53\u9762",
+      "\u76EE\u5149"
+    ]
+  },
+  {
+    "voiceId": "le_v05",
+    "startFrame": 518,
+    "endFrame": 641,
+    "textZh": "\u4E8E\u662F\u5DE5\u4F5C\u662F\u4E3A\u4E86\u4EA4\u4EE3\uFF0C\n\n\u52AA\u529B\u662F\u4E3A\u4E86\u6BD4\u8F83",
+    "textEn": "Work becomes explanation,\nand effort becomes comparison.",
+    "emphasisWords": [
+      "\u4EA4\u4EE3",
+      "\u6BD4\u8F83"
+    ]
+  },
+  {
+    "voiceId": "le_v06",
+    "startFrame": 646,
+    "endFrame": 799,
+    "textZh": "\u771F\u6B63\u56F0\u4F4F\u4EBA\u7684\u4E0D\u662F\u8D77\u70B9\uFF0C\n\n\u800C\u662F\u542C\u89C1\u5185\u5FC3\u540E\u53C8\u628A\u5B83\u6309\u56DE\u53BB",
+    "textEn": "What traps you is not the start,\nbut silencing what you already heard inside.",
+    "emphasisWords": [
+      "\u6309\u56DE\u53BB"
+    ]
+  },
+  {
+    "voiceId": "le_v07",
+    "startFrame": 802,
+    "endFrame": 972,
+    "textZh": "\u4E0D\u662F\u6BCF\u4E2A\u4EBA\u90FD\u8981\u79BB\u5F00\u73B0\u5B9E\uFF0C\n\n\u4F46\u6BCF\u4E2A\u4EBA\u90FD\u8BE5\u6709\u4E00\u6B21\u4E3A\u81EA\u5DF1\u8D1F\u8D23\u7684\u51B3\u5B9A",
+    "textEn": "Not everyone must flee reality,\nbut everyone deserves one decision owned by the self.",
+    "emphasisWords": [
+      "\u4E3A\u81EA\u5DF1\u8D1F\u8D23"
+    ]
+  },
+  {
+    "voiceId": "le_v08",
+    "startFrame": 975,
+    "endFrame": 1104,
+    "textZh": "\u5982\u679C\u4F60\u603B\u6015\u5931\u53BB\u638C\u58F0\uFF0C\n\n\u6700\u540E\u5931\u53BB\u7684\u5F80\u5F80\u5C31\u662F\u81EA\u5DF1",
+    "textEn": "If you fear losing applause,\nyou may end up losing yourself.",
+    "emphasisWords": [
+      "\u81EA\u5DF1"
+    ]
+  }
+];
+const literaryEmbersAudio = createVoiceOnlyAudioConfig({
+  voiceoverSrc: "/audio/literary-embers/moon-sixpence-elevenlabs-cn.mp3",
+  subtitles: [
+    {
+      "startFrame": 0,
+      "endFrame": 139,
+      "text": "\u8FD9\u53E5\u8BDD\u4F1A\u523A\u75DB\u6240\u6709\n\u4E0D\n\u7518\u5FC3\u5374\u4E00\u76F4\u66FF\u522B\u4EBA\u6D3B\u7684\u4EBA",
+      "emphasisWords": [
+        "\u66FF\u522B\u4EBA\u6D3B"
+      ]
+    },
+    {
+      "startFrame": 144,
+      "endFrame": 233,
+      "text": "\u4ECA\u5929\u5206\u4EAB\u300A\u6708\u4EAE\u4E0E\u516D\u4FBF\u58EB\u300B",
+      "emphasisWords": [
+        "\u300A\u6708\u4EAE\u4E0E\u516D\u4FBF\u58EB\u300B"
+      ]
+    },
+    {
+      "startFrame": 238,
+      "endFrame": 360,
+      "text": "\u5F88\u591A\u4EBA\u4E0D\u662F\u6CA1\u6709\u5929\u8D4B\uFF0C\n\n\u53EA\u662F\u4ECE\u6765\u6CA1\u66FF\u81EA\u5DF1\u6D3B\u8FC7",
+      "emphasisWords": [
+        "\u66FF\u81EA\u5DF1\u6D3B\u8FC7"
+      ]
+    },
+    {
+      "startFrame": 362,
+      "endFrame": 516,
+      "text": "\u4F60\u62B1\u6028\u751F\u6D3B\u6C89\u95F7\uFF0C\n\n\u5374\u628A\u6BCF\u6B21\u9009\u62E9\u90FD\u4EA4\u7ED9\u4F53\u9762\u548C\u76EE\u5149",
+      "emphasisWords": [
+        "\u4F53\u9762",
+        "\u76EE\u5149"
+      ]
+    },
+    {
+      "startFrame": 518,
+      "endFrame": 641,
+      "text": "\u4E8E\u662F\u5DE5\u4F5C\u662F\u4E3A\u4E86\u4EA4\u4EE3\uFF0C\n\n\u52AA\u529B\u662F\u4E3A\u4E86\u6BD4\u8F83",
+      "emphasisWords": [
+        "\u4EA4\u4EE3",
+        "\u6BD4\u8F83"
+      ]
+    },
+    {
+      "startFrame": 646,
+      "endFrame": 799,
+      "text": "\u771F\u6B63\u56F0\u4F4F\u4EBA\u7684\u4E0D\u662F\u8D77\u70B9\uFF0C\n\n\u800C\u662F\u542C\u89C1\u5185\u5FC3\u540E\u53C8\u628A\u5B83\u6309\u56DE\u53BB",
+      "emphasisWords": [
+        "\u6309\u56DE\u53BB"
+      ]
+    },
+    {
+      "startFrame": 802,
+      "endFrame": 972,
+      "text": "\u4E0D\u662F\u6BCF\u4E2A\u4EBA\u90FD\u8981\u79BB\u5F00\u73B0\u5B9E\uFF0C\n\n\u4F46\u6BCF\u4E2A\u4EBA\u90FD\u8BE5\u6709\u4E00\u6B21\u4E3A\u81EA\u5DF1\u8D1F\u8D23\u7684\u51B3\u5B9A",
+      "emphasisWords": [
+        "\u4E3A\u81EA\u5DF1\u8D1F\u8D23"
+      ]
+    },
+    {
+      "startFrame": 975,
+      "endFrame": 1104,
+      "text": "\u5982\u679C\u4F60\u603B\u6015\u5931\u53BB\u638C\u58F0\uFF0C\n\n\u6700\u540E\u5931\u53BB\u7684\u5F80\u5F80\u5C31\u662F\u81EA\u5DF1",
+      "emphasisWords": [
+        "\u81EA\u5DF1"
+      ]
+    }
+  ],
+  voiceoverEnabled: true
+});
+
+;// ./src/data/LiteraryEmbersValidationData.ts
+
+const literaryEmbersMeta = {
+  templateId: "literary_embers_quote_montage",
+  videoId: "moon_sixpence_validation_v1",
+  orientation: "vertical",
+  bookTitle: "\u300A\u6708\u4EAE\u4E0E\u516D\u4FBF\u58EB\u300B",
+  authorLine: "\u6BDB\u59C6 | \u8457",
+  targetTheme: "\u6700\u53EF\u6015\u7684\u4E0D\u662F\u79BB\u7FA4\uFF0C\u800C\u662F\u4E00\u76F4\u66FF\u522B\u4EBA\u6D3B"
+};
+const literaryEmbersCoverFlow = [
+  {
+    title: "\u300A\u6D3B\u7740\u300B",
+    author: "\u4F59\u534E",
+    palette: ["#70605b", "#cfbfaf", "#efe2d0"],
+    coverImage: "/images/literary-embers/covers/huozhe-douban.png"
+  },
+  {
+    title: "\u300A\u767E\u5E74\u5B64\u72EC\u300B",
+    author: "\u52A0\u897F\u4E9A\xB7\u9A6C\u5C14\u514B\u65AF",
+    palette: ["#1d7860", "#5fd1a5", "#f5e6b8"],
+    coverImage: "/images/literary-embers/covers/one-hundred-years-douban.png"
+  },
+  {
+    title: "\u300A\u4E0D\u505A\u544A\u522B\u300B",
+    author: "\u97E9\u6C5F",
+    palette: ["#f1f5f9", "#d6e4ff", "#8ec5fc"],
+    coverImage: "/images/literary-embers/covers/no-goodbye-douban.png"
+  },
+  {
+    title: "\u300A\u6708\u4EAE\u4E0E\u516D\u4FBF\u58EB\u300B",
+    author: "\u6BDB\u59C6",
+    palette: ["#c98531", "#f0b96f", "#2e1d15"],
+    coverImage: "/images/literary-embers/covers/moon-sixpence-douban.png"
+  }
+];
+const literaryEmbersScenes = [
+  {
+    id: "le_s01",
+    type: "burnHook",
+    duration: 150,
+    accentText: "\u523A\u75DB\u6240\u6709\u4E0D\u7518\u5FC3\u5374\u4E00\u76F4\u66FF\u522B\u4EBA\u6D3B\u7684\u4EBA"
+  },
+  { id: "le_s02", type: "bookCascade", duration: 84, accentText: "\u4ECA\u5929\u5206\u4EAB" },
+  {
+    id: "le_s03",
+    type: "deskPanel",
+    duration: 126,
+    accentText: "\u4E0D\u662F\u6CA1\u60F3\u8FC7",
+    note: "office life and stacked books"
+  },
+  {
+    id: "le_s04",
+    type: "streetPanel",
+    duration: 150,
+    accentText: "\u800C\u662F\u4E0D\u6562\u504F\u79BB",
+    note: "street window and walking figure"
+  },
+  {
+    id: "le_s05",
+    type: "windowPanel",
+    duration: 112,
+    accentText: "\u6C89\u9ED8\u5730\u5411\u5185\u575D\u5851",
+    note: "ledge and city view"
+  },
+  {
+    id: "le_s06",
+    type: "crossroadPanel",
+    duration: 156,
+    accentText: "\u628A\u51B3\u5B9A\u8FD8\u7ED9\u81EA\u5DF1",
+    note: "crossroad and shadow"
+  },
+  {
+    id: "le_s07",
+    type: "collapsePanel",
+    duration: 164,
+    accentText: "\u542C\u89C1\u5185\u5FC3\u5374\u4E00\u6B21\u6B21\u6309\u56DE\u53BB",
+    note: "room corner and crouched figure"
+  },
+  {
+    id: "le_s08",
+    type: "walkawayPanel",
+    duration: 142,
+    accentText: "\u5982\u679C\u603B\u6015\u5931\u53BB\u638C\u58F0",
+    note: "bright road and back view"
+  }
+];
+const LITERARY_EMBERS_DURATION_IN_FRAMES = literaryEmbersScenes.reduce(
+  (sum, scene) => sum + scene.duration,
+  0
+);
+const literaryEmbersEstimatedSubtitleCues = [
+  {
+    voiceId: "le_v01",
+    startFrame: 0,
+    endFrame: 140,
+    textZh: "\u8FD9\u53E5\u8BDD\u4F1A\u523A\u75DB\u6240\u6709\n\u4E0D\u7518\u5FC3\u5374\u4E00\u76F4\u66FF\u522B\u4EBA\u6D3B\u7684\u4EBA",
+    textEn: "This hits everyone\nwho keeps living for other eyes.",
+    emphasisWords: ["\u66FF\u522B\u4EBA\u6D3B"]
+  },
+  {
+    voiceId: "le_v02",
+    startFrame: 145,
+    endFrame: 255,
+    textZh: "\u4ECA\u5929\u5206\u4EAB\u300A\u6708\u4EAE\u4E0E\u516D\u4FBF\u58EB\u300B",
+    textEn: "Today: The Moon and Sixpence.",
+    emphasisWords: ["\u300A\u6708\u4EAE\u4E0E\u516D\u4FBF\u58EB\u300B"]
+  },
+  {
+    voiceId: "le_v03",
+    startFrame: 260,
+    endFrame: 430,
+    textZh: "\u5F88\u591A\u4EBA\u4E0D\u662F\u6CA1\u6709\u5929\u8D4B\uFF0C\n\u53EA\u662F\u4ECE\u6765\u6CA1\u66FF\u81EA\u5DF1\u6D3B\u8FC7",
+    textEn: "Many people lack not talent,\nbut the courage to live for themselves.",
+    emphasisWords: ["\u66FF\u81EA\u5DF1\u6D3B\u8FC7"]
+  },
+  {
+    voiceId: "le_v04",
+    startFrame: 435,
+    endFrame: 585,
+    textZh: "\u4F60\u62B1\u6028\u751F\u6D3B\u6C89\u95F7\uFF0C\n\u5374\u628A\u6BCF\u6B21\u9009\u62E9\u90FD\u4EA4\u7ED9\u4F53\u9762\u548C\u76EE\u5149",
+    textEn: "You resent a dull life,\nyet hand every choice to approval and safety.",
+    emphasisWords: ["\u4F53\u9762", "\u76EE\u5149"]
+  },
+  {
+    voiceId: "le_v05",
+    startFrame: 590,
+    endFrame: 760,
+    textZh: "\u4E8E\u662F\u5DE5\u4F5C\u662F\u4E3A\u4E86\u4EA4\u4EE3\uFF0C\n\u52AA\u529B\u662F\u4E3A\u4E86\u6BD4\u8F83",
+    textEn: "Work becomes explanation,\nand effort becomes comparison.",
+    emphasisWords: ["\u4EA4\u4EE3", "\u6BD4\u8F83"]
+  },
+  {
+    voiceId: "le_v06",
+    startFrame: 765,
+    endFrame: 930,
+    textZh: "\u771F\u6B63\u56F0\u4F4F\u4EBA\u7684\u4E0D\u662F\u8D77\u70B9\uFF0C\n\u800C\u662F\u542C\u89C1\u5185\u5FC3\u540E\u53C8\u628A\u5B83\u6309\u56DE\u53BB",
+    textEn: "What traps you is not the start,\nbut silencing what you already heard inside.",
+    emphasisWords: ["\u6309\u56DE\u53BB"]
+  },
+  {
+    voiceId: "le_v07",
+    startFrame: 935,
+    endFrame: 1085,
+    textZh: "\u4E0D\u662F\u6BCF\u4E2A\u4EBA\u90FD\u8981\u79BB\u5F00\u73B0\u5B9E\uFF0C\n\u4F46\u6BCF\u4E2A\u4EBA\u90FD\u8BE5\u6709\u4E00\u6B21\u4E3A\u81EA\u5DF1\u8D1F\u8D23\u7684\u51B3\u5B9A",
+    textEn: "Not everyone must flee reality,\nbut everyone deserves one decision owned by the self.",
+    emphasisWords: ["\u4E3A\u81EA\u5DF1\u8D1F\u8D23"]
+  },
+  {
+    voiceId: "le_v08",
+    startFrame: 1090,
+    endFrame: 1255,
+    textZh: "\u5982\u679C\u4F60\u603B\u6015\u5931\u53BB\u638C\u58F0\uFF0C\n\u6700\u540E\u5931\u53BB\u7684\u5F80\u5F80\u5C31\u662F\u81EA\u5DF1",
+    textEn: "If you fear losing applause,\nyou may end up losing yourself.",
+    emphasisWords: ["\u81EA\u5DF1"]
+  }
+];
+
+;// ./src/scenes/literaryEmbers/LiteraryEmbersScenes.tsx
+
+
+
+
+const LiteraryEmbersScenes_palette = {
+  black: "#050505",
+  warm: "#e3b34c",
+  white: "#f4f4f2",
+  ash: "#d5d5d0"
+};
+const sceneImageMap = {
+  le_s01: "/images/literary-embers/opener-moon-manuscript.png",
+  le_s03: "/images/literary-embers/panel-trapped-desk.png",
+  le_s04: "/images/literary-embers/panel-gaze-window.png",
+  le_s05: "/images/literary-embers/panel-comparison-machine.png",
+  le_s06: "/images/literary-embers/panel-crossroad-shadow.png",
+  le_s07: "/images/literary-embers/panel-collapse-room.png",
+  le_s08: "/images/literary-embers/panel-walkaway-light.png"
+};
+const filmGrain = {
+  position: "absolute",
+  inset: 0,
+  opacity: 0.12,
+  backgroundImage: "radial-gradient(rgba(255,255,255,0.95) 0.8px, transparent 0.8px), radial-gradient(rgba(255,255,255,0.6) 0.6px, transparent 0.6px)",
+  backgroundSize: "14px 14px, 9px 9px",
+  backgroundPosition: "0 0, 4px 5px",
+  mixBlendMode: "screen"
+};
+const BookLockup = () => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    "div",
+    {
+      style: {
+        position: "absolute",
+        top: 22,
+        left: "50%",
+        transform: "translateX(-50%)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 4,
+        color: LiteraryEmbersScenes_palette.white,
+        textShadow: "0 2px 8px rgba(0,0,0,0.55)"
+      },
+      children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              fontFamily: '"NotoSerifSC", "NotoSansSC", serif',
+              fontSize: 46,
+              fontWeight: 700,
+              whiteSpace: "nowrap"
+            },
+            children: literaryEmbersMeta.bookTitle
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { fontFamily: '"NotoSansSC", sans-serif', fontSize: 21, letterSpacing: 2, opacity: 0.78 }, children: literaryEmbersMeta.authorLine })
+      ]
+    }
+  );
+};
+const AccentText = ({ text, color = LiteraryEmbersScenes_palette.ash }) => {
+  if (!text) {
+    return null;
+  }
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+    "div",
+    {
+      style: {
+        position: "absolute",
+        top: 114,
+        left: "50%",
+        transform: "translateX(-50%)",
+        fontFamily: '"NotoSansSC", sans-serif',
+        fontSize: 20,
+        letterSpacing: 4,
+        color,
+        opacity: 0.82
+      },
+      children: text
+    }
+  );
+};
+const FullBleedImage = ({ src, duration, startScale, endScale, startX = 0, endX = 0, startY = 0, endY = 0, overlay }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const scale = (0,esm.interpolate)(frame, [0, duration], [startScale, endScale], { extrapolateRight: "clamp" });
+  const x = (0,esm.interpolate)(frame, [0, duration], [startX, endX], { extrapolateRight: "clamp" });
+  const y = (0,esm.interpolate)(frame, [0, duration], [startY, endY], { extrapolateRight: "clamp" });
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Img,
+      {
+        src: (0,esm.staticFile)(src.startsWith("/") ? src.slice(1) : src),
+        style: {
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          transform: `translate(${x}px, ${y}px) scale(${scale})`
+        }
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          inset: 0,
+          background: overlay ?? "linear-gradient(180deg, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.12) 48%, rgba(0,0,0,0.36) 100%)"
+        }
+      }
+    )
+  ] });
+};
+const BurnHookScene = ({ scene }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const flash = (0,esm.interpolate)(frame, [0, 5, 14, 26], [0.95, 0.12, 0.32, 0], { extrapolateRight: "clamp" });
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { background: "#07080b", overflow: "hidden" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      FullBleedImage,
+      {
+        src: sceneImageMap[scene.id],
+        duration: scene.duration,
+        startScale: 1.1,
+        endScale: 1.02,
+        startY: -24,
+        endY: 10,
+        overlay: "radial-gradient(circle at 50% 34%, rgba(255,255,255,0.14), transparent 24%), linear-gradient(180deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.16) 55%, rgba(0,0,0,0.44) 100%)"
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          inset: 0,
+          background: "radial-gradient(circle at 50% 26%, rgba(255,226,166,0.24), transparent 24%)",
+          mixBlendMode: "screen"
+        }
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          inset: 0,
+          opacity: flash,
+          background: "radial-gradient(circle at 50% 38%, rgba(255,255,255,0.92), transparent 42%)"
+        }
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: filmGrain })
+  ] });
+};
+const BookCard = ({ title, author, paletteStops, coverImage, style }) => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    "div",
+    {
+      style: {
+        position: "absolute",
+        width: 340,
+        height: 500,
+        borderRadius: 14,
+        overflow: "hidden",
+        border: "1px solid rgba(255,255,255,0.45)",
+        boxShadow: "0 22px 40px rgba(0,0,0,0.35)",
+        background: `linear-gradient(160deg, ${paletteStops[0]}, ${paletteStops[1]} 56%, ${paletteStops[2]})`,
+        ...style
+      },
+      children: [
+        coverImage ? /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          esm.Img,
+          {
+            src: (0,esm.staticFile)(coverImage.startsWith("/") ? coverImage.slice(1) : coverImage),
+            style: {
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover"
+            }
+          }
+        ) : null,
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 22%, rgba(0,0,0,0.12) 100%), radial-gradient(circle at 18% 22%, rgba(255,255,255,0.38), transparent 18%), radial-gradient(circle at 78% 68%, rgba(255,255,255,0.14), transparent 24%)"
+            }
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              left: 18,
+              right: 18,
+              bottom: 18,
+              padding: "10px 14px",
+              borderRadius: 10,
+              fontFamily: '"NotoSansSC", sans-serif',
+              fontSize: 18,
+              letterSpacing: 2,
+              color: "rgba(255,255,255,0.95)",
+              textAlign: "center",
+              background: "rgba(0,0,0,0.28)",
+              textShadow: "0 2px 10px rgba(0,0,0,0.4)"
+            },
+            children: [
+              title,
+              " \xB7 ",
+              author
+            ]
+          }
+        )
+      ]
+    }
+  );
+};
+const BookCascadeScene = ({ scene }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { background: "linear-gradient(180deg, #0d1117 0%, #171a1f 48%, #08090c 100%)" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          inset: 0,
+          background: "radial-gradient(circle at 50% 24%, rgba(255,224,177,0.18), transparent 20%), radial-gradient(circle at 50% 68%, rgba(255,255,255,0.1), transparent 22%)",
+          filter: "blur(10px)"
+        }
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: 72,
+          right: 72,
+          bottom: 116,
+          height: 180,
+          borderRadius: 999,
+          background: "radial-gradient(circle at 50% 50%, rgba(255,193,106,0.26), rgba(255,193,106,0.04) 38%, rgba(0,0,0,0) 72%)",
+          filter: "blur(8px)"
+        }
+      }
+    ),
+    literaryEmbersCoverFlow.map((book, index) => {
+      const local = frame - index * 18;
+      const opacity = (0,esm.interpolate)(local, [0, 8, 28, 52], [0, 1, 1, index === literaryEmbersCoverFlow.length - 1 ? 1 : 0], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp"
+      });
+      const x = [-170, 110, -80, 0][index] ?? 0;
+      const y = [56, -24, 14, -2][index] ?? 0;
+      const scale = index === literaryEmbersCoverFlow.length - 1 ? (0,esm.interpolate)(local, [0, 20, 54], [0.82, 1.08, 1.02], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp"
+      }) : 0.88;
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        BookCard,
+        {
+          title: book.title,
+          author: book.author,
+          paletteStops: book.palette,
+          coverImage: book.coverImage,
+          style: {
+            left: "50%",
+            top: "50%",
+            transform: `translate(-50%, -50%) translate(${x}px, ${y}px) scale(${scale}) rotate(${index === 3 ? 0 : index % 2 === 0 ? -10 : 10}deg)`,
+            opacity,
+            filter: index === literaryEmbersCoverFlow.length - 1 ? "drop-shadow(0 28px 44px rgba(0,0,0,0.55))" : "blur(0.2px) saturate(0.92)"
+          }
+        },
+        book.title
+      );
+    }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: "50%",
+          top: 166,
+          transform: "translateX(-50%)",
+          fontFamily: '"NotoSansSC", sans-serif',
+          fontSize: 24,
+          letterSpacing: 10,
+          color: "rgba(255,244,225,0.68)"
+        },
+        children: "\u4ECE\u5176\u4ED6\u4EBA\u751F\u91CC\u62FD\u56DE\u81EA\u5DF1"
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: filmGrain }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          bottom: 170,
+          left: "50%",
+          transform: "translateX(-50%)",
+          fontFamily: '"NotoSansSC", sans-serif',
+          fontSize: 28,
+          letterSpacing: 8,
+          color: "rgba(255,230,192,0.82)"
+        },
+        children: scene.accentText
+      }
+    )
+  ] });
+};
+const ImagePanelScene = ({
+  scene,
+  src,
+  startScale = 1.04,
+  endScale = 1.1
+}) => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { background: "#111", overflow: "hidden" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      FullBleedImage,
+      {
+        src,
+        duration: scene.duration,
+        startScale,
+        endScale,
+        startY: 10,
+        endY: -14,
+        overlay: "linear-gradient(180deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.08) 38%, rgba(0,0,0,0.28) 100%), radial-gradient(circle at 50% 44%, rgba(255,255,255,0), rgba(0,0,0,0.32) 100%)"
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: filmGrain }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(BookLockup, {}),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AccentText, { text: scene.accentText })
+  ] });
+};
+const LiteraryEmbersScenes_SceneCard = ({ scene }) => {
+  switch (scene.type) {
+    case "burnHook":
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(BurnHookScene, { scene });
+    case "bookCascade":
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(BookCascadeScene, { scene });
+    case "deskPanel":
+    case "streetPanel":
+    case "windowPanel":
+    case "crossroadPanel":
+    case "collapsePanel":
+    case "walkawayPanel":
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(ImagePanelScene, { scene, src: sceneImageMap[scene.id] });
+    default:
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: { backgroundColor: LiteraryEmbersScenes_palette.black } });
+  }
+};
+const LiteraryEmbersScenes = () => {
+  let cursor = 0;
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: { background: LiteraryEmbersScenes_palette.black }, children: literaryEmbersScenes.map((scene) => {
+    const from = cursor;
+    cursor += scene.duration;
+    return /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from, durationInFrames: scene.duration, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(LiteraryEmbersScenes_SceneCard, { scene }) }, scene.id);
+  }) });
+};
+
+;// ./src/compositions/LiteraryEmbersValidationComposition.tsx
+
+
+
+
+
+
+
+
+const LITERARY_EMBERS_VERTICAL_DURATION_IN_FRAMES = LITERARY_EMBERS_DURATION_IN_FRAMES;
+const LiteraryEmbersValidationComposition = () => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#050505" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(LiteraryEmbersScenes, {}),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AudioTrackLayer, { config: literaryEmbersAudio }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(BilingualQuoteTrack, { cues: literaryEmbersSubtitleCues })
   ] });
 };
 
@@ -4683,13 +8588,22 @@ const VIDEO_PROFILES = {
 
 
 
+
+
+
+
+
+
+
 const AGENT_DURATION_IN_FRAMES = 70 * VIDEO_PROFILES.youtubeHorizontal.fps;
 const RAG_DURATION_IN_FRAMES = 60 * VIDEO_PROFILES.youtubeHorizontal.fps;
 const MACD_DURATION_IN_FRAMES = 60 * VIDEO_PROFILES.youtubeHorizontal.fps;
 const NEW_SIGNALS_DURATION_IN_FRAMES = 75 * VIDEO_PROFILES.youtubeHorizontal.fps;
 const NEW_SIGNALS_RSI_DURATION_IN_FRAMES = 60 * VIDEO_PROFILES.youtubeHorizontal.fps;
+const NEW_SIGNALS_VOLUME_DURATION_IN_FRAMES = 60 * VIDEO_PROFILES.youtubeHorizontal.fps;
 const COMIC_HABIT_SPIRAL_DURATION_IN_FRAMES = 60 * VIDEO_PROFILES.youtubeHorizontal.fps;
 const COMIC_EMOTIONAL_SCROLL_DURATION_IN_FRAMES = 60 * VIDEO_PROFILES.youtubeHorizontal.fps;
+const MINIMAL_PSYCH_EXPLAINER_DURATION_IN_FRAMES = 38 * VIDEO_PROFILES.youtubeHorizontal.fps;
 const RemotionRoot = () => {
   return /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
     /* @__PURE__ */ (0,jsx_runtime.jsx)(
@@ -4728,12 +8642,34 @@ const RemotionRoot = () => {
     /* @__PURE__ */ (0,jsx_runtime.jsx)(
       esm.Composition,
       {
+        id: "minimal-psych-explainer-preview",
+        component: MinimalPsychExplainerComposition,
+        durationInFrames: MINIMAL_PSYCH_EXPLAINER_DURATION_IN_FRAMES,
+        fps: VIDEO_PROFILES.youtubeHorizontal.fps,
+        width: VIDEO_PROFILES.youtubeHorizontal.width,
+        height: VIDEO_PROFILES.youtubeHorizontal.height
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Composition,
+      {
         id: "mcp-horizontal-preview",
         component: McpHorizontalComposition,
         durationInFrames: VIDEO_PROFILES.youtubeHorizontal.durationInFrames,
         fps: VIDEO_PROFILES.youtubeHorizontal.fps,
         width: VIDEO_PROFILES.youtubeHorizontal.width,
         height: VIDEO_PROFILES.youtubeHorizontal.height
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Composition,
+      {
+        id: "mcp-vertical-preview",
+        component: McpVerticalComposition,
+        durationInFrames: 315,
+        fps: VIDEO_PROFILES.tiktokVertical.fps,
+        width: VIDEO_PROFILES.tiktokVertical.width,
+        height: VIDEO_PROFILES.tiktokVertical.height
       }
     ),
     /* @__PURE__ */ (0,jsx_runtime.jsx)(
@@ -4789,6 +8725,61 @@ const RemotionRoot = () => {
         fps: VIDEO_PROFILES.youtubeHorizontal.fps,
         width: VIDEO_PROFILES.youtubeHorizontal.width,
         height: VIDEO_PROFILES.youtubeHorizontal.height
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Composition,
+      {
+        id: "new-signals-volume-preview",
+        component: NewSignalsVolumeComposition,
+        durationInFrames: NEW_SIGNALS_VOLUME_DURATION_IN_FRAMES,
+        fps: VIDEO_PROFILES.youtubeHorizontal.fps,
+        width: VIDEO_PROFILES.youtubeHorizontal.width,
+        height: VIDEO_PROFILES.youtubeHorizontal.height
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Composition,
+      {
+        id: "tech-archive-explainer-preview",
+        component: TechArchiveExplainerComposition,
+        durationInFrames: TECH_ARCHIVE_DURATION_IN_FRAMES,
+        fps: VIDEO_PROFILES.youtubeHorizontal.fps,
+        width: VIDEO_PROFILES.youtubeHorizontal.width,
+        height: VIDEO_PROFILES.youtubeHorizontal.height
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Composition,
+      {
+        id: "philosophy-montage-validation-preview",
+        component: PhilosophyMontageValidationComposition,
+        durationInFrames: PHILOSOPHY_MONTAGE_DURATION_IN_FRAMES,
+        fps: VIDEO_PROFILES.youtubeHorizontal.fps,
+        width: VIDEO_PROFILES.youtubeHorizontal.width,
+        height: VIDEO_PROFILES.youtubeHorizontal.height
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Composition,
+      {
+        id: "philosophy-montage-stoic-boundary-preview",
+        component: PhilosophyMontageStoicBoundaryComposition,
+        durationInFrames: STOIC_BOUNDARY_DURATION_IN_FRAMES,
+        fps: VIDEO_PROFILES.youtubeHorizontal.fps,
+        width: VIDEO_PROFILES.youtubeHorizontal.width,
+        height: VIDEO_PROFILES.youtubeHorizontal.height
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Composition,
+      {
+        id: "literary-embers-validation-preview",
+        component: LiteraryEmbersValidationComposition,
+        durationInFrames: LITERARY_EMBERS_VERTICAL_DURATION_IN_FRAMES,
+        fps: 30,
+        width: 720,
+        height: 960
       }
     )
   ] });
@@ -33025,7 +37016,7 @@ var NoReactInternals = {
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
 /******/ 	__webpack_require__(6507);
-/******/ 	__webpack_require__(4665);
+/******/ 	__webpack_require__(4947);
 /******/ 	__webpack_require__(3610);
 /******/ 	var __webpack_exports__ = __webpack_require__(3482);
 /******/ 	

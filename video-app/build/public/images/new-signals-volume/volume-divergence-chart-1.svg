@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+  <rect width="1200" height="760" fill="#071019"/>
+  <g stroke="#233247" stroke-width="2">
+    <path d="M90 120H1120M90 240H1120M90 360H1120M90 480H1120M90 600H1120"/>
+    <path d="M170 80V640M310 80V640M450 80V640M590 80V640M730 80V640M870 80V640M1010 80V640"/>
+  </g>
+  <path d="M116 476L230 430L346 386L462 310L578 342L696 248L812 280L932 178L1068 210" fill="none" stroke="#4d8dff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M688 250L932 178" stroke="#ffb04d" stroke-width="10" stroke-linecap="round"/>
+  <path d="M688 572L932 616" stroke="#ff6c4a" stroke-width="10" stroke-linecap="round"/>
+  <g fill="#ff6c4a">
+    <rect x="144" y="540" width="54" height="92" rx="8"/>
+    <rect x="282" y="510" width="54" height="122" rx="8"/>
+    <rect x="420" y="488" width="54" height="144" rx="8"/>
+    <rect x="558" y="530" width="54" height="102" rx="8"/>
+    <rect x="696" y="548" width="54" height="84" rx="8"/>
+    <rect x="834" y="570" width="54" height="62" rx="8"/>
+    <rect x="972" y="592" width="54" height="40" rx="8"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-weight="700">
+    <text x="90" y="62" fill="#f7f9ff" font-size="38">CASE 1 / Higher Price, Lower Volume</text>
+    <text x="708" y="146" fill="#ffb04d" font-size="30">price makes higher high</text>
+    <text x="704" y="686" fill="#ff6c4a" font-size="30">volume fails to confirm</text>
+  </g>
+</svg>

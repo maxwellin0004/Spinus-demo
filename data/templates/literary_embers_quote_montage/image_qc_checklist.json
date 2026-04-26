@@ -1,0 +1,62 @@
+﻿{
+  "template_id": "literary_embers_quote_montage",
+  "qc_version": "1.0.0",
+  "checks": [
+    {
+      "id": "img_resolution",
+      "name": "图片分辨率",
+      "type": "image",
+      "rule": "每张主图至少 720x960",
+      "severity": "high"
+    },
+    {
+      "id": "img_no_text",
+      "name": "图片无文字",
+      "type": "image",
+      "rule": "图内不可出现任何可读文字/字幕/水印/Logo",
+      "severity": "critical"
+    },
+    {
+      "id": "img_anatomy",
+      "name": "人物解剖",
+      "type": "image",
+      "rule": "手/眼/四肢结构自然，无明显畸形",
+      "severity": "high"
+    },
+    {
+      "id": "img_subtitle_safe_zone",
+      "name": "字幕安全区",
+      "type": "image",
+      "rule": "底部 18% 区域不放关键主体细节",
+      "severity": "high"
+    },
+    {
+      "id": "img_brightness_mobile",
+      "name": "移动端亮度",
+      "type": "image",
+      "rule": "移动端观看主体可见，不发灰不糊",
+      "severity": "medium"
+    },
+    {
+      "id": "scene_semantic_match",
+      "name": "图文语义一致",
+      "type": "scene",
+      "rule": "每段画面必须对应该段文案语义，不可随机美图替代",
+      "severity": "critical"
+    },
+    {
+      "id": "audio_subtitle_sync",
+      "name": "音频字幕同步",
+      "type": "audio_subtitle",
+      "rule": "字幕时间轴必须来源于生成音频回填；口型无需一致但句子节拍需一致",
+      "severity": "critical"
+    },
+    {
+      "id": "bridge_real_cover",
+      "name": "书封真实性",
+      "type": "asset",
+      "rule": "bookCascade 使用真实书封图，不使用 AI 假书封上线",
+      "severity": "high"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+﻿[
+  {
+    "asset_id": "opener_concept_images",
+    "target_section": "hook",
+    "asset_type": "image_set",
+    "asset_description": "8-10张哲学概念开场图，每个概念一张，不共享背景。",
+    "source_guidance": "可用AI生成；词义要匹配，不要抽象噪点底图。",
+    "prompt_ref": "image_prompt_library.json::opener",
+    "required": true,
+    "fallback_plan": "本次第二条验证直接复用现有 opener-style 开场概念图。",
+    "notes": "斯多葛主义那张要显得稳定、克制、有秩序。"
+  },
+  {
+    "asset_id": "scene_problem_image",
+    "target_section": "problem",
+    "asset_type": "hero_image",
+    "asset_description": "人物被评价、冲突、社交目光和信息压迫的场景图。",
+    "source_guidance": "AI生成或公开图片；优先电影感、强人物主体。",
+    "prompt_ref": "image_prompt_library.json::body_scenes[s01]",
+    "required": true,
+    "fallback_plan": "可用城市/地铁人物图叠加噪音元素。",
+    "notes": "不能只是普通风景。"
+  },
+  {
+    "asset_id": "scene_split_image",
+    "target_section": "doctrine",
+    "asset_type": "hero_image",
+    "asset_description": "混乱外界 vs 内在秩序的左右分裂构图图。",
+    "source_guidance": "优先AI生成。",
+    "prompt_ref": "image_prompt_library.json::body_scenes[s04]",
+    "required": true,
+    "fallback_plan": "可用两张图拼接，但优先一张完整构图图。",
+    "notes": "这张图决定这一模板能否讲抽象 doctrine。"
+  },
+  {
+    "asset_id": "scene_pause_image",
+    "target_section": "method",
+    "asset_type": "hero_image",
+    "asset_description": "手停在发送键前、回复前暂停的一瞬间。",
+    "source_guidance": "AI生成。",
+    "prompt_ref": "image_prompt_library.json::body_scenes[s05]",
+    "required": true,
+    "fallback_plan": "可使用现有 pause-before-unlock 类资产。",
+    "notes": "要有停住感，不是正在点击。"
+  },
+  {
+    "asset_id": "scene_outro_image",
+    "target_section": "close",
+    "asset_type": "hero_image",
+    "asset_description": "恢复平静后的清晨或开阔环境人物图。",
+    "source_guidance": "AI生成或公开图片。",
+    "prompt_ref": "image_prompt_library.json::body_scenes[s07]",
+    "required": true,
+    "fallback_plan": "可用当前 morning_control_city 方向。",
+    "notes": "亮但不要空。"
+  },
+  {
+    "asset_id": "voiceover",
+    "target_section": "all",
+    "asset_type": "audio",
+    "asset_description": "ElevenLabs 中文口播。",
+    "source_guidance": "scripts/generate_philosophy_montage_tts.py 可复用。",
+    "required": true,
+    "fallback_plan": "无；无口播只能做粗预览。",
+    "notes": "最终字幕必须从真实音频回填。"
+  }
+]

@@ -1,0 +1,10 @@
+﻿[
+  {"time_range": "0-144f", "scene": "le_s01", "layer_target": "hook_visual", "action": "flash -> bloom -> smoke drift", "sync_target": "le_v01", "notes": "0-4.8 秒钩子"},
+  {"time_range": "144-238f", "scene": "le_s02", "layer_target": "cover_cards", "action": "书封闪卡后锁定目标书", "sync_target": "le_v02", "notes": "桥段"},
+  {"time_range": "238-362f", "scene": "le_s03", "layer_target": "panel", "action": "slow push-in on desk panel", "sync_target": "le_v03", "notes": "正文 1"},
+  {"time_range": "362-518f", "scene": "le_s04", "layer_target": "panel", "action": "hard cut to street panel and continue slow move", "sync_target": "le_v04", "notes": "正文 2"},
+  {"time_range": "518-646f", "scene": "le_s05", "layer_target": "panel", "action": "slow drift on window panel", "sync_target": "le_v05", "notes": "正文 3"},
+  {"time_range": "646-802f", "scene": "le_s06", "layer_target": "panel", "action": "hard cut to crossroad symmetry panel", "sync_target": "le_v06", "notes": "正文 4"},
+  {"time_range": "802-975f", "scene": "le_s07", "layer_target": "panel", "action": "slow push on collapse panel", "sync_target": "le_v07", "notes": "正文 5"},
+  {"time_range": "975-1104f", "scene": "le_s08", "layer_target": "panel", "action": "bright outro walkaway", "sync_target": "le_v08", "notes": "收尾"}
+]

@@ -1,0 +1,5 @@
+﻿[
+  {"visual_id": "v01", "target_section": "hook", "visual_goal": "让用户在 1 秒内感到痛感和危险", "layout_structure": "单一中央象征物 + 周围暗场", "visual_hierarchy": "火焰 > 雕塑手部 > 底部字幕", "primary_elements": ["火焰光晕", "烟雾", "雕塑手部"], "style_palette": ["#050505", "#f0b24f", "#d7d7d7"], "notes": "不放顶部书名"},
+  {"visual_id": "v02", "target_section": "bridge", "visual_goal": "在文学语境中锁定目标书", "layout_structure": "中心书封卡片堆叠", "visual_hierarchy": "目标书封 > 其他书封 > 底部字幕", "primary_elements": ["4 张真实书封", "轻雾层", "曝光闪白"], "style_palette": ["#0d1117", "#c98531", "#f6efe4"], "notes": "最后停留目标书封"},
+  {"visual_id": "v03", "target_section": "body_all", "visual_goal": "用图片情绪承载文本而非页面信息图", "layout_structure": "顶部书名锁定 + 单幅场景图 + 底部双语字幕", "visual_hierarchy": "人物姿态 > 场景氛围 > 字幕", "primary_elements": ["全屏主图", "微颗粒", "柔和暗角"], "style_palette": ["#050505", "#f4f4f2", "#d0d0cc"], "notes": "几乎无页面文案"}
+]

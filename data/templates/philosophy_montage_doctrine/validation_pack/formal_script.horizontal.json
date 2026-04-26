@@ -1,0 +1,26 @@
+﻿[
+  {
+    "section": "hook",
+    "screen_time": "0-5s",
+    "visual_execution": "引导句只出现一次，然后 10 个概念词切图快切，最终锁到斯多葛主义。",
+    "voice_execution": "今天我们要讲的，是斯多葛主义。",
+    "subtitle_execution": "主题词分两行或单独一行，确保字形有冲击力。",
+    "delivery_goal": "先建立哲学视频的气场。"
+  },
+  {
+    "section": "body",
+    "screen_time": "5-39s",
+    "visual_execution": "每段一张主图，人物与情绪语义明确，慢推慢移，不堆页面。",
+    "voice_execution": "解释事件、判断、停顿、控制边界。",
+    "subtitle_execution": "每句 1-2 行，跟随口播时间轴切换。",
+    "delivery_goal": "用少量视觉元素把 doctrine 讲清。"
+  },
+  {
+    "section": "close",
+    "screen_time": "39-48s",
+    "visual_execution": "明亮安静的收束图，人物恢复掌控。",
+    "voice_execution": "当你守住内心入口，情绪不会再接管你。",
+    "subtitle_execution": "最后一句单独落地。",
+    "delivery_goal": "让模板有清晰的情绪回落。"
+  }
+]

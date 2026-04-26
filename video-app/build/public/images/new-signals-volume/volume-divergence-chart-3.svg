@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+  <rect width="1200" height="760" fill="#071019"/>
+  <g stroke="#233247" stroke-width="2">
+    <path d="M90 120H1120M90 240H1120M90 360H1120M90 480H1120M90 600H1120"/>
+    <path d="M170 80V640M310 80V640M450 80V640M590 80V640M730 80V640M870 80V640M1010 80V640"/>
+  </g>
+  <rect x="112" y="322" width="968" height="8" rx="4" fill="#ffb04d" opacity="0.82"/>
+  <path d="M120 488L240 448L360 398L482 342L604 286L724 310L844 374L962 430L1080 514" fill="none" stroke="#4d8dff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M722 310L844 374L962 430L1080 514" fill="none" stroke="#ff3d3d" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M1008 446l72 68-100 18" fill="none" stroke="#ff3d3d" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#ff3d3d">
+    <rect x="144" y="570" width="54" height="62" rx="8"/>
+    <rect x="282" y="548" width="54" height="84" rx="8"/>
+    <rect x="420" y="526" width="54" height="106" rx="8"/>
+    <rect x="558" y="500" width="54" height="132" rx="8"/>
+    <rect x="696" y="470" width="54" height="162" rx="8"/>
+    <rect x="834" y="438" width="54" height="194" rx="8"/>
+    <rect x="972" y="392" width="54" height="240" rx="8"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-weight="700">
+    <text x="90" y="62" fill="#f7f9ff" font-size="38">CASE 3 / Failed Breakout With Heavy Selling</text>
+    <text x="792" y="304" fill="#ffb04d" font-size="28">lost breakout level</text>
+    <text x="742" y="686" fill="#ff3d3d" font-size="30">selling volume expands</text>
+  </g>
+</svg>

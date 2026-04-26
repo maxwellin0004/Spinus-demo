@@ -1,0 +1,22 @@
+﻿{
+  "variants": [
+    {
+      "id": "cosmic_doctrine",
+      "description": "High-contrast opener art with cool blue body scenes and strong contemplative mood.",
+      "font_pair": ["Noto Sans SC Black", "Noto Sans SC Bold"],
+      "palette_bias": ["#0f172a", "#1e3a8a", "#22d3ee"]
+    },
+    {
+      "id": "morning_clarity",
+      "description": "Brighter natural-light body images with calm recovery energy.",
+      "font_pair": ["Noto Sans SC Black", "Noto Sans SC Medium"],
+      "palette_bias": ["#1f2937", "#0f766e", "#fbbf24"]
+    },
+    {
+      "id": "urban_pressure",
+      "description": "Slightly darker, more social-feed and city-pressure oriented visual treatment.",
+      "font_pair": ["Noto Sans SC Black", "Noto Sans SC Bold"],
+      "palette_bias": ["#111827", "#7c2d12", "#fb7185"]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+﻿{
+  "protocol_version": "1.0",
+  "sequence": [
+    "Write voiceover_units first.",
+    "Generate final ElevenLabs voiceover audio.",
+    "Read real character timing from the provider response.",
+    "Build subtitle_timeline.generated.horizontal.json from real timing.",
+    "Render the final Remotion composition from the aligned subtitle source."
+  ],
+  "hard_rules": [
+    "Do not ship final subtitle timing from hand-estimated frames when aligned audio exists.",
+    "If voiceover text changes, regenerate audio and rebuild the subtitle timeline.",
+    "Keep subtitle text source identical to voiceover_units text except for line breaks."
+  ],
+  "fallback": {
+    "when_alignment_unavailable": "Use estimated_after_audio_duration_fit and mark the timeline explicitly as non-final."
+  }
+}

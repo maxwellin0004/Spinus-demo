@@ -1,0 +1,100 @@
+import type { PhilosophyMontageOpenerConfig, PhilosophyMontageScene } from "./PhilosophyMontageValidationData";
+
+export const stoicBoundaryScenes: PhilosophyMontageScene[] = [
+  {
+    id: "s00",
+    type: "openerConcepts",
+    duration: 180,
+    subtitleLines: ["今天我们要讲的是", "斯多葛主义。"],
+    image: "/images/philosophy-montage/opener-style/opener_09.jpg",
+    palette: ["#0f172a", "#1e293b", "#f8fafc"],
+  },
+  {
+    id: "s01",
+    type: "titleStack",
+    duration: 210,
+    subtitleLines: ["它不是让你没情绪，", "而是别把外界刺激都请进内心。"],
+    image: "/images/philosophy-montage/stoic-boundary-pressure-crowd.png",
+    palette: ["#111827", "#1e293b", "#fb923c"],
+  },
+  {
+    id: "s02",
+    type: "conceptBoard",
+    duration: 240,
+    subtitleLines: ["一句评价、一条消息、一次冷脸，", "本来只是事件。", "你反复回放，它才变成情绪占领。"],
+    image: "/images/philosophy-montage/stoic-boundary-pressure-crowd.png",
+    palette: ["#0f172a", "#334155", "#f59e0b"],
+  },
+  {
+    id: "s03",
+    type: "ruminationExample",
+    duration: 240,
+    subtitleLines: ["很多痛苦不是事件本身，", "而是你立刻接管它、解释它、反刍它。"],
+    image: "/images/philosophy-montage/stoic-boundary-pressure-crowd.png",
+    palette: ["#1f2937", "#374151", "#fb7185"],
+  },
+  {
+    id: "s04",
+    type: "controlSplit",
+    duration: 285,
+    subtitleLines: ["先切开两层：", "外界发生了什么，和我准备怎么解释它。"],
+    image: "/images/philosophy-montage/stoic-boundary-chaos-vs-order.png",
+    palette: ["#111827", "#0f766e", "#fbbf24"],
+  },
+  {
+    id: "s05",
+    type: "decisionPrompt",
+    duration: 225,
+    subtitleLines: ["准备回复、争辩、证明自己之前，", "先停一秒。"],
+    image: "/images/philosophy-montage/stoic-boundary-pause-before-reply.png",
+    palette: ["#1f2937", "#92400e", "#f59e0b"],
+  },
+  {
+    id: "s06",
+    type: "axiomWall",
+    duration: 225,
+    subtitleLines: ["再问一句：", "这件事属于我能控制的部分吗？"],
+    image: "/images/philosophy-montage/stoic-boundary-pause-before-reply.png",
+    palette: ["#052e16", "#14532d", "#86efac"],
+  },
+  {
+    id: "s07",
+    type: "cityOutro",
+    duration: 240,
+    subtitleLines: ["守住内心入口，", "情绪不会立刻消失，", "但它不会再接管你。"],
+    image: "/images/philosophy-montage/stoic-boundary-morning-walk.png",
+    palette: ["#0f172a", "#0f766e", "#f8fafc"],
+  },
+];
+
+export const stoicBoundaryOpenerConfig: PhilosophyMontageOpenerConfig = {
+  introTitle: "今天我们要讲的是",
+  terms: [
+    "享乐主义",
+    "虚无主义",
+    "受害者心态",
+    "情绪反射",
+    "自我防御",
+    "他人评价",
+    "外界刺激",
+    "内在判断",
+    "斯多葛主义",
+    "情绪边界",
+  ],
+  bgImages: [
+    "/images/philosophy-montage/opener-style/opener_01.jpg",
+    "/images/philosophy-montage/opener-style/opener_02.jpg",
+    "/images/philosophy-montage/opener-style/opener_03.jpg",
+    "/images/philosophy-montage/opener-style/opener_04.jpg",
+    "/images/philosophy-montage/opener-style/opener_05.jpg",
+    "/images/philosophy-montage/opener-style/opener_06.jpg",
+    "/images/philosophy-montage/opener-style/opener_07.jpg",
+    "/images/philosophy-montage/opener-style/opener_08.jpg",
+    "/images/philosophy-montage/opener-style/opener_09.jpg",
+    "/images/philosophy-montage/opener-style/opener_10.jpg",
+  ],
+  introFrames: 24,
+  switchEvery: 9,
+};
+
+export const STOIC_BOUNDARY_DURATION = stoicBoundaryScenes.reduce((sum, scene) => sum + scene.duration, 0);

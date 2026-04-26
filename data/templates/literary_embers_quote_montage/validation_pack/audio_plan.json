@@ -1,0 +1,5 @@
+﻿[
+  {"time_range": "0.0-7.2", "section": "hook+bridge", "voice_strategy": "前句低沉直接，桥段平静落书名", "bgm_strategy": "可选极轻氛围底音", "sfx_strategy": "白闪和卡片入场可各一层轻效", "silence_pauses": "句尾保留短停顿", "mix_relation": "voiceover 主导", "notes": "不做大鼓点"},
+  {"time_range": "7.2-34.0", "section": "body", "voice_strategy": "句句稳定，不煽情过头", "bgm_strategy": "持续极低铺底", "sfx_strategy": "几乎不用", "silence_pauses": "逗号后轻停", "mix_relation": "voiceover 压低 BGM", "notes": "情绪靠文案和画面"},
+  {"time_range": "34.0-39.2", "section": "outro", "voice_strategy": "降速收尾", "bgm_strategy": "允许尾段多留一点空气", "sfx_strategy": "无", "silence_pauses": "句尾留白", "mix_relation": "voiceover 最后一句后可保留半秒空白", "notes": "收束"}
+]

@@ -1,0 +1,1213 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - link "登录/注册" [ref=e5] [cursor=pointer]:
+      - /url: https://accounts.douban.com/passport/login?source=book
+    - link "下载豆瓣客户端" [ref=e7] [cursor=pointer]:
+      - /url: https://www.douban.com/doubanapp/app?channel=top-nav
+    - list [ref=e9]:
+      - listitem [ref=e10]:
+        - link "豆瓣" [ref=e11] [cursor=pointer]:
+          - /url: https://www.douban.com
+      - listitem [ref=e12]:
+        - link "读书" [ref=e13] [cursor=pointer]:
+          - /url: https://book.douban.com
+      - listitem [ref=e14]:
+        - link "电影" [ref=e15] [cursor=pointer]:
+          - /url: https://movie.douban.com
+      - listitem [ref=e16]:
+        - link "音乐" [ref=e17] [cursor=pointer]:
+          - /url: https://music.douban.com
+      - listitem [ref=e18]:
+        - link "播客" [ref=e19] [cursor=pointer]:
+          - /url: https://www.douban.com/podcast/
+      - listitem [ref=e20]:
+        - link "同城" [ref=e21] [cursor=pointer]:
+          - /url: https://www.douban.com/location
+      - listitem [ref=e22]:
+        - link "小组" [ref=e23] [cursor=pointer]:
+          - /url: https://www.douban.com/group
+      - listitem [ref=e24]:
+        - link "阅读" [ref=e25] [cursor=pointer]:
+          - /url: https://read.douban.com/?dcs=top-nav&dcm=douban
+      - listitem [ref=e26]:
+        - link "FM" [ref=e27] [cursor=pointer]:
+          - /url: https://fm.douban.com/?from_=shire_top_nav
+      - listitem [ref=e28]:
+        - link "时间" [ref=e29] [cursor=pointer]:
+          - /url: https://time.douban.com/?dt_time_source=douban-web_top_nav
+      - listitem [ref=e30]:
+        - link "豆品" [ref=e31] [cursor=pointer]:
+          - /url: https://market.douban.com/?utm_campaign=douban_top_nav&utm_source=douban&utm_medium=pc_web
+  - generic [ref=e32]:
+    - generic [ref=e34]:
+      - link "豆瓣读书" [ref=e36] [cursor=pointer]:
+        - /url: https://book.douban.com
+      - group "搜索：" [ref=e39]:
+        - textbox [ref=e41]:
+          - /placeholder: 书名、作者、ISBN
+        - button "搜索" [ref=e43] [cursor=pointer]
+    - generic [ref=e44]:
+      - list [ref=e46]:
+        - listitem [ref=e47]:
+          - link "购书单" [ref=e48] [cursor=pointer]:
+            - /url: https://book.douban.com/cart/
+        - listitem [ref=e49]:
+          - link "电子图书" [ref=e50] [cursor=pointer]:
+            - /url: https://read.douban.com/ebooks/?dcs=book-nav&dcm=douban
+        - listitem [ref=e51]:
+          - link "2025年度榜单" [ref=e52] [cursor=pointer]:
+            - /url: https://book.douban.com/annual/2025/?fullscreen=1&dt_from=navigation
+        - listitem [ref=e53]:
+          - link "2025年度报告" [ref=e54] [cursor=pointer]:
+            - /url: https://c9.douban.com/app/standbyme-2025/?autorotate=false&fullscreen=true&hidenav=true&monitor_screenshot=true&dt_from=web_navigation
+      - link [ref=e55] [cursor=pointer]:
+        - /url: https://book.douban.com/annual/2025/?fullscreen=1&&dt_from=book_navigation
+  - generic [ref=e56]:
+    - heading "不做告别" [level=1] [ref=e57]: 不做告别
+    - generic [ref=e59]:
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - generic [ref=e63]:
+              - link "不做告别" [ref=e65] [cursor=pointer]:
+                - /url: https://img9.doubanio.com/view/subject/l/public/s34677666.jpg
+                - img "不做告别" [ref=e66]
+              - generic [ref=e67]:
+                - generic [ref=e68]:
+                  - text: "作者:"
+                  - link "韩江" [ref=e69] [cursor=pointer]:
+                    - /url: /author/313423
+                - generic [ref=e70]:
+                  - text: "译者:"
+                  - link "卢鸿金" [ref=e71] [cursor=pointer]:
+                    - /url: /author/4645125
+                - text: "出版社:"
+                - link "九州出版社" [ref=e72] [cursor=pointer]:
+                  - /url: https://book.douban.com/press/2655
+                - text: "出品方:"
+                - link "磨铁·铁葫芦" [ref=e73] [cursor=pointer]:
+                  - /url: https://book.douban.com/producers/157
+                - text: "出版年: 2024-1"
+                - text: "ISBN: 9787522518954"
+                - text: "页数: 288"
+                - text: "装帧: 精装"
+                - text: "定价: 58"
+                - text: "原作名: 작별하지 않는다"
+                - text: "丛书:"
+                - link "韩江系列作品" [ref=e74] [cursor=pointer]:
+                  - /url: https://book.douban.com/series/66939
+            - generic [ref=e76]:
+              - generic [ref=e77]: 豆瓣评分
+              - generic [ref=e78]:
+                - strong [ref=e79]: "7.6"
+                - link "4492人评价" [ref=e84] [cursor=pointer]:
+                  - /url: comments
+              - generic "力荐" [ref=e85]: 5星
+              - text: 22.0%
+              - generic "推荐" [ref=e87]: 4星
+              - text: 44.3%
+              - generic "还行" [ref=e89]: 3星
+              - text: 29.2%
+              - generic "较差" [ref=e91]: 2星
+              - text: 3.7%
+              - generic "很差" [ref=e93]: 1星
+              - text: 0.9%
+          - generic [ref=e95]:
+            - link "想读" [ref=e96] [cursor=pointer]:
+              - /url: "#"
+              - button "想读" [ref=e99]
+            - link "在读" [ref=e100] [cursor=pointer]:
+              - /url: "#"
+              - button "在读" [ref=e103]
+            - link "读过" [ref=e104] [cursor=pointer]:
+              - /url: "#"
+              - button "读过" [ref=e107]
+            - generic [ref=e110]:
+              - text: "评价:"
+              - generic [ref=e111]:
+                - generic:
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e112] [cursor=pointer]
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e113] [cursor=pointer]
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e114] [cursor=pointer]
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e115] [cursor=pointer]
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e116] [cursor=pointer]
+          - list [ref=e118]:
+            - listitem [ref=e119]:
+              - img [ref=e120]
+              - link "写笔记" [ref=e121] [cursor=pointer]:
+                - /url: https://www.douban.com/topic/create?subtype=annotation&subject_id=36438836
+            - listitem [ref=e122]:
+              - img [ref=e123]
+              - link "写书评" [ref=e124] [cursor=pointer]:
+                - /url: https://book.douban.com/subject/36438836/new_review
+            - listitem [ref=e125]:
+              - generic [ref=e126]:
+                - img [ref=e127]
+                - link "加入购书单" [ref=e128] [cursor=pointer]:
+                  - /url: https://www.douban.com/accounts/passport/login?source=book
+            - listitem [ref=e129]:
+              - link "分享到" [ref=e130] [cursor=pointer]:
+                - /url: "#"
+          - link "推荐" [ref=e133] [cursor=pointer]:
+            - /url: https://www.douban.com/accounts/register?reason=collect
+        - generic [ref=e134]:
+          - heading "内容简介 · · · · · ·" [level=2] [ref=e135]
+          - generic [ref=e138]:
+            - paragraph [ref=e139]: 韩国大山文学奖
+            - paragraph [ref=e140]: 韩国金万重文学奖
+            - paragraph [ref=e141]: 韩国三星湖岩艺术奖
+            - paragraph [ref=e142]: 法国美第奇文学奖
+            - paragraph [ref=e143]: 法国埃米尔吉梅亚洲文学奖
+            - paragraph [ref=e144]: 获奖作品
+            - paragraph [ref=e145]: 1诺贝尔文学奖热门提名人选、亚洲首位布克国际文学奖得主 韩江《少年来了》后调竭尽全力书写生命续章。获得2023法国美第奇文学奖，入围法国费米娜文学奖。
+            - paragraph [ref=e146]: 如果说写《少年来了》时，噩梦或死亡深入我的内心经历，那么写这部小说时则是自己从死亡走向生命的经历。我认为这本小说拯救了我。――韩江
+            - paragraph [ref=e147]: 2 再次书写国家暴力和大屠杀主题，以济 州岛大屠杀为蓝本。
+            - paragraph [ref=e148]: 献给我们的感觉、存在和良知。
+            - paragraph [ref=e149]: 断气的婴儿、冲散的尸体、倾泻而下的子弹、枕头下的锯子和眼珠里燃烧着火花与烟灰
+            - paragraph [ref=e150]: 3韩国前总统文在寅难以释怀之作，大山文学奖+金万重文学奖双奖加冕。
+            - paragraph [ref=e151]: 那些看似风和日丽的午后，远处竟下着暴雪；如今稳妥踩着的土地，数十年前曾是血染之处。
+            - paragraph [ref=e152]: 我读了韩江作家的长篇小说《不做告别》后久久不能释...
+            - paragraph [ref=e153]:
+              - link "(展开全部)" [ref=e154] [cursor=pointer]:
+                - /url: javascript:void(0)
+          - heading [level=2]
+          - heading "不做告别的创作者 · · · · · ·" [level=2] [ref=e155]
+          - generic [ref=e156]:
+            - paragraph
+            - list [ref=e158]:
+              - listitem [ref=e159]:
+                - link "[韩国] 韩江" [ref=e160] [cursor=pointer]:
+                  - /url: https://book.douban.com/author/313423/
+                  - img "[韩国] 韩江" [ref=e161]
+                - generic [ref=e162]:
+                  - link "韩江" [ref=e163] [cursor=pointer]:
+                    - /url: https://book.douban.com/author/313423/
+                  - generic [ref=e164]: 作者
+              - listitem [ref=e165]:
+                - link "卢鸿金" [ref=e166] [cursor=pointer]:
+                  - /url: https://book.douban.com/author/4645125/
+                  - img "卢鸿金" [ref=e167]
+                - generic [ref=e168]:
+                  - link "卢鸿金" [ref=e169] [cursor=pointer]:
+                    - /url: https://book.douban.com/author/4645125/
+                  - generic [ref=e170]: 译者
+              - listitem
+          - heading "作者简介 · · · · · ·" [level=2] [ref=e171]
+          - generic [ref=e174]:
+            - paragraph [ref=e175]: 韩江 한강
+            - paragraph [ref=e176]: 布克国际文学奖（亚洲首位）
+            - paragraph [ref=e177]: 布克国际文学奖短名单*2
+            - paragraph [ref=e178]: 国际都柏林文学奖短名单
+            - paragraph [ref=e179]: 法国美第奇文学奖
+            - paragraph [ref=e180]: 法国费米娜文学奖决选
+            - paragraph [ref=e181]: 意大利马拉帕蒂文学奖
+            - paragraph [ref=e182]: 西班牙圣克莱门特文学奖
+            - paragraph [ref=e183]: 挪威未来图书馆年度艺术家
+            - paragraph [ref=e184]: 韩国李箱文学奖
+            - paragraph [ref=e185]: 韩国大山文学奖
+            - paragraph [ref=e186]: 韩国金万重文学奖
+            - paragraph [ref=e187]: 韩国东里文学奖
+            - paragraph [ref=e188]: 韩国万海文学奖
+            - paragraph [ref=e189]: 韩国黄顺元文学奖
+            - paragraph [ref=e190]: 韩国金裕 贞文学奖
+            - paragraph [ref=e191]: 韩国今日青年艺术家奖
+            - paragraph [ref=e192]: 韩国小说文学奖
+            - paragraph [ref=e193]: 韩国《首尔新闻报》年度春季文学奖
+            - paragraph [ref=e194]: 韩江 한강
+            - paragraph [ref=e195]: 1970年生，毕业于延世大学国文系，现任韩国艺术大学文艺创作系教授，当代韩国文坛最具国际影响力的作家之一。她曾先后荣获《首尔新闻报》年度春季文学奖，韩国小说文学奖，今日青年艺术家奖，东里文学奖、李箱文学奖、万海文学奖等。其作品从更为根源的层面上回望生活的悲苦和创伤，笔墨执著地袒护伤痕，充满探索的力量。
+            - paragraph [ref=e196]: 2016年5月16号,布克国际文学奖在伦敦揭晓。韩...
+            - paragraph [ref=e197]:
+              - link "(展开全部)" [ref=e198] [cursor=pointer]:
+                - /url: javascript:void(0)
+          - heading "目录 · · · · · ·" [level=2] [ref=e199]
+          - generic [ref=e200]:
+            - text: 第一部 鸟
+            - text: 1 结晶
+            - text: 2 线
+            - text: 3 暴雪
+            - text: 4 鸟
+            - text: 5 剩余之光
+            - text: · · · · · · (
+            - link "更多" [ref=e201] [cursor=pointer]:
+              - /url: "javascript:$('#dir_36438836_short').hide();$('#dir_36438836_full').show();$.get('/j/subject/j_dir_count',{id:36438836});void(0);"
+            - text: )
+          - generic [ref=e203]:
+            - heading "原文摘录 · · · · · · ( 全部 )" [level=2] [ref=e204]:
+              - text: 原文摘录 · · · · · ·
+              - generic [ref=e205]:
+                - text: (
+                - link "全部" [ref=e206] [cursor=pointer]:
+                  - /url: blockquotes
+                - text: )
+            - list [ref=e207]:
+              - listitem [ref=e208]:
+                - figure [ref=e209]:
+                  - text: 我虽然没有和人生和解，但终究还是要重新活下去。 (
+                  - link "查看原文" [ref=e210] [cursor=pointer]:
+                    - /url: https://book.douban.com/annotation/146226925/
+                  - text: )
+                  - generic [ref=e211]:
+                    - generic [ref=e212]:
+                      - link [ref=e213] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/Hyo-jin/
+                        - img [ref=e214]
+                      - link "懋" [ref=e215] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/Hyo-jin/
+                      - text: 4赞 2025-09-21 12:20:37
+                    - generic "引自章节：第一部 鸟" [ref=e216]: —— 引自章节：第一部 鸟
+              - listitem [ref=e217]:
+                - figure [ref=e218]:
+                  - text: 我和记不清面孔的一行人走在废弃的道路上。看到停在路边的一辆黑色轿车时，有人说，他坐在那里面。虽然没有说出名字，但大家都正确理解了那句话的含意。 (
+                  - link "查看原文" [ref=e219] [cursor=pointer]:
+                    - /url: https://book.douban.com/annotation/138042498/
+                  - text: )
+                  - generic [ref=e220]:
+                    - generic [ref=e221]:
+                      - link [ref=e222] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/55613349/
+                        - img [ref=e223]
+                      - link "松野空松" [ref=e224] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/55613349/
+                      - text: 2赞 2024-10-15 17:10:26
+                    - generic "引自章节：1 结晶" [ref=e225]: —— 引自章节：1 结晶
+            - paragraph [ref=e226]:
+              - text: ">"
+              - link "全部原文摘录" [ref=e227] [cursor=pointer]:
+                - /url: blockquotes
+          - generic [ref=e228]:
+            - heading [level=2]
+            - heading "丛书信息 · · · · · ·" [level=2] [ref=e229]
+            - generic [ref=e230]:
+              - link "韩江系列作品" [ref=e231] [cursor=pointer]:
+                - /url: https://book.douban.com/series/66939
+              - text: (共14册)， 这套丛书还有 《人类行为》《失语者》《白》《光与线》《你冰冷的手》 等 。
+          - generic [ref=e232]:
+            - heading "喜欢读\"不做告别\"的人也喜欢的电子书 · · · · · ·" [level=2] [ref=e233]
+            - generic [ref=e234]: 支持 Web、iPhone、iPad、Android 阅读器
+            - generic [ref=e235]:
+              - generic [ref=e236]:
+                - term [ref=e237]:
+                  - link [ref=e238] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/447749067/?dcs=subject-rec&dcm=douban&dct=36438836
+                    - img [ref=e240]
+                - definition [ref=e241]:
+                  - link "最后一人" [ref=e243] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/447749067/
+                  - generic [ref=e244]: 17.93元
+              - generic [ref=e245]:
+                - term [ref=e246]:
+                  - link [ref=e247] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/445826872/?dcs=subject-rec&dcm=douban&dct=36438836
+                    - img [ref=e249]
+                - definition [ref=e250]:
+                  - link "疼痛部" [ref=e252] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/445826872/
+                  - generic [ref=e253]: 27.00元
+              - generic [ref=e254]:
+                - term [ref=e255]:
+                  - link [ref=e256] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/419607526/?dcs=subject-rec&dcm=douban&dct=36438836
+                    - img [ref=e258]
+                - definition [ref=e259]:
+                  - link "你的夏天还好吗？" [ref=e261] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/419607526/
+                  - generic [ref=e262]: 34.00元
+              - generic [ref=e263]:
+                - term [ref=e264]:
+                  - link [ref=e265] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/407656555/?dcs=subject-rec&dcm=douban&dct=36438836
+                    - img [ref=e267]
+                - definition [ref=e268]:
+                  - link "白" [ref=e270] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/407656555/
+                  - generic [ref=e271]: 44.82元
+              - generic [ref=e272]:
+                - term [ref=e273]:
+                  - link [ref=e274] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/439431770/?dcs=subject-rec&dcm=douban&dct=36438836
+                    - img [ref=e276]
+                - definition [ref=e277]:
+                  - link "明亮的夜晚" [ref=e279] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/439431770/
+                  - generic [ref=e280]: 46.80元
+          - generic [ref=e281]:
+            - heading "喜欢读\"不做告别\"的人也喜欢 · · · · · ·" [level=2] [ref=e282]
+            - generic [ref=e283]:
+              - generic [ref=e284]:
+                - term [ref=e285]:
+                  - link [ref=e286] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/36438780/
+                    - img [ref=e287]
+                - definition [ref=e288]:
+                  - link "失语者" [ref=e289] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/36438780/
+                  - text: "7.1"
+              - generic [ref=e290]:
+                - term [ref=e291]:
+                  - link [ref=e292] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/27593378/
+                    - img [ref=e293]
+                - definition [ref=e294]:
+                  - link "少年來了" [ref=e295] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/27593378/
+                  - text: "9.2"
+              - generic [ref=e296]:
+                - term [ref=e297]:
+                  - link [ref=e298] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/37129014/
+                    - img [ref=e299]
+                - definition [ref=e300]:
+                  - link "伤口愈合中" [ref=e301] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/37129014/
+                  - text: "7.9"
+              - generic [ref=e302]:
+                - term [ref=e303]:
+                  - link [ref=e304] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/36035671/
+                    - img [ref=e305]
+                - definition [ref=e306]:
+                  - link "关于女儿" [ref=e307] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/36035671/
+                  - text: "8.4"
+              - generic [ref=e308]:
+                - term [ref=e309]:
+                  - link [ref=e310] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/25723502/
+                    - img [ref=e311]
+                - definition [ref=e312]:
+                  - link "玄鹿" [ref=e313] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/25723502/
+                  - text: "7.9"
+              - generic [ref=e314]:
+                - term [ref=e315]:
+                  - link [ref=e316] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/35943619/
+                    - img [ref=e317]
+                - definition [ref=e318]:
+                  - link "潜入谎言之海" [ref=e319] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/35943619/
+                  - text: "9.0"
+              - generic [ref=e320]:
+                - term [ref=e321]:
+                  - link [ref=e322] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/36553465/
+                    - img [ref=e323]
+                - definition [ref=e324]:
+                  - link "日暮时分" [ref=e325] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/36553465/
+                  - text: "8.1"
+              - generic [ref=e326]:
+                - term [ref=e327]:
+                  - link [ref=e328] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/36327195/
+                    - img [ref=e329]
+                - definition [ref=e330]:
+                  - link "9号的工作" [ref=e331] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/36327195/
+                  - text: "7.4"
+              - generic [ref=e332]:
+                - term [ref=e333]:
+                  - link [ref=e334] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/25918620/
+                    - img [ref=e335]
+                - definition [ref=e336]:
+                  - link "叶落彼岸" [ref=e337] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/25918620/
+                  - text: "8.0"
+              - generic [ref=e338]:
+                - term [ref=e339]:
+                  - link [ref=e340] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/36524087/
+                    - img [ref=e341]
+                - definition [ref=e342]:
+                  - link "光之护卫" [ref=e343] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/36524087/
+                  - text: "7.7"
+          - generic [ref=e344]:
+            - generic [ref=e345]:
+              - link "我来说两句" [ref=e346] [cursor=pointer]:
+                - /url: https://www.douban.com/register?reason=review
+              - heading "短评 · · · · · · ( 全部 2258 条 )" [level=2] [ref=e347]:
+                - text: 短评 · · · · · ·
+                - generic [ref=e348]:
+                  - text: (
+                  - link "全部 2258 条" [ref=e349] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/36438836/comments/
+                  - text: )
+            - link "热门" [ref=e352]:
+              - /url: https://book.douban.com/subject/36438836/comments?sort=score
+            - list [ref=e355]:
+              - listitem [ref=e356]:
+                - generic [ref=e357]:
+                  - heading "13 有用 凪 力荐 2024-03-08 02:24:49 美国" [level=3] [ref=e358]:
+                    - generic [ref=e359]:
+                      - text: "13"
+                      - link "有用" [ref=e360] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e361]:
+                      - link "凪" [ref=e362] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/31387930/
+                      - generic "力荐" [ref=e363]
+                      - link "2024-03-08 02:24:49" [ref=e364] [cursor=pointer]:
+                        - /url: /comment/4064759940
+                      - text: 美国
+                  - paragraph [ref=e365]:
+                    - text: 读这本书很快，甚至很轻，比《少年来了》轻很多。《少年来了》充斥着最血腥与真实的人物，而这个故事里，虚虚实实，鸟儿、雪花这些最轻的事物，承载着另一段历史的无限之重。 怪不得可以被引进到中国大陆，因为它足够诗意，不想深入探究历史的人，可以合上书，发出一些感慨，然后离开。但愿意探究历史的人，会越来越发现其中的沉重。这当然美国帝国主义和韩国军国政府的合谋，但这背后，我们要如何理解二战与韩战，也是值得思考的...
+                    - generic [ref=e366]:
+                      - text: (
+                      - link "展开" [ref=e367] [cursor=pointer]:
+                        - /url: javascript:;
+                      - text: )
+              - listitem [ref=e368]:
+                - generic [ref=e369]:
+                  - heading "138 有用 布卤 还行 2024-02-15 15:09:46 辽宁" [level=3] [ref=e370]:
+                    - generic [ref=e371]:
+                      - text: "138"
+                      - link "有用" [ref=e372] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e373]:
+                      - link "布卤" [ref=e374] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/asl1234567/
+                      - generic "还行" [ref=e375]
+                      - link "2024-02-15 15:09:46" [ref=e376] [cursor=pointer]:
+                        - /url: /comment/4022396011
+                      - text: 辽宁
+                  - paragraph [ref=e377]: 韩江的文字越来越美了，笔力也越来越成熟。可是，我不喜欢这本书，隐藏在密密麻麻心事下的真实事件变得模糊且无足轻重。我讨厌沉迷在情绪里。这是年轻不懂事的人才会做出的事。克制有时是加法。
+              - listitem [ref=e378]:
+                - generic [ref=e379]:
+                  - heading "19 有用 ⠀ 推荐 2024-02-11 13:34:33 云南" [level=3] [ref=e380]:
+                    - generic [ref=e381]:
+                      - text: "19"
+                      - link "有用" [ref=e382] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e383]:
+                      - link "⠀" [ref=e384] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/159154315/
+                      - generic "推荐" [ref=e385]
+                      - link "2024-02-11 13:34:33" [ref=e386] [cursor=pointer]:
+                        - /url: /comment/4087054185
+                      - text: 云南
+                  - paragraph [ref=e387]: 看的时候总想到张纯如，她在写南京大屠杀时应该也如此痛苦最终不能存活吧。比起其他读过的韩江的书，这本以史实为底，像是踩在坚实又悲痛的大地上。韩江的文笔和氛围感都很浓郁，段落和语句总是破碎，这本算是读起来提着口气有引子带领的。读完除了深沉的惆怅也别无他法。过去的伤痕一直影响到现在，像大地震后的余波，历经数十载
+              - listitem [ref=e388]:
+                - generic [ref=e389]:
+                  - heading "15 有用 盐少女 推荐 2024-01-03 21:28:52 北京" [level=3] [ref=e390]:
+                    - generic [ref=e391]:
+                      - text: "15"
+                      - link "有用" [ref=e392] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e393]:
+                      - link "盐少女" [ref=e394] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/superchu/
+                      - generic "推荐" [ref=e395]
+                      - link "2024-01-03 21:28:52" [ref=e396] [cursor=pointer]:
+                        - /url: /comment/4045401796
+                      - text: 北京
+                  - paragraph [ref=e397]:
+                    - text: 一直很喜欢济州岛，尤其是冬天，反反复复去过很多次，所以，当韩江写到雪天等公交的场景时，几乎毫无障碍地就代入其中。我不曾知道，这个宁静的小岛，经历过这样惨烈的屠杀，我不曾知道，起起落落的飞机跑道之下，埋葬着那么多亡魂，我不曾知道，在这居住劳作的人们，拥有如此悲伤的集体记忆。雪花落下，大海翻涌，掩埋了，卷走了，一切平息之后，谁会记得，谁来讲述？无论如何，我都感激这些记述者。下一次，当我再度踏足这座岛屿...
+                    - generic [ref=e398]:
+                      - text: (
+                      - link "展开" [ref=e399] [cursor=pointer]:
+                        - /url: javascript:;
+                      - text: )
+              - listitem [ref=e400]:
+                - generic [ref=e401]:
+                  - heading "258 有用 阿布 推荐 2023-12-29 22:51:42 广东" [level=3] [ref=e402]:
+                    - generic [ref=e403]:
+                      - text: "258"
+                      - link "有用" [ref=e404] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e405]:
+                      - link "阿布" [ref=e406] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/abuxu/
+                      - generic "推荐" [ref=e407]
+                      - link "2023-12-29 22:51:42" [ref=e408] [cursor=pointer]:
+                        - /url: /comment/4038898731
+                      - text: 广东
+                  - paragraph [ref=e409]:
+                    - text: 我买了平装台湾版，又从图书馆借了韩文原版，拿到这个精装简体版发现某些本以为会删的译文不但保留了，而且处理比台版好、更贴近韩文原意（比如빨갱이，此处不便展开，详情请看书），书封的营销文句比台版更鲜明（台版列举本书在韩国得了两项文学奖及是三家电商畅销书，但中国读者不熟悉这些奖项和电商啊）。当然，也有不得不删改的字句，比如仅出现两次的“6·25韩战”改成“战争”，我觉得在当前出版形势下可以理解，对全书影...
+                    - generic [ref=e410]:
+                      - text: (
+                      - link "展开" [ref=e411] [cursor=pointer]:
+                        - /url: javascript:;
+                      - text: )
+          - generic [ref=e412]:
+            - generic [ref=e413]:
+              - link "我要写书评" [ref=e414] [cursor=pointer]:
+                - /url: new_review
+              - heading "不做告别的书评 · · · · · · ( 全部 88 条 )" [level=2] [ref=e415]:
+                - text: 不做告别的书评 · · · · · ·
+                - generic [ref=e416]:
+                  - text: (
+                  - link "全部 88 条" [ref=e417] [cursor=pointer]:
+                    - /url: reviews
+                  - text: )
+            - generic [ref=e418]:
+              - generic [ref=e419]:
+                - link "热门" [ref=e420] [cursor=pointer]:
+                  - /url: javascript:;;
+                - text: /
+              - link "只看本版本的评论" [ref=e421] [cursor=pointer]:
+                - /url: /subject/36438836/reviews?version=1
+            - generic [ref=e422]:
+              - generic [ref=e424]:
+                - generic [ref=e425]:
+                  - link:
+                    - /url: https://www.douban.com/people/198839378/
+                    - img [ref=e426] [cursor=pointer]
+                  - link "OCEANUNRAVEL" [ref=e427] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/198839378/
+                  - generic "推荐" [ref=e428]
+                  - text: 2023-09-07 22:17:45
+                  - link "漫遊者文化2023版" [ref=e430] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/36393275/
+                - generic [ref=e431]:
+                  - heading "《永不告别》签售会｜巴黎2023.9.4" [level=2] [ref=e432]:
+                    - link "《永不告别》签售会｜巴黎2023.9.4" [ref=e433] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/15437452/
+                  - generic [ref=e435] [cursor=pointer]:
+                    - paragraph [ref=e436]: 这篇书评可能有关键情节透露
+                    - text: 译自韩江老师9月4日于巴黎凤凰书店签售会上的发言。不准确之处请多包涵。 “在《少年来了》之后，我不知道自己是否要再写一本关于屠杀的新书。您刚刚朗读的那个片段（注：第一章的开头），写的其实真的是我在《少年来了》出版后做的一个梦。这个梦无疑与我在《少年来了》里写的... (
+                    - link "展开" [ref=e437]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e438]:
+                    - link "89" [ref=e439] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "没用" [ref=e440] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "7回应" [ref=e441] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/15437452/#comments
+              - generic [ref=e443]:
+                - generic [ref=e444]:
+                  - link:
+                    - /url: https://www.douban.com/people/asingsdb/
+                    - img [ref=e445] [cursor=pointer]
+                  - link "A-sing一颗横星" [ref=e446] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/asingsdb/
+                  - generic "推荐" [ref=e447]
+                  - text: 2024-04-22 12:04:47
+                - generic [ref=e448]:
+                  - heading "即使疼痛，永不告别" [level=2] [ref=e449]:
+                    - link "即使疼痛，永不告别" [ref=e450] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/15894270/
+                  - generic [ref=e452] [cursor=pointer]:
+                    - paragraph [ref=e453]: 这篇书评可能有关键情节透露
+                    - text: 我不想将这本书完全概括为讲述济州岛四三大屠杀的故事，因为假如你抱着了解史实的期待去阅读，大概率会失望甚至困惑。韩江的笔触始终聚焦在个体，尤其是女性个体身上，书中的大部分内容关于感受、情绪、知觉，但这些描写并不空洞，而是从天气、物件、意象中溢出，通过翻页的指... (
+                    - link "展开" [ref=e454]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e455]:
+                    - link "57" [ref=e456] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "没用" [ref=e457] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "2回应" [ref=e458] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/15894270/#comments
+              - generic [ref=e460]:
+                - generic [ref=e461]:
+                  - link:
+                    - /url: https://www.douban.com/people/191393774/
+                    - img [ref=e462] [cursor=pointer]
+                  - link "山语河" [ref=e463] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/191393774/
+                  - generic "力荐" [ref=e464]
+                  - text: 2024-01-06 10:02:57
+                - generic [ref=e465]:
+                  - heading "泅过时间的海——《不做告别》书评" [level=2] [ref=e466]:
+                    - link "泅过时间的海——《不做告别》书评" [ref=e467] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/15665772/
+                  - generic [ref=e469] [cursor=pointer]:
+                    - text: 在这个时代，我们应该如何谈论记忆？是年度的app总结，还是软件的月报，甚至是充斥着社交软件的聊天记录？翻开以前的笔记本，看着手机里的照片，这些又能构筑起怎样的一种记忆？韩江在《不做告别》这本书中告诉我们，记忆是人类存在的体现：时间犹如海洋，潮起潮落之间将人们留... (
+                    - link "展开" [ref=e470]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e471]:
+                    - link "35" [ref=e472] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "没用" [ref=e473] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "2回应" [ref=e474] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/15665772/#comments
+              - generic [ref=e476]:
+                - generic [ref=e477]:
+                  - link:
+                    - /url: https://www.douban.com/people/ralphie/
+                    - img [ref=e478] [cursor=pointer]
+                  - link "喜欢书多过人" [ref=e479] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/ralphie/
+                  - generic "力荐" [ref=e480]
+                  - text: 2024-01-07 21:56:46
+                - generic [ref=e481]:
+                  - heading "那个凝视深渊的人后来怎么样了" [level=2] [ref=e482]:
+                    - link "那个凝视深渊的人后来怎么样了" [ref=e483] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/15669498/
+                  - generic [ref=e485] [cursor=pointer]:
+                    - paragraph [ref=e486]: 这篇书评可能有关键情节透露
+                    - text: 读这本书的过程中我一再一再地想到了张纯如。济州岛上无穷无尽的雪也让我想起下在南京连绵不绝的雨。 不同于常见的写大屠杀的书，韩江写得相当克制。她细细地描写变幻中的暴风雪，写忽强忽弱的风，写树如何在风中颤抖、树枝如何断裂，写海面反射的光线，写墓地延绵至海平面。凛... (
+                    - link "展开" [ref=e487]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e488]:
+                    - link "11" [ref=e489] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "没用" [ref=e490] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "2回应" [ref=e491] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/15669498/#comments
+              - generic [ref=e493]:
+                - generic [ref=e494]:
+                  - link:
+                    - /url: https://www.douban.com/people/61629639/
+                    - img [ref=e495] [cursor=pointer]
+                  - link "小飞侠" [ref=e496] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/61629639/
+                  - generic "还行" [ref=e497]
+                  - text: 2024-01-12 09:41:04
+                - generic [ref=e498]:
+                  - heading "被雪压垮的树枝" [level=2] [ref=e499]:
+                    - link "被雪压垮的树枝" [ref=e500] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/15678367/
+                  - generic [ref=e502] [cursor=pointer]:
+                    - paragraph [ref=e503]: 这篇书评可能有关键情节透露
+                    - text: 这是我读的第七本韩江的书，感觉熟悉又陌生。初读《素食者》的惊艳，《白》的氛围感，《少年来了》的阵痛，那种感觉在后续的短篇集和诗歌里消失殆尽，是倦了。 这本《不做告别》，是韩江在《素食者》拿到布克奖五年后写下的长篇小说。故事的题材是“济州四三事件”。小说家庆荷... (
+                    - link "展开" [ref=e504]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e505]:
+                    - link "9" [ref=e506] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "没用" [ref=e507] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "1回应" [ref=e508] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/15678367/#comments
+              - generic [ref=e510]:
+                - generic [ref=e511]:
+                  - link:
+                    - /url: https://www.douban.com/people/197877315/
+                    - img [ref=e512] [cursor=pointer]
+                  - link "娜斯娅Nasya" [ref=e513] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/197877315/
+                  - generic "力荐" [ref=e514]
+                  - text: 2025-01-04 12:50:36
+                - generic [ref=e515]:
+                  - heading "那些关于韩江的零碎想法" [level=2] [ref=e516]:
+                    - link "那些关于韩江的零碎想法" [ref=e517] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/16407202/
+                  - generic [ref=e519] [cursor=pointer]:
+                    - text: 看的第六本韩江的书，了解应该暂且先告一段落。 先说我的个人感受吧，我确实没这么喜欢这个作家，不喜欢的点在于“片段化，诗意化的语言，以及面对鲜血的叙事方式”这些属于她的特色确实不对我个人胃口。但我觉得她的作品还蛮有意思的，尤其是近十年《失语者》《少年来了》《白... (
+                    - link "展开" [ref=e520]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e521]:
+                    - link "7" [ref=e522] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "没用" [ref=e523] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "2回应" [ref=e524] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/16407202/#comments
+              - generic [ref=e526]:
+                - generic [ref=e527]:
+                  - link:
+                    - /url: https://www.douban.com/people/173988247/
+                    - img [ref=e528] [cursor=pointer]
+                  - link "Maléficent" [ref=e529] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/173988247/
+                  - generic "推荐" [ref=e530]
+                  - text: 2024-10-19 19:59:42
+                - generic [ref=e531]:
+                  - heading "看不见的寒，跌跌撞撞的回溯" [level=2] [ref=e532]:
+                    - link "看不见的寒，跌跌撞撞的回溯" [ref=e533] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/16247916/
+                  - generic [ref=e535] [cursor=pointer]:
+                    - text: （原发在小组榜单图书鉴评中心，评论区有原帖指路） 一开始看的时候没有特别惊艳，或许是因为意识流的写法，能感觉到前半部分她想去营造的氛围，但不太明白一些象征和隐喻背后具体在说些什么。所以这本书一般不建议当作了解韩江的第一本去看，如果本身不太了解这本书背后的历史... (
+                    - link "展开" [ref=e536]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e537]:
+                    - link "7" [ref=e538] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "没用" [ref=e539] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "1回应" [ref=e540] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/16247916/#comments
+              - generic [ref=e542]:
+                - generic [ref=e543]:
+                  - link:
+                    - /url: https://www.douban.com/people/257296876/
+                    - img [ref=e544] [cursor=pointer]
+                  - link "春泥棒" [ref=e545] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/257296876/
+                  - generic "力荐" [ref=e546]
+                  - text: 2024-01-12 20:53:34
+                - generic [ref=e547]:
+                  - heading "作为事件的记忆" [level=2] [ref=e548]:
+                    - link "作为事件的记忆" [ref=e549] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/15679410/
+                  - generic [ref=e551] [cursor=pointer]:
+                    - text: 由于在自己做研究的过程中，我发现所谓“东亚研究”，时常指的是中日两国相关的研究，地处东北亚的朝韩以及东南亚诸国时常在对“东亚”的实际讨论中缺席。其中有一层原因是语言障碍，大概率会有做所谓“”东亚研究”的人意识到这些地区的重要性，然而被迫忙于写作与发表，并无... (
+                    - link "展开" [ref=e552]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e553]:
+                    - link "6" [ref=e554] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "1" [ref=e555] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "0回应" [ref=e556] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/15679410/#comments
+              - generic [ref=e558]:
+                - generic [ref=e559]:
+                  - link:
+                    - /url: https://www.douban.com/people/o09/
+                    - img [ref=e560] [cursor=pointer]
+                  - link "OcéaneHe" [ref=e561] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/o09/
+                  - generic "力荐" [ref=e562]
+                  - text: 2025-01-26 11:46:46
+                  - link "漫遊者文化2023版" [ref=e564] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/36393275/
+                - generic [ref=e565]:
+                  - heading "一种文学" [level=2] [ref=e566]:
+                    - link "一种文学" [ref=e567] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/16448542/
+                  - generic [ref=e569] [cursor=pointer]:
+                    - paragraph [ref=e570]: 这篇书评可能有关键情节透露
+                    - text: 抱着了解南韩历史的心情翻开。 开头是截肢扎针，想起《少年来了》对残躯断肢不知餍足的长篇直视。有点厌烦。 正如第一部分的标题「鸟」，当仁善提出要「我」冒着暴雪深入山林只为拯救鸟儿阿麻，故事有趣起来。 阅读的过程，是不情不愿跟着作者在混乱的时空线中穿梭来去。顶着刺... (
+                    - link "展开" [ref=e571]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e572]:
+                    - link "4" [ref=e573] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "没用" [ref=e574] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "2回应" [ref=e575] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/16448542/#comments
+              - generic [ref=e577]:
+                - generic [ref=e578]:
+                  - link:
+                    - /url: https://www.douban.com/people/167606169/
+                    - img [ref=e579] [cursor=pointer]
+                  - link "汪小狗🐶" [ref=e580] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/167606169/
+                  - generic "推荐" [ref=e581]
+                  - text: 2024-02-24 14:11:07
+                - generic [ref=e582]:
+                  - heading "世界上最小的鸟鼓动着心脏" [level=2] [ref=e583]:
+                    - link "世界上最小的鸟鼓动着心脏" [ref=e584] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/15769454/
+                  - generic [ref=e586] [cursor=pointer]:
+                    - text: 之前刚读过金息的《最后一人》，暴力是人类最残酷的罪行，都是写暴力，《最后一人》基于老年慰安妇的口述，以近乎白描的方式写下回忆，《不做告别》是全新的故事，“济州岛四三事件”，是挂在树上的靶子，是靶子投射到地面上活着的人们心中的阴影，探究祖辈被残忍对待，后辈的... (
+                    - link "展开" [ref=e587]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e588]:
+                    - link "4" [ref=e589] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "没用" [ref=e590] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "0回应" [ref=e591] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/15769454/#comments
+            - paragraph [ref=e592]:
+              - text: ">"
+              - link "更多书评 88篇" [ref=e593] [cursor=pointer]:
+                - /url: reviews
+          - generic [ref=e595]:
+            - generic [ref=e596]:
+              - heading "读书笔记 · · · · · · ( 共 169 篇 )" [level=2] [ref=e597]:
+                - text: 读书笔记 · · · · · ·
+                - generic [ref=e598]:
+                  - text: (
+                  - link "共 169 篇" [ref=e599] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/36438836/annotation
+                  - text: )
+              - link "我来写笔记" [ref=e600] [cursor=pointer]:
+                - /url: https://www.douban.com/register?reason=annotate
+            - generic [ref=e601]:
+              - list [ref=e602]:
+                - listitem [ref=e603]:
+                  - link "按有用程度" [ref=e604] [cursor=pointer]:
+                    - /url: "#rank"
+                - listitem [ref=e605]:
+                  - link "按页码先后" [ref=e606] [cursor=pointer]:
+                    - /url: "#page"
+                - listitem [ref=e607]:
+                  - link "最新笔记" [ref=e608] [cursor=pointer]:
+                    - /url: "#time"
+              - list [ref=e609]:
+                - listitem [ref=e610]:
+                  - link "懋" [ref=e612] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/Hyo-jin/
+                    - img "懋" [ref=e613]
+                  - generic [ref=e614]:
+                    - heading "展开 第7页" [level=3] [ref=e616]:
+                      - link "展开" [ref=e618] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/146226925/
+                      - link "第7页" [ref=e619] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/146226925/
+                    - generic [ref=e620]:
+                      - paragraph [ref=e621]:
+                        - link "懋" [ref=e622] [cursor=pointer]:
+                          - /url: https://www.douban.com/people/Hyo-jin/
+                        - text: (恒转如瀑流)
+                      - generic [ref=e624]:
+                        - text: 我虽然没有和人生和解，但终究还是要重新活下去。
+                        - paragraph [ref=e625]: 2025-09-21 12:20:37 4人喜欢
+                - listitem [ref=e626]:
+                  - link "连木木" [ref=e628] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/lianmumu/
+                    - img "连木木" [ref=e629]
+                  - generic [ref=e630]:
+                    - heading "展开 。" [level=3] [ref=e632]:
+                      - link "展开" [ref=e634] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/130803541/
+                      - link "。" [ref=e635] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/130803541/
+                    - generic [ref=e636]:
+                      - paragraph [ref=e637]:
+                        - link "连木木" [ref=e638] [cursor=pointer]:
+                          - /url: https://www.douban.com/people/lianmumu/
+                        - text: (镜子与爱丽丝)
+                      - generic [ref=e640]:
+                        - text: ◆ 第一部 鸟 >> 当时不知道为什么身体会开始颤抖，虽然处于即将要哭出来的那一瞬间，但眼泪并没有流下来，也未曾凝结。这能称为恐怖吗？那是不安、战栗、突然的痛苦吗？不，那是冰冷的觉醒，让人咬牙切齿。就像...
+                        - paragraph [ref=e641]: 2024-01-09 22:08:07 4人喜欢
+                - listitem [ref=e642]:
+                  - link "懋" [ref=e644] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/Hyo-jin/
+                    - img "懋" [ref=e645]
+                  - generic [ref=e646]:
+                    - heading "展开 第173页" [level=3] [ref=e648]:
+                      - link "展开" [ref=e650] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/146229803/
+                      - link "第173页" [ref=e651] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/146229803/
+                    - generic [ref=e652]:
+                      - paragraph [ref=e653]:
+                        - link "懋" [ref=e654] [cursor=pointer]:
+                          - /url: https://www.douban.com/people/Hyo-jin/
+                        - text: (恒转如瀑流)
+                      - generic [ref=e656]:
+                        - text: 有一些话在自言自语以后，为了想否认，养成了大声说“不”的习惯。
+                        - paragraph [ref=e657]: 2025-09-21 17:54:39 2人喜欢
+                - listitem [ref=e658]:
+                  - link "松野空松" [ref=e660] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/55613349/
+                    - img "松野空松" [ref=e661]
+                  - generic [ref=e662]:
+                    - heading "展开 我不敢知道你的意思" [level=3] [ref=e664]:
+                      - link "展开" [ref=e666] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/138042498/
+                      - link "我不敢知道你的意思" [ref=e667] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/138042498/
+                    - generic [ref=e668]:
+                      - paragraph [ref=e669]:
+                        - link "松野空松" [ref=e670] [cursor=pointer]:
+                          - /url: https://www.douban.com/people/55613349/
+                        - text: (每次想写什么又懒得写)
+                      - generic [ref=e672]:
+                        - text: 我和记不清面孔的一行人走在废弃的道路上。看到停在路边的一辆黑色轿车时，有人说，他坐在那里面。虽然没有说出名字，但大家都正确理解了那句话的含意。
+                        - paragraph [ref=e673]: 2024-10-15 17:10:26 2人喜欢
+            - paragraph [ref=e675]:
+              - text: ">"
+              - link "更多读书笔记（ 共169篇 ）" [ref=e676] [cursor=pointer]:
+                - /url: https://book.douban.com/subject/36438836/annotation
+          - generic [ref=e677]:
+            - heading "论坛 · · · · · ·" [level=2] [ref=e678]
+            - table [ref=e679]:
+              - rowgroup [ref=e680]:
+                - row [ref=e681]:
+                  - cell [ref=e682]
+                  - cell [ref=e683]
+                  - cell [ref=e684]
+                  - cell [ref=e685]
+                - row "为什么作者后记说这是一本爱情小说 来自豆芽菜 2026-02-26 19:56:47" [ref=e686]:
+                  - cell "为什么作者后记说这是一本爱情小说" [ref=e687]:
+                    - link "为什么作者后记说这是一本爱情小说" [ref=e688] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/36438836/discussion/637970113/
+                  - cell "来自豆芽菜" [ref=e689]:
+                    - text: 来自
+                    - link "豆芽菜" [ref=e690] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/3558405/
+                  - cell [ref=e691]
+                  - cell "2026-02-26 19:56:47" [ref=e692]
+                - row "有其他关于济州岛的书吗？ 来自蒋方 4 回应 2026-02-21 14:35:29" [ref=e693]:
+                  - cell "有其他关于济州岛的书吗？" [ref=e694]:
+                    - link "有其他关于济州岛的书吗？" [ref=e695] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/36438836/discussion/637664488/
+                  - cell "来自蒋方" [ref=e696]:
+                    - text: 来自
+                    - link "蒋方" [ref=e697] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/223698747/
+                  - cell "4 回应" [ref=e698]
+                  - cell "2026-02-21 14:35:29" [ref=e699]
+                - row "疑似翻译错误 来自丢二 2 回应 2026-02-21 14:13:57" [ref=e700]:
+                  - cell "疑似翻译错误" [ref=e701]:
+                    - link "疑似翻译错误" [ref=e702] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/36438836/discussion/637719741/
+                  - cell "来自丢二" [ref=e703]:
+                    - text: 来自
+                    - link "丢二" [ref=e704] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/islandzii/
+                  - cell "2 回应" [ref=e705]
+                  - cell "2026-02-21 14:13:57" [ref=e706]
+                - row "人物叫人名字时能不能不要在名字后面加“啊”了！！！ 来自Lino 9 回应 2026-01-09 13:48:04" [ref=e707]:
+                  - cell "人物叫人名字时能不能不要在名字后面加“啊”了！！！" [ref=e708]:
+                    - link "人物叫人名字时能不能不要在名字后面加“啊”了！！！" [ref=e709] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/36438836/discussion/637807375/
+                  - cell "来自Lino" [ref=e710]:
+                    - text: 来自
+                    - link "Lino" [ref=e711] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/1368764/
+                  - cell "9 回应" [ref=e712]
+                  - cell "2026-01-09 13:48:04" [ref=e713]
+                - row "不做告别？永不告别？哪个更好 来自又四日monkey 2026-01-08 12:26:40" [ref=e714]:
+                  - cell "不做告别？永不告别？哪个更好" [ref=e715]:
+                    - link "不做告别？永不告别？哪个更好" [ref=e716] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/36438836/discussion/637952627/
+                  - cell "来自又四日monkey" [ref=e717]:
+                    - text: 来自
+                    - link "又四日monkey" [ref=e718] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/168159895/
+                  - cell [ref=e719]
+                  - cell "2026-01-08 12:26:40" [ref=e720]
+            - paragraph [ref=e721]:
+              - text: ">"
+              - link "浏览更多话题" [ref=e722] [cursor=pointer]:
+                - /url: https://book.douban.com/subject/36438836/discussion/
+      - generic [ref=e723]:
+        - generic [ref=e724]: 广告
+        - generic [ref=e725]:
+          - generic [ref=e726]:
+            - heading "当前版本有售 · · · · · ·" [level=2] [ref=e727]
+            - list [ref=e728]:
+              - listitem [ref=e729]:
+                - generic [ref=e730]:
+                  - link "豆瓣阅读" [ref=e732] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/450947279/?dcs=subject-buylink&dcm=douban&dct=36438836
+                  - generic [ref=e733]:
+                    - link "52.20元" [ref=e735] [cursor=pointer]:
+                      - /url: https://read.douban.com/ebook/450947279/?dcs=subject-buylink&dcm=douban&dct=36438836
+                    - link "购买电子书" [ref=e737] [cursor=pointer]:
+                      - /url: https://read.douban.com/ebook/450947279/?dcs=subject-buylink&dcm=douban&dct=36438836
+              - listitem [ref=e738]:
+                - generic [ref=e739]:
+                  - link "得到" [ref=e741] [cursor=pointer]:
+                    - /url: https://www.dedao.cn/ebook/detail?id=L5BbmPyQPrjybo2eO1GvAmNJnlYxV0R9R7kw8XDBK9qZpgkRELd75z4Ma6oDRrqj&source=douban
+                  - generic [ref=e742]:
+                    - link "58.00元" [ref=e744] [cursor=pointer]:
+                      - /url: https://www.dedao.cn/ebook/detail?id=L5BbmPyQPrjybo2eO1GvAmNJnlYxV0R9R7kw8XDBK9qZpgkRELd75z4Ma6oDRrqj&source=douban
+                    - link "购买电子书" [ref=e746] [cursor=pointer]:
+                      - /url: https://www.dedao.cn/ebook/detail?id=L5BbmPyQPrjybo2eO1GvAmNJnlYxV0R9R7kw8XDBK9qZpgkRELd75z4Ma6oDRrqj&source=douban
+              - listitem [ref=e747]:
+                - generic [ref=e748]:
+                  - link "京东商城" [ref=e750] [cursor=pointer]:
+                    - /url: https://book.douban.com/link2/?lowest=2900&pre=0&vendor=jingdong&srcpage=subject&price=3260&pos=3&url=https%3A%2F%2Funion-click.jd.com%2Fjdc%3Fe%3Disbn9787522518954uid%26p%3DJF8BARwJK1olWAcDUV1VCEwVCl8IHlgXVAUDV24ZVxNJXF9RXh5UHw0cSgYYXBcIWDoXSQVJQwYHV1xUC0oUHDZNRwYlPRhGByEpQT93ZjtUTQd2OHlHDFsqTkcbM2gNHF0SVAUFZF5ZCU8TM18IGmtHM9604ob4uVfDqeDdk8wlXwYDVVtdAEwUAl8IHV0TXAUEU1xaDUsUM28AH2vM3bHU9syElsHCi_g4K2sWbV5ABwFVDkIRB2wLH1scVQIHEAYIOHsXM2w4RTUUWgNXBg0ICSVLXT1KTgxLFmgFV1xcCksVM20JGlkXbTYyHVs_Sw5RCzhzS15SD2diNzc9QylnRzJvXjVXG1J2Ex0YShcQUCYPXDldG18yVG5dDksVMw&cntvendor=5&srcsubj=36438836&type=bkbuy&subject=36438836
+                  - generic [ref=e751]:
+                    - link "32.60元" [ref=e753] [cursor=pointer]:
+                      - /url: https://book.douban.com/link2/?lowest=2900&pre=0&vendor=jingdong&srcpage=subject&price=3260&pos=1&url=https%3A%2F%2Funion-click.jd.com%2Fjdc%3Fe%3Disbn9787522518954uid%26p%3DJF8BARwJK1olWAcDUV1VCEwVCl8IHlgXVAUDV24ZVxNJXF9RXh5UHw0cSgYYXBcIWDoXSQVJQwYHV1xUC0oUHDZNRwYlPRhGByEpQT93ZjtUTQd2OHlHDFsqTkcbM2gNHF0SVAUFZF5ZCU8TM18IGmtHM9604ob4uVfDqeDdk8wlXwYDVVtdAEwUAl8IHV0TXAUEU1xaDUsUM28AH2vM3bHU9syElsHCi_g4K2sWbV5ABwFVDkIRB2wLH1scVQIHEAYIOHsXM2w4RTUUWgNXBg0ICSVLXT1KTgxLFmgFV1xcCksVM20JGlkXbTYyHVs_Sw5RCzhzS15SD2diNzc9QylnRzJvXjVXG1J2Ex0YShcQUCYPXDldG18yVG5dDksVMw&cntvendor=5&srcsubj=36438836&type=bkbuy&subject=36438836
+                    - link "购买纸质书" [ref=e755] [cursor=pointer]:
+                      - /url: https://book.douban.com/link2/?lowest=2900&pre=0&vendor=jingdong&srcpage=subject&price=3260&pos=1&url=https%3A%2F%2Funion-click.jd.com%2Fjdc%3Fe%3Disbn9787522518954uid%26p%3DJF8BARwJK1olWAcDUV1VCEwVCl8IHlgXVAUDV24ZVxNJXF9RXh5UHw0cSgYYXBcIWDoXSQVJQwYHV1xUC0oUHDZNRwYlPRhGByEpQT93ZjtUTQd2OHlHDFsqTkcbM2gNHF0SVAUFZF5ZCU8TM18IGmtHM9604ob4uVfDqeDdk8wlXwYDVVtdAEwUAl8IHV0TXAUEU1xaDUsUM28AH2vM3bHU9syElsHCi_g4K2sWbV5ABwFVDkIRB2wLH1scVQIHEAYIOHsXM2w4RTUUWgNXBg0ICSVLXT1KTgxLFmgFV1xcCksVM20JGlkXbTYyHVs_Sw5RCzhzS15SD2diNzc9QylnRzJvXjVXG1J2Ex0YShcQUCYPXDldG18yVG5dDksVMw&cntvendor=5&srcsubj=36438836&type=bkbuy&subject=36438836
+              - listitem [ref=e756]:
+                - generic [ref=e757]:
+                  - link "当当网" [ref=e759] [cursor=pointer]:
+                    - /url: https://book.douban.com/link2/?lowest=2900&pre=0&vendor=dangdang&srcpage=subject&price=2900&pos=4&url=https%3A%2F%2Funion.dangdang.com%2Ftransfer.php%3Ffrom%3DP-306226-0-s36438836%26backurl%3Dhttps%3A%2F%2Fproduct.dangdang.com%2Fproduct.aspx%3Fproduct_id%3D29642220&cntvendor=5&srcsubj=36438836&type=bkbuy&subject=36438836
+                  - generic [ref=e760]:
+                    - link "29.00元" [ref=e762] [cursor=pointer]:
+                      - /url: https://book.douban.com/link2/?lowest=2900&pre=0&vendor=dangdang&srcpage=subject&price=2900&pos=1&url=https%3A%2F%2Funion.dangdang.com%2Ftransfer.php%3Ffrom%3DP-306226-0-s36438836%26backurl%3Dhttps%3A%2F%2Fproduct.dangdang.com%2Fproduct.aspx%3Fproduct_id%3D29642220&cntvendor=5&srcsubj=36438836&type=bkbuy&subject=36438836
+                    - link "购买纸质书" [ref=e764] [cursor=pointer]:
+                      - /url: https://book.douban.com/link2/?lowest=2900&pre=0&vendor=dangdang&srcpage=subject&price=2900&pos=1&url=https%3A%2F%2Funion.dangdang.com%2Ftransfer.php%3Ffrom%3DP-306226-0-s36438836%26backurl%3Dhttps%3A%2F%2Fproduct.dangdang.com%2Fproduct.aspx%3Fproduct_id%3D29642220&cntvendor=5&srcsubj=36438836&type=bkbuy&subject=36438836
+              - listitem [ref=e765]:
+                - generic [ref=e766]:
+                  - link "中图网" [ref=e768] [cursor=pointer]:
+                    - /url: https://book.douban.com/link2/?lowest=2900&pre=0&vendor=bookschina&srcpage=subject&price=3520&pos=5&url=http%3A%2F%2Fwww.bookschina.com%2Funion%2Fubook.asp%3Fadservice%3D354872%26tourl%3Dhttp%3A%2F%2Fwww.bookschina.com%2F9263892.htm&cntvendor=5&srcsubj=36438836&type=bkbuy&subject=36438836
+                  - generic [ref=e769]:
+                    - link "35.20元" [ref=e771] [cursor=pointer]:
+                      - /url: https://book.douban.com/link2/?lowest=2900&pre=0&vendor=bookschina&srcpage=subject&price=3520&pos=1&url=http%3A%2F%2Fwww.bookschina.com%2Funion%2Fubook.asp%3Fadservice%3D354872%26tourl%3Dhttp%3A%2F%2Fwww.bookschina.com%2F9263892.htm&cntvendor=5&srcsubj=36438836&type=bkbuy&subject=36438836
+                    - link "购买纸质书" [ref=e773] [cursor=pointer]:
+                      - /url: https://book.douban.com/link2/?lowest=2900&pre=0&vendor=bookschina&srcpage=subject&price=3520&pos=1&url=http%3A%2F%2Fwww.bookschina.com%2Funion%2Fubook.asp%3Fadservice%3D354872%26tourl%3Dhttp%3A%2F%2Fwww.bookschina.com%2F9263892.htm&cntvendor=5&srcsubj=36438836&type=bkbuy&subject=36438836
+          - link "+ 加入购书单" [ref=e776] [cursor=pointer]:
+            - /url: https://www.douban.com/accounts/passport/login?source=book
+        - generic [ref=e778]:
+          - heading "在线试读 ：" [level=2] [ref=e779]
+          - generic [ref=e780]:
+            - generic [ref=e781]:
+              - img [ref=e782]
+              - link "豆瓣阅读" [ref=e783] [cursor=pointer]:
+                - /url: https://read.douban.com/reader/ebook/450947279?from=book
+            - link "在线阅读" [ref=e784] [cursor=pointer]:
+              - /url: https://read.douban.com/reader/ebook/450947279?from=book
+          - generic [ref=e785]:
+            - generic [ref=e786]:
+              - img [ref=e787]
+              - link "得到" [ref=e788] [cursor=pointer]:
+                - /url: https://www.dedao.cn/ebook/reader?id=L5BbmPyQPrjybo2eO1GvAmNJnlYxV0R9R7kw8XDBK9qZpgkRELd75z4Ma6oDRrqj&source=douban
+            - link "在线试读" [ref=e789] [cursor=pointer]:
+              - /url: https://www.dedao.cn/ebook/reader?id=L5BbmPyQPrjybo2eO1GvAmNJnlYxV0R9R7kw8XDBK9qZpgkRELd75z4Ma6oDRrqj&source=douban
+        - generic [ref=e790]:
+          - heading "这本书的其他版本 · · · · · · ( 全部10 )" [level=2] [ref=e791]:
+            - text: 这本书的其他版本 · · · · · ·
+            - generic [ref=e792]:
+              - text: (
+              - link "全部10" [ref=e793] [cursor=pointer]:
+                - /url: https://book.douban.com/works/1157828
+              - text: )
+          - list [ref=e794]:
+            - listitem [ref=e795]:
+              - generic [ref=e796]:
+                - generic [ref=e797]:
+                  - link "Hogarth Press （2025）" [ref=e798] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/36846736/
+                  - generic [ref=e799]: 暂无评分 29人读过
+                - link "展开有售 (1)" [ref=e801] [cursor=pointer]:
+                  - /url: javascript:void(0);
+            - listitem [ref=e802]:
+              - generic [ref=e803]:
+                - generic [ref=e804]:
+                  - link "漫遊者文化 （2023）" [ref=e805] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/36393275/
+                  - generic [ref=e806]: 8.5分 442人读过
+                - link "展开有售 (1)" [ref=e808] [cursor=pointer]:
+                  - /url: javascript:void(0);
+            - listitem [ref=e809]:
+              - generic [ref=e811]:
+                - link "문학동네 （2021）" [ref=e812] [cursor=pointer]:
+                  - /url: https://book.douban.com/subject/35592203/
+                - generic [ref=e813]: 暂无评分 15人读过
+            - listitem [ref=e814]:
+              - generic [ref=e816]:
+                - link "GRASSET （2023）" [ref=e817] [cursor=pointer]:
+                  - /url: https://book.douban.com/subject/36705461/
+                - generic [ref=e818]: 暂无评分 4人读过
+        - heading "以下书单推荐 · · · · · · ( 全部 )" [level=2] [ref=e819]:
+          - text: 以下书单推荐 · · · · · ·
+          - generic [ref=e820]:
+            - text: (
+            - link "全部" [ref=e821] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/36438836/doulists
+            - text: )
+        - list [ref=e823]:
+          - listitem [ref=e824]:
+            - link "葫芦里装的什么书？" [ref=e825] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/1487725/
+            - text: (铁葫芦)
+          - listitem [ref=e826]:
+            - link "购书单【1】" [ref=e827] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/3349252/
+            - text: (波豆豆)
+          - listitem [ref=e828]:
+            - link "韩国文学简/繁中译本" [ref=e829] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/109007816/
+            - text: (乐浪公主)
+          - listitem [ref=e830]:
+            - link "我的书" [ref=e831] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/2267168/
+            - text: (汪金卫)
+          - listitem [ref=e832]:
+            - link "2026至2020 待购图书" [ref=e833] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/122189677/
+            - text: (Shirleysays)
+        - generic [ref=e835]:
+          - iframe [ref=e836]:
+            - generic [active] [ref=f33e1]:
+              - generic [ref=f33e2]:
+                - link [ref=f33e3] [cursor=pointer]:
+                  - /url: https://erebor.douban.com/redirect/?action=&ad=268323&ad_type=7&al=3&bid=1BMsX9Vf6s8&brand=&chicken=293a7c88246a72a6599e888536063202&creative=unknown_300x100&crtr=7%3A%E9%9F%A9%E5%9B%BD%7C7%3A%E5%B0%8F%E8%AF%B4%7C7%3A%E9%9F%A9%E6%B1%9F%7C7%3A%E6%96%87%E5%AD%A6%7C7%3A%E9%9F%A9%E5%9B%BD%E6%96%87%E5%AD%A6%7C7%3A%E5%8E%86%E5%8F%B2%7C7%3A%E5%A4%96%E5%9B%BD%E6%96%87%E5%AD%A6%7C7%3A%E5%A5%B3%E6%80%A7%7C7%3A2024%7C7%3A%E7%A4%BE%E4%BC%9A%7C3%3A%2Fsubject%2F36438836%2F%3F_dtcc%3D1&device=0&disable_creative=false&disable_third=false&high_value=false&hn=nob173&imp_type=2&is_cache=false&is_cmp=false&is_core=false&is_ht=false&is_short=false&item_type=COMPLEMENT&mark=&model=&net=&os=52&osv=NT+10.0&p=0&posid=&priority=2&region=68972b8f49b28cf6&sig=c806f5bcad9a450c4b315ea61fa7cbedee601b4bba563f4c45c625a82a27a188&sigt=hmac&t_mode=&target=aHR0cHM6Ly9yZWFkLmRvdWJhbi5jb20vZXZlbnQvQXByaWxfMjAyNi8%2FdXRtX3NvdXJjZT1kb3ViYW4mdXRtX21lZGl1bT1kb3ViYW4tc2lkZS1hZDImdXRtX2NhbXBhaWduPXJlY29tbWVuZDA0MjA%3D&ts=__TIMESTAMP__&ts_ms=__TIMESTAMP_MS__&uid=&unit=dale_book_subject_middle_mini&vendor=
+                - generic [ref=f33e4]:
+                  - paragraph [ref=f33e5]:
+                    - link "豆瓣阅读丨电子书读书日大促" [ref=f33e6] [cursor=pointer]:
+                      - /url: https://erebor.douban.com/redirect/?action=&ad=268323&ad_type=7&al=3&bid=1BMsX9Vf6s8&brand=&chicken=293a7c88246a72a6599e888536063202&creative=unknown_300x100&crtr=7%3A%E9%9F%A9%E5%9B%BD%7C7%3A%E5%B0%8F%E8%AF%B4%7C7%3A%E9%9F%A9%E6%B1%9F%7C7%3A%E6%96%87%E5%AD%A6%7C7%3A%E9%9F%A9%E5%9B%BD%E6%96%87%E5%AD%A6%7C7%3A%E5%8E%86%E5%8F%B2%7C7%3A%E5%A4%96%E5%9B%BD%E6%96%87%E5%AD%A6%7C7%3A%E5%A5%B3%E6%80%A7%7C7%3A2024%7C7%3A%E7%A4%BE%E4%BC%9A%7C3%3A%2Fsubject%2F36438836%2F%3F_dtcc%3D1&device=0&disable_creative=false&disable_third=false&high_value=false&hn=nob173&imp_type=2&is_cache=false&is_cmp=false&is_core=false&is_ht=false&is_short=false&item_type=COMPLEMENT&mark=&model=&net=&os=52&osv=NT+10.0&p=0&posid=&priority=2&region=68972b8f49b28cf6&sig=c806f5bcad9a450c4b315ea61fa7cbedee601b4bba563f4c45c625a82a27a188&sigt=hmac&t_mode=&target=aHR0cHM6Ly9yZWFkLmRvdWJhbi5jb20vZXZlbnQvQXByaWxfMjAyNi8%2FdXRtX3NvdXJjZT1kb3ViYW4mdXRtX21lZGl1bT1kb3ViYW4tc2lkZS1hZDImdXRtX2NhbXBhaWduPXJlY29tbWVuZDA0MjA%3D&ts=__TIMESTAMP__&ts_ms=__TIMESTAMP_MS__&uid=&unit=dale_book_subject_middle_mini&vendor=
+                  - paragraph [ref=f33e7]: 豆瓣阅读
+              - img
+          - generic [ref=e837]: 广告
+        - heading "谁读这本书? · · · · · ·" [level=2] [ref=e838]
+        - generic [ref=e839]:
+          - generic [ref=e840]:
+            - link "Vousmeregardez" [ref=e842] [cursor=pointer]:
+              - /url: https://www.douban.com/people/173021946/
+              - img "Vousmeregardez" [ref=e843]
+            - generic [ref=e844]:
+              - link "Vousmeregardez" [ref=e845] [cursor=pointer]:
+                - /url: https://www.douban.com/people/173021946/
+              - generic [ref=e846]: 昨天 读过
+              - generic "还行" [ref=e847]
+          - generic [ref=e849]:
+            - link "开开心心" [ref=e851] [cursor=pointer]:
+              - /url: https://www.douban.com/people/202275566/
+              - img "开开心心" [ref=e852]
+            - generic [ref=e853]:
+              - link "开开心心" [ref=e854] [cursor=pointer]:
+                - /url: https://www.douban.com/people/202275566/
+              - generic [ref=e855]: 昨天 想读
+          - generic [ref=e857]:
+            - link "Lilian_YZ" [ref=e859] [cursor=pointer]:
+              - /url: https://www.douban.com/people/167675204/
+              - img "Lilian_YZ" [ref=e860]
+            - generic [ref=e861]:
+              - link "Lilian_YZ" [ref=e862] [cursor=pointer]:
+                - /url: https://www.douban.com/people/167675204/
+              - generic [ref=e863]: 昨天 想读
+          - generic [ref=e865]:
+            - link "也许在梦的出口" [ref=e867] [cursor=pointer]:
+              - /url: https://www.douban.com/people/220845034/
+              - img "也许在梦的出口" [ref=e868]
+            - generic [ref=e869]:
+              - link "也许在梦的出口" [ref=e870] [cursor=pointer]:
+                - /url: https://www.douban.com/people/220845034/
+              - generic [ref=e871]: 昨天 读过
+              - generic "力荐" [ref=e872]
+          - paragraph [ref=e874]:
+            - text: ">"
+            - link "361人在读" [ref=e875] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/36438836/comments?status=N
+          - paragraph [ref=e876]:
+            - text: ">"
+            - link "5146人读过" [ref=e877] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/36438836/comments?status=P
+          - paragraph [ref=e878]:
+            - text: ">"
+            - link "7394人想读" [ref=e879] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/36438836/comments?status=F
+        - heading [level=2]
+        - heading "二手市场 · · · · · ·" [level=2] [ref=e880]
+        - list [ref=e882]:
+          - listitem [ref=e883]:
+            - link "在豆瓣转让" [ref=e884] [cursor=pointer]:
+              - /url: https://www.douban.com/register?reason=secondhand-offer&cat=book
+            - text: 有7394人想读，手里有一本闲着?
+        - paragraph [ref=e885]:
+          - text: "订阅关于不做告别的评论:"
+          - 'link "feed: rss 2.0" [ref=e887] [cursor=pointer]':
+            - /url: https://book.douban.com/feed/subject/36438836/reviews
+    - generic [ref=e888]:
+      - generic [ref=e889]: © 2005－2026 douban.com, all rights reserved 北京豆网科技有限公司
+      - generic [ref=e890]:
+        - link "关于豆瓣" [ref=e891] [cursor=pointer]:
+          - /url: https://www.douban.com/about
+        - text: ·
+        - link "在豆瓣工作" [ref=e892] [cursor=pointer]:
+          - /url: https://www.douban.com/jobs
+        - text: ·
+        - link "联系我们" [ref=e893] [cursor=pointer]:
+          - /url: https://www.douban.com/about?topic=contactus
+        - text: ·
+        - link "法律声明" [ref=e894] [cursor=pointer]:
+          - /url: https://www.douban.com/about/legal
+        - text: ·
+        - link "帮助中心" [ref=e895] [cursor=pointer]:
+          - /url: https://help.douban.com/?app=book
+        - text: ·
+        - link "图书馆合作" [ref=e896] [cursor=pointer]:
+          - /url: https://book.douban.com/library_invitation
+        - text: ·
+        - link "移动应用" [ref=e897] [cursor=pointer]:
+          - /url: https://www.douban.com/doubanapp/

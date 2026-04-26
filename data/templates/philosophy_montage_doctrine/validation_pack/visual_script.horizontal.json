@@ -1,0 +1,32 @@
+﻿[
+  {
+    "visual_id": "v01",
+    "target_section": "hook",
+    "visual_goal": "哲学概念快切，最终锁定斯多葛主义。",
+    "layout_structure": "full-screen opener image + centered term typography",
+    "visual_hierarchy": "background image > doctrine term > intro title",
+    "primary_elements": ["intro title", "10 concept terms", "10 background images", "flash bar", "shutter bars"],
+    "style_palette": ["#0f172a", "#7c3aed", "#f8fafc"],
+    "notes": "concept 背景必须逐词变化。"
+  },
+  {
+    "visual_id": "v02",
+    "target_section": "body",
+    "visual_goal": "正文段每段一张主图，字幕解释。",
+    "layout_structure": "single hero image full screen + bottom subtitle",
+    "visual_hierarchy": "hero image > subtitle",
+    "primary_elements": ["hero image", "color grading overlay", "subtitle"],
+    "style_palette": ["#0f172a", "#1e293b", "#e2e8f0"],
+    "notes": "画面里可以没有正文文字。"
+  },
+  {
+    "visual_id": "v03",
+    "target_section": "close",
+    "visual_goal": "收尾要明亮、安静、有秩序。",
+    "layout_structure": "open environment image + bottom subtitle",
+    "visual_hierarchy": "calm environment > character silhouette > subtitle",
+    "primary_elements": ["morning city or shore", "single human figure", "soft light"],
+    "style_palette": ["#1f2937", "#0f766e", "#fbbf24"],
+    "notes": "不要空镜式无内容。"
+  }
+]

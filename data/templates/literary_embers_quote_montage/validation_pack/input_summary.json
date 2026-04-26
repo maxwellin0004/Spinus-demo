@@ -1,0 +1,14 @@
+﻿{
+  "topic": "《月亮与六便士》：最可怕的不是离群，而是一直替别人活",
+  "duration_sec": 42,
+  "language": "zh-CN",
+  "target_platforms": ["Douyin", "Xiaohongshu", "Bilibili"],
+  "video_goal": "验证文学书摘情绪蒙太奇模板可复用性",
+  "style_direction": "ink noir literary montage",
+  "tone": "sharp, restrained, reflective",
+  "audience": "偏好文学、哲思、情绪型短视频的中文用户",
+  "subtitle_required": true,
+  "voice_required": true,
+  "orientation": "vertical",
+  "why_this_topic_fits": "它同样依赖一条锋利的文学观点、强情绪画面、极少页面文字和双语书摘语法，能验证模板不是只适配《山月记》一条内容。"
+}

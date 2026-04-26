@@ -1,0 +1,27 @@
+﻿[
+  {
+    "scene_id": "s00",
+    "time_range": "00:00-00:05",
+    "duration_frames": 150,
+    "scene_change_type": "hard opener montage",
+    "object_events": [
+      "0f white flash",
+      "intro title in 0-24f",
+      "concept term switch every 9f",
+      "final doctrine lock in last 42f"
+    ],
+    "sync_points": ["sb_v01 start", "first flash", "term lock"]
+  },
+  {
+    "scene_id": "s01-s07",
+    "time_range": "00:05-00:48",
+    "duration_frames": 1755,
+    "scene_change_type": "hard scene cuts with slow intra-scene motion",
+    "object_events": [
+      "hero image slow zoom",
+      "light drift",
+      "subtitle cue changes by voice_id"
+    ],
+    "sync_points": ["each subtitle cue start", "scene emotional turn", "close line landing"]
+  }
+]

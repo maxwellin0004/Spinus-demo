@@ -1,0 +1,36 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "literary_embers_audio_schema",
+  "type": "object",
+  "properties": {
+    "audio_alignment": {
+      "type": "object",
+      "required": ["tts_provider", "voiceover_units", "subtitle_timeline_path"],
+      "properties": {
+        "tts_provider": {"type": "string", "default": "elevenlabs"},
+        "voiceover_audio_path": {"type": "string"},
+        "subtitle_timeline_path": {"type": "string"},
+        "alignment_status": {"type": "string", "enum": ["estimated", "aligned", "estimated_after_audio_duration_fit"]},
+        "voiceover_units": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["voice_id", "section", "text", "target_duration_sec", "visual_section_id", "timing_status"],
+            "properties": {
+              "voice_id": {"type": "string"},
+              "section": {"type": "string"},
+              "text": {"type": "string"},
+              "subtitle_zh": {"type": "string"},
+              "subtitle_en": {"type": "string"},
+              "target_duration_sec": {"type": "number"},
+              "intended_pause_after_sec": {"type": "number"},
+              "emphasis_words": {"type": "array", "items": {"type": "string"}},
+              "visual_section_id": {"type": "string"},
+              "timing_status": {"type": "string"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,105 @@
+﻿{
+  "template_id": "literary_embers_quote_montage",
+  "variant_version": "1.0.0",
+  "variant_modes": ["cinematic_realism", "painterly_oil", "film_grain_noir"],
+  "scene_variants": {
+    "le_s01": {
+      "cinematic_realism": {
+        "positive_prompt": "symbolic marble hand in ember smoke, cinematic realism, dramatic rim light, high contrast, volumetric particles, emotional tension, no text",
+        "negative_prompt": "text, watermark, logo, deformed hand, extra fingers, lowres"
+      },
+      "painterly_oil": {
+        "positive_prompt": "symbolic hand wrapped by fire and ash, premium oil painting texture with realistic anatomy, rich brush detail, dark background, dramatic warm light, no text",
+        "negative_prompt": "cartoon, anime, poster letters, watermark, blurry"
+      },
+      "film_grain_noir": {
+        "positive_prompt": "high-contrast noir cinematic frame, pale hand emerging from smoke and ember glow, subtle film grain, deep blacks, minimal composition, no text",
+        "negative_prompt": "flat lighting, colorful doodles, logo, subtitles"
+      }
+    },
+    "le_s03": {
+      "cinematic_realism": {
+        "positive_prompt": "solitary person at cluttered desk with books, night apartment, window light and dust, cinematic realism, strong depth, no text",
+        "negative_prompt": "corporate office, smiling stock style, text watermark"
+      },
+      "painterly_oil": {
+        "positive_prompt": "literary melancholic desk scene, layered oil-paint texture, books and papers, moody shadows, emotional stillness, no text",
+        "negative_prompt": "anime face, poster text, logo"
+      },
+      "film_grain_noir": {
+        "positive_prompt": "moody noir interior desk scene, lone silhouette, low key light, subtle grain, dramatic shadows, no text",
+        "negative_prompt": "overbright room, cartoon, watermark"
+      }
+    },
+    "le_s04": {
+      "cinematic_realism": {
+        "positive_prompt": "evening street with bright window reflection, lone passerby, social pressure mood, cinematic realism, reflective glass, no text",
+        "negative_prompt": "readable shop signs, logo, UI"
+      },
+      "painterly_oil": {
+        "positive_prompt": "urban street and window gaze, expressive oil strokes, cinematic perspective, emotional isolation, no text",
+        "negative_prompt": "flat cartoon, subtitles burned in"
+      },
+      "film_grain_noir": {
+        "positive_prompt": "noir street panel, reflective shop glass, passing figure, high contrast night ambiance, subtle grain, no text",
+        "negative_prompt": "neon overload, watermark"
+      }
+    },
+    "le_s05": {
+      "cinematic_realism": {
+        "positive_prompt": "lone figure by tall window overlooking distant city lights, cool tones, cinematic realism, atmospheric haze, no text",
+        "negative_prompt": "tourist vibe, sunny cheerful scene, logo"
+      },
+      "painterly_oil": {
+        "positive_prompt": "window solitude scene with city bokeh, rich painterly texture, restrained cool palette, emotional inward collapse, no text",
+        "negative_prompt": "anime style, text overlay"
+      },
+      "film_grain_noir": {
+        "positive_prompt": "dark noir interior and city lights outside window, lone silhouette, heavy contrast, grain, no text",
+        "negative_prompt": "poster typography, watermark"
+      }
+    },
+    "le_s06": {
+      "cinematic_realism": {
+        "positive_prompt": "crossroads at dusk, single figure and long shadow splitting paths, cinematic central perspective, dramatic mood, no text",
+        "negative_prompt": "road sign text, logo, blurry anatomy"
+      },
+      "painterly_oil": {
+        "positive_prompt": "symbolic crossroads decision scene, expressive oil texture, dramatic shadow geometry, emotional tension, no text",
+        "negative_prompt": "comic style, visible text"
+      },
+      "film_grain_noir": {
+        "positive_prompt": "noir crossroads composition, lone figure against split shadows, deep blacks and selective highlights, no text",
+        "negative_prompt": "bright cheerful palette, watermark"
+      }
+    },
+    "le_s07": {
+      "cinematic_realism": {
+        "positive_prompt": "quiet room corner with crouched figure, low-key cinematic light, emotional collapse, elegant realism, no text",
+        "negative_prompt": "horror gore, caricature, logo"
+      },
+      "painterly_oil": {
+        "positive_prompt": "minimal room corner, crouched character silhouette, moody oil texture, emotional low point, no text",
+        "negative_prompt": "anime, subtitles, watermark"
+      },
+      "film_grain_noir": {
+        "positive_prompt": "noir interior corner, compressed body posture, sparse light, heavy shadow, film grain, no text",
+        "negative_prompt": "flat white light, text"
+      }
+    },
+    "le_s08": {
+      "cinematic_realism": {
+        "positive_prompt": "long road with back-view figure walking toward soft light, cinematic hopeful ending, realistic texture, no text",
+        "negative_prompt": "motivational poster words, logo, overexposed whiteout"
+      },
+      "painterly_oil": {
+        "positive_prompt": "open road and distant warm exit light, painterly realism, emotional release, refined color contrast, no text",
+        "negative_prompt": "cartoon stickers, readable text"
+      },
+      "film_grain_noir": {
+        "positive_prompt": "noir-to-light transition road scene, lone back figure, subtle grain, controlled highlights, no text",
+        "negative_prompt": "watermark, flat composition"
+      }
+    }
+  }
+}

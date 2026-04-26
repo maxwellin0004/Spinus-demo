@@ -1,0 +1,20 @@
+﻿[
+  {
+    "scene_id": "s00",
+    "component_name": "OpenerConceptSwitch",
+    "input_fields": ["intro_title", "concept_terms", "concept_images", "switch_every_frames"],
+    "layout_structure": "centered doctrine opener",
+    "animation_presets": ["flash", "jitter", "push_in", "term_switch"],
+    "asset_slots": ["opener_images"],
+    "responsive_rules": "16:9 safe area with centered text lock-up"
+  },
+  {
+    "scene_id": "s01-s07",
+    "component_name": "SceneCard",
+    "input_fields": ["image", "duration_frames", "palette", "subtitle_lines"],
+    "layout_structure": "single hero image with bottom subtitle",
+    "animation_presets": ["slow_drift", "slow_zoom", "hard_cut_scene_change"],
+    "asset_slots": ["body_hero_images"],
+    "responsive_rules": "subtitle bottom safe area, no dense page text"
+  }
+]

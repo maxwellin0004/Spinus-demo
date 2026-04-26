@@ -1,0 +1,35 @@
+﻿{
+  "theme_id": "book_1984_social_gaze",
+  "meta": {
+    "video_id": "validation_1984_gaze_v1",
+    "book_title": "《1984》",
+    "author_line": "乔治·奥威尔 | 著",
+    "topic_statement": "当你习惯被看见，你会忘记如何看见自己",
+    "duration_sec": 37,
+    "style_variant": "film_grain_noir",
+    "voiceover_enabled": true
+  },
+  "hook": {
+    "scene_type": "burnHook",
+    "symbolic_metaphor": "被巨大眼睛投影包围的人影",
+    "hook_line_zh": "真正可怕的不是监视，而是你开始主动迎合目光",
+    "hook_line_en": "What is terrifying is not surveillance, but choosing to perform for it.",
+    "hook_image": "/images/literary-embers/opener-1984-gaze.png"
+  },
+  "cover_bridge": {
+    "scene_type": "bookCascade",
+    "flash_books": [
+      {"title": "《1984》", "author": "乔治·奥威尔", "palette": ["#232323", "#727272", "#d7d7d7"], "cover_image": "/images/literary-embers/covers/1984-real.png", "source": "public_book_cover"},
+      {"title": "《美丽新世界》", "author": "赫胥黎", "palette": ["#1e3553", "#4f84c4", "#d6e5f5"], "cover_image": "/images/literary-embers/covers/brave-new-world-real.png", "source": "public_book_cover"},
+      {"title": "《动物农场》", "author": "乔治·奥威尔", "palette": ["#4f1f1f", "#a04848", "#edd5d5"], "cover_image": "/images/literary-embers/covers/animal-farm-real.png", "source": "public_book_cover"}
+    ]
+  },
+  "scenes": [
+    {"scene_id": "le_s03", "scene_type": "deskPanel", "duration_frames": 124, "accent_text": "你在写给谁看", "subtitle_zh": "很多表达不是为了表达，而是为了被允许", "subtitle_en": "Much expression is not to express, but to be permitted.", "scene_image": "/images/literary-embers/panel-1984-desk.png", "illustration_note": "屏幕冷光与独坐人物"},
+    {"scene_id": "le_s04", "scene_type": "streetPanel", "duration_frames": 156, "accent_text": "每一步都像表演", "subtitle_zh": "当目光变成秩序，你会把真实藏进沉默", "subtitle_en": "When gaze becomes order, truth gets hidden in silence.", "scene_image": "/images/literary-embers/panel-1984-street.png", "illustration_note": "监控感街道"},
+    {"scene_id": "le_s05", "scene_type": "windowPanel", "duration_frames": 128, "accent_text": "你慢慢失去判断", "subtitle_zh": "你不再问对不对，只问会不会被接受", "subtitle_en": "You stop asking if it is right, and ask if it is accepted.", "scene_image": "/images/literary-embers/panel-1984-window.png", "illustration_note": "高窗与远景"},
+    {"scene_id": "le_s06", "scene_type": "crossroadPanel", "duration_frames": 156, "accent_text": "把视线关掉一次", "subtitle_zh": "自由不是没人看你，而是你敢不表演", "subtitle_en": "Freedom is not being unseen, but refusing to perform.", "scene_image": "/images/literary-embers/panel-1984-crossroad.png", "illustration_note": "岔路和阴影"},
+    {"scene_id": "le_s07", "scene_type": "collapsePanel", "duration_frames": 173, "accent_text": "先把自己找回来", "subtitle_zh": "你可以慢一点，但别把自己交给掌声", "subtitle_en": "Go slower if needed, but do not outsource your self to applause.", "scene_image": "/images/literary-embers/panel-1984-room.png", "illustration_note": "低谷室内"},
+    {"scene_id": "le_s08", "scene_type": "walkawayPanel", "duration_frames": 129, "accent_text": "从今天开始", "subtitle_zh": "从今天起，至少做一次不为他人目光的决定", "subtitle_en": "Starting today, make one decision that is not for other eyes.", "scene_image": "/images/literary-embers/panel-1984-walk.png", "illustration_note": "向光背影"}
+  ]
+}

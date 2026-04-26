@@ -1,0 +1,22 @@
+﻿{
+  "protocol": "audio_first_then_subtitle_backfill",
+  "provider": "elevenlabs",
+  "steps": [
+    "Read sentence-level voiceover units with stable voice_id values.",
+    "Generate final Chinese voiceover audio using ElevenLabs with timestamps.",
+    "Use the returned timestamp alignment as the source of truth.",
+    "Write subtitle_timeline.generated.vertical.json with bilingual cues keyed by voice_id and visual_section_id.",
+    "Update video-app/src/data/LiteraryEmbersValidationAudio.ts to read the aligned cues and final voiceover audio path.",
+    "Render only after audio-aligned subtitle timing is wired into the composition."
+  ],
+  "fallback": {
+    "allowed": true,
+    "timing_status": "estimated_after_audio_duration_fit",
+    "conditions": ["audio was generated but timestamp alignment is unavailable"]
+  },
+  "hard_rules": [
+    "Do not render final voiceover versions from hand-guessed subtitle frames.",
+    "Every final subtitle cue must map to a voice_id and a visual_section_id.",
+    "Bilingual subtitle text can be authored manually, but timing must come from generated audio."
+  ]
+}

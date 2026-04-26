@@ -1,0 +1,50 @@
+{
+  "template_id": "philosophy_montage_doctrine",
+  "video_id": "stoic_boundary_validation_v1",
+  "orientation": "horizontal",
+  "fps": 30,
+  "voiceover_units": [
+    {
+      "voice_id": "sb_v01",
+      "visual_section_id": "s00",
+      "text": "今天我们要讲的，是斯多葛主义。",
+      "emphasis_words": ["斯多葛主义"]
+    },
+    {
+      "voice_id": "sb_v02",
+      "visual_section_id": "s01",
+      "text": "它不是让你没情绪，而是让你别把所有外界刺激都请进内心。",
+      "emphasis_words": ["外界刺激", "内心"]
+    },
+    {
+      "voice_id": "sb_v03",
+      "visual_section_id": "s02",
+      "text": "一句评价、一条消息、一次冷脸，本来只是事件。你一旦反复回放，它就会从事件变成情绪占领。",
+      "emphasis_words": ["事件", "反复回放", "情绪占领"]
+    },
+    {
+      "voice_id": "sb_v04",
+      "visual_section_id": "s04",
+      "text": "斯多葛主义最核心的一步，不是压住情绪，而是先切开两层：外界发生了什么，和我准备怎么解释它。",
+      "emphasis_words": ["两层", "解释它"]
+    },
+    {
+      "voice_id": "sb_v05",
+      "visual_section_id": "s05",
+      "text": "在你准备回复、争辩、证明自己之前，先停一秒。",
+      "emphasis_words": ["先停一秒"]
+    },
+    {
+      "voice_id": "sb_v06",
+      "visual_section_id": "s06",
+      "text": "问一句：这件事，到底属于我能控制的部分吗？",
+      "emphasis_words": ["能控制"]
+    },
+    {
+      "voice_id": "sb_v07",
+      "visual_section_id": "s07",
+      "text": "当你守住内心入口，情绪不会立刻消失，但它不会再接管你。这，就是斯多葛主义真正有用的地方。",
+      "emphasis_words": ["内心入口", "不会再接管", "真正有用"]
+    }
+  ]
+}

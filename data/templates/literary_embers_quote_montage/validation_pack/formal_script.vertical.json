@@ -1,0 +1,5 @@
+﻿[
+  {"time_range": "0.0-4.8s", "section": "hook", "visual_description": "黑场中出现被火焰包裹的灰白雕塑手部，底部双语字幕直击主题", "audio_description": "低沉中文口播，轻环境底噪", "notes": "不先上书名"},
+  {"time_range": "4.8-7.9s", "section": "bridge", "visual_description": "真实书封快速闪现，最终锁定《月亮与六便士》", "audio_description": "读出书名", "notes": "建立文学语境"},
+  {"time_range": "7.9-36.8s", "section": "body+outro", "visual_description": "顶部持续书名锁定，6 幅情绪图依次推进，底部双语字幕承载信息", "audio_description": "句句稳定推进，尾段收慢", "notes": "主体靠情绪画面和文案"}
+]

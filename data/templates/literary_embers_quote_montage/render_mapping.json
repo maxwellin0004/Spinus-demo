@@ -1,0 +1,22 @@
+﻿{
+  "component": "LiteraryEmbersValidationComposition",
+  "orientation": "vertical",
+  "mapping": {
+    "meta.book_title": "video-app/src/data/LiteraryEmbersValidationData.ts:literaryEmbersMeta.bookTitle",
+    "meta.author_line": "video-app/src/data/LiteraryEmbersValidationData.ts:literaryEmbersMeta.authorLine",
+    "hook.hook_image": "video-app/src/scenes/literaryEmbers/LiteraryEmbersScenes.tsx:sceneImageMap.le_s01",
+    "cover_bridge.flash_books[].cover_image": "video-app/src/data/LiteraryEmbersValidationData.ts:literaryEmbersCoverFlow[].coverImage",
+    "cover_bridge.flash_books[].title": "video-app/src/data/LiteraryEmbersValidationData.ts:literaryEmbersCoverFlow[].title",
+    "cover_bridge.flash_books[].author": "video-app/src/data/LiteraryEmbersValidationData.ts:literaryEmbersCoverFlow[].author",
+    "scenes[].scene_image": "video-app/src/scenes/literaryEmbers/LiteraryEmbersScenes.tsx:sceneImageMap[scene.id]",
+    "scenes[].accent_text": "video-app/src/data/LiteraryEmbersValidationData.ts:literaryEmbersScenes[].accentText",
+    "audio.voiceover_audio_path": "video-app/src/data/LiteraryEmbersValidationAudio.ts:literaryEmbersAudio.voiceover.src",
+    "audio.subtitle_timeline": "video-app/src/data/LiteraryEmbersValidationAudio.ts:literaryEmbersSubtitleCues"
+  },
+  "props_contract": {
+    "book_lockup": ["bookTitle", "authorLine"],
+    "cover_card": ["title", "author", "coverImage", "palette"],
+    "scene_card": ["id", "type", "duration", "accentText"],
+    "bilingual_subtitles": ["voiceId", "startFrame", "endFrame", "textZh", "textEn", "emphasisWords"]
+  }
+}

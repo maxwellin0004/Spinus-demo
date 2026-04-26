@@ -1,0 +1,5 @@
+﻿[
+  {"section": "hook", "source_lines": "这句话会刺痛所有不甘心却一直替别人活的人。", "voiceover_lines": "这句话会刺痛所有不甘心却一直替别人活的人。", "subtitle_chunks": ["这句话会刺痛所有", "不甘心却一直替别人活的人"], "emphasis_words": ["替别人活"], "pauses_emphasis": "后半句压重", "sfx_notes": "轻白闪", "notes": "双语字幕同步出现"},
+  {"section": "bridge", "source_lines": "今天分享《月亮与六便士》。", "voiceover_lines": "今天分享《月亮与六便士》。", "subtitle_chunks": ["今天分享《月亮与六便士》"], "emphasis_words": ["《月亮与六便士》"], "pauses_emphasis": "书名轻停顿", "sfx_notes": "卡片翻入", "notes": "时长短"},
+  {"section": "body_all", "source_lines": "每段保持一句完整观点。", "voiceover_lines": "逐句口播，与每个 scene 一一对应。", "subtitle_chunks": ["每句 1-2 行"], "emphasis_words": ["观点词"], "pauses_emphasis": "句尾停顿 0.25s 左右", "sfx_notes": "无密集音效", "notes": "底部双语，中文主，英文辅"}
+]

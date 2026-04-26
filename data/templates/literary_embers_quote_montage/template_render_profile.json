@@ -1,0 +1,32 @@
+﻿{
+  "template_id": "literary_embers_quote_montage",
+  "render_profile_version": "1.0.0",
+  "composition_id": "literary-embers-validation-preview",
+  "video": {
+    "codec": "h264",
+    "pixel_format": "yuv420p",
+    "fps": 30,
+    "width": 720,
+    "height": 960,
+    "crf_recommendation": 18,
+    "audio_bitrate": "192k"
+  },
+  "audio": {
+    "voiceover_enabled": true,
+    "voiceover_target_lufs": -16,
+    "bgm_enabled": false,
+    "peak_limit_db": -1
+  },
+  "subtitle": {
+    "track": "bilingual",
+    "sync_source": "subtitle_timeline.generated.vertical.json",
+    "safe_bottom_px": 56
+  },
+  "output": {
+    "default_file": "video-app/out/literary-embers-validation-preview.mp4",
+    "preview_file": "video-app/out/literary-embers-validation-preview.mp4"
+  },
+  "command": {
+    "render": "npx remotion render literary-embers-validation-preview out/literary-embers-validation-preview.mp4"
+  }
+}

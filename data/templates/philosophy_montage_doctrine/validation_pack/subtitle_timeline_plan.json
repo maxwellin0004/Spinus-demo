@@ -1,0 +1,6 @@
+﻿{
+  "orientation": "horizontal",
+  "status": "estimated_before_tts",
+  "rule": "Generate ElevenLabs audio first, then rebuild subtitle_timeline.generated.horizontal.json from real timing.",
+  "voice_ids": ["sb_v01", "sb_v02", "sb_v03", "sb_v04", "sb_v05", "sb_v06", "sb_v07"]
+}

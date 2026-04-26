@@ -1,0 +1,37 @@
+﻿{
+  "validation_topic": "斯多葛主义的情绪边界",
+  "orientation": "horizontal",
+  "opener_reuse": {
+    "reuse_existing_concept_images": true,
+    "source": "video-app/public/images/philosophy-montage/opener-style/opener_01.jpg ~ opener_10.jpg",
+    "note": "按用户要求，开篇概念背景图继续复用现有那套。"
+  },
+  "body_asset_map": [
+    {
+      "visual_section_id": "s01",
+      "purpose": "情绪被外界评价和噪音牵动",
+      "image": "/images/philosophy-montage/stoic-boundary-pressure-crowd.png"
+    },
+    {
+      "visual_section_id": "s02",
+      "purpose": "事件被放大为情绪占领",
+      "image": "/images/philosophy-montage/stoic-boundary-pressure-crowd.png"
+    },
+    {
+      "visual_section_id": "s04",
+      "purpose": "外界混乱 vs 内在秩序",
+      "image": "/images/philosophy-montage/stoic-boundary-chaos-vs-order.png"
+    },
+    {
+      "visual_section_id": "s05",
+      "purpose": "回复前暂停一秒",
+      "image": "/images/philosophy-montage/stoic-boundary-pause-before-reply.png"
+    },
+    {
+      "visual_section_id": "s07",
+      "purpose": "恢复平静后的收束",
+      "image": "/images/philosophy-montage/stoic-boundary-morning-walk.png"
+    }
+  ],
+  "status": "assets_ready_for_second_validation_render"
+}

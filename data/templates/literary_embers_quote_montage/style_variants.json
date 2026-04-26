@@ -1,0 +1,6 @@
+﻿{
+  "variants": [
+    {"variant_id": "ink_noir_vertical", "description": "High-contrast monochrome illustration with warm gold subtitle accents and mild grain.", "colors": ["#050505", "#f4f4f2", "#f4d03f", "#d0d0cc"], "motion": "slow push + slight drift", "subtitle_style": "gold zh + white italic en"},
+    {"variant_id": "paper_fog_vertical", "description": "Softer paper-white base with lower contrast and gentler transition flicker.", "colors": ["#f7f3ea", "#1c1c1c", "#d8b05e", "#d9d4c9"], "motion": "slow fade + haze drift", "subtitle_style": "muted gold zh + ivory en"}
+  ]
+}

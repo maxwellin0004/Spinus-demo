@@ -1,0 +1,10 @@
+﻿[
+  {"section": "hook", "visual_goal": "用象征性燃烧画面建立刺痛感", "visual_content": "灰白手部雕塑被火焰和烟雾包裹，底部双语字幕命中人群", "asset_needs": "hook 主图", "motion_transition": "白闪+推近", "notes": "绝不先上书名"},
+  {"section": "bridge", "visual_goal": "完成文学语境到主书目的过门", "visual_content": "多本真实书封闪现后锁定目标书", "asset_needs": "真实书封 4 张", "motion_transition": "卡片闪现+中心锁定", "notes": "维持轻雾和曝光漂白"},
+  {"section": "body_01", "visual_goal": "把观点钉在现实生活感上", "visual_content": "书堆与桌前人物情绪图", "asset_needs": "panel-trapped-desk", "motion_transition": "慢推", "notes": "顶部固定书名"},
+  {"section": "body_02", "visual_goal": "表现体面与旁观者目光", "visual_content": "橱窗和路过人物情绪图", "asset_needs": "panel-gaze-window", "motion_transition": "硬切到新场景", "notes": "保持高反差"},
+  {"section": "body_03", "visual_goal": "放大内耗感", "visual_content": "窗边人物与冷调城市", "asset_needs": "panel-comparison-machine", "motion_transition": "慢移", "notes": "景深更空"},
+  {"section": "body_04", "visual_goal": "把问题转换成抉择", "visual_content": "岔路与巨大阴影", "asset_needs": "panel-crossroad-shadow", "motion_transition": "硬切", "notes": "构图中轴对称"},
+  {"section": "body_05", "visual_goal": "压到最低点后准备反转", "visual_content": "房间角落蜷缩人物", "asset_needs": "panel-collapse-room", "motion_transition": "慢推", "notes": "情绪最低谷"},
+  {"section": "outro", "visual_goal": "给出开放式醒悟收束", "visual_content": "空白长路与背影向亮处走", "asset_needs": "panel-walkaway-light", "motion_transition": "亮场收尾", "notes": "最后一段留白"}
+]

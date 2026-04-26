@@ -1,0 +1,1079 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - link "登录/注册" [ref=e5] [cursor=pointer]:
+      - /url: https://accounts.douban.com/passport/login?source=book
+    - link "下载豆瓣客户端" [ref=e7] [cursor=pointer]:
+      - /url: https://www.douban.com/doubanapp/app?channel=top-nav
+    - list [ref=e9]:
+      - listitem [ref=e10]:
+        - link "豆瓣" [ref=e11] [cursor=pointer]:
+          - /url: https://www.douban.com
+      - listitem [ref=e12]:
+        - link "读书" [ref=e13] [cursor=pointer]:
+          - /url: https://book.douban.com
+      - listitem [ref=e14]:
+        - link "电影" [ref=e15] [cursor=pointer]:
+          - /url: https://movie.douban.com
+      - listitem [ref=e16]:
+        - link "音乐" [ref=e17] [cursor=pointer]:
+          - /url: https://music.douban.com
+      - listitem [ref=e18]:
+        - link "播客" [ref=e19] [cursor=pointer]:
+          - /url: https://www.douban.com/podcast/
+      - listitem [ref=e20]:
+        - link "同城" [ref=e21] [cursor=pointer]:
+          - /url: https://www.douban.com/location
+      - listitem [ref=e22]:
+        - link "小组" [ref=e23] [cursor=pointer]:
+          - /url: https://www.douban.com/group
+      - listitem [ref=e24]:
+        - link "阅读" [ref=e25] [cursor=pointer]:
+          - /url: https://read.douban.com/?dcs=top-nav&dcm=douban
+      - listitem [ref=e26]:
+        - link "FM" [ref=e27] [cursor=pointer]:
+          - /url: https://fm.douban.com/?from_=shire_top_nav
+      - listitem [ref=e28]:
+        - link "时间" [ref=e29] [cursor=pointer]:
+          - /url: https://time.douban.com/?dt_time_source=douban-web_top_nav
+      - listitem [ref=e30]:
+        - link "豆品" [ref=e31] [cursor=pointer]:
+          - /url: https://market.douban.com/?utm_campaign=douban_top_nav&utm_source=douban&utm_medium=pc_web
+  - generic [ref=e32]:
+    - generic [ref=e34]:
+      - link "豆瓣读书" [ref=e36] [cursor=pointer]:
+        - /url: https://book.douban.com
+      - group "搜索：" [ref=e39]:
+        - textbox [ref=e41]:
+          - /placeholder: 书名、作者、ISBN
+        - button "搜索" [ref=e43] [cursor=pointer]
+    - generic [ref=e44]:
+      - list [ref=e46]:
+        - listitem [ref=e47]:
+          - link "购书单" [ref=e48] [cursor=pointer]:
+            - /url: https://book.douban.com/cart/
+        - listitem [ref=e49]:
+          - link "电子图书" [ref=e50] [cursor=pointer]:
+            - /url: https://read.douban.com/ebooks/?dcs=book-nav&dcm=douban
+        - listitem [ref=e51]:
+          - link "2025年度榜单" [ref=e52] [cursor=pointer]:
+            - /url: https://book.douban.com/annual/2025/?fullscreen=1&dt_from=navigation
+        - listitem [ref=e53]:
+          - link "2025年度报告" [ref=e54] [cursor=pointer]:
+            - /url: https://c9.douban.com/app/standbyme-2025/?autorotate=false&fullscreen=true&hidenav=true&monitor_screenshot=true&dt_from=web_navigation
+      - link [ref=e55] [cursor=pointer]:
+        - /url: https://book.douban.com/annual/2025/?fullscreen=1&&dt_from=book_navigation
+  - generic [ref=e56]:
+    - heading "月亮与六便士" [level=1] [ref=e57]: 月亮与六便士
+    - heading "毛姆经典作品" [level=2] [ref=e58]
+    - generic [ref=e60]:
+      - generic [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - generic [ref=e64]:
+              - link "月亮与六便士" [ref=e66] [cursor=pointer]:
+                - /url: https://img3.doubanio.com/view/subject/l/public/s28382157.jpg
+                - img "月亮与六便士" [ref=e67]
+              - generic [ref=e68]:
+                - generic [ref=e69]:
+                  - text: "作者:"
+                  - link "[英] 威廉·萨默塞特·毛姆" [ref=e70] [cursor=pointer]:
+                    - /url: /author/4576950
+                - generic [ref=e71]:
+                  - text: "译者:"
+                  - link "苏福忠" [ref=e72] [cursor=pointer]:
+                    - /url: /search/%E8%8B%8F%E7%A6%8F%E5%BF%A0
+                - text: "出版社:"
+                - link "陕西师范大学出版社" [ref=e73] [cursor=pointer]:
+                  - /url: https://book.douban.com/press/2438
+                - text: "出品方:"
+                - link "雅众文化" [ref=e74] [cursor=pointer]:
+                  - /url: https://book.douban.com/producers/41
+                - text: "出版年: 2016-1"
+                - text: "ISBN: 9787561383254"
+                - text: "页数: 240"
+                - text: "装帧: 精装"
+                - text: "定价: 29.80"
+                - text: "原作名: The moon and Sixpence"
+                - text: "丛书:"
+                - link "“悦经典”丛书" [ref=e75] [cursor=pointer]:
+                  - /url: https://book.douban.com/series/18820
+            - generic [ref=e77]:
+              - generic [ref=e78]: 豆瓣评分
+              - generic [ref=e79]:
+                - strong [ref=e80]: "8.9"
+                - link "20217人评价" [ref=e85] [cursor=pointer]:
+                  - /url: comments
+              - generic "力荐" [ref=e86]: 5星
+              - text: 52.1%
+              - generic "推荐" [ref=e88]: 4星
+              - text: 38.0%
+              - generic "还行" [ref=e90]: 3星
+              - text: 8.8%
+              - generic "较差" [ref=e92]: 2星
+              - text: 0.8%
+              - generic "很差" [ref=e94]: 1星
+              - text: 0.4%
+          - generic [ref=e95]:
+            - link "想读" [ref=e96] [cursor=pointer]:
+              - /url: "#"
+              - button "想读" [ref=e99]
+            - link "在读" [ref=e100] [cursor=pointer]:
+              - /url: "#"
+              - button "在读" [ref=e103]
+            - link "读过" [ref=e104] [cursor=pointer]:
+              - /url: "#"
+              - button "读过" [ref=e107]
+            - generic [ref=e110]:
+              - text: "评价:"
+              - generic [ref=e111]:
+                - generic:
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e112] [cursor=pointer]
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e113] [cursor=pointer]
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e114] [cursor=pointer]
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e115] [cursor=pointer]
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e116] [cursor=pointer]
+          - list [ref=e118]:
+            - listitem [ref=e119]:
+              - img [ref=e120]
+              - link "写笔记" [ref=e121] [cursor=pointer]:
+                - /url: https://www.douban.com/topic/create?subtype=annotation&subject_id=26707463
+            - listitem [ref=e122]:
+              - img [ref=e123]
+              - link "写书评" [ref=e124] [cursor=pointer]:
+                - /url: https://book.douban.com/subject/26707463/new_review
+            - listitem [ref=e125]:
+              - generic [ref=e126]:
+                - img [ref=e127]
+                - link "加入购书单" [ref=e128] [cursor=pointer]:
+                  - /url: https://www.douban.com/accounts/passport/login?source=book
+            - listitem [ref=e129]:
+              - link "分享到" [ref=e130] [cursor=pointer]:
+                - /url: "#"
+          - link "推荐" [ref=e133] [cursor=pointer]:
+            - /url: https://www.douban.com/accounts/register?reason=collect
+        - generic [ref=e134]:
+          - heading "内容简介 · · · · · ·" [level=2] [ref=e135]
+          - generic [ref=e138]:
+            - paragraph [ref=e139]: 名家名作名译——悦经典系列 14
+            - paragraph [ref=e140]: .
+            - paragraph [ref=e141]: 剖析不朽人性，结构独特灵魂。
+            - paragraph [ref=e142]: 20世纪拥有最多读者的作家之一，英文现实主义巨擘，故事圣手毛姆代表性长篇名作。
+            - paragraph [ref=e143]: .
+            - paragraph [ref=e144]: 一位四十岁才学习绘画的证券经纪人，放弃优裕的生活，疯狂迷恋上了绘画。为了追求艺术理想，他饱尝贫穷与饥饿的煎熬，忍受精神上的痛苦折磨，最终遁迹与世隔绝 的塔西提岛，成为一个自成一格的画家。《月亮与六便士》的主人公一生活动的轨迹仿佛就是在解构小说原型高更的画作主题：我们从何处 来？我们是谁？我们向何处去？
+            - paragraph [ref=e145]: 毛姆用幽默的文字、动人的情节、深刻的思想编织了一位艺术家的传奇人生，探索了艺术与生活的矛盾与相互作用。这部堪称完美的小说成为了经典中的经典，让一代又一代读者将之奉为必读佳作。
+            - paragraph [ref=e146]: ……………………
+            - paragraph [ref=e147]: 读《月亮与六便士》就像一头撞在了高耸的冰山上，令平庸的日常生活彻底解体！
+            - paragraph [ref=e148]: ——弗吉尼亚•伍尔夫
+          - heading [level=2]
+          - heading "月亮与六便士的创作者 · · · · · ·" [level=2] [ref=e149]
+          - generic [ref=e150]:
+            - paragraph
+            - list [ref=e152]:
+              - listitem [ref=e153]:
+                - link "[英国] 威廉·萨默塞特·毛姆" [ref=e154] [cursor=pointer]:
+                  - /url: https://book.douban.com/author/4576950/
+                  - img "[英国] 威廉·萨默塞特·毛姆" [ref=e155]
+                - generic [ref=e156]:
+                  - link "威廉·萨默塞特·毛姆" [ref=e157] [cursor=pointer]:
+                    - /url: https://book.douban.com/author/4576950/
+                  - generic [ref=e158]: 作者
+              - listitem [ref=e159]:
+                - link "苏福忠" [ref=e160] [cursor=pointer]:
+                  - /url: https://book.douban.com/author/185586/
+                  - img "苏福忠" [ref=e161]
+                - generic [ref=e162]:
+                  - link "苏福忠" [ref=e163] [cursor=pointer]:
+                    - /url: https://book.douban.com/author/185586/
+                  - generic [ref=e164]: 译者
+              - listitem
+          - heading "作者简介 · · · · · ·" [level=2] [ref=e165]
+          - generic [ref=e168]:
+            - paragraph [ref=e169]: 作者：
+            - paragraph [ref=e170]: 威廉•萨默赛特•毛姆
+            - paragraph [ref=e171]: 英国作家、小说家、剧作家，20世纪拥有最多读者的作家之一。
+            - paragraph [ref=e172]: 1874年出生在巴黎，先在坎特伯雷国王学校学习，后进入海德堡大学攻读哲学，最后进圣托马斯医学院学医。1897年医科毕业后成为医生，并创作了第一部长篇小说。此后弃医从文，笔耕不辍。1954年，英国女王授予他“荣誉侍从”的称号，他成为皇家文学会的会员。代表作有《月亮与六便士》《刀锋》《人生的枷锁》等长篇小说及多部短篇小说。
+            - paragraph [ref=e173]: .
+            - paragraph [ref=e174]: 译者：
+            - paragraph [ref=e175]: 苏福忠
+            - paragraph [ref=e176]: 著名翻译家，译作有《一九八四》《瓦尔登湖》《红字》及厄普代克四部曲《兔子富了》等，著有《译事余墨》，发表其他各类个人作品六十余万字。
+          - generic [ref=e178]:
+            - heading "原文摘录 · · · · · · ( 全部 )" [level=2] [ref=e179]:
+              - text: 原文摘录 · · · · · ·
+              - generic [ref=e180]:
+                - text: (
+                - link "全部" [ref=e181] [cursor=pointer]:
+                  - /url: blockquotes
+                - text: )
+            - list [ref=e182]:
+              - listitem [ref=e183]:
+                - figure [ref=e184]:
+                  - text: 我们每个人生在世界上都是孤独的。每个人都被囚禁在一座铁塔里，只能靠一些符号同别人传达自己的思想；而这些符号并没有共同的价值，因此它们的意义是模糊的、不确定的。我们非常可怜地想把自己心中的财富传送给别人，但是他们却没有接受这些财富的能力。因此我们只能孤独地行走，尽管身体互相依傍却并不在一起，即不了解别人也不能为别人所了解。 (
+                  - link "查看原文" [ref=e185] [cursor=pointer]:
+                    - /url: https://book.douban.com/annotation/17521470/
+                  - text: )
+                  - generic [ref=e186]:
+                    - generic [ref=e187]:
+                      - link [ref=e188] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/6478391/
+                        - img [ref=e189]
+                      - link "ziruofeier" [ref=e190] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/6478391/
+                      - text: 41 回复 1148赞 2012-03-29 00:07:19
+                    - generic "引自第190页" [ref=e191]: —— 引自第190页
+              - listitem [ref=e192]:
+                - figure [ref=e193]:
+                  - text: 她对自己的丈夫从来就没有什么感情，过去我认为她爱施特略夫，实际上只是男人的爱抚和生活的安适在女人身上引起的自然反应。大多数女人都把这种反应当做爱情了。这是一种对任何一个人都可能产生的被动的感情，正像藤蔓可以攀附在随便哪株树上一样。因为这种感情可以叫一个女孩子嫁给任何一个需要她的男人，相信日久天长便会对这个人产生爱情，所以世俗的见解便断定了它的力量。但是说到底，这种感情是什么呢？它只不过是对有保障的生活的满足，对拥有家资的骄傲，对有人需要自己沾沾自喜，和对建立起自己的家庭洋洋得意而已；女人们秉性善良、喜爱虚荣，因此便认为这种感情极富于精神价值。但是在冲动的热情前面，这种感情是毫无防卫能力的。 (
+                  - link "查看原文" [ref=e194] [cursor=pointer]:
+                    - /url: https://book.douban.com/annotation/19112596/
+                  - text: )
+                  - generic [ref=e195]:
+                    - generic [ref=e196]:
+                      - link [ref=e197] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/mado1983/
+                        - img [ref=e198]
+                      - link "mado1983" [ref=e199] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/mado1983/
+                      - text: 68 回复 524赞 2012-06-20 23:38:29
+                    - generic "引自第138页" [ref=e200]: —— 引自第138页
+            - paragraph [ref=e201]:
+              - text: ">"
+              - link "全部原文摘录" [ref=e202] [cursor=pointer]:
+                - /url: blockquotes
+          - generic [ref=e203]:
+            - heading [level=2]
+            - heading "丛书信息 · · · · · ·" [level=2] [ref=e204]
+            - generic [ref=e205]:
+              - link "“悦经典”丛书" [ref=e206] [cursor=pointer]:
+                - /url: https://book.douban.com/series/18820
+              - text: (共32册)， 这套丛书还有 《人间失格 斜阳》《达洛维夫人》《舞姬》《人间失格》《白色的虹：帕乌斯托夫斯基短篇集》 等 。
+          - generic [ref=e207]:
+            - heading "喜欢读\"月亮与六便士\"的人也喜欢的电子书 · · · · · ·" [level=2] [ref=e208]
+            - generic [ref=e209]: 支持 Web、iPhone、iPad、Android 阅读器
+            - generic [ref=e210]:
+              - generic [ref=e211]:
+                - term [ref=e212]:
+                  - link [ref=e213] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/24981002/?dcs=subject-rec&dcm=douban&dct=26707463
+                    - img [ref=e215]
+                - definition [ref=e216]:
+                  - link "面纱" [ref=e218] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/24981002/
+                  - generic [ref=e219]: 6.99元
+              - generic [ref=e220]:
+                - term [ref=e221]:
+                  - link [ref=e222] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/2429996/?dcs=subject-rec&dcm=douban&dct=26707463
+                    - img [ref=e224]
+                - definition [ref=e225]:
+                  - link "鼠疫" [ref=e227] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/2429996/
+                  - generic [ref=e228]: 9.99元
+              - generic [ref=e229]:
+                - term [ref=e230]:
+                  - link [ref=e231] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/8659962/?dcs=subject-rec&dcm=douban&dct=26707463
+                    - img [ref=e233]
+                - definition [ref=e234]:
+                  - link "远山淡影" [ref=e236] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/8659962/
+                  - generic [ref=e237]: 14.99元
+              - generic [ref=e238]:
+                - term [ref=e239]:
+                  - link [ref=e240] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/2538477/?dcs=subject-rec&dcm=douban&dct=26707463
+                    - img [ref=e242]
+                - definition [ref=e243]:
+                  - link "情人" [ref=e245] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/2538477/
+                  - generic [ref=e246]: 24.99元
+              - generic [ref=e247]:
+                - term [ref=e248]:
+                  - link [ref=e249] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/109905425/?dcs=subject-rec&dcm=douban&dct=26707463
+                    - img [ref=e251]
+                - definition [ref=e252]:
+                  - link "树上的男爵（卡尔维诺经典）" [ref=e254] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/109905425/
+                  - generic [ref=e255]: 25.99元
+          - generic [ref=e256]:
+            - heading "喜欢读\"月亮与六便士\"的人也喜欢 · · · · · ·" [level=2] [ref=e257]
+            - generic [ref=e258]:
+              - generic [ref=e259]:
+                - term [ref=e260]:
+                  - link [ref=e261] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/2035162/
+                    - img [ref=e262]
+                - definition [ref=e263]:
+                  - link "刀锋" [ref=e264] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/2035162/
+                  - text: "9.0"
+              - generic [ref=e265]:
+                - term [ref=e266]:
+                  - link [ref=e267] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/4908885/
+                    - img [ref=e268]
+                - definition [ref=e269]:
+                  - link "局外人" [ref=e270] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/4908885/
+                  - text: "9.1"
+              - generic [ref=e271]:
+                - term [ref=e272]:
+                  - link [ref=e273] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/26986954/
+                    - img [ref=e274]
+                - definition [ref=e275]:
+                  - link "新名字的故事" [ref=e276] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/26986954/
+                  - text: "9.2"
+              - generic [ref=e277]:
+                - term [ref=e278]:
+                  - link [ref=e279] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/26717204/
+                    - img [ref=e280]
+                - definition [ref=e281]:
+                  - link "毛姆经典短篇集" [ref=e282] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/26717204/
+                  - text: "8.3"
+              - generic [ref=e283]:
+                - term [ref=e284]:
+                  - link [ref=e285] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1457778/
+                    - img [ref=e286]
+                - definition [ref=e287]:
+                  - link "人生的枷锁" [ref=e288] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1457778/
+                  - text: "9.0"
+              - generic [ref=e289]:
+                - term [ref=e290]:
+                  - link [ref=e291] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/26878124/
+                    - img [ref=e292]
+                - definition [ref=e293]:
+                  - link "我的天才女友" [ref=e294] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/26878124/
+                  - text: "8.8"
+              - generic [ref=e295]:
+                - term [ref=e296]:
+                  - link [ref=e297] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/4820710/
+                    - img [ref=e298]
+                - definition [ref=e299]:
+                  - link "1984" [ref=e300] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/4820710/
+                  - text: "9.4"
+              - generic [ref=e301]:
+                - term [ref=e302]:
+                  - link [ref=e303] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/2154960/
+                    - img [ref=e304]
+                - definition [ref=e305]:
+                  - link "一个陌生女人的来信" [ref=e306] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/2154960/
+                  - text: "8.7"
+              - generic [ref=e307]:
+                - term [ref=e308]:
+                  - link [ref=e309] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/30172069/
+                    - img [ref=e310]
+                - definition [ref=e311]:
+                  - link "失踪的孩子" [ref=e312] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/30172069/
+                  - text: "9.2"
+              - generic [ref=e313]:
+                - term [ref=e314]:
+                  - link [ref=e315] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/25884880/
+                    - img [ref=e316]
+                - definition [ref=e317]:
+                  - link "我不知道该说什么，关于死亡还是爱..." [ref=e318] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/25884880/
+                  - text: "9.2"
+          - generic [ref=e319]:
+            - generic [ref=e320]:
+              - link "我来说两句" [ref=e321] [cursor=pointer]:
+                - /url: https://www.douban.com/register?reason=review
+              - heading "短评 · · · · · · ( 全部 7689 条 )" [level=2] [ref=e322]:
+                - text: 短评 · · · · · ·
+                - generic [ref=e323]:
+                  - text: (
+                  - link "全部 7689 条" [ref=e324] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/26707463/comments/
+                  - text: )
+            - link "热门" [ref=e327]:
+              - /url: https://book.douban.com/subject/26707463/comments?sort=score
+            - list [ref=e330]:
+              - listitem [ref=e331]:
+                - generic [ref=e332]:
+                  - heading "61 有用 王方休 2016-05-22 19:43:52" [level=3] [ref=e333]:
+                    - generic [ref=e334]:
+                      - text: "61"
+                      - link "有用" [ref=e335] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e336]:
+                      - link "王方休" [ref=e337] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/wangfangxiu/
+                      - link "2016-05-22 19:43:52" [ref=e338] [cursor=pointer]:
+                        - /url: /comment/1044254816
+                  - paragraph [ref=e339]: 最后20页可以反复读，斯特里克兰德和他妻子在生命最后的每一秒都闪耀着神性的光芒。
+              - listitem [ref=e340]:
+                - generic [ref=e341]:
+                  - heading "42 有用 大萌 力荐 2016-04-14 19:47:17" [level=3] [ref=e342]:
+                    - generic [ref=e343]:
+                      - text: "42"
+                      - link "有用" [ref=e344] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e345]:
+                      - link "大萌" [ref=e346] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/renminjiaoshi/
+                      - generic "力荐" [ref=e347]
+                      - link "2016-04-14 19:47:17" [ref=e348] [cursor=pointer]:
+                        - /url: /comment/1031676084
+                  - paragraph [ref=e349]: 前几年开始就没什么书可看，把以前看过的书都找来英文版重读了一遍，毛姆实在是太会写了，用词和句法也太妙了，每次看的时候都会感慨一下。不得不承认写作是需要天赋的……
+              - listitem [ref=e350]:
+                - generic [ref=e351]:
+                  - heading "1425 有用 Karqha 力荐 2016-03-15 21:32:42" [level=3] [ref=e352]:
+                    - generic [ref=e353]:
+                      - text: "1425"
+                      - link "有用" [ref=e354] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e355]:
+                      - link "Karqha" [ref=e356] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/saraven/
+                      - generic "力荐" [ref=e357]
+                      - link "2016-03-15 21:32:42" [ref=e358] [cursor=pointer]:
+                        - /url: /comment/1021612438
+                  - paragraph [ref=e359]: 上帝的磨盘转动很慢，但却磨的很细
+              - listitem [ref=e360]:
+                - generic [ref=e361]:
+                  - heading "733 有用 一大朵 推荐 2016-04-25 10:14:49" [level=3] [ref=e362]:
+                    - generic [ref=e363]:
+                      - text: "733"
+                      - link "有用" [ref=e364] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e365]:
+                      - link "一大朵" [ref=e366] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/2859890/
+                      - generic "推荐" [ref=e367]
+                      - link "2016-04-25 10:14:49" [ref=e368] [cursor=pointer]:
+                        - /url: /comment/1035297381
+                  - paragraph [ref=e369]: “忘了是谁说过，为了让灵魂受益，每天应该做两件自己不喜欢的事情。说这话的是一个富有智慧的人，我把这句格言谨记在心，遵照行事，因此每天我醒来起床，每晚上床睡下。” 毛姆真是个特别有趣的人，文笔里都是脱离了社会背景的人生智慧。
+              - listitem [ref=e370]:
+                - generic [ref=e371]:
+                  - heading "137 有用 马特 推荐 2016-05-19 10:55:43" [level=3] [ref=e372]:
+                    - generic [ref=e373]:
+                      - text: "137"
+                      - link "有用" [ref=e374] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e375]:
+                      - link "马特" [ref=e376] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/MATTZ/
+                      - generic "推荐" [ref=e377]
+                      - link "2016-05-19 10:55:43" [ref=e378] [cursor=pointer]:
+                        - /url: /comment/1040519492
+                  - paragraph [ref=e379]: 毛姆的故事没有什么问题，但是译者序里第以部分就开始全文剧透是几个意思！！！！！！！！！！
+          - generic [ref=e380]:
+            - generic [ref=e381]:
+              - link "我要写书评" [ref=e382] [cursor=pointer]:
+                - /url: new_review
+              - heading "月亮与六便士的书评 · · · · · · ( 全部 11581 条 )" [level=2] [ref=e383]:
+                - text: 月亮与六便士的书评 · · · · · ·
+                - generic [ref=e384]:
+                  - text: (
+                  - link "全部 11581 条" [ref=e385] [cursor=pointer]:
+                    - /url: reviews
+                  - text: )
+            - generic [ref=e386]:
+              - generic [ref=e387]:
+                - link "热门" [ref=e388] [cursor=pointer]:
+                  - /url: javascript:;;
+                - text: /
+              - link "只看本版本的评论" [ref=e389] [cursor=pointer]:
+                - /url: /subject/26707463/reviews?version=1
+            - generic [ref=e390]:
+              - generic [ref=e392]:
+                - generic [ref=e393]:
+                  - link:
+                    - /url: https://www.douban.com/people/drunkpiano/
+                    - img [ref=e394] [cursor=pointer]
+                  - link "drunkpiano" [ref=e395] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/drunkpiano/
+                  - generic "力荐" [ref=e396]
+                  - text: 2009-09-22 03:50:09
+                  - link "上海译文出版社2006版" [ref=e398] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1858513/
+                - generic [ref=e399]:
+                  - heading "另一个高度" [level=2] [ref=e400]:
+                    - link "另一个高度" [ref=e401] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/2372405/
+                  - generic [ref=e403] [cursor=pointer]:
+                    - text: 你肯定有这样一个朋友吧：在银行工作，长得一般，业务凑合，有老婆孩子，勤勤恳恳养家糊口，不爱说话，但如果开口说话，说的话也多半无趣无味——总之形象非常白开水，在任何一个社交场合都是角落里不大起眼的人。事实上你肯定有不止一个这样的朋友，事实上你自己没准就是这样... (
+                    - link "展开" [ref=e404]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e405]:
+                    - link "8264" [ref=e406] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "399" [ref=e407] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "642回应" [ref=e408] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/2372405/#comments
+              - generic [ref=e410]:
+                - generic [ref=e411]:
+                  - link:
+                    - /url: https://www.douban.com/people/190720566/
+                    - img [ref=e412] [cursor=pointer]
+                  - link "灰瞳" [ref=e413] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/190720566/
+                  - generic "还行" [ref=e414]
+                  - text: 2019-01-29 23:28:44
+                  - link "浙江文艺出版社2017版" [ref=e416] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/26954760/
+                - generic [ref=e417]:
+                  - heading "从女性角度看《月亮与六便士》" [level=2] [ref=e418]:
+                    - link "从女性角度看《月亮与六便士》" [ref=e419] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/9926084/
+                  - generic [ref=e421] [cursor=pointer]:
+                    - paragraph [ref=e422]: 这篇书评可能有关键情节透露
+                    - text: 从女性角度看《月亮与六便士》 “满地都是六便士，他却抬头看见了月亮。” “却”字在这儿体现了整本书的价值观。我相信每个看过小说的人都会知道所谓“六便士”代表的是现实生活，而“月亮”这种远在天边的东西，我们称之为“理想”。我看了很多豆瓣的书评，所讲的大多是歌颂... (
+                    - link "展开" [ref=e423]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e424]:
+                    - link "3651" [ref=e425] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "115" [ref=e426] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "740回应" [ref=e427] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/9926084/#comments
+              - generic [ref=e429]:
+                - generic [ref=e430]:
+                  - link:
+                    - /url: https://www.douban.com/people/zhangjiawei/
+                    - img [ref=e431] [cursor=pointer]
+                  - link "张佳玮" [ref=e432] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/zhangjiawei/
+                  - generic "力荐" [ref=e433]
+                  - text: 2015-02-02 21:54:14
+                  - link "上海译文出版社2006版" [ref=e435] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1858513/
+                - generic [ref=e436]:
+                  - heading "拿毒舌遮情怀的傲娇聪明人" [level=2] [ref=e437]:
+                    - link "拿毒舌遮情怀的傲娇聪明人" [ref=e438] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/7365902/
+                  - generic [ref=e440] [cursor=pointer]:
+                    - text: 毛姆是个非常聪明的作家。非常，聪明。 写东西好的人其实不一定聪明。他是真聪明。 他是个非常认真的读者。比起其他毒舌，他读的书多到逆天。而且他还很八卦，看看他写的司汤达评传和福楼拜评传好了。他对作者心理的把握极高明。 也只有他敢说巴尔扎克、托尔斯泰、陀思妥耶夫... (
+                    - link "展开" [ref=e441]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e442]:
+                    - link "2480" [ref=e443] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "126" [ref=e444] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "117回应" [ref=e445] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/7365902/#comments
+              - generic [ref=e447]:
+                - generic [ref=e448]:
+                  - link:
+                    - /url: https://www.douban.com/people/neverblue/
+                    - img [ref=e449] [cursor=pointer]
+                  - link "乐安蓝" [ref=e450] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/neverblue/
+                  - generic "力荐" [ref=e451]
+                  - text: 2008-12-22 23:28:48
+                  - link "上海译文出版社2006版" [ref=e453] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1858513/
+                - generic [ref=e454]:
+                  - heading "我都成那么牛逼的人了，可我还是想要个妞儿……" [level=2] [ref=e455]:
+                    - link "我都成那么牛逼的人了，可我还是想要个妞儿……" [ref=e456] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1593905/
+                  - generic [ref=e458] [cursor=pointer]:
+                    - text: 几个月前，我问一朋友生日时想收到什么礼物。他答曰：大美妞儿~我笑回：“书中自有千钟粟，书中自有黄金屋，书中自有颜如玉……”他不同意最后那句，旁征博引地回我：“……你说念个尼采念个权力意志……再整萨特啊……德里达啊……叔本华啊……洛克啊……祁克果……再鼓捣鼓捣... (
+                    - link "展开" [ref=e459]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e460]:
+                    - link "2204" [ref=e461] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "218" [ref=e462] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "323回应" [ref=e463] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1593905/#comments
+              - generic [ref=e465]:
+                - generic [ref=e466]:
+                  - link:
+                    - /url: https://www.douban.com/people/shenwanjiu/
+                    - img [ref=e467] [cursor=pointer]
+                  - link "沈万九" [ref=e468] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/shenwanjiu/
+                  - generic "力荐" [ref=e469]
+                  - text: 2016-03-25 21:31:19
+                - generic [ref=e470]:
+                  - heading "《月亮和六便士》：既然我们早晚都要去追寻心中的那朵蓝莲花，那为何不早点出发？" [level=2] [ref=e471]:
+                    - link "《月亮和六便士》：既然我们早晚都要去追寻心中的那朵蓝莲花，那为何不早点出发？" [ref=e472] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/7826762/
+                  - generic [ref=e474] [cursor=pointer]:
+                    - paragraph [ref=e475]: 这篇书评可能有关键情节透露
+                    - text: 前阵子，有一则新闻报道，说湖南有一个法官，工作十余载，突然提出辞职，辞职信写得是文采斐然啊： “初则喜正义之伸张，乐法律得施行，不屑媚俗，安于清贫。久矣疲命于杂务，掣肘各情形，荒于教子，未尽孝心……” 也就是说，这位法官在熟悉的轨道奋斗了多年后，突然做出了... (
+                    - link "展开" [ref=e476]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e477]:
+                    - link "1419" [ref=e478] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "84" [ref=e479] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "84回应" [ref=e480] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/7826762/#comments
+              - generic [ref=e482]:
+                - generic [ref=e483]:
+                  - link:
+                    - /url: https://www.douban.com/people/szb/
+                    - img [ref=e484] [cursor=pointer]
+                  - link "新西兰孙小社" [ref=e485] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/szb/
+                  - generic "力荐" [ref=e486]
+                  - text: 2012-06-02 09:56:50
+                  - link "上海译文出版社2009版" [ref=e488] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/4123116/
+                - generic [ref=e489]:
+                  - heading "撷贝集：月亮和六便士经典段落赏析" [level=2] [ref=e490]:
+                    - link "撷贝集：月亮和六便士经典段落赏析" [ref=e491] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/5450809/
+                  - generic [ref=e493] [cursor=pointer]:
+                    - text: ——毛姆论伟大 “我所谓的伟大不是走红运的政治家或是立战功的军人的伟大；这种人显赫一时，与其说是他们本身的特质倒不如说沾了他们地位的光，一旦事过境迁，他们的伟大也就黯然失色了。人们常常发现一位离了职的首相当年只不过是个大言不惭的演说家；一个解甲归田的将军无... (
+                    - link "展开" [ref=e494]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e495]:
+                    - link "1241" [ref=e496] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "21" [ref=e497] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "33回应" [ref=e498] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/5450809/#comments
+              - generic [ref=e500]:
+                - generic [ref=e501]:
+                  - link:
+                    - /url: https://www.douban.com/people/wenzel/
+                    - img [ref=e502] [cursor=pointer]
+                  - link "文泽尔" [ref=e503] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/wenzel/
+                  - generic "力荐" [ref=e504]
+                  - text: 2016-04-12 21:10:11
+                - generic [ref=e505]:
+                  - heading "西西弗斯与巨石" [level=2] [ref=e506]:
+                    - link "西西弗斯与巨石" [ref=e507] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/7850404/
+                  - generic [ref=e509] [cursor=pointer]:
+                    - text: 毛姆是以高更的生活经历为参考，创造查尔斯·斯特里克兰德这个角色的，这点大家现在都很清楚了。原书成书于1919年，第一次世界大战刚刚结束，全欧洲迎来新秩序和希望的时代。当时的毛姆45岁，正值创作巅峰期，《月亮与六便士》是他在全盛期写下的杰作，亦是其作家生涯的最重要... (
+                    - link "展开" [ref=e510]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e511]:
+                    - link "1147" [ref=e512] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "54" [ref=e513] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "63回应" [ref=e514] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/7850404/#comments
+              - generic [ref=e516]:
+                - generic [ref=e517]:
+                  - link:
+                    - /url: https://www.douban.com/people/Sising/
+                    - img [ref=e518] [cursor=pointer]
+                  - link "菠菜" [ref=e519] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/Sising/
+                  - generic "力荐" [ref=e520]
+                  - text: 2007-09-11 17:02:01
+                  - link "上海译文出版社2006版" [ref=e522] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1858513/
+                - generic [ref=e523]:
+                  - heading "安心如水" [level=2] [ref=e524]:
+                    - link "安心如水" [ref=e525] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1206528/
+                  - generic [ref=e527] [cursor=pointer]:
+                    - text: 对我来说，世界上最难的事情是什么？不，不是穿了新衣服吹了新发型不去照镜子……当然这个也挺难的，我基本做不到。但严肃地说，更难的事情是，怎么才能，知道自己应该如何生活。 小时候我的生活规则很简单，大人说不能和坏孩子交朋友我就抗拒了那么一下下。那时候天蓝风轻，... (
+                    - link "展开" [ref=e528]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e529]:
+                    - link "688" [ref=e530] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "41" [ref=e531] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "107回应" [ref=e532] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1206528/#comments
+            - paragraph [ref=e533]:
+              - text: ">"
+              - link "更多书评 11581篇" [ref=e534] [cursor=pointer]:
+                - /url: reviews
+          - generic [ref=e536]:
+            - generic [ref=e537]:
+              - heading "读书笔记 · · · · · · ( 共 421 篇 )" [level=2] [ref=e538]:
+                - text: 读书笔记 · · · · · ·
+                - generic [ref=e539]:
+                  - text: (
+                  - link "共 421 篇" [ref=e540] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/26707463/annotation
+                  - text: )
+              - link "我来写笔记" [ref=e541] [cursor=pointer]:
+                - /url: https://www.douban.com/register?reason=annotate
+            - generic [ref=e542]:
+              - list [ref=e543]:
+                - listitem [ref=e544]:
+                  - link "按有用程度" [ref=e545] [cursor=pointer]:
+                    - /url: "#rank"
+                - listitem [ref=e546]:
+                  - link "按页码先后" [ref=e547] [cursor=pointer]:
+                    - /url: "#page"
+                - listitem [ref=e548]:
+                  - link "最新笔记" [ref=e549] [cursor=pointer]:
+                    - /url: "#time"
+              - list [ref=e550]:
+                - listitem [ref=e551]:
+                  - link "岱小鹅" [ref=e553] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/50710354/
+                    - img "岱小鹅" [ref=e554]
+                  - generic [ref=e555]:
+                    - heading "展开 摘抄" [level=3] [ref=e557]:
+                      - link "展开" [ref=e559] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/39799246/
+                      - link "摘抄" [ref=e560] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/39799246/
+                    - generic [ref=e561]:
+                      - paragraph [ref=e562]:
+                        - link "岱小鹅" [ref=e563] [cursor=pointer]:
+                          - /url: https://www.douban.com/people/50710354/
+                        - text: (一个只能欺骗自己的骗子)
+                      - generic [ref=e565]:
+                        - text: 1.我所说的伟大，并非官运亨通的政客或者立功受奖的军人所赢得的那种伟大，因为这些人的伟大只关乎他们的地位，而无涉于个人品性。人们通常会发现一位卸职的首相想当年无非是个夸夸其谈的政客，没有一兵一卒的光...
+                        - link "(6回应)" [ref=e566] [cursor=pointer]:
+                          - /url: https://book.douban.com/annotation/39799246/
+                        - paragraph [ref=e567]: 2016-10-22 12:02:35 470人喜欢
+                - listitem [ref=e568]:
+                  - link "celia" [ref=e570] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/104470122/
+                    - img "celia" [ref=e571]
+                  - generic [ref=e572]:
+                    - heading "展开 第166页" [level=3] [ref=e574]:
+                      - link "展开" [ref=e576] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/37786815/
+                      - link "第166页" [ref=e577] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/37786815/
+                    - generic [ref=e578]:
+                      - paragraph [ref=e579]:
+                        - link "celia" [ref=e580] [cursor=pointer]:
+                          - /url: https://www.douban.com/people/104470122/
+                      - generic [ref=e582]:
+                        - text: 世界是无情的、残酷的。我们生到人世间没有人知道为了什么，我们死后没有人知道到何处去。我们必须自甘卑屈。我们必须看到冷清寂寥的美妙。在生活中我们一定不要出风头、露头角，惹起命运对我们注目。让我们去寻...
+                        - link "(4回应)" [ref=e583] [cursor=pointer]:
+                          - /url: https://book.douban.com/annotation/37786815/
+                        - paragraph [ref=e584]: 2016-05-16 19:53:06 56人喜欢
+                - listitem [ref=e585]:
+                  - link "YUNINA" [ref=e587] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/158296962/
+                    - img "YUNINA" [ref=e588]
+                  - generic [ref=e589]:
+                    - heading "展开 月亮与六便士" [level=3] [ref=e591]:
+                      - link "展开" [ref=e593] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/41956046/
+                      - link "月亮与六便士" [ref=e594] [cursor=pointer]:
+                        - /url: https://book.douban.com/annotation/41956046/
+                    - generic [ref=e595]:
+                      - paragraph [ref=e596]:
+                        - link "YUNINA" [ref=e597] [cursor=pointer]:
+                          - /url: https://www.douban.com/people/158296962/
+                      - generic [ref=e599]:
+                        - text: 1.我拿不准亚伯拉罕是否真的把生活糟蹋了。去做你最想做的事情，在你喜欢的环境里生活，自己宁静致远，就是把生活糟蹋了吗？做一个闻名遐迩的外科医生，一年一万磅收入，娶一个漂亮妻子，这就是成功吗？我看这取...
+                        - paragraph [ref=e600]: 2017-02-27 21:09:38 18人喜欢
+            - paragraph [ref=e602]:
+              - text: ">"
+              - link "更多读书笔记（ 共421篇 ）" [ref=e603] [cursor=pointer]:
+                - /url: https://book.douban.com/subject/26707463/annotation
+          - generic [ref=e604]:
+            - heading "论坛 · · · · · ·" [level=2] [ref=e605]
+            - table [ref=e606]:
+              - rowgroup [ref=e607]:
+                - row [ref=e608]:
+                  - cell [ref=e609]
+                  - cell [ref=e610]
+                  - cell [ref=e611]
+                  - cell [ref=e612]
+                - row "为什么斯特里克兰追求理想之后，就开始变得没有品... 来自bethany由鱼 6 回应 2023-03-10 15:22:33" [ref=e613]:
+                  - cell "为什么斯特里克兰追求理想之后，就开始变得没有品..." [ref=e614]:
+                    - link "为什么斯特里克兰追求理想之后，就开始变得没有品..." [ref=e615] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/26707463/discussion/616372552/
+                  - cell "来自bethany由鱼" [ref=e616]:
+                    - text: 来自
+                    - link "bethany由鱼" [ref=e617] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/withharrypotter/
+                  - cell "6 回应" [ref=e618]
+                  - cell "2023-03-10 15:22:33" [ref=e619]
+                - row "船长阐释了追求美的新的体会 来自没头脑不高兴 2023-03-10 15:21:41" [ref=e620]:
+                  - cell "船长阐释了追求美的新的体会" [ref=e621]:
+                    - link "船长阐释了追求美的新的体会" [ref=e622] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/26707463/discussion/637406590/
+                  - cell "来自没头脑不高兴" [ref=e623]:
+                    - text: 来自
+                    - link "没头脑不高兴" [ref=e624] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/200583471/
+                  - cell [ref=e625]
+                  - cell "2023-03-10 15:21:41" [ref=e626]
+                - row "一个女人可以原谅男人伤害她 来自Nancy 9 回应 2021-06-17 18:11:03" [ref=e627]:
+                  - cell "一个女人可以原谅男人伤害她" [ref=e628]:
+                    - link "一个女人可以原谅男人伤害她" [ref=e629] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/26707463/discussion/615623805/
+                  - cell "来自Nancy" [ref=e630]:
+                    - text: 来自
+                    - link "Nancy" [ref=e631] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/178249228/
+                  - cell "9 回应" [ref=e632]
+                  - cell "2021-06-17 18:11:03" [ref=e633]
+                - row "其实有些不太理解斯特里克兰 来自小七 10 回应 2020-03-04 22:17:42" [ref=e634]:
+                  - cell "其实有些不太理解斯特里克兰" [ref=e635]:
+                    - link "其实有些不太理解斯特里克兰" [ref=e636] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/26707463/discussion/615652423/
+                  - cell "来自小七" [ref=e637]:
+                    - text: 来自
+                    - link "小七" [ref=e638] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/132539989/
+                  - cell "10 回应" [ref=e639]
+                  - cell "2020-03-04 22:17:42" [ref=e640]
+                - row "大家是多久读完《月亮与六便士》的啊～ 来自hello_ssk 33 回应 2019-11-12 13:01:31" [ref=e641]:
+                  - cell "大家是多久读完《月亮与六便士》的啊～" [ref=e642]:
+                    - link "大家是多久读完《月亮与六便士》的啊～" [ref=e643] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/26707463/discussion/615270281/
+                  - cell "来自hello_ssk" [ref=e644]:
+                    - text: 来自
+                    - link "hello_ssk" [ref=e645] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/163332226/
+                  - cell "33 回应" [ref=e646]
+                  - cell "2019-11-12 13:01:31" [ref=e647]
+            - paragraph [ref=e648]:
+              - text: ">"
+              - link "浏览更多话题" [ref=e649] [cursor=pointer]:
+                - /url: https://book.douban.com/subject/26707463/discussion/
+      - generic [ref=e650]:
+        - generic [ref=e651]: 广告
+        - generic [ref=e652]:
+          - generic [ref=e653]:
+            - heading "当前版本有售 · · · · · ·" [level=2] [ref=e654]
+            - list [ref=e655]:
+              - listitem [ref=e656]:
+                - generic [ref=e657]:
+                  - link "豆瓣阅读" [ref=e659] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/20507995/?dcs=subject-buylink&dcm=douban&dct=26707463
+                  - generic [ref=e660]:
+                    - link "17.91元" [ref=e662] [cursor=pointer]:
+                      - /url: https://read.douban.com/ebook/20507995/?dcs=subject-buylink&dcm=douban&dct=26707463
+                    - link "购买电子书" [ref=e664] [cursor=pointer]:
+                      - /url: https://read.douban.com/ebook/20507995/?dcs=subject-buylink&dcm=douban&dct=26707463
+              - listitem [ref=e665]:
+                - generic [ref=e666]:
+                  - link "得到" [ref=e668] [cursor=pointer]:
+                    - /url: https://www.dedao.cn/ebook/detail?id=gO8xJGVarB2qEQoplXvY14JRbVdnz0zERVkwjPmyDANKge8O65LG7Mk9xZYk69Zr&source=douban
+                  - generic [ref=e669]:
+                    - link "19.90元" [ref=e671] [cursor=pointer]:
+                      - /url: https://www.dedao.cn/ebook/detail?id=gO8xJGVarB2qEQoplXvY14JRbVdnz0zERVkwjPmyDANKge8O65LG7Mk9xZYk69Zr&source=douban
+                    - link "购买电子书" [ref=e673] [cursor=pointer]:
+                      - /url: https://www.dedao.cn/ebook/detail?id=gO8xJGVarB2qEQoplXvY14JRbVdnz0zERVkwjPmyDANKge8O65LG7Mk9xZYk69Zr&source=douban
+              - listitem [ref=e674]:
+                - generic [ref=e675]:
+                  - link "京东商城" [ref=e677] [cursor=pointer]:
+                    - /url: https://book.douban.com/link2/?lowest=2320&pre=0&vendor=jingdong&srcpage=subject&price=2320&pos=3&url=https%3A%2F%2Funion-click.jd.com%2Fjdc%3Fe%3Disbn9787561383254uid%26p%3DJF8BARwJK1olWAcDUV1VCEwVCl8IG1ITVAIAUW4ZVxNJXF9RXh5UHw0cSgYYXBcIWDoXSQVJQwYCXVhUDEkSHDZNRwYlInQKJyUGc0p3dxlQTFNhFEZaNgo8aEcbM2gNHF0SVAUFZF5ZCU8TM18IGmtHM9604ob4uVfDqeDdk8wlXwYDVVtdAEwUAl8IHV0TXAQAVVxbDkwSM28AH2vM3bHU9syElsHCi_g4K2sWbV5ABwFVDkIRB2gIGVIXXgIHEAYIOHsXM2w4RTUUWgIGBFsJDSVLXT1PRl1BCmgFVlpbDUkWM20JGlkXbTYyJx8iCihIYW5fHRpGIQZ_PVdUQTlqcBdzWDUXVAJlB1w-aQtAcBxSSCl3FG8yVG5dDksVMw&cntvendor=3&srcsubj=26707463&type=bkbuy&subject=26707463
+                  - generic [ref=e678]:
+                    - link "23.20元" [ref=e680] [cursor=pointer]:
+                      - /url: https://book.douban.com/link2/?lowest=2320&pre=0&vendor=jingdong&srcpage=subject&price=2320&pos=1&url=https%3A%2F%2Funion-click.jd.com%2Fjdc%3Fe%3Disbn9787561383254uid%26p%3DJF8BARwJK1olWAcDUV1VCEwVCl8IG1ITVAIAUW4ZVxNJXF9RXh5UHw0cSgYYXBcIWDoXSQVJQwYCXVhUDEkSHDZNRwYlInQKJyUGc0p3dxlQTFNhFEZaNgo8aEcbM2gNHF0SVAUFZF5ZCU8TM18IGmtHM9604ob4uVfDqeDdk8wlXwYDVVtdAEwUAl8IHV0TXAQAVVxbDkwSM28AH2vM3bHU9syElsHCi_g4K2sWbV5ABwFVDkIRB2gIGVIXXgIHEAYIOHsXM2w4RTUUWgIGBFsJDSVLXT1PRl1BCmgFVlpbDUkWM20JGlkXbTYyJx8iCihIYW5fHRpGIQZ_PVdUQTlqcBdzWDUXVAJlB1w-aQtAcBxSSCl3FG8yVG5dDksVMw&cntvendor=3&srcsubj=26707463&type=bkbuy&subject=26707463
+                    - link "购买纸质书" [ref=e682] [cursor=pointer]:
+                      - /url: https://book.douban.com/link2/?lowest=2320&pre=0&vendor=jingdong&srcpage=subject&price=2320&pos=1&url=https%3A%2F%2Funion-click.jd.com%2Fjdc%3Fe%3Disbn9787561383254uid%26p%3DJF8BARwJK1olWAcDUV1VCEwVCl8IG1ITVAIAUW4ZVxNJXF9RXh5UHw0cSgYYXBcIWDoXSQVJQwYCXVhUDEkSHDZNRwYlInQKJyUGc0p3dxlQTFNhFEZaNgo8aEcbM2gNHF0SVAUFZF5ZCU8TM18IGmtHM9604ob4uVfDqeDdk8wlXwYDVVtdAEwUAl8IHV0TXAQAVVxbDkwSM28AH2vM3bHU9syElsHCi_g4K2sWbV5ABwFVDkIRB2gIGVIXXgIHEAYIOHsXM2w4RTUUWgIGBFsJDSVLXT1PRl1BCmgFVlpbDUkWM20JGlkXbTYyJx8iCihIYW5fHRpGIQZ_PVdUQTlqcBdzWDUXVAJlB1w-aQtAcBxSSCl3FG8yVG5dDksVMw&cntvendor=3&srcsubj=26707463&type=bkbuy&subject=26707463
+          - link "+ 加入购书单" [ref=e685] [cursor=pointer]:
+            - /url: https://www.douban.com/accounts/passport/login?source=book
+        - generic [ref=e687]:
+          - heading "在线试读 ：" [level=2] [ref=e688]
+          - generic [ref=e689]:
+            - generic [ref=e690]:
+              - img [ref=e691]
+              - link "豆瓣阅读" [ref=e692] [cursor=pointer]:
+                - /url: https://read.douban.com/reader/ebook/20507995?from=book
+            - link "在线阅读" [ref=e693] [cursor=pointer]:
+              - /url: https://read.douban.com/reader/ebook/20507995?from=book
+          - generic [ref=e694]:
+            - generic [ref=e695]:
+              - img [ref=e696]
+              - link "得到" [ref=e697] [cursor=pointer]:
+                - /url: https://www.dedao.cn/ebook/reader?id=gO8xJGVarB2qEQoplXvY14JRbVdnz0zERVkwjPmyDANKge8O65LG7Mk9xZYk69Zr&source=douban
+            - link "在线试读" [ref=e698] [cursor=pointer]:
+              - /url: https://www.dedao.cn/ebook/reader?id=gO8xJGVarB2qEQoplXvY14JRbVdnz0zERVkwjPmyDANKge8O65LG7Mk9xZYk69Zr&source=douban
+        - generic [ref=e699]:
+          - heading "这本书的其他版本 · · · · · · ( 全部116 )" [level=2] [ref=e700]:
+            - text: 这本书的其他版本 · · · · · ·
+            - generic [ref=e701]:
+              - text: (
+              - link "全部116" [ref=e702] [cursor=pointer]:
+                - /url: https://book.douban.com/works/1007949
+              - text: )
+          - list [ref=e703]:
+            - listitem [ref=e704]:
+              - generic [ref=e705]:
+                - generic [ref=e706]:
+                  - link "浙江文艺出版社 （2017）" [ref=e707] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/26954760/
+                  - generic [ref=e708]: 8.7分 462516人读过
+                - link "展开有售 (4)" [ref=e710] [cursor=pointer]:
+                  - /url: javascript:void(0);
+            - listitem [ref=e711]:
+              - generic [ref=e712]:
+                - generic [ref=e713]:
+                  - link "Vintage Classics （2008）" [ref=e714] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1792758/
+                  - generic [ref=e715]: 8.9分 1745人读过
+                - link "展开有售 (1)" [ref=e717] [cursor=pointer]:
+                  - /url: javascript:void(0);
+            - listitem [ref=e718]:
+              - generic [ref=e719]:
+                - generic [ref=e720]:
+                  - link "上海译文出版社 （2006）" [ref=e721] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1858513/
+                  - generic [ref=e722]: 8.9分 328116人读过
+                - link "展开有售 (1)" [ref=e724] [cursor=pointer]:
+                  - /url: javascript:void(0);
+            - listitem [ref=e725]:
+              - generic [ref=e726]:
+                - generic [ref=e727]:
+                  - link "上海译文出版社 （2009）" [ref=e728] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/4123116/
+                  - generic [ref=e729]: 9.1分 144056人读过
+                - link "展开有售 (4)" [ref=e731] [cursor=pointer]:
+                  - /url: javascript:void(0);
+        - heading "以下书单推荐 · · · · · · ( 全部 )" [level=2] [ref=e732]:
+          - text: 以下书单推荐 · · · · · ·
+          - generic [ref=e733]:
+            - text: (
+            - link "全部" [ref=e734] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/26707463/doulists
+            - text: )
+        - list [ref=e736]:
+          - listitem [ref=e737]:
+            - link "威廉·萨默塞特·毛姆 年表顺序作品大全" [ref=e738] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/1383458/
+            - text: (王多功)
+          - listitem [ref=e739]:
+            - link "热门图书" [ref=e740] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/35898464/
+            - text: (豆瓣读书)
+          - listitem [ref=e741]:
+            - link "新书速递" [ref=e742] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/35898462/
+            - text: (豆瓣读书)
+          - listitem [ref=e743]:
+            - link "37°暖书单（一）" [ref=e744] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/41155218/
+            - text: (37°暖)
+          - listitem [ref=e745]:
+            - link "读书即生活 BOOK TEAM" [ref=e746] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/43680804/
+            - text: (裁缝点灯)
+        - generic [ref=e748]:
+          - iframe [ref=e749]:
+            - generic [active] [ref=f1e1]:
+              - generic [ref=f1e2]:
+                - link [ref=f1e3] [cursor=pointer]:
+                  - /url: https://erebor.douban.com/redirect/?action=&ad=268323&ad_type=7&al=3&bid=1BMsX9Vf6s8&brand=&chicken=123f112060c6c47d07dd724755590aba&creative=unknown_300x100&crtr=7%3A%E6%AF%9B%E5%A7%86%7C7%3A%E5%A4%96%E5%9B%BD%E6%96%87%E5%AD%A6%7C7%3A%E5%A5%BD%E4%B9%A6%EF%BC%8C%E5%80%BC%E5%BE%97%E4%B8%80%E8%AF%BB%7C7%3A%E7%BB%8F%E5%85%B8%E5%B0%8F%E8%AF%B4%7C7%3A%E7%BB%8F%E5%85%B8%7C7%3A%E5%B0%8F%E8%AF%B4%7C7%3A%E8%8B%B1%E5%9B%BD%7C7%3A%E6%88%91%E6%83%B3%E8%AF%BB%E8%BF%99%E6%9C%AC%E4%B9%A6%7C7%3A%E8%AE%A4%E8%AF%86%E8%87%AA%E5%B7%B1%EF%BC%8C%E5%9C%A8%E8%B7%AF%E4%B8%8A%EF%BC%81%7C7%3A%E8%8B%B1%E5%9B%BD%E6%96%87%E5%AD%A6%7C3%3A%2Fsubject%2F26707463%2F&device=0&disable_creative=false&disable_third=false&high_value=false&hn=nob65&imp_type=2&is_cache=false&is_cmp=false&is_core=false&is_ht=false&is_short=false&item_type=COMPLEMENT&mark=&model=&net=&os=52&osv=NT+10.0&p=0&posid=&priority=2&region=68972b8f49b28cf6&sig=c806f5bcad9a450c4b315ea61fa7cbedee601b4bba563f4c45c625a82a27a188&sigt=hmac&t_mode=&target=aHR0cHM6Ly9yZWFkLmRvdWJhbi5jb20vZXZlbnQvQXByaWxfMjAyNi8%2FdXRtX3NvdXJjZT1kb3ViYW4mdXRtX21lZGl1bT1kb3ViYW4tc2lkZS1hZDImdXRtX2NhbXBhaWduPXJlY29tbWVuZDA0MjA%3D&ts=__TIMESTAMP__&ts_ms=__TIMESTAMP_MS__&uid=&unit=dale_book_subject_middle_mini&vendor=
+                - generic [ref=f1e4]:
+                  - paragraph [ref=f1e5]:
+                    - link "豆瓣阅读丨电子书读书日大促" [ref=f1e6] [cursor=pointer]:
+                      - /url: https://erebor.douban.com/redirect/?action=&ad=268323&ad_type=7&al=3&bid=1BMsX9Vf6s8&brand=&chicken=123f112060c6c47d07dd724755590aba&creative=unknown_300x100&crtr=7%3A%E6%AF%9B%E5%A7%86%7C7%3A%E5%A4%96%E5%9B%BD%E6%96%87%E5%AD%A6%7C7%3A%E5%A5%BD%E4%B9%A6%EF%BC%8C%E5%80%BC%E5%BE%97%E4%B8%80%E8%AF%BB%7C7%3A%E7%BB%8F%E5%85%B8%E5%B0%8F%E8%AF%B4%7C7%3A%E7%BB%8F%E5%85%B8%7C7%3A%E5%B0%8F%E8%AF%B4%7C7%3A%E8%8B%B1%E5%9B%BD%7C7%3A%E6%88%91%E6%83%B3%E8%AF%BB%E8%BF%99%E6%9C%AC%E4%B9%A6%7C7%3A%E8%AE%A4%E8%AF%86%E8%87%AA%E5%B7%B1%EF%BC%8C%E5%9C%A8%E8%B7%AF%E4%B8%8A%EF%BC%81%7C7%3A%E8%8B%B1%E5%9B%BD%E6%96%87%E5%AD%A6%7C3%3A%2Fsubject%2F26707463%2F&device=0&disable_creative=false&disable_third=false&high_value=false&hn=nob65&imp_type=2&is_cache=false&is_cmp=false&is_core=false&is_ht=false&is_short=false&item_type=COMPLEMENT&mark=&model=&net=&os=52&osv=NT+10.0&p=0&posid=&priority=2&region=68972b8f49b28cf6&sig=c806f5bcad9a450c4b315ea61fa7cbedee601b4bba563f4c45c625a82a27a188&sigt=hmac&t_mode=&target=aHR0cHM6Ly9yZWFkLmRvdWJhbi5jb20vZXZlbnQvQXByaWxfMjAyNi8%2FdXRtX3NvdXJjZT1kb3ViYW4mdXRtX21lZGl1bT1kb3ViYW4tc2lkZS1hZDImdXRtX2NhbXBhaWduPXJlY29tbWVuZDA0MjA%3D&ts=__TIMESTAMP__&ts_ms=__TIMESTAMP_MS__&uid=&unit=dale_book_subject_middle_mini&vendor=
+                  - paragraph [ref=f1e7]: 豆瓣阅读
+              - img
+          - generic [ref=e750]: 广告
+        - heading "谁读这本书? · · · · · ·" [level=2] [ref=e751]
+        - generic [ref=e752]:
+          - generic [ref=e753]:
+            - link "绎" [ref=e755] [cursor=pointer]:
+              - /url: https://www.douban.com/people/224280605/
+              - img "绎" [ref=e756]
+            - generic [ref=e757]:
+              - link "绎" [ref=e758] [cursor=pointer]:
+                - /url: https://www.douban.com/people/224280605/
+              - generic [ref=e759]: 昨天 读过
+              - generic "力荐" [ref=e760]
+          - generic [ref=e762]:
+            - link "林知清" [ref=e764] [cursor=pointer]:
+              - /url: https://www.douban.com/people/289933382/
+              - img "林知清" [ref=e765]
+            - generic [ref=e766]:
+              - link "林知清" [ref=e767] [cursor=pointer]:
+                - /url: https://www.douban.com/people/289933382/
+              - generic [ref=e768]: 4月23日 读过
+              - generic "还行" [ref=e769]
+          - generic [ref=e771]:
+            - link "读书的Lena" [ref=e773] [cursor=pointer]:
+              - /url: https://www.douban.com/people/252438398/
+              - img "读书的Lena" [ref=e774]
+            - generic [ref=e775]:
+              - link "读书的Lena" [ref=e776] [cursor=pointer]:
+                - /url: https://www.douban.com/people/252438398/
+              - generic [ref=e777]: 4月19日 读过
+              - generic "力荐" [ref=e778]
+          - paragraph [ref=e780]:
+            - text: ">"
+            - link "1684人在读" [ref=e781] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/26707463/comments?status=N
+          - paragraph [ref=e782]:
+            - text: ">"
+            - link "20958人读过" [ref=e783] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/26707463/comments?status=P
+          - paragraph [ref=e784]:
+            - text: ">"
+            - link "15375人想读" [ref=e785] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/26707463/comments?status=F
+        - insertion [ref=e788]
+        - heading [level=2]
+        - heading "二手市场 · · · · · ·" [level=2] [ref=e789]
+        - list [ref=e791]:
+          - listitem [ref=e792]:
+            - link "5本二手书欲转让" [ref=e793] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/26707463/offers
+            - text: (1.00 至 26.00元)
+          - listitem [ref=e794]:
+            - link "在豆瓣转让" [ref=e795] [cursor=pointer]:
+              - /url: https://www.douban.com/register?reason=secondhand-offer&cat=book
+            - text: 有15375人想读，手里有一本闲着?
+        - paragraph [ref=e796]:
+          - text: "订阅关于月亮与六便士的评论:"
+          - 'link "feed: rss 2.0" [ref=e798] [cursor=pointer]':
+            - /url: https://book.douban.com/feed/subject/26707463/reviews
+    - generic [ref=e799]:
+      - generic [ref=e800]: © 2005－2026 douban.com, all rights reserved 北京豆网科技有限公司
+      - generic [ref=e801]:
+        - link "关于豆瓣" [ref=e802] [cursor=pointer]:
+          - /url: https://www.douban.com/about
+        - text: ·
+        - link "在豆瓣工作" [ref=e803] [cursor=pointer]:
+          - /url: https://www.douban.com/jobs
+        - text: ·
+        - link "联系我们" [ref=e804] [cursor=pointer]:
+          - /url: https://www.douban.com/about?topic=contactus
+        - text: ·
+        - link "法律声明" [ref=e805] [cursor=pointer]:
+          - /url: https://www.douban.com/about/legal
+        - text: ·
+        - link "帮助中心" [ref=e806] [cursor=pointer]:
+          - /url: https://help.douban.com/?app=book
+        - text: ·
+        - link "图书馆合作" [ref=e807] [cursor=pointer]:
+          - /url: https://book.douban.com/library_invitation
+        - text: ·
+        - link "移动应用" [ref=e808] [cursor=pointer]:
+          - /url: https://www.douban.com/doubanapp/

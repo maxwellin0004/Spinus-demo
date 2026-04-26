@@ -1,0 +1,42 @@
+﻿[
+  {
+    "section": "hook",
+    "visual_goal": "先用概念切换建立哲学气质，再落到斯多葛主义。",
+    "visual_content": "开场先出现“今天我们要讲的是”，随后快速切换享乐主义、虚无主义、犬儒主义、存在主义等词，最终锁定斯多葛主义。",
+    "asset_needs": "10张概念开场图，其中斯多葛主义图需要更稳、更克制、更像暴风中的秩序。",
+    "motion_transition": "白闪、推近、快切词、最后锁定定格。",
+    "notes": "引导句只出现一次，后续概念页不再重复。"
+  },
+  {
+    "section": "problem",
+    "visual_goal": "呈现被外界刺激牵动、情绪被拖走的状态。",
+    "visual_content": "一个人站在人群、弹窗、评价、社交噪音中，被多方向目光和信息挤压。",
+    "asset_needs": "高亮人物主图，不能做成普通街拍。",
+    "motion_transition": "慢推近 + 轻微横移。",
+    "notes": "字幕承担主要解释，不在画面中堆段落文字。"
+  },
+  {
+    "section": "doctrine",
+    "visual_goal": "用分层画面说明外界事件与内在判断是两件事。",
+    "visual_content": "左侧是外界事件风暴，右侧是内在秩序、笔记、冷静站立的人或静止空间。",
+    "asset_needs": "1张强分裂构图图，左右语义必须不同。",
+    "motion_transition": "从混乱端缓慢漂移到稳定端。",
+    "notes": "这是全片核心 doctrine 画面。"
+  },
+  {
+    "section": "method",
+    "visual_goal": "把斯多葛主义落成一个执行动作。",
+    "visual_content": "手停在发送键前、人物深呼吸、短暂停顿、手机被放下。",
+    "asset_needs": "1张“准备回应但先停住”的图。",
+    "motion_transition": "局部推近 + 轻微冻结感。",
+    "notes": "这一段要有停顿感。"
+  },
+  {
+    "section": "close",
+    "visual_goal": "给出平静、恢复掌控后的状态。",
+    "visual_content": "清晨、风平、人物安静走在城市或海边，不再被信息追逐。",
+    "asset_needs": "1张明亮但克制的收尾图。",
+    "motion_transition": "缓慢拉远收束。",
+    "notes": "结尾不做强煽动，保持稳定感。"
+  }
+]

@@ -1,0 +1,423 @@
+{
+  "status": "draft",
+  "current_stage": "completed",
+  "updated_at": "2026-04-24T15:49:14+0800",
+  "audio_extracted": false,
+  "audio_path": null,
+  "frame_index": {
+    "success": false,
+    "source": "missing_ffmpeg",
+    "frames": []
+  },
+  "transcript": {
+    "full_text": "系统占位转写，用于驱动第二阶段分析工作流。",
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 161.98,
+        "text": "系统占位转写，用于驱动第二阶段分析工作流。"
+      }
+    ],
+    "generated": true,
+    "source": "mock"
+  },
+  "title_analysis": {
+    "raw_title": null,
+    "cover_text": null,
+    "first_frame_text": null,
+    "title_type": "risk-warning",
+    "formula": "negative-judgment + danger-result",
+    "conclusion_first": true,
+    "contains": {
+      "risk": true,
+      "benefit": false,
+      "conflict": true,
+      "number": false,
+      "contrast": true,
+      "promise": false
+    },
+    "relationship_between_surfaces": {
+      "title_vs_cover": "reinforcing",
+      "title_vs_first_frame": "supplementary"
+    },
+    "keyword_slots": [],
+    "variable_candidates": [
+      "topic",
+      "risk_phrase"
+    ],
+    "confidence": 0.62
+  },
+  "title_engine": {
+    "mode": "mock_fallback",
+    "model": "gpt-5.4-nano",
+    "reason": "Network error calling https://api.bltcy.ai/v1/chat/completions: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。"
+  },
+  "description_analysis": {
+    "raw_description": null,
+    "description_type": "insight-plus-hashtags",
+    "description_formula": "thesis + reinforcement + hashtags",
+    "opening_role": "thesis",
+    "has_call_to_action": false,
+    "call_to_action_type": null,
+    "tone": "warning",
+    "title_relation": "reinforcement",
+    "keyword_clusters": [],
+    "hashtag_strategy": {
+      "count": 0,
+      "hashtags": [],
+      "language_mix": "zh + en",
+      "mix_type": "broad + niche",
+      "broad_tags": [],
+      "niche_tags": [],
+      "brand_or_account_tags": []
+    },
+    "variable_candidates": [
+      "hashtags",
+      "insight_sentence"
+    ],
+    "confidence": 0.58
+  },
+  "description_engine": {
+    "mode": "mock_fallback",
+    "model": "gpt-5.4-nano",
+    "reason": "Network error calling https://api.bltcy.ai/v1/chat/completions: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。"
+  },
+  "hook_analysis": {
+    "time_range_sec": [
+      0,
+      5
+    ],
+    "hook_text": "系统占位转写，用于驱动第二阶段分析工作流。",
+    "hook_type": "warning-hook",
+    "core_mechanism": "lead with a strong corrective statement before explanation",
+    "conclusion_first": true,
+    "devices": {
+      "risk": true,
+      "conflict": true,
+      "promise": false,
+      "question": false,
+      "surprise": true,
+      "contrarian": true
+    },
+    "visual_support": "headline overlay paired with fast opening rhythm",
+    "surface_dependency": "title-cover-first-frame bundle",
+    "template_rule_candidates": [
+      "Make the first spoken sentence feel like a correction or warning",
+      "Keep the hook visually aligned with the first strong subtitle moment"
+    ],
+    "confidence": 0.64
+  },
+  "hook_engine": {
+    "mode": "mock_fallback",
+    "model": "gpt-5.4-nano",
+    "reason": "Network error calling https://api.bltcy.ai/v1/chat/completions: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。"
+  },
+  "structure_analysis": [
+    {
+      "id": "hook",
+      "start_sec": 0,
+      "end_sec": 4,
+      "label": "hook",
+      "purpose": "Capture attention with a strong corrective statement",
+      "summary": "States the core warning before any explanation",
+      "transition_to_next": "Move from warning into quick setup",
+      "information_density": "high",
+      "confidence": 0.71
+    },
+    {
+      "id": "setup",
+      "start_sec": 4,
+      "end_sec": 12,
+      "label": "setup",
+      "purpose": "Frame the common misunderstanding or problem",
+      "summary": "Uses the transcript opening to establish the problem context",
+      "transition_to_next": "Pivot into evidence or explanation",
+      "information_density": "medium",
+      "confidence": 0.68
+    },
+    {
+      "id": "body",
+      "start_sec": 12,
+      "end_sec": 153.98,
+      "label": "body",
+      "purpose": "Provide the main evidence or explanation",
+      "summary": "Expands the core idea with examples or criteria",
+      "transition_to_next": "Condense into takeaway",
+      "information_density": "medium-high",
+      "confidence": 0.64
+    },
+    {
+      "id": "outro",
+      "start_sec": 153.98,
+      "end_sec": 161.98,
+      "label": "outro",
+      "purpose": "Deliver takeaway and optional soft CTA",
+      "summary": "Restates the key lesson and closes the short",
+      "transition_to_next": "end",
+      "information_density": "medium",
+      "confidence": 0.57
+    }
+  ],
+  "global_structure_pattern": "warning -> setup -> evidence -> takeaway",
+  "structure_engine": {
+    "mode": "mock_fallback",
+    "model": "gpt-5.4-nano",
+    "reason": "Network error calling https://api.bltcy.ai/v1/chat/completions: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。"
+  },
+  "script_analysis": {
+    "tone": "urgent and corrective",
+    "sentence_style": "short spoken sentences",
+    "sentence_length_pattern": "mostly short with occasional medium explanation",
+    "conclusion_first": true,
+    "dominant_modes": [
+      "warning",
+      "explanation",
+      "correction"
+    ],
+    "density_pattern": "high upfront, moderate in the middle",
+    "paragraph_organization": "claim first, explanation second",
+    "rule_candidates": [
+      "Lead each section with the strongest claim",
+      "Keep each spoken line short enough for hard subtitle emphasis"
+    ],
+    "confidence": 0.63
+  },
+  "script_style_engine": {
+    "mode": "mock_fallback",
+    "model": "gpt-5.4-nano",
+    "reason": "Network error calling https://api.bltcy.ai/v1/chat/completions: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。"
+  },
+  "rhythm_analysis": {
+    "scene_changes": [
+      {
+        "time_sec": 0.0,
+        "approximate": false,
+        "change_strength": "hard_change",
+        "change_type": "opening-frame",
+        "from_visual": "intro",
+        "to_visual": "hook frame",
+        "purpose": "start with a decisive opening visual",
+        "linked_to_audio_emphasis": true
+      },
+      {
+        "time_sec": 2.0,
+        "approximate": true,
+        "change_strength": "soft_change",
+        "change_type": "supporting-layout-shift",
+        "from_visual": "hook frame",
+        "to_visual": "setup frame",
+        "purpose": "move from hook into explanation",
+        "linked_to_audio_emphasis": true
+      }
+    ],
+    "section_rhythm": {
+      "hook": {
+        "avg_change_interval_sec": 1.5,
+        "rhythm_level": "high"
+      },
+      "body": {
+        "avg_change_interval_sec": 3.0,
+        "rhythm_level": "medium"
+      },
+      "outro": {
+        "avg_change_interval_sec": 2.5,
+        "rhythm_level": "medium"
+      }
+    },
+    "peak_moments": [
+      "0.0s opening-frame",
+      "2.0s supporting-layout-shift"
+    ],
+    "rhythm_rule_candidates": [
+      "Use a harder visual change at the opening than in the middle section",
+      "Keep body rhythm slower than hook rhythm while maintaining steady motion"
+    ],
+    "confidence": 0.59
+  },
+  "rhythm_engine": {
+    "mode": "mock_fallback",
+    "model": "gemini-3.1-flash-lite-preview-thinking-minimal",
+    "reason": "Network error calling https://api.bltcy.ai/v1/chat/completions: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。"
+  },
+  "frame_summaries": [],
+  "visual_analysis": [
+    {
+      "section_id": "hook",
+      "visual_type": "headline overlay",
+      "layout": "center headline with supporting subtitle",
+      "asset_types": [
+        "text",
+        "background image"
+      ],
+      "style_markers": [
+        "high contrast",
+        "center focus"
+      ],
+      "fixed_elements": [
+        "large headline",
+        "subtitle emphasis"
+      ],
+      "variable_elements": [
+        "background asset",
+        "accent color"
+      ],
+      "recreation_difficulty": "easy",
+      "confidence": 0.67
+    },
+    {
+      "section_id": "setup",
+      "visual_type": "supporting explainer scene",
+      "layout": "single focus",
+      "asset_types": [
+        "text",
+        "image"
+      ],
+      "style_markers": [
+        "informational"
+      ],
+      "fixed_elements": [
+        "subtitle emphasis"
+      ],
+      "variable_elements": [
+        "supporting image",
+        "highlight word"
+      ],
+      "recreation_difficulty": "easy",
+      "confidence": 0.55
+    },
+    {
+      "section_id": "body",
+      "visual_type": "evidence scene",
+      "layout": "left visual right text",
+      "asset_types": [
+        "chart",
+        "caption"
+      ],
+      "style_markers": [
+        "data-led",
+        "clean panels"
+      ],
+      "fixed_elements": [
+        "two-column evidence layout"
+      ],
+      "variable_elements": [
+        "chart asset",
+        "support text"
+      ],
+      "recreation_difficulty": "medium",
+      "confidence": 0.6
+    },
+    {
+      "section_id": "outro",
+      "visual_type": "supporting explainer scene",
+      "layout": "single focus",
+      "asset_types": [
+        "text",
+        "image"
+      ],
+      "style_markers": [
+        "informational"
+      ],
+      "fixed_elements": [
+        "subtitle emphasis"
+      ],
+      "variable_elements": [
+        "supporting image",
+        "highlight word"
+      ],
+      "recreation_difficulty": "easy",
+      "confidence": 0.55
+    }
+  ],
+  "visual_engine": {
+    "mode": "mock_fallback",
+    "model": "gemini-3.1-flash-lite-preview-thinking-minimal",
+    "reason": "Network error calling https://api.bltcy.ai/v1/chat/completions: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。"
+  },
+  "subtitle_analysis": {
+    "position": "bottom center",
+    "line_count_pattern": "1-2 lines",
+    "line_length_pattern": "short to medium",
+    "highlight_strategy": "keyword emphasis on conclusion and risk words",
+    "timing_pattern": "faster in hook, steadier in body, slightly compressed near outro",
+    "confidence": 0.58
+  },
+  "audio_analysis": {
+    "voice_style": "confident concise narration",
+    "pace_wpm_estimate": 110,
+    "pause_pattern": "short pause after hook and before final takeaway",
+    "bgm_style": "tense tech underscore",
+    "hook_sfx_likely": [
+      "impact-hit"
+    ],
+    "sync_pattern": "subtitle emphasis aligns with phrase endings and rhythm peaks",
+    "confidence": 0.56
+  },
+  "subtitle_audio_engine": {
+    "mode": "mock_fallback",
+    "model": "gpt-5.4-nano",
+    "reason": "Network error calling https://api.bltcy.ai/v1/chat/completions: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。"
+  },
+  "source_video_id": "manual_download13",
+  "engine": {
+    "provider": "bltcy",
+    "mock_analysis": false,
+    "models": {
+      "analyze_title": "gpt-5.4-nano",
+      "analyze_description": "gpt-5.4-nano",
+      "analyze_hook": "gpt-5.4-nano",
+      "analyze_structure": "gpt-5.4-nano",
+      "analyze_script_style": "gpt-5.4-nano",
+      "analyze_visual_rhythm": "gemini-3.1-flash-lite-preview-thinking-minimal",
+      "analyze_visual_style": "gemini-3.1-flash-lite-preview-thinking-minimal",
+      "analyze_subtitle_audio": "gpt-5.4-nano",
+      "build_summary": "gpt-5.4-nano",
+      "transcribe_audio": "gpt-4o-mini-transcribe"
+    }
+  },
+  "meta": {
+    "title": null,
+    "description": null,
+    "cover_text": null,
+    "first_frame_text": null,
+    "platform": "uncertain",
+    "track": "uncertain",
+    "duration_sec": 161.98,
+    "language": "uncertain"
+  },
+  "review": {
+    "mode": "auto",
+    "reviewed": false,
+    "notes": ""
+  },
+  "summary": {
+    "top_template_rules": [
+      "Lead with a corrective warning in the first 3 seconds",
+      "Keep the first visual change hard and high contrast",
+      "Use claim-first script organization before explanation",
+      "Tie description hashtags to both broad and niche discovery terms",
+      "Keep hard subtitle rhythm faster in the hook than in the body"
+    ],
+    "key_packaging_features": [
+      "Primary title pattern centers on risk-warning",
+      "Description acts as a short thesis plus discovery hashtags",
+      "Hard subtitles support the spoken hook with compressed pacing"
+    ],
+    "best_variable_candidates": [
+      "topic",
+      "risk_phrase",
+      "background_asset",
+      "hashtags"
+    ],
+    "best_fixed_rules": [
+      "warning-first hook",
+      "high-contrast headline opening",
+      "claim-first structure"
+    ]
+  },
+  "summary_engine": {
+    "mode": "mock_fallback",
+    "model": "gpt-5.4-nano",
+    "reason": "Network error calling https://api.bltcy.ai/v1/chat/completions: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。"
+  }
+}

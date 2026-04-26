@@ -1,0 +1,7 @@
+﻿{
+  "tts_provider": "elevenlabs",
+  "alignment_requirement": "must_use_generated_timestamps",
+  "output_timeline": "data/audio_scripts/literary_embers_subtitle_timeline.vertical.json",
+  "video_app_target": "video-app/src/data/LiteraryEmbersValidationAudio.ts",
+  "fallback": "estimated_after_audio_duration_fit only if provider returns audio without timestamps"
+}

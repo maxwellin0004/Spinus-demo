@@ -1,0 +1,1014 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - link "登录/注册" [ref=e5] [cursor=pointer]:
+      - /url: https://accounts.douban.com/passport/login?source=book
+    - link "下载豆瓣客户端" [ref=e7] [cursor=pointer]:
+      - /url: https://www.douban.com/doubanapp/app?channel=top-nav
+    - list [ref=e9]:
+      - listitem [ref=e10]:
+        - link "豆瓣" [ref=e11] [cursor=pointer]:
+          - /url: https://www.douban.com
+      - listitem [ref=e12]:
+        - link "读书" [ref=e13] [cursor=pointer]:
+          - /url: https://book.douban.com
+      - listitem [ref=e14]:
+        - link "电影" [ref=e15] [cursor=pointer]:
+          - /url: https://movie.douban.com
+      - listitem [ref=e16]:
+        - link "音乐" [ref=e17] [cursor=pointer]:
+          - /url: https://music.douban.com
+      - listitem [ref=e18]:
+        - link "播客" [ref=e19] [cursor=pointer]:
+          - /url: https://www.douban.com/podcast/
+      - listitem [ref=e20]:
+        - link "同城" [ref=e21] [cursor=pointer]:
+          - /url: https://www.douban.com/location
+      - listitem [ref=e22]:
+        - link "小组" [ref=e23] [cursor=pointer]:
+          - /url: https://www.douban.com/group
+      - listitem [ref=e24]:
+        - link "阅读" [ref=e25] [cursor=pointer]:
+          - /url: https://read.douban.com/?dcs=top-nav&dcm=douban
+      - listitem [ref=e26]:
+        - link "FM" [ref=e27] [cursor=pointer]:
+          - /url: https://fm.douban.com/?from_=shire_top_nav
+      - listitem [ref=e28]:
+        - link "时间" [ref=e29] [cursor=pointer]:
+          - /url: https://time.douban.com/?dt_time_source=douban-web_top_nav
+      - listitem [ref=e30]:
+        - link "豆品" [ref=e31] [cursor=pointer]:
+          - /url: https://market.douban.com/?utm_campaign=douban_top_nav&utm_source=douban&utm_medium=pc_web
+  - generic [ref=e32]:
+    - generic [ref=e34]:
+      - link "豆瓣读书" [ref=e36] [cursor=pointer]:
+        - /url: https://book.douban.com
+      - group "搜索：" [ref=e39]:
+        - textbox [ref=e41]:
+          - /placeholder: 书名、作者、ISBN
+        - button "搜索" [ref=e43] [cursor=pointer]
+    - generic [ref=e44]:
+      - list [ref=e46]:
+        - listitem [ref=e47]:
+          - link "购书单" [ref=e48] [cursor=pointer]:
+            - /url: https://book.douban.com/cart/
+        - listitem [ref=e49]:
+          - link "电子图书" [ref=e50] [cursor=pointer]:
+            - /url: https://read.douban.com/ebooks/?dcs=book-nav&dcm=douban
+        - listitem [ref=e51]:
+          - link "2025年度榜单" [ref=e52] [cursor=pointer]:
+            - /url: https://book.douban.com/annual/2025/?fullscreen=1&dt_from=navigation
+        - listitem [ref=e53]:
+          - link "2025年度报告" [ref=e54] [cursor=pointer]:
+            - /url: https://c9.douban.com/app/standbyme-2025/?autorotate=false&fullscreen=true&hidenav=true&monitor_screenshot=true&dt_from=web_navigation
+      - link [ref=e55] [cursor=pointer]:
+        - /url: https://book.douban.com/annual/2025/?fullscreen=1&&dt_from=book_navigation
+  - generic [ref=e56]:
+    - generic [ref=e57]:
+      - generic [ref=e58]: No.6
+      - link "豆瓣图书Top250" [ref=e60] [cursor=pointer]:
+        - /url: https://book.douban.com/top250
+    - heading "百年孤独" [level=1] [ref=e61]: 百年孤独
+    - generic [ref=e63]:
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - generic [ref=e66]:
+            - generic [ref=e67]:
+              - link "百年孤独" [ref=e69] [cursor=pointer]:
+                - /url: https://img1.doubanio.com/view/subject/l/public/s27237850.jpg
+                - img "百年孤独" [ref=e70]
+              - generic [ref=e71]:
+                - generic [ref=e72]:
+                  - text: "作者:"
+                  - link "[哥伦比亚] 加西亚·马尔克斯" [ref=e73] [cursor=pointer]:
+                    - /url: /author/1039386
+                - generic [ref=e74]:
+                  - text: "译者:"
+                  - link "范晔" [ref=e75] [cursor=pointer]:
+                    - /url: /search/%E8%8C%83%E6%99%94
+                - text: "出版社:"
+                - link "南海出版公司" [ref=e76] [cursor=pointer]:
+                  - /url: https://book.douban.com/press/2413
+                - text: "出品方:"
+                - link "新经典文化" [ref=e77] [cursor=pointer]:
+                  - /url: https://book.douban.com/producers/3
+                - text: "出版年: 2011-6"
+                - text: "ISBN: 9787544253994"
+                - text: "页数: 360"
+                - text: "装帧: 精装"
+                - text: "定价: 39.50元"
+                - text: "原作名: Cien años de soledad"
+                - text: "丛书:"
+                - link "新经典文库：加西亚·马尔克斯作品" [ref=e78] [cursor=pointer]:
+                  - /url: https://book.douban.com/series/10489
+            - generic [ref=e80]:
+              - generic [ref=e81]: 豆瓣评分
+              - generic [ref=e82]:
+                - strong [ref=e83]: "9.3"
+                - link "472890人评价" [ref=e88] [cursor=pointer]:
+                  - /url: comments
+              - generic "力荐" [ref=e89]: 5星
+              - text: 70.7%
+              - generic "推荐" [ref=e91]: 4星
+              - text: 23.5%
+              - generic "还行" [ref=e93]: 3星
+              - text: 5.1%
+              - generic "较差" [ref=e95]: 2星
+              - text: 0.5%
+              - generic "很差" [ref=e96]: 1星
+              - text: 0.3%
+          - generic [ref=e97]:
+            - link "想读" [ref=e98] [cursor=pointer]:
+              - /url: "#"
+              - button "想读" [ref=e101]
+            - link "在读" [ref=e102] [cursor=pointer]:
+              - /url: "#"
+              - button "在读" [ref=e105]
+            - link "读过" [ref=e106] [cursor=pointer]:
+              - /url: "#"
+              - button "读过" [ref=e109]
+            - generic [ref=e112]:
+              - text: "评价:"
+              - generic [ref=e113]:
+                - generic:
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e114] [cursor=pointer]
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e115] [cursor=pointer]
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e116] [cursor=pointer]
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e117] [cursor=pointer]
+                  - link:
+                    - /url: https://www.douban.com/accounts/passport/login?source=book
+                    - img [ref=e118] [cursor=pointer]
+          - list [ref=e120]:
+            - listitem [ref=e121]:
+              - img [ref=e122]
+              - link "写笔记" [ref=e123] [cursor=pointer]:
+                - /url: https://www.douban.com/topic/create?subtype=annotation&subject_id=6082808
+            - listitem [ref=e124]:
+              - img [ref=e125]
+              - link "写书评" [ref=e126] [cursor=pointer]:
+                - /url: https://book.douban.com/subject/6082808/new_review
+            - listitem [ref=e127]:
+              - generic [ref=e128]:
+                - img [ref=e129]
+                - link "加入购书单" [ref=e130] [cursor=pointer]:
+                  - /url: https://www.douban.com/accounts/passport/login?source=book
+            - listitem [ref=e131]:
+              - link "分享到" [ref=e132] [cursor=pointer]:
+                - /url: "#"
+          - link "推荐" [ref=e135] [cursor=pointer]:
+            - /url: https://www.douban.com/accounts/register?reason=collect
+        - generic [ref=e136]:
+          - heading "内容简介 · · · · · ·" [level=2] [ref=e137]
+          - paragraph [ref=e141]: 《百年孤独》是魔幻现实主义文学的代表作，描写了布恩迪亚家族七代人的传奇故事，以及加勒比海沿岸小镇马孔多的百年兴衰，反映了拉丁美洲一个世纪以来风云变幻的历史。作品融入神话传说、民间故事、宗教典故等神秘因素，巧妙地糅合了现实与虚幻，展现出一个瑰丽的想象世界，成为20世纪最重要的经典文学巨著之一。1982年加西亚•马尔克斯获得诺贝尔文学奖，奠定世界级文学大师的地位，很大程度上乃是凭借《百年孤独》的巨大影响。
+          - heading [level=2]
+          - heading "百年孤独的创作者 · · · · · ·" [level=2] [ref=e142]
+          - generic [ref=e143]:
+            - paragraph
+            - list [ref=e145]:
+              - listitem [ref=e146]:
+                - link "[哥伦比亚] 加西亚·马尔克斯" [ref=e147] [cursor=pointer]:
+                  - /url: https://book.douban.com/author/1039386/
+                  - img "[哥伦比亚] 加西亚·马尔克斯" [ref=e148]
+                - generic [ref=e149]:
+                  - link "加西亚·马尔克斯" [ref=e150] [cursor=pointer]:
+                    - /url: https://book.douban.com/author/1039386/
+                  - generic [ref=e151]: 作者
+              - listitem [ref=e152]:
+                - link "范晔" [ref=e153] [cursor=pointer]:
+                  - /url: https://book.douban.com/author/4608209/
+                  - img "范晔" [ref=e154]
+                - generic [ref=e155]:
+                  - link "范晔" [ref=e156] [cursor=pointer]:
+                    - /url: https://book.douban.com/author/4608209/
+                  - generic [ref=e157]: 译者
+              - listitem
+          - heading "作者简介 · · · · · ·" [level=2] [ref=e158]
+          - paragraph [ref=e162]: 加西亚•马尔克斯（Gabriel García Márquez）1927年出生于哥伦比亚马格达莱纳海滨小镇阿拉卡塔卡。童年与外祖父母一起生活。1936年随父母迁居苏克雷。1947年考入波哥大国立大学。1948年因内战辍学，进入报界。五十年代开始发表文学作品。六十年代初移居墨西哥。1967年出版《百年孤独》。1982年获诺贝尔文学奖。
+          - heading "目录 · · · · · ·" [level=2] [ref=e163]
+          - generic [ref=e164]: 有2015年6月34印本
+          - generic [ref=e166]:
+            - heading "创作者在豆瓣 · · · · · ·( 全部 1 )" [level=2] [ref=e167]:
+              - text: 创作者在豆瓣 · · · · · ·
+              - generic [ref=e168]:
+                - text: (
+                - link "全部 1" [ref=e169] [cursor=pointer]:
+                  - /url: /subject/6082808/creators
+                - text: )
+            - generic [ref=e171]:
+              - link "去关注" [ref=e173] [cursor=pointer]:
+                - /url: https://www.douban.com/people/4441894/
+              - link "okapi okapi 译者 / 28502 人关注" [ref=e174] [cursor=pointer]:
+                - /url: https://www.douban.com/people/4441894/
+                - generic "okapi" [ref=e175]
+                - generic [ref=e176]:
+                  - generic [ref=e177]: okapi
+                  - generic [ref=e178]: 译者 / 28502 人关注
+          - generic [ref=e180]:
+            - heading "原文摘录 · · · · · · ( 全部 )" [level=2] [ref=e181]:
+              - text: 原文摘录 · · · · · ·
+              - generic [ref=e182]:
+                - text: (
+                - link "全部" [ref=e183] [cursor=pointer]:
+                  - /url: blockquotes
+                - text: )
+            - list [ref=e184]:
+              - listitem [ref=e185]:
+                - figure [ref=e186]:
+                  - text: 失眠症最可怕之处不在于让人毫无倦意不能入睡，而是会不可逆转地恶化到更严重的境地：遗忘。也就是说，患者慢慢习惯了无眠的状态，就开始淡忘童年的记忆，继之以事物的名称和概念，最后是各人的身份，以至失去自我，沦为没有过往的白痴。 (
+                  - link "查看原文" [ref=e187] [cursor=pointer]:
+                    - /url: https://book.douban.com/annotation/18142063/
+                  - text: )
+                  - generic [ref=e188]:
+                    - generic [ref=e189]:
+                      - link [ref=e190] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/eugenexu/
+                        - img [ref=e191]
+                      - link "徐公子～" [ref=e192] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/eugenexu/
+                      - text: 137 回复 827赞 2012-05-05 14:40:58
+                    - generic "引自第38页" [ref=e193]: —— 引自第38页
+              - listitem [ref=e194]:
+                - figure [ref=e195]:
+                  - text: 人们一派懈怠，而遗忘却日渐贪婪，无情地吞噬一点一滴的记忆。 (
+                  - link "查看原文" [ref=e196] [cursor=pointer]:
+                    - /url: https://book.douban.com/annotation/19154013/
+                  - text: )
+                  - generic [ref=e197]:
+                    - generic [ref=e198]:
+                      - link [ref=e199] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/chenzhengwei527/
+                        - img [ref=e200]
+                      - link "Slacker" [ref=e201] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/chenzhengwei527/
+                      - text: 15 回复 236赞 2012-06-22 23:03:59
+                    - generic "引自第298页" [ref=e202]: —— 引自第298页
+            - paragraph [ref=e203]:
+              - text: ">"
+              - link "全部原文摘录" [ref=e204] [cursor=pointer]:
+                - /url: blockquotes
+          - generic [ref=e205]:
+            - heading [level=2]
+            - heading "丛书信息 · · · · · ·" [level=2] [ref=e206]
+            - generic [ref=e207]:
+              - link "新经典文库：加西亚·马尔克斯作品" [ref=e208] [cursor=pointer]:
+                - /url: https://book.douban.com/series/10489
+              - text: (共44册)， 这套丛书还有 《霍乱时期的爱情》《活着为了讲述》《百年孤独》《我们八月见》《世上最美的溺水者》 等 。
+          - generic [ref=e209]:
+            - heading "喜欢读\"百年孤独\"的人也喜欢的电子书 · · · · · ·" [level=2] [ref=e210]
+            - generic [ref=e211]: 支持 Web、iPhone、iPad、Android 阅读器
+            - generic [ref=e212]:
+              - generic [ref=e213]:
+                - term [ref=e214]:
+                  - link [ref=e215] [cursor=pointer]:
+                    - /url: https://read.douban.com/bundle/169369991/?dcs=subject-rec&dcm=douban&dct=6082808
+                    - img [ref=e217]
+                - definition [ref=e218]:
+                  - link "水浒传（套装全2册）" [ref=e220] [cursor=pointer]:
+                    - /url: https://read.douban.com/bundle/169369991/
+                  - generic [ref=e221]: 18.99元
+              - generic [ref=e222]:
+                - term [ref=e223]:
+                  - link [ref=e224] [cursor=pointer]:
+                    - /url: https://read.douban.com/bundle/169371278/?dcs=subject-rec&dcm=douban&dct=6082808
+                    - img [ref=e226]
+                - definition [ref=e227]:
+                  - link "红楼梦（套装全2册）" [ref=e229] [cursor=pointer]:
+                    - /url: https://read.douban.com/bundle/169371278/
+                  - generic [ref=e230]: 21.99元
+              - generic [ref=e231]:
+                - term [ref=e232]:
+                  - link [ref=e233] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/34157247/?dcs=subject-rec&dcm=douban&dct=6082808
+                    - img [ref=e235]
+                - definition [ref=e236]:
+                  - link "月亮与六便士（作家榜经典名著）" [ref=e238] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/34157247/
+                  - generic [ref=e239]: 35.82元
+              - generic [ref=e240]:
+                - term [ref=e241]:
+                  - link [ref=e242] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/754089/?dcs=subject-rec&dcm=douban&dct=6082808
+                    - img [ref=e244]
+                - definition [ref=e245]:
+                  - link "局外人" [ref=e247] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/754089/
+                  - generic [ref=e248]: 6.00元
+              - generic [ref=e249]:
+                - term [ref=e250]:
+                  - link [ref=e251] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/407582/?dcs=subject-rec&dcm=douban&dct=6082808
+                    - img [ref=e253]
+                - definition [ref=e254]:
+                  - link "少年PI的奇幻漂流（插图珍藏版）" [ref=e256] [cursor=pointer]:
+                    - /url: https://read.douban.com/ebook/407582/
+                  - generic [ref=e257]: 25.99元
+          - generic [ref=e258]:
+            - heading "喜欢读\"百年孤独\"的人也喜欢 · · · · · ·" [level=2] [ref=e259]
+            - generic [ref=e260]:
+              - generic [ref=e261]:
+                - term [ref=e262]:
+                  - link [ref=e263] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1008145/
+                    - img [ref=e264]
+                - definition [ref=e265]:
+                  - link "围城" [ref=e266] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1008145/
+                  - text: "9.0"
+              - generic [ref=e267]:
+                - term [ref=e268]:
+                  - link [ref=e269] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1008988/
+                    - img [ref=e270]
+                - definition [ref=e271]:
+                  - link "了不起的盖茨比" [ref=e272] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1008988/
+                  - text: "8.5"
+              - generic [ref=e273]:
+                - term [ref=e274]:
+                  - link [ref=e275] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1083428/
+                    - img [ref=e276]
+                - definition [ref=e277]:
+                  - link "傲慢与偏见" [ref=e278] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1083428/
+                  - text: "8.9"
+              - generic [ref=e279]:
+                - term [ref=e280]:
+                  - link [ref=e281] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1064275/
+                    - img [ref=e282]
+                - definition [ref=e283]:
+                  - link "老人与海" [ref=e284] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1064275/
+                  - text: "8.5"
+              - generic [ref=e285]:
+                - term [ref=e286]:
+                  - link [ref=e287] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1068920/
+                    - img [ref=e288]
+                - definition [ref=e289]:
+                  - link "飘" [ref=e290] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1068920/
+                  - text: "9.3"
+              - generic [ref=e291]:
+                - term [ref=e292]:
+                  - link [ref=e293] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1829226/
+                    - img [ref=e294]
+                - definition [ref=e295]:
+                  - link "肖申克的救赎" [ref=e296] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1829226/
+                  - text: "9.1"
+              - generic [ref=e297]:
+                - term [ref=e298]:
+                  - link [ref=e299] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/4011670/
+                    - img [ref=e300]
+                - definition [ref=e301]:
+                  - link "人间失格" [ref=e302] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/4011670/
+                  - text: "8.2"
+              - generic [ref=e303]:
+                - term [ref=e304]:
+                  - link [ref=e305] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1865089/
+                    - img [ref=e306]
+                - definition [ref=e307]:
+                  - link "瓦尔登湖" [ref=e308] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1865089/
+                  - text: "8.4"
+              - generic [ref=e309]:
+                - term [ref=e310]:
+                  - link [ref=e311] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/10594787/
+                    - img [ref=e312]
+                - definition [ref=e313]:
+                  - link "霍乱时期的爱情" [ref=e314] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/10594787/
+                  - text: "9.0"
+              - generic [ref=e315]:
+                - term [ref=e316]:
+                  - link [ref=e317] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/5363767/
+                    - img [ref=e318]
+                - definition [ref=e319]:
+                  - link "三体Ⅲ" [ref=e320] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/5363767/
+                  - text: "9.2"
+          - generic [ref=e321]:
+            - generic [ref=e322]:
+              - link "我来说两句" [ref=e323] [cursor=pointer]:
+                - /url: https://www.douban.com/register?reason=review
+              - heading "短评 · · · · · · ( 全部 131309 条 )" [level=2] [ref=e324]:
+                - text: 短评 · · · · · ·
+                - generic [ref=e325]:
+                  - text: (
+                  - link "全部 131309 条" [ref=e326] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/6082808/comments/
+                  - text: )
+            - link "热门" [ref=e329]:
+              - /url: https://book.douban.com/subject/6082808/comments?sort=score
+            - list [ref=e332]:
+              - listitem [ref=e333]:
+                - generic [ref=e334]:
+                  - heading "2251 有用 同志亦凡人中文站 力荐 2012-05-08 06:20:07" [level=3] [ref=e335]:
+                    - generic [ref=e336]:
+                      - text: "2251"
+                      - link "有用" [ref=e337] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e338]:
+                      - link "同志亦凡人中文站" [ref=e339] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/3540441/
+                      - generic "力荐" [ref=e340]
+                      - link "2012-05-08 06:20:07" [ref=e341] [cursor=pointer]:
+                        - /url: /comment/529298097
+                  - paragraph [ref=e342]: 一个家族百年反复浮现的竟然就那么几个名字，加西亚真的很残酷。一代又一代就像被推上命运轮盘赌后不断开出的绝望点数，以致于在最后血脉断绝的一刻，我们感到的不是同情而是如释重负。然而家族可以终结，孤独却是无视时空的永恒存在。它从洪荒流淌至今，还将延绵万世，就像南美大陆奔腾壮丽的亚马逊河，碾碎一切人事物。
+              - listitem [ref=e343]:
+                - generic [ref=e344]:
+                  - heading "23976 有用 秋里 力荐 2012-01-16 13:28:58" [level=3] [ref=e345]:
+                    - generic [ref=e346]:
+                      - text: "23976"
+                      - link "有用" [ref=e347] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e348]:
+                      - link "秋里" [ref=e349] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/er-mao/
+                      - generic "力荐" [ref=e350]
+                      - link "2012-01-16 13:28:58" [ref=e351] [cursor=pointer]:
+                        - /url: /comment/483029638
+                  - paragraph [ref=e352]:
+                    - text: 每个人都是孤独地出生，在这世间恍惚几十年并不漫长的日子转眼就远去了，然后再孤独地死去。 生命注定是个悲剧，因为我们从没有融入世界，世界永远是身外之物。如果有幸，能在茫茫人海寻得一个身体与灵魂都与自己万分契合的人，与之存在一种可以称之为爱情的联系，然后一起承受生命中不可逃离不可消除的深沉的宿命的孤独。可是这般的幸运艰深难得。有的已失去了爱的能力，有的爱得深沉却无处安放，有的死在这爱里……在所有的爱里...
+                    - generic [ref=e353]:
+                      - text: (
+                      - link "展开" [ref=e354] [cursor=pointer]:
+                        - /url: javascript:;
+                      - text: )
+              - listitem [ref=e355]:
+                - generic [ref=e356]:
+                  - heading "683 有用 黄不胖 力荐 2013-05-04 16:56:57" [level=3] [ref=e357]:
+                    - generic [ref=e358]:
+                      - text: "683"
+                      - link "有用" [ref=e359] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e360]:
+                      - link "黄不胖" [ref=e361] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/starlv/
+                      - generic "力荐" [ref=e362]
+                      - link "2013-05-04 16:56:57" [ref=e363] [cursor=pointer]:
+                        - /url: /comment/676037062
+                  - paragraph [ref=e364]: 令人恐惧的伟大小说。无法摆脱的孤独与无力，梦想与激情皆成泡影，暴风之中，只剩回忆。
+              - listitem [ref=e365]:
+                - generic [ref=e366]:
+                  - heading "16533 有用 PerfectCadence 力荐 2014-06-19 21:56:07" [level=3] [ref=e367]:
+                    - generic [ref=e368]:
+                      - text: "16533"
+                      - link "有用" [ref=e369] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e370]:
+                      - link "PerfectCadence" [ref=e371] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/AdrianaYim/
+                      - generic "力荐" [ref=e372]
+                      - link "2014-06-19 21:56:07" [ref=e373] [cursor=pointer]:
+                        - /url: /comment/817850515
+                  - paragraph [ref=e374]: 看第3遍开始越来越让我惊艳的已不是马尔克斯而是译者了。太牛逼了！这样的文字就算是母语创作也属上乘。尤其倒数第二代布恩迪亚在飓风中破译羊皮卷的全书结尾，笔触磅礴，美到让人惊怖。
+              - listitem [ref=e375]:
+                - generic [ref=e376]:
+                  - heading "425 有用 大島 力荐 2018-03-08 23:18:28" [level=3] [ref=e377]:
+                    - generic [ref=e378]:
+                      - text: "425"
+                      - link "有用" [ref=e379] [cursor=pointer]:
+                        - /url: ""
+                    - generic [ref=e380]:
+                      - link "大島" [ref=e381] [cursor=pointer]:
+                        - /url: https://www.douban.com/people/auxt/
+                      - generic "力荐" [ref=e382]
+                      - link "2018-03-08 23:18:28" [ref=e383] [cursor=pointer]:
+                        - /url: /comment/1103990293
+                  - paragraph [ref=e384]: 毫不吃力地读完了全书，但我依然不能完整复述出特尔内拉老公的全名。
+          - generic [ref=e385]:
+            - generic [ref=e386]:
+              - link "我要写书评" [ref=e387] [cursor=pointer]:
+                - /url: new_review
+              - heading "百年孤独的书评 · · · · · · ( 全部 7497 条 )" [level=2] [ref=e388]:
+                - text: 百年孤独的书评 · · · · · ·
+                - generic [ref=e389]:
+                  - text: (
+                  - link "全部 7497 条" [ref=e390] [cursor=pointer]:
+                    - /url: reviews
+                  - text: )
+            - generic [ref=e391]:
+              - generic [ref=e392]:
+                - link "热门" [ref=e393] [cursor=pointer]:
+                  - /url: javascript:;;
+                - text: /
+              - link "只看本版本的评论" [ref=e394] [cursor=pointer]:
+                - /url: /subject/6082808/reviews?version=1
+            - generic [ref=e395]:
+              - generic [ref=e397]:
+                - generic [ref=e398]:
+                  - link:
+                    - /url: https://www.douban.com/people/icekiller/
+                    - img [ref=e399] [cursor=pointer]
+                  - link "阿落" [ref=e400] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/icekiller/
+                  - generic "力荐" [ref=e401]
+                  - text: 2007-01-10 15:52:57
+                  - link "上海译文出版社1989版" [ref=e403] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1786670/
+                - generic [ref=e404]:
+                  - heading "在你觉得阅读困难的时候千万不要勉强" [level=2] [ref=e405]:
+                    - link "在你觉得阅读困难的时候千万不要勉强" [ref=e406] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1109738/
+                  - generic [ref=e408] [cursor=pointer]:
+                    - text: 面对这样的作品，当你没有能力读它的时候，千万不要试图去读懂。不要逼自己去面对那些看似纷乱的情节，不要强迫自己搞清楚那一代又一代的人物关系，不要翻来覆去的理清某些相似的名字不同的人物。这些屏障存在于那里，已经说明你无须去读它，起码是当下，无须去读。就像高中的... (
+                    - link "展开" [ref=e409]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e410]:
+                    - link "12668" [ref=e411] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "797" [ref=e412] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "1493回应" [ref=e413] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1109738/#comments
+              - generic [ref=e415]:
+                - generic [ref=e416]:
+                  - link:
+                    - /url: https://www.douban.com/people/60811255/
+                    - img [ref=e417] [cursor=pointer]
+                  - link "而已" [ref=e418] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/60811255/
+                  - generic "力荐" [ref=e419]
+                  - text: 2013-01-22 11:43:42
+                - generic [ref=e420]:
+                  - heading "那些关于时间和孤独故事" [level=2] [ref=e421]:
+                    - link "那些关于时间和孤独故事" [ref=e422] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/5750661/
+                  - generic [ref=e424] [cursor=pointer]:
+                    - text: 坦白说这是我近几年来花最多时间去读的一本书，近两个月的时间--回肠荡气、满腹沉重、欲罢不能。知道自己才疏学浅，为这样的小说写笔记不免有些班门弄斧的嫌疑，但是不写实在是对不住我两个月读了这样一本好书，好在笔记只是自己的笔记而已。喜欢这本书的，看过了就过了，没有... (
+                    - link "展开" [ref=e425]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e426]:
+                    - link "9665" [ref=e427] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "205" [ref=e428] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "840回应" [ref=e429] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/5750661/#comments
+              - generic [ref=e431]:
+                - generic [ref=e432]:
+                  - link:
+                    - /url: https://www.douban.com/people/Sising/
+                    - img [ref=e433] [cursor=pointer]
+                  - link "菠菜" [ref=e434] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/Sising/
+                  - generic "推荐" [ref=e435]
+                  - text: 2010-02-19 16:40:34
+                  - link "上海译文出版社1989版" [ref=e437] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1786670/
+                - generic [ref=e438]:
+                  - heading "无孤独不浪漫" [level=2] [ref=e439]:
+                    - link "无孤独不浪漫" [ref=e440] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/3000399/
+                  - generic [ref=e442] [cursor=pointer]:
+                    - text: 家族中的第一人被绑在树上，家族中的最后一人被蚂蚁吃掉。 该用什么样的眼光来看待布恩地亚家族呢？漫长的几代人之中，有手艺灵巧的、有求知旺盛的、有聪明机灵的、有勇敢坚强的、有吃苦耐劳的、有光彩照人的……他们有坚毅的眼光，不轻易言败的性格，无论是旅途劳顿的南征北... (
+                    - link "展开" [ref=e443]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e444]:
+                    - link "6294" [ref=e445] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "435" [ref=e446] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "387回应" [ref=e447] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/3000399/#comments
+              - generic [ref=e449]:
+                - generic [ref=e450]:
+                  - link:
+                    - /url: https://www.douban.com/people/3064233/
+                    - img [ref=e451] [cursor=pointer]
+                  - link "石头摇篮" [ref=e452] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/3064233/
+                  - generic "力荐" [ref=e453]
+                  - text: 2013-07-20 23:38:20
+                - generic [ref=e454]:
+                  - heading "《百年孤独》之冰块、孤独与人物" [level=2] [ref=e455]:
+                    - link "《百年孤独》之冰块、孤独与人物" [ref=e456] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/6172634/
+                  - generic [ref=e458] [cursor=pointer]:
+                    - text: 读《百年孤独》前便有充分心理准备：小说纵跨百年，七代人，人多，名字都很长，长得还都很像，布恩迪亚家族给新生儿命名总是翻来覆去叫“奥雷里亚诺”或者“何赛·阿尔卡蒂奥”，一堆酷似或者干脆一样的名字听说是很多人怕读或读不下去的重要原因。于是，从翻开《百年孤独》起... (
+                    - link "展开" [ref=e459]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e460]:
+                    - link "3186" [ref=e461] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "124" [ref=e462] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "344回应" [ref=e463] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/6172634/#comments
+              - generic [ref=e465]:
+                - generic [ref=e466]:
+                  - link:
+                    - /url: https://www.douban.com/people/1812564/
+                    - img [ref=e467] [cursor=pointer]
+                  - link "茉莉" [ref=e468] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/1812564/
+                  - generic "力荐" [ref=e469]
+                  - text: 2007-09-20 19:07:23
+                  - link "上海译文出版社1989版" [ref=e471] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1786670/
+                - generic [ref=e472]:
+                  - heading "马尔克斯妻子写的《百年孤独》" [level=2] [ref=e473]:
+                    - link "马尔克斯妻子写的《百年孤独》" [ref=e474] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1210834/
+                  - generic [ref=e476] [cursor=pointer]:
+                    - text: 马尔克斯的《百年孤独》使他成为拉丁美洲的骄傲。也让他获得了世界级的声望。《霍乱时期的爱情》使他得到了1982年的诺贝尔文学奖。 在他沉着冷静地讲着一些令人毛骨悚然或者幽默荒谬的故事的时候，他的背后也有一个人，一个如他笔下所写的那个魔幻现实主义世界中，坚定地站... (
+                    - link "展开" [ref=e477]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e478]:
+                    - link "2864" [ref=e479] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "86" [ref=e480] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "253回应" [ref=e481] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1210834/#comments
+              - generic [ref=e483]:
+                - generic [ref=e484]:
+                  - link:
+                    - /url: https://www.douban.com/people/zhaoxianghui/
+                    - img [ref=e485] [cursor=pointer]
+                  - link "Rilke" [ref=e486] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/zhaoxianghui/
+                  - generic "推荐" [ref=e487]
+                  - text: 2011-06-04 23:27:24
+                - generic [ref=e488]:
+                  - heading "三种译本的段落对照" [level=2] [ref=e489]:
+                    - link "三种译本的段落对照" [ref=e490] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/4976722/
+                  - generic [ref=e492] [cursor=pointer]:
+                    - text: 一 南海出版公司范晔版：多年以后，面对行刑队，奥里雷亚诺.布恩迪亚上校将会回想起父亲带他去见识冰块的那个遥远的下午。那时的马孔多是一个二十户人家的村落，泥巴和芦苇盖成的屋子沿河岸排开，湍急的河水清澈见底，河床里卵石洁白光滑宛如史前巨蛋。世界新生伊始，许多事物... (
+                    - link "展开" [ref=e493]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e494]:
+                    - link "2366" [ref=e495] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "225" [ref=e496] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "950回应" [ref=e497] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/4976722/#comments
+              - generic [ref=e499]:
+                - generic [ref=e500]:
+                  - link:
+                    - /url: https://www.douban.com/people/155591171/
+                    - img [ref=e501] [cursor=pointer]
+                  - link "此刻有冰" [ref=e502] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/155591171/
+                  - generic "力荐" [ref=e503]
+                  - text: 2018-09-19 16:25:49
+                  - link "南海出版公司2017版" [ref=e505] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/27107109/
+                - generic [ref=e506]:
+                  - heading "十分钟帮你搞定《百年孤独》" [level=2] [ref=e507]:
+                    - link "十分钟帮你搞定《百年孤独》" [ref=e508] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/9658860/
+                  - generic [ref=e510] [cursor=pointer]:
+                    - text: 文/蓓蓓 提到《百年孤独》，大家可能都会想到“买的人很多，读的人很少的经典之作”“史上最晦涩难读的文学作品”“死活读不下去的书”…… 没错，这些榜单《百年孤独》均有上榜。 可是这明明是一本拉丁美洲菜市场阿姨们人手一本的书啊，一点儿阅读门槛都没有，怎么就难读了呢... (
+                    - link "展开" [ref=e511]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e512]:
+                    - link "1554" [ref=e513] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "9" [ref=e514] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "98回应" [ref=e515] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/9658860/#comments
+              - generic [ref=e517]:
+                - generic [ref=e518]:
+                  - link:
+                    - /url: https://www.douban.com/people/spiritualistz81/
+                    - img [ref=e519] [cursor=pointer]
+                  - link "Claudia" [ref=e520] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/spiritualistz81/
+                  - generic "力荐" [ref=e521]
+                  - text: 2009-03-03 20:13:11
+                  - link "上海译文出版社1989版" [ref=e523] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1786670/
+                - generic [ref=e524]:
+                  - heading "除了孤独，我一无所有" [level=2] [ref=e525]:
+                    - link "除了孤独，我一无所有" [ref=e526] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1787908/
+                  - generic [ref=e528] [cursor=pointer]:
+                    - text: 我对所有事情都有兴趣，所以我经常上当，在一个冷漠的社会里，你的热情在他们眼睛里就是不成熟。他们为面子活，你为兴趣活，你觉得你这样很开心，他们觉得你很无聊；你觉得你很真诚，他们觉得你在标榜自己。所以，我现在即使有兴趣也会装做“平常心”的样子，只是为了满足大多... (
+                    - link "展开" [ref=e529]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e530]:
+                    - link "960" [ref=e531] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "78" [ref=e532] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "175回应" [ref=e533] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/1787908/#comments
+              - generic [ref=e535]:
+                - generic [ref=e536]:
+                  - link:
+                    - /url: https://www.douban.com/people/lengleng/
+                    - img [ref=e537] [cursor=pointer]
+                  - link "琼斯黄" [ref=e538] [cursor=pointer]:
+                    - /url: https://www.douban.com/people/lengleng/
+                  - generic "力荐" [ref=e539]
+                  - text: 2011-08-25 20:08:36
+                - generic [ref=e540]:
+                  - heading "奥雷里亚诺，马孔多在下雨" [level=2] [ref=e541]:
+                    - link "奥雷里亚诺，马孔多在下雨" [ref=e542] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/5076687/
+                  - generic [ref=e544] [cursor=pointer]:
+                    - text: 没有比最近这些日子更合适的时间来重读《百年孤独》了。故乡下着一场连绵不断，眼看着不会终止的雨，我窝在自己的小屋里做着重复再重复的英文练习，很少上网，几乎断了和繁华世界的联系。这些长期的和暂时的，无意的和刻意的，外在的和内在的小小封闭，给了我一颗挨近马孔多的... (
+                    - link "展开" [ref=e545]:
+                      - /url: javascript:;
+                    - text: )
+                  - generic [ref=e546]:
+                    - link "811" [ref=e547] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "20" [ref=e548] [cursor=pointer]:
+                      - /url: javascript:;
+                    - link "102回应" [ref=e549] [cursor=pointer]:
+                      - /url: https://book.douban.com/review/5076687/#comments
+            - paragraph [ref=e550]:
+              - text: ">"
+              - link "更多书评 7497篇" [ref=e551] [cursor=pointer]:
+                - /url: reviews
+          - generic [ref=e552]:
+            - heading "论坛 · · · · · ·" [level=2] [ref=e553]
+            - table [ref=e554]:
+              - rowgroup [ref=e555]:
+                - row [ref=e556]:
+                  - cell [ref=e557]
+                  - cell [ref=e558]
+                  - cell [ref=e559]
+                  - cell [ref=e560]
+                - row "透过百年孤独，看到社会主义制度的优越性 来自Lube 1 回应 2026-04-24 16:55:23" [ref=e561]:
+                  - cell "透过百年孤独，看到社会主义制度的优越性" [ref=e562]:
+                    - link "透过百年孤独，看到社会主义制度的优越性" [ref=e563] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/6082808/discussion/637985807/
+                  - cell "来自Lube" [ref=e564]:
+                    - text: 来自
+                    - link "Lube" [ref=e565] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/157147371/
+                  - cell "1 回应" [ref=e566]
+                  - cell "2026-04-24 16:55:23" [ref=e567]
+                - row "看完这本书，对冰块有种别样的感觉 来自湍 1 回应 2026-04-24 16:52:29" [ref=e568]:
+                  - cell "看完这本书，对冰块有种别样的感觉" [ref=e569]:
+                    - link "看完这本书，对冰块有种别样的感觉" [ref=e570] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/6082808/discussion/637987215/
+                  - cell "来自湍" [ref=e571]:
+                    - text: 来自
+                    - link "湍" [ref=e572] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/221364523/
+                  - cell "1 回应" [ref=e573]
+                  - cell "2026-04-24 16:52:29" [ref=e574]
+                - row "奥雷里亚诺爱过蕾梅黛丝吗？ 来自铃兰 34 回应 2026-04-24 16:34:37" [ref=e575]:
+                  - cell "奥雷里亚诺爱过蕾梅黛丝吗？" [ref=e576]:
+                    - link "奥雷里亚诺爱过蕾梅黛丝吗？" [ref=e577] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/6082808/discussion/616381866/
+                  - cell "来自铃兰" [ref=e578]:
+                    - text: 来自
+                    - link "铃兰" [ref=e579] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/148066302/
+                  - cell "34 回应" [ref=e580]
+                  - cell "2026-04-24 16:34:37" [ref=e581]
+                - row "这篇小说的高潮在哪里？ 来自小苏打 70 回应 2026-04-22 17:29:41" [ref=e582]:
+                  - cell "这篇小说的高潮在哪里？" [ref=e583]:
+                    - link "这篇小说的高潮在哪里？" [ref=e584] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/6082808/discussion/48487706/
+                  - cell "来自小苏打" [ref=e585]:
+                    - text: 来自
+                    - link "小苏打" [ref=e586] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/smartshirley/
+                  - cell "70 回应" [ref=e587]
+                  - cell "2026-04-22 17:29:41" [ref=e588]
+                - row "百年孤独中 梅梅和马乌里肖巴比伦生下的奥雷里亚诺... 来自veg 1 回应 2026-04-22 17:28:01" [ref=e589]:
+                  - cell "百年孤独中 梅梅和马乌里肖巴比伦生下的奥雷里亚诺..." [ref=e590]:
+                    - link "百年孤独中 梅梅和马乌里肖巴比伦生下的奥雷里亚诺..." [ref=e591] [cursor=pointer]:
+                      - /url: https://book.douban.com/subject/6082808/discussion/637988674/
+                  - cell "来自veg" [ref=e592]:
+                    - text: 来自
+                    - link "veg" [ref=e593] [cursor=pointer]:
+                      - /url: https://www.douban.com/people/181803576/
+                  - cell "1 回应" [ref=e594]
+                  - cell "2026-04-22 17:28:01" [ref=e595]
+            - paragraph [ref=e596]:
+              - text: ">"
+              - link "浏览更多话题" [ref=e597] [cursor=pointer]:
+                - /url: https://book.douban.com/subject/6082808/discussion/
+      - generic [ref=e598]:
+        - generic [ref=e599]: 广告
+        - generic [ref=e600]:
+          - generic [ref=e601]:
+            - heading "当前版本有售 · · · · · ·" [level=2] [ref=e602]
+            - list [ref=e603]:
+              - listitem [ref=e604]:
+                - generic [ref=e605]:
+                  - link "京东商城" [ref=e607] [cursor=pointer]:
+                    - /url: https://book.douban.com/link2/?lowest=7900&pre=0&vendor=jingdong&srcpage=subject&price=7900&pos=1&url=https%3A%2F%2Funion-click.jd.com%2Fjdc%3Fe%3Disbn9787544253994uid%26p%3DJF8BARwJK1olWAcDUV1VCEwVCl8IGVkcXwEBXW4ZVxNJXF9RXh5UHw0cSgYYXBcIWDoXSQVJQwYAVldfD0geHDZNRwYlO0drMgscSDNyQh1pSCZ3LnpjCRpHeEcbM2gNHF0SVAUFZF5ZCU8TM18IGmtHM9604ob4uVfDqeDdk8wlXwYDVVtdAEwUAl8IHV0TXAIEVltdDkkVM28AH2vM3bHU9syElsHCi_g4K2sWbV5ABwFVDkIRB2oNGF8XVQ4HEAYIOHsXM2w4RTUUWgIBVFsPWyVLXTpYGF5DGWgLUV9UC0kWM20JGlkXbTYyUF0ke00eZAl_Ylh-X1B1XTkrWitsUDNLQDUXOnVrPy1bTUJgB2t_cBMQP3UyVG5dDksVMw&cntvendor=1&srcsubj=6082808&type=bkbuy&subject=6082808
+                  - generic [ref=e608]:
+                    - link "79.00元" [ref=e610] [cursor=pointer]:
+                      - /url: https://book.douban.com/link2/?lowest=7900&pre=0&vendor=jingdong&srcpage=subject&price=7900&pos=1&url=https%3A%2F%2Funion-click.jd.com%2Fjdc%3Fe%3Disbn9787544253994uid%26p%3DJF8BARwJK1olWAcDUV1VCEwVCl8IGVkcXwEBXW4ZVxNJXF9RXh5UHw0cSgYYXBcIWDoXSQVJQwYAVldfD0geHDZNRwYlO0drMgscSDNyQh1pSCZ3LnpjCRpHeEcbM2gNHF0SVAUFZF5ZCU8TM18IGmtHM9604ob4uVfDqeDdk8wlXwYDVVtdAEwUAl8IHV0TXAIEVltdDkkVM28AH2vM3bHU9syElsHCi_g4K2sWbV5ABwFVDkIRB2oNGF8XVQ4HEAYIOHsXM2w4RTUUWgIBVFsPWyVLXTpYGF5DGWgLUV9UC0kWM20JGlkXbTYyUF0ke00eZAl_Ylh-X1B1XTkrWitsUDNLQDUXOnVrPy1bTUJgB2t_cBMQP3UyVG5dDksVMw&cntvendor=1&srcsubj=6082808&type=bkbuy&subject=6082808
+                    - link "购买纸质书" [ref=e612] [cursor=pointer]:
+                      - /url: https://book.douban.com/link2/?lowest=7900&pre=0&vendor=jingdong&srcpage=subject&price=7900&pos=1&url=https%3A%2F%2Funion-click.jd.com%2Fjdc%3Fe%3Disbn9787544253994uid%26p%3DJF8BARwJK1olWAcDUV1VCEwVCl8IGVkcXwEBXW4ZVxNJXF9RXh5UHw0cSgYYXBcIWDoXSQVJQwYAVldfD0geHDZNRwYlO0drMgscSDNyQh1pSCZ3LnpjCRpHeEcbM2gNHF0SVAUFZF5ZCU8TM18IGmtHM9604ob4uVfDqeDdk8wlXwYDVVtdAEwUAl8IHV0TXAIEVltdDkkVM28AH2vM3bHU9syElsHCi_g4K2sWbV5ABwFVDkIRB2oNGF8XVQ4HEAYIOHsXM2w4RTUUWgIBVFsPWyVLXTpYGF5DGWgLUV9UC0kWM20JGlkXbTYyUF0ke00eZAl_Ylh-X1B1XTkrWitsUDNLQDUXOnVrPy1bTUJgB2t_cBMQP3UyVG5dDksVMw&cntvendor=1&srcsubj=6082808&type=bkbuy&subject=6082808
+          - link "+ 加入购书单" [ref=e615] [cursor=pointer]:
+            - /url: https://www.douban.com/accounts/passport/login?source=book
+        - generic [ref=e616]:
+          - heading "这本书的其他版本 · · · · · · ( 全部83 )" [level=2] [ref=e617]:
+            - text: 这本书的其他版本 · · · · · ·
+            - generic [ref=e618]:
+              - text: (
+              - link "全部83" [ref=e619] [cursor=pointer]:
+                - /url: https://book.douban.com/works/1007890
+              - text: )
+          - list [ref=e620]:
+            - listitem [ref=e621]:
+              - generic [ref=e622]:
+                - generic [ref=e623]:
+                  - link "Penguin Classics （2000）" [ref=e624] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/1865170/
+                  - generic [ref=e625]: 9.4分 536人读过
+                - link "展开有售 (1)" [ref=e627] [cursor=pointer]:
+                  - /url: javascript:void(0);
+            - listitem [ref=e628]:
+              - generic [ref=e630]:
+                - link "上海译文出版社 （1989）" [ref=e631] [cursor=pointer]:
+                  - /url: https://book.douban.com/subject/1786670/
+                - generic [ref=e632]: 8.9分 113993人读过
+            - listitem [ref=e633]:
+              - generic [ref=e634]:
+                - generic [ref=e635]:
+                  - link "南海出版公司 （2017）" [ref=e636] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/27107109/
+                  - generic [ref=e637]: 9.5分 34698人读过
+                - link "展开有售 (1)" [ref=e639] [cursor=pointer]:
+                  - /url: javascript:void(0);
+            - listitem [ref=e640]:
+              - generic [ref=e642]:
+                - link "浙江文艺出版社 （1991）" [ref=e643] [cursor=pointer]:
+                  - /url: https://book.douban.com/subject/1059112/
+                - generic [ref=e644]: 9.1分 10275人读过
+        - generic [ref=e645]:
+          - heading "在哪儿借这本书 · · · · · ·" [level=2] [ref=e646]
+          - list [ref=e647]:
+            - listitem [ref=e648]:
+              - link "上海市中心图书馆(84)" [ref=e649] [cursor=pointer]:
+                - /url: https://www.douban.com/link2/?url=http%3A%2F%2Fipac.library.sh.cn%2Fipac20%2Fipac.jsp%3Faspect%3Dbasic_search%26profile%3Dsl%26index%3DISBN%26term%3D9787544253994%26otherloc%3Dtrue&subject=7544253996&type=borrow&library=10011&link2key=a020ada537
+            - listitem [ref=e650]:
+              - link "广州其他馆藏(2)" [ref=e651] [cursor=pointer]:
+                - /url: https://www.douban.com/link2/?url=http%3A%2F%2Fopac.gzlib.gov.cn%2Fopac%2Fsearch%3Frows%3D10%26curlibcode%3DGT%26hasholding%3D1%26searchWay0%3Dmarc%26q0%3D%26logical0%3DAND%26q%3D9787544253994%26searchWay%3Disbn%26scWay%3Ddim%26searchSource%3Dreader&subject=7544253996&type=borrow&library=10023&link2key=a020ada537
+            - listitem [ref=e652]:
+              - link "吉林省图书馆" [ref=e653] [cursor=pointer]:
+                - /url: https://www.douban.com/link2/?url=http%3A%2F%2F218.62.1.221%3A8080%2Fopac%2Fopenlink.php%3FstrText%3D978-7-5442-5399-4%26strSearchType%3Disbn&subject=7544253996&type=borrow&library=10002&link2key=a020ada537
+            - listitem [ref=e654]:
+              - link "沈阳师范大学图书馆" [ref=e655] [cursor=pointer]:
+                - /url: https://www.douban.com/link2/?url=http%3A%2F%2F58.154.49.3%3A8080%2Fopac%2Fopenlink.php%3FhistoryCount%3D1%26strText%3D978-7-5442-5399-4%26doctype%3DALL%26strSearchType%3Disbn%26match_flag%3Dforward%26displaypg%3D20%26sort%3DCATA_DATE%26orderby%3Ddesc%26showmode%3Dlist%26location%3DALL&subject=7544253996&type=borrow&library=10010&link2key=a020ada537
+            - listitem [ref=e656]:
+              - link "温州市图书馆" [ref=e657] [cursor=pointer]:
+                - /url: https://www.douban.com/link2/?url=http%3A%2F%2Fopac3.wzlib.cn%2Fopac%2Fsearch%3FsearchWay%3Disbn%26q%3D978-7-5442-5399-4%26booktype%3D%26marcformat%3D%26sortWay%3Dscore%26sortOrder%3Ddesc%26startPubdate%3D%26endPubdate%3D%26rows%3D10&subject=7544253996&type=borrow&library=10020&link2key=a020ada537
+            - listitem [ref=e658]:
+              - link "重庆图书馆" [ref=e659] [cursor=pointer]:
+                - /url: https://www.douban.com/link2/?url=http%3A%2F%2F222.177.237.197%3A8080%2FInDigLib%2Ffront%2FComplexSearch.action%3FcurrentPage%3D1%26select1%3Disbn%26select2%3D%26select3%3D%26text1%3D978-7-5442-5399-4%26text2%3D%26text3%3D%26pageSize%3D20%26condition%3D%26table%3Di_biblios%26type%3D%26videoType%3Dcomplex&subject=7544253996&type=borrow&library=10021&link2key=a020ada537
+        - heading "以下书单推荐 · · · · · · ( 全部 )" [level=2] [ref=e660]:
+          - text: 以下书单推荐 · · · · · ·
+          - generic [ref=e661]:
+            - text: (
+            - link "全部" [ref=e662] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/6082808/doulists
+            - text: )
+        - list [ref=e664]:
+          - listitem [ref=e665]:
+            - link "世界100位文学大师排行榜及代表作最佳中文版本" [ref=e666] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/1294399/
+            - text: (子轩)
+          - listitem [ref=e667]:
+            - link "一湄私人书橱" [ref=e668] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/226728/
+            - text: (一湄)
+          - listitem [ref=e669]:
+            - link "评分9.0~9.7(1000+人参与评价)" [ref=e670] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/1757387/
+            - text: (第五顾尘ᕦ)
+          - listitem [ref=e671]:
+            - link "你好好睡，我好好读书。等你醒了我们聊柏拉图。" [ref=e672] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/436036/
+            - text: (琼斯黄)
+          - listitem [ref=e673]:
+            - link "值得看看的一些文史哲闲书" [ref=e674] [cursor=pointer]:
+              - /url: https://www.douban.com/doulist/15494/
+            - text: (froggy)
+        - generic [ref=e676]:
+          - iframe [ref=e677]:
+            - generic [active] [ref=f30e1]:
+              - generic [ref=f30e2]:
+                - link [ref=f30e3] [cursor=pointer]:
+                  - /url: https://erebor.douban.com/redirect/?action=&ad=268323&ad_type=7&al=3&bid=1BMsX9Vf6s8&brand=&chicken=fc49de6a1728b3826aa9b7be8fb37597&creative=unknown_300x100&crtr=7%3A%E7%99%BE%E5%B9%B4%E5%AD%A4%E7%8B%AC%7C7%3A%E5%8A%A0%E8%A5%BF%E4%BA%9A%C2%B7%E9%A9%AC%E5%B0%94%E5%85%8B%E6%96%AF%7C7%3A%E9%AD%94%E5%B9%BB%E7%8E%B0%E5%AE%9E%E4%B8%BB%E4%B9%89%7C7%3A%E7%BB%8F%E5%85%B8%7C7%3A%E6%8B%89%E7%BE%8E%E6%96%87%E5%AD%A6%7C7%3A%E5%A4%96%E5%9B%BD%E6%96%87%E5%AD%A6%7C7%3A%E5%B0%8F%E8%AF%B4%7C7%3A%E6%96%87%E5%AD%A6%7C7%3A%E5%AD%A4%E7%8B%AC%7C7%3A%E5%90%8D%E8%91%97%7C3%3A%2Fsubject%2F6082808%2F&device=0&disable_creative=false&disable_third=false&high_value=false&hn=nob179&imp_type=2&is_cache=false&is_cmp=false&is_core=false&is_ht=false&is_short=false&item_type=COMPLEMENT&mark=&model=&net=&os=52&osv=NT+10.0&p=0&posid=&priority=2&region=68972b8f49b28cf6&sig=c806f5bcad9a450c4b315ea61fa7cbedee601b4bba563f4c45c625a82a27a188&sigt=hmac&t_mode=&target=aHR0cHM6Ly9yZWFkLmRvdWJhbi5jb20vZXZlbnQvQXByaWxfMjAyNi8%2FdXRtX3NvdXJjZT1kb3ViYW4mdXRtX21lZGl1bT1kb3ViYW4tc2lkZS1hZDImdXRtX2NhbXBhaWduPXJlY29tbWVuZDA0MjA%3D&ts=__TIMESTAMP__&ts_ms=__TIMESTAMP_MS__&uid=&unit=dale_book_subject_middle_mini&vendor=
+                - generic [ref=f30e4]:
+                  - paragraph [ref=f30e5]:
+                    - link "豆瓣阅读丨电子书读书日大促" [ref=f30e6] [cursor=pointer]:
+                      - /url: https://erebor.douban.com/redirect/?action=&ad=268323&ad_type=7&al=3&bid=1BMsX9Vf6s8&brand=&chicken=fc49de6a1728b3826aa9b7be8fb37597&creative=unknown_300x100&crtr=7%3A%E7%99%BE%E5%B9%B4%E5%AD%A4%E7%8B%AC%7C7%3A%E5%8A%A0%E8%A5%BF%E4%BA%9A%C2%B7%E9%A9%AC%E5%B0%94%E5%85%8B%E6%96%AF%7C7%3A%E9%AD%94%E5%B9%BB%E7%8E%B0%E5%AE%9E%E4%B8%BB%E4%B9%89%7C7%3A%E7%BB%8F%E5%85%B8%7C7%3A%E6%8B%89%E7%BE%8E%E6%96%87%E5%AD%A6%7C7%3A%E5%A4%96%E5%9B%BD%E6%96%87%E5%AD%A6%7C7%3A%E5%B0%8F%E8%AF%B4%7C7%3A%E6%96%87%E5%AD%A6%7C7%3A%E5%AD%A4%E7%8B%AC%7C7%3A%E5%90%8D%E8%91%97%7C3%3A%2Fsubject%2F6082808%2F&device=0&disable_creative=false&disable_third=false&high_value=false&hn=nob179&imp_type=2&is_cache=false&is_cmp=false&is_core=false&is_ht=false&is_short=false&item_type=COMPLEMENT&mark=&model=&net=&os=52&osv=NT+10.0&p=0&posid=&priority=2&region=68972b8f49b28cf6&sig=c806f5bcad9a450c4b315ea61fa7cbedee601b4bba563f4c45c625a82a27a188&sigt=hmac&t_mode=&target=aHR0cHM6Ly9yZWFkLmRvdWJhbi5jb20vZXZlbnQvQXByaWxfMjAyNi8%2FdXRtX3NvdXJjZT1kb3ViYW4mdXRtX21lZGl1bT1kb3ViYW4tc2lkZS1hZDImdXRtX2NhbXBhaWduPXJlY29tbWVuZDA0MjA%3D&ts=__TIMESTAMP__&ts_ms=__TIMESTAMP_MS__&uid=&unit=dale_book_subject_middle_mini&vendor=
+                  - paragraph [ref=f30e7]: 豆瓣阅读
+              - img
+          - generic [ref=e678]: 广告
+        - heading "谁读这本书? · · · · · ·" [level=2] [ref=e679]
+        - generic [ref=e680]:
+          - generic [ref=e681]:
+            - link "那卡屎马" [ref=e683] [cursor=pointer]:
+              - /url: https://www.douban.com/people/198684922/
+              - img "那卡屎马" [ref=e684]
+            - generic [ref=e685]:
+              - link "那卡屎马" [ref=e686] [cursor=pointer]:
+                - /url: https://www.douban.com/people/198684922/
+              - generic [ref=e687]: 17分钟前 想读
+          - generic [ref=e689]:
+            - link "Eee_111" [ref=e691] [cursor=pointer]:
+              - /url: https://www.douban.com/people/224494335/
+              - img "Eee_111" [ref=e692]
+            - generic [ref=e693]:
+              - link "Eee_111" [ref=e694] [cursor=pointer]:
+                - /url: https://www.douban.com/people/224494335/
+              - generic [ref=e695]: 1小时前 在读
+          - generic [ref=e697]:
+            - link "爱吃鱼" [ref=e699] [cursor=pointer]:
+              - /url: https://www.douban.com/people/207774573/
+              - img "爱吃鱼" [ref=e700]
+            - generic [ref=e701]:
+              - link "爱吃鱼" [ref=e702] [cursor=pointer]:
+                - /url: https://www.douban.com/people/207774573/
+              - generic [ref=e703]: 1小时前 想读
+          - generic [ref=e705]:
+            - link "momo" [ref=e707] [cursor=pointer]:
+              - /url: https://www.douban.com/people/182052690/
+              - img "momo" [ref=e708]
+            - generic [ref=e709]:
+              - link "momo" [ref=e710] [cursor=pointer]:
+                - /url: https://www.douban.com/people/182052690/
+              - generic [ref=e711]: 2小时前 读过
+              - generic "力荐" [ref=e712]
+          - paragraph [ref=e714]:
+            - text: ">"
+            - link "65271人在读" [ref=e715] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/6082808/comments?status=N
+          - paragraph [ref=e716]:
+            - text: ">"
+            - link "703802人读过" [ref=e717] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/6082808/comments?status=P
+          - paragraph [ref=e718]:
+            - text: ">"
+            - link "478320人想读" [ref=e719] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/6082808/comments?status=F
+        - heading [level=2]
+        - heading "二手市场 · · · · · ·" [level=2] [ref=e720]
+        - list [ref=e722]:
+          - listitem [ref=e723]:
+            - link "42本二手书欲转让" [ref=e724] [cursor=pointer]:
+              - /url: https://book.douban.com/subject/6082808/offers
+            - text: (0.01 至 500元以上)
+          - listitem [ref=e725]:
+            - link "在豆瓣转让" [ref=e726] [cursor=pointer]:
+              - /url: https://www.douban.com/register?reason=secondhand-offer&cat=book
+            - text: 有478320人想读，手里有一本闲着?
+        - paragraph [ref=e727]:
+          - text: "订阅关于百年孤独的评论:"
+          - 'link "feed: rss 2.0" [ref=e729] [cursor=pointer]':
+            - /url: https://book.douban.com/feed/subject/6082808/reviews
+    - generic [ref=e730]:
+      - generic [ref=e731]: © 2005－2026 douban.com, all rights reserved 北京豆网科技有限公司
+      - generic [ref=e732]:
+        - link "关于豆瓣" [ref=e733] [cursor=pointer]:
+          - /url: https://www.douban.com/about
+        - text: ·
+        - link "在豆瓣工作" [ref=e734] [cursor=pointer]:
+          - /url: https://www.douban.com/jobs
+        - text: ·
+        - link "联系我们" [ref=e735] [cursor=pointer]:
+          - /url: https://www.douban.com/about?topic=contactus
+        - text: ·
+        - link "法律声明" [ref=e736] [cursor=pointer]:
+          - /url: https://www.douban.com/about/legal
+        - text: ·
+        - link "帮助中心" [ref=e737] [cursor=pointer]:
+          - /url: https://help.douban.com/?app=book
+        - text: ·
+        - link "图书馆合作" [ref=e738] [cursor=pointer]:
+          - /url: https://book.douban.com/library_invitation
+        - text: ·
+        - link "移动应用" [ref=e739] [cursor=pointer]:
+          - /url: https://www.douban.com/doubanapp/

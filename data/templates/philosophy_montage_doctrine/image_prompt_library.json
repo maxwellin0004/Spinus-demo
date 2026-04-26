@@ -1,0 +1,140 @@
+﻿{
+  "template_id": "philosophy_montage_doctrine",
+  "prompt_version": "1.0.0",
+  "generation_profile": {
+    "orientation": "horizontal",
+    "width": 1920,
+    "height": 1080,
+    "aspect_ratio": "16:9",
+    "style_core": [
+      "cinematic philosophical montage",
+      "bright but controlled contrast",
+      "human-centered emotional storytelling",
+      "clean subtitle safe zone"
+    ],
+    "global_negative_prompt": "lowres, blurry, muddy colors, jpeg artifacts, watermark, logo, ui screenshot, poster text, subtitles, random letters, deformed eyes, extra fingers, extra limbs, bad anatomy, overexposed highlights"
+  },
+  "opener": {
+    "intro_card": {
+      "asset_output": "/images/philosophy-montage/opener-style/intro_card.jpg",
+      "intent": "开场引导句卡片，仪式感 + 哲思感",
+      "positive_prompt": "A cinematic mythic sky scene, giant cloud forms and deep blue atmosphere, one human figure suspended on a rope above clouds, philosophical epic mood, strong depth, clean center composition, no text",
+      "negative_prompt": "text overlay, logo, UI, cartoon, low detail",
+      "composition_notes": "中心区域保留主标题空间，底部留字幕安全区。"
+    },
+    "concept_terms": [
+      {
+        "term": "享乐主义",
+        "asset_output": "/images/philosophy-montage/opener-style/opener_01.jpg",
+        "positive_prompt": "A glowing nightlife banquet scene with overflowing sensory pleasure, rich warm highlights, crowded but elegant composition, cinematic realism, no text",
+        "negative_prompt": "cheap party poster look, readable signs, watermark"
+      },
+      {
+        "term": "消费主义",
+        "asset_output": "/images/philosophy-montage/opener-style/opener_02.jpg",
+        "positive_prompt": "Towering shopping bags and billboards surrounding a tiny person, dramatic perspective, bright commercial lights vs emotional emptiness, cinematic realism, no text",
+        "negative_prompt": "brand logos readable, ad text, UI screenshot"
+      },
+      {
+        "term": "虚无主义",
+        "asset_output": "/images/philosophy-montage/opener-style/opener_03.jpg",
+        "positive_prompt": "A lone figure standing in a vast dark landscape under collapsing stars, existential emptiness, high contrast, cinematic philosophical mood, no text",
+        "negative_prompt": "horror monster, text, watermark"
+      },
+      {
+        "term": "完美主义",
+        "asset_output": "/images/philosophy-montage/opener-style/opener_04.jpg",
+        "positive_prompt": "A person trapped in a geometric room of rulers, checklists, and symmetry, ultra-clean but oppressive, cinematic lighting, no text",
+        "negative_prompt": "office infographic, readable checklist text, logo"
+      },
+      {
+        "term": "犬儒主义",
+        "asset_output": "/images/philosophy-montage/opener-style/opener_05.jpg",
+        "positive_prompt": "Urban rooftop with a solitary figure looking down on a chaotic city, cold detached mood, dramatic dusk light, cinematic realism, no text",
+        "negative_prompt": "graffiti text readable, cartoon style"
+      },
+      {
+        "term": "工具理性",
+        "asset_output": "/images/philosophy-montage/opener-style/opener_06.jpg",
+        "positive_prompt": "A human silhouette integrated into clockwork and analytical grids, precision and efficiency atmosphere, cool metallic palette, cinematic realism, no text",
+        "negative_prompt": "UI dashboard screenshot, visible numbers and words"
+      },
+      {
+        "term": "功利主义",
+        "asset_output": "/images/philosophy-montage/opener-style/opener_07.jpg",
+        "positive_prompt": "A giant balancing scale with crowds and outcomes, moral calculus visual metaphor, dramatic stage lighting, cinematic style, no text",
+        "negative_prompt": "political posters, readable slogans"
+      },
+      {
+        "term": "存在主义",
+        "asset_output": "/images/philosophy-montage/opener-style/opener_08.jpg",
+        "positive_prompt": "A person at a cosmic crossroads under immense sky, intense self-choice moment, high contrast and painterly realism, no text",
+        "negative_prompt": "road sign text, logo, cartoon"
+      },
+      {
+        "term": "斯多葛主义",
+        "asset_output": "/images/philosophy-montage/opener-style/opener_09.jpg",
+        "positive_prompt": "A calm figure standing in a storm while all debris flows around without moving the person, disciplined serenity, stable composition, restrained colors, cinematic realism, no text",
+        "negative_prompt": "aggressive action pose, chaotic blur, readable text"
+      },
+      {
+        "term": "数字极简主义",
+        "asset_output": "/images/philosophy-montage/opener-style/opener_10.jpg",
+        "positive_prompt": "A clean desk by morning light, phone face down, notebook open, intentional digital boundaries, peaceful and clear, cinematic realism, no text",
+        "negative_prompt": "visible app icons text, cluttered social media UI"
+      }
+    ]
+  },
+  "body_scenes": [
+    {
+      "scene_id": "s01",
+      "asset_output": "/images/philosophy-montage/focus_feed_trap.png",
+      "intent": "注意力被噪音偷走",
+      "positive_prompt": "A central person overwhelmed by floating notifications and social gaze in a bright city environment, cinematic emotional pressure, subject clearly readable, no text",
+      "negative_prompt": "actual app UI text, watermark, low contrast",
+      "composition_notes": "人物中景居中，底部 15% 保留字幕区。"
+    },
+    {
+      "scene_id": "s02",
+      "asset_output": "/images/philosophy-montage/screen_overload_wall.png",
+      "intent": "输入过载不等于思考",
+      "positive_prompt": "A wall of glowing screens around a thoughtful human silhouette, information overload metaphor, cool-blue cinematic palette, no text",
+      "negative_prompt": "readable headlines, logos, dashboard UI"
+    },
+    {
+      "scene_id": "s03",
+      "asset_output": "/images/philosophy-montage/notification_burst_desk.png",
+      "intent": "切换成本可视化",
+      "positive_prompt": "Desk scene exploding with notification lights while a person tries to focus, cognitive fragmentation mood, dynamic but clear composition, no text",
+      "negative_prompt": "comic effects text, emoji overlays, watermark"
+    },
+    {
+      "scene_id": "s04",
+      "asset_output": "/images/philosophy-montage/control_vs_chaos.png",
+      "intent": "可控与不可控分层",
+      "positive_prompt": "Split composition: left side algorithmic chaos, right side calm ordered workspace with a composed person, clear dual semantics, cinematic realism, no text",
+      "negative_prompt": "symmetric but semantically identical halves, readable labels"
+    },
+    {
+      "scene_id": "s05",
+      "asset_output": "/images/philosophy-montage/pause_before_unlock.png",
+      "intent": "暂停动作",
+      "positive_prompt": "Close-up of hand paused above phone unlock gesture, visible hesitation and deliberate breathing moment, cinematic shallow depth, no text",
+      "negative_prompt": "actively tapping phone, readable phone text, logo"
+    },
+    {
+      "scene_id": "s06",
+      "asset_output": "/images/philosophy-montage/focus_budget_workspace.png",
+      "intent": "注意力预算",
+      "positive_prompt": "Organized workspace with timer, notebook, and single task focus, disciplined calm productivity, bright natural light, cinematic realism, no text",
+      "negative_prompt": "to-do list readable text, app screens, watermark"
+    },
+    {
+      "scene_id": "s07",
+      "asset_output": "/images/philosophy-montage/morning_control_city.png",
+      "intent": "收尾恢复掌控",
+      "positive_prompt": "Morning city with one calm walker in soft sunlight, regained control and emotional release, bright but restrained palette, cinematic realism, no text",
+      "negative_prompt": "motivational poster words, overexposed sky, logo"
+    }
+  ]
+}

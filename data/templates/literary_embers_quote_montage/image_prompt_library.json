@@ -1,0 +1,108 @@
+﻿{
+  "template_id": "literary_embers_quote_montage",
+  "prompt_version": "1.0.0",
+  "default_generation_profile": {
+    "orientation": "vertical",
+    "width": 720,
+    "height": 960,
+    "aspect_ratio": "3:4",
+    "style_core": [
+      "cinematic literary mood",
+      "high-detail painterly realism",
+      "dramatic light and shadow",
+      "clean composition for subtitle safe zone",
+      "no on-image text"
+    ],
+    "color_strategy": "high contrast with controlled warm highlights; avoid muddy gray",
+    "subtitle_safe_zone": {
+      "bottom_percent": 18,
+      "rule": "keep key subject above bottom 18% area"
+    },
+    "global_negative_prompt": "lowres, blurry, muddy colors, jpeg artifacts, watermark, logo, UI, poster text, subtitles, letters, random Chinese characters, cropped face, deformed eyes, extra fingers, extra limbs, duplicate body, uncanny anatomy, oversharpen, cartoon sticker, flat lighting"
+  },
+  "prompts": [
+    {
+      "scene_id": "le_s01",
+      "scene_type": "burnHook",
+      "asset_output": "/images/literary-embers/opener-moon-manuscript.png",
+      "intent": "开场 0-5 秒痛感钩子，建立危险与刺痛情绪",
+      "positive_prompt": "A dramatic symbolic close-up of a pale marble hand emerging from ember smoke, fingertips glowing as if singed by fire, floating ash particles, dark cinematic background, volumetric warm rim light, textured oil-paint + realistic detail hybrid, emotional tension, high contrast, premium short-video cover aesthetic, center composition, keep lower area clean for subtitles, no text",
+      "negative_prompt": "hands with wrong anatomy, extra fingers, blood gore, horror monster, cartoon style, watermark, text overlay, logo, UI elements, low contrast, dull lighting",
+      "composition_notes": "主体位于中上区域，手部略偏中，底部留出字幕空间；避免画面过满。",
+      "lighting_notes": "主光为橙金色侧逆光，辅光微弱冷色，形成冷热对冲。",
+      "quality_bar": "手部比例自然；烟雾层次清晰；火光不爆白；无任何可读文字。"
+    },
+    {
+      "scene_id": "le_s03",
+      "scene_type": "deskPanel",
+      "asset_output": "/images/literary-embers/panel-trapped-desk.png",
+      "intent": "“不是没想过”——困在日常结构中的压抑感",
+      "positive_prompt": "A solitary adult sitting at a cluttered desk with stacked books and papers, dim apartment interior at night, window light slicing through dust, literary melancholy, cinematic realism with painterly texture, strong foreground-background depth, subtle film grain feel, high contrast black and warm highlights, no text",
+      "negative_prompt": "office stock photo look, smiling person, bright corporate scene, overexposed white wall, text, watermark, logo, distorted face",
+      "composition_notes": "人物在中左或中间，书堆形成前景框；底部和右下避免关键主体。",
+      "lighting_notes": "窗口冷光 + 台灯暖光，形成心理拉扯。",
+      "quality_bar": "人物轮廓清晰，桌面细节丰富但不脏乱，情绪明显。"
+    },
+    {
+      "scene_id": "le_s04",
+      "scene_type": "streetPanel",
+      "asset_output": "/images/literary-embers/panel-gaze-window.png",
+      "intent": "“而是不敢偏离”——被他人目光定义",
+      "positive_prompt": "An evening street scene with a person walking past a bright shop window, silhouettes of passersby reflecting on glass, subtle sense of social pressure, cinematic urban mood, painterly-realistic style, rich contrast, reflective surfaces, controlled highlights, no text",
+      "negative_prompt": "cyberpunk neon overload, cartoon, anime line-art, obvious brand signs, readable shop text, watermark, logo, blurry people",
+      "composition_notes": "橱窗高亮区在中右或中上，主人物不要贴边；底部保持字幕可读。",
+      "lighting_notes": "街道冷色环境光 + 橱窗暖色高光。",
+      "quality_bar": "玻璃反射自然；人物比例正常；画面不出现可读招牌。"
+    },
+    {
+      "scene_id": "le_s05",
+      "scene_type": "windowPanel",
+      "asset_output": "/images/literary-embers/panel-comparison-machine.png",
+      "intent": "“沉默地向内坍塌”——比较机制下的内耗",
+      "positive_prompt": "A lone figure by a high window overlooking distant city lights, interior in shadow, emotional isolation, modern literary cinema frame, painterly realistic rendering, restrained palette with cool blues and muted amber accents, atmospheric haze, no text",
+      "negative_prompt": "sunny happy scene, vacation vibe, exaggerated fantasy architecture, text, subtitle burned-in, watermark, malformed body",
+      "composition_notes": "人物在中间或偏左，远景城市做背景层；底部避免复杂高亮纹理。",
+      "lighting_notes": "室内低照度，窗外点状城市光作为视觉锚点。",
+      "quality_bar": "孤独感明确；空间纵深清楚；没有花哨装饰。"
+    },
+    {
+      "scene_id": "le_s06",
+      "scene_type": "crossroadPanel",
+      "asset_output": "/images/literary-embers/panel-crossroad-shadow.png",
+      "intent": "“把决定还给自己”——抉择与阴影对峙",
+      "positive_prompt": "A crossroads at dusk with one figure standing still, long shadow splitting into different directions, symbolic decision moment, cinematic composition with central perspective, painterly realism, strong contrast and moody atmosphere, no text",
+      "negative_prompt": "traffic-heavy modern signage, readable road text, comic style, bright cheerful palette, watermark, logo",
+      "composition_notes": "中轴构图优先，道路线条引导到人物；底部道路纹理不抢字幕。",
+      "lighting_notes": "低角度侧光拉长影子，强调选择压力。",
+      "quality_bar": "岔路关系清楚；人物和影子可辨；画面有叙事感。"
+    },
+    {
+      "scene_id": "le_s07",
+      "scene_type": "collapsePanel",
+      "asset_output": "/images/literary-embers/panel-collapse-room.png",
+      "intent": "“听见内心却一次次按回去”——情绪低谷",
+      "positive_prompt": "A quiet room corner with a person crouched down, minimal furniture, emotional collapse but elegant visual language, cinematic low-key lighting, painterly realism, monochrome leaning palette with subtle warm edge light, no text",
+      "negative_prompt": "horror gore, crying caricature, cartoon, visible text on wall, watermark, logo, poor anatomy",
+      "composition_notes": "人物位于中下偏中，留出上方书名区和底部字幕区。",
+      "lighting_notes": "主环境暗，边缘暖光轻微勾边，不要全黑。",
+      "quality_bar": "姿态真实；低谷感强；但保持美术品质，不脏不糊。"
+    },
+    {
+      "scene_id": "le_s08",
+      "scene_type": "walkawayPanel",
+      "asset_output": "/images/literary-embers/panel-walkaway-light.png",
+      "intent": "收尾“失去掌声就会失去自己”——走向自我",
+      "positive_prompt": "A long open road with a single back-view figure walking toward soft light, emotional release after tension, cinematic literary ending frame, painterly realistic style, high dynamic range but controlled highlights, subtle hopeful tone, no text",
+      "negative_prompt": "motivational poster text, extreme lens flare, cartoon character, watermark, logo, overexposed whiteout",
+      "composition_notes": "道路与人物形成纵深，人物居中或偏下中；底部保持字幕清洁。",
+      "lighting_notes": "远端暖光做出口，前景维持中低亮度对比。",
+      "quality_bar": "收束感明确；亮而不炸；人物轮廓清楚。"
+    }
+  ],
+  "cover_bridge_guidance": {
+    "type": "real_cover_capture_first",
+    "rule": "bookCascade 优先使用真实书封图，不使用 AI 重绘书封",
+    "fallback_prompt_if_no_cover": "Design a premium literary book cover mockup with no readable text, abstract symbolic art, high contrast, paper texture, cinematic lighting",
+    "notes": "若真实封面不可得，可临时占位，但上线前必须替换成真实书封。"
+  }
+}

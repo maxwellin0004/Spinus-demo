@@ -1,0 +1,121 @@
+﻿{
+    "template_id":  "literary_embers_quote_montage",
+    "video_id":  "moon_sixpence_validation_v1",
+    "orientation":  "vertical",
+    "voiceover_units":  [
+                            {
+                                "voice_id":  "le_v01",
+                                "section":  "hook",
+                                "text":  "这句话会刺痛所有不甘心却一直替别人活的人。",
+                                "subtitle_zh":  "这句话会刺痛所有\n不甘心却一直替别人活的人",
+                                "subtitle_en":  "This line hits everyone\nwho keeps living for other eyes.",
+                                "target_duration_sec":  4.6,
+                                "intended_pause_after_sec":  0.2,
+                                "emphasis_words":  [
+                                                       "替别人活"
+                                                   ],
+                                "visual_section_id":  "le_s01",
+                                "timing_status":  "aligned"
+                            },
+                            {
+                                "voice_id":  "le_v02",
+                                "section":  "bridge",
+                                "text":  "今天分享《月亮与六便士》。",
+                                "subtitle_zh":  "今天分享《月亮与六便士》",
+                                "subtitle_en":  "Today: The Moon and Sixpence.",
+                                "target_duration_sec":  2.6,
+                                "intended_pause_after_sec":  0.2,
+                                "emphasis_words":  [
+                                                       "《月亮与六便士》"
+                                                   ],
+                                "visual_section_id":  "le_s02",
+                                "timing_status":  "aligned"
+                            },
+                            {
+                                "voice_id":  "le_v03",
+                                "section":  "body",
+                                "text":  "很多人不是没有天赋，只是从来没替自己活过。",
+                                "subtitle_zh":  "很多人不是没有天赋，\n只是从来没替自己活过",
+                                "subtitle_en":  "Many people lack not talent,\nbut the courage to live for themselves.",
+                                "target_duration_sec":  5.1,
+                                "intended_pause_after_sec":  0.28,
+                                "emphasis_words":  [
+                                                       "替自己活过"
+                                                   ],
+                                "visual_section_id":  "le_s03",
+                                "timing_status":  "aligned"
+                            },
+                            {
+                                "voice_id":  "le_v04",
+                                "section":  "body",
+                                "text":  "你抱怨生活沉闷，却把每次选择都交给体面和目光。",
+                                "subtitle_zh":  "你抱怨生活沉闷，\n却把每次选择都交给体面和目光",
+                                "subtitle_en":  "You resent a dull life,\nyet hand every choice to approval and safety.",
+                                "target_duration_sec":  5.3,
+                                "intended_pause_after_sec":  0.28,
+                                "emphasis_words":  [
+                                                       "体面",
+                                                       "目光"
+                                                   ],
+                                "visual_section_id":  "le_s04",
+                                "timing_status":  "aligned"
+                            },
+                            {
+                                "voice_id":  "le_v05",
+                                "section":  "body",
+                                "text":  "于是工作是为了交代，努力是为了比较。",
+                                "subtitle_zh":  "于是工作是为了交代，\n努力是为了比较",
+                                "subtitle_en":  "Work becomes explanation,\nand effort becomes comparison.",
+                                "target_duration_sec":  4.6,
+                                "intended_pause_after_sec":  0.25,
+                                "emphasis_words":  [
+                                                       "交代",
+                                                       "比较"
+                                                   ],
+                                "visual_section_id":  "le_s05",
+                                "timing_status":  "aligned"
+                            },
+                            {
+                                "voice_id":  "le_v06",
+                                "section":  "body",
+                                "text":  "真正困住人的不是起点，而是听见内心后又把它按回去。",
+                                "subtitle_zh":  "真正困住人的不是起点，\n而是听见内心后又把它按回去",
+                                "subtitle_en":  "What traps you is not the start,\nbut silencing what you already heard inside.",
+                                "target_duration_sec":  5.8,
+                                "intended_pause_after_sec":  0.28,
+                                "emphasis_words":  [
+                                                       "按回去"
+                                                   ],
+                                "visual_section_id":  "le_s06",
+                                "timing_status":  "aligned"
+                            },
+                            {
+                                "voice_id":  "le_v07",
+                                "section":  "body",
+                                "text":  "不是每个人都要离开现实，但每个人都该有一次为自己负责的决定。",
+                                "subtitle_zh":  "不是每个人都要离开现实，\n但每个人都该有一次为自己负责的决定",
+                                "subtitle_en":  "Not everyone must flee reality,\nbut everyone deserves one decision owned by the self.",
+                                "target_duration_sec":  6.0,
+                                "intended_pause_after_sec":  0.32,
+                                "emphasis_words":  [
+                                                       "为自己负责"
+                                                   ],
+                                "visual_section_id":  "le_s07",
+                                "timing_status":  "aligned"
+                            },
+                            {
+                                "voice_id":  "le_v08",
+                                "section":  "outro",
+                                "text":  "如果你总怕失去掌声，最后失去的往往就是自己。",
+                                "subtitle_zh":  "如果你总怕失去掌声，\n最后失去的往往就是自己",
+                                "subtitle_en":  "If you fear losing applause,\nyou may end up losing yourself.",
+                                "target_duration_sec":  5.2,
+                                "intended_pause_after_sec":  0.25,
+                                "emphasis_words":  [
+                                                       "自己"
+                                                   ],
+                                "visual_section_id":  "le_s08",
+                                "timing_status":  "aligned"
+                            }
+                        ]
+}

@@ -1,0 +1,7 @@
+﻿[
+  {"asset_id": "hook_image", "target_section": "hook", "asset_type": "image", "asset_description": "火焰情绪开场图", "source_guidance": "本地图片 /images/literary-embers/opener-moon-manuscript.png", "prompt_ref": "image_prompt_library.json::le_s01", "required": true, "fallback_plan": "替换为同风格高对比情绪图", "notes": "不得使用带字幕水印的原视频截图"},
+  {"asset_id": "book_covers_real", "target_section": "bridge", "asset_type": "book_cover_images", "asset_description": "4 张真实书封（Douban 页面抓取）", "source_guidance": "本地图片 /images/literary-embers/covers/*.png", "prompt_ref": "image_prompt_library.json::cover_bridge_guidance", "required": true, "fallback_plan": "同书目其他清晰封面图", "notes": "每张封面必须清晰可辨"},
+  {"asset_id": "body_panels", "target_section": "body_all", "asset_type": "image_set", "asset_description": "6 张与文稿对应的情绪场景图", "source_guidance": "本地图片 /images/literary-embers/panel-*.png", "prompt_ref": "image_prompt_library.json::le_s03~le_s08", "required": true, "fallback_plan": "按相同镜头语义重生图片", "notes": "每段一张主图，不叠加大段页面文字"},
+  {"asset_id": "voiceover_cn", "target_section": "audio_all", "asset_type": "voiceover_audio", "asset_description": "ElevenLabs 中文口播", "source_guidance": "video-app/public/audio/literary-embers/moon-sixpence-elevenlabs-cn.mp3", "required": true, "fallback_plan": "rough preview 可禁用", "notes": "最终版必须启用"},
+  {"asset_id": "subtitle_bilingual", "target_section": "all", "asset_type": "subtitle_data", "asset_description": "双语字幕时间轴", "source_guidance": "subtitle_timeline.generated.vertical.json", "required": true, "fallback_plan": "仅 rough preview 使用估算", "notes": "最终以音频对齐时间轴为准"}
+]

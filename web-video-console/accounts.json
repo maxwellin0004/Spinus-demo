@@ -1,0 +1,99 @@
+[
+  {
+    "id": "trading_xhs",
+    "name": "交易教育-小红书",
+    "platform": "xiaohongshu",
+    "persona": "冷静交易老师",
+    "toneTags": [
+      "强Hook",
+      "口语化",
+      "节奏快"
+    ],
+    "defaultTemplateId": "new_signals",
+    "defaultCompositionId": "NewSignalsComposition",
+    "defaultDurationSec": 60,
+    "aspectRatio": "9:16",
+    "ctaStyle": "行动建议型",
+    "constraints": [
+      "不喊单",
+      "不夸收益",
+      "结尾给明确下一步动作"
+    ],
+    "subtitleStyle": "大字高亮",
+    "voiceProfile": "cn_female_fast"
+  },
+  {
+    "id": "trading_bili",
+    "name": "交易教育-B站",
+    "platform": "bilibili",
+    "persona": "结构化交易分析员",
+    "toneTags": [
+      "更专业",
+      "信息密度高",
+      "解释型"
+    ],
+    "defaultTemplateId": "new_signals",
+    "defaultCompositionId": "NewSignalsComposition",
+    "defaultDurationSec": 90,
+    "aspectRatio": "16:9",
+    "ctaStyle": "延伸阅读型",
+    "constraints": [
+      "避免夸张表达",
+      "结论要有依据"
+    ],
+    "subtitleStyle": "标准字幕",
+    "voiceProfile": "cn_male_clear"
+  },
+  {
+    "id": "psych_xhs",
+    "name": "心理洞察-小红书",
+    "platform": "xiaohongshu",
+    "persona": "冷静洞察型讲述者",
+    "toneTags": [
+      "克制",
+      "洞察",
+      "慢铺垫"
+    ],
+    "defaultTemplateId": "minimal_psych_explainer",
+    "defaultCompositionId": "MinimalPsychExplainer",
+    "defaultDurationSec": 60,
+    "aspectRatio": "9:16",
+    "ctaStyle": "评论互动型",
+    "constraints": [
+      "不说教",
+      "不要情绪绑架"
+    ],
+    "subtitleStyle": "轻高亮",
+    "voiceProfile": "cn_female_warm"
+  },
+  {
+    "id": "account-1777018974620",
+    "name": "心理解释",
+    "platform": "youtube",
+    "persona": "冷静共情",
+    "toneTags": [],
+    "defaultTemplateId": "minimal_psych_explainer",
+    "defaultCompositionId": "MinimalPsychExplainer",
+    "defaultDurationSec": 60,
+    "aspectRatio": "9:16",
+    "ctaStyle": "行动建议型",
+    "constraints": [],
+    "subtitleStyle": "大字高亮",
+    "voiceProfile": "default"
+  },
+  {
+    "id": "account-1777020066096",
+    "name": "心理行为",
+    "platform": "xiaohongshu",
+    "persona": "内容账号",
+    "toneTags": [],
+    "defaultTemplateId": "ai_concept_analyse",
+    "defaultCompositionId": "AiConceptAnalyse",
+    "defaultDurationSec": 60,
+    "aspectRatio": "9:16",
+    "ctaStyle": "行动建议型",
+    "constraints": [],
+    "subtitleStyle": "标准字幕",
+    "voiceProfile": "default"
+  }
+]

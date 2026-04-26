@@ -1,0 +1,129 @@
+﻿{
+    "template_id":  "literary_embers_quote_montage",
+    "template_name":  "Literary Embers Quote Montage",
+    "version":  "1.2.0",
+    "status":  "template-ready",
+    "created_at":  "2026-04-25",
+    "updated_at":  "2026-04-26",
+    "orientation":  "vertical",
+    "resolution":  {
+                       "width":  720,
+                       "height":  960,
+                       "fps":  30
+                   },
+    "source_reference":  {
+                             "video_path":  "D:/document/google/download (15).mp4",
+                             "analysis_method":  "manual frame decomposition + rebuilt validation render",
+                             "notes":  "Emotion-first literary quote montage with a symbolic hook, real-book cover bridge, image-driven body panels, and bilingual subtitles."
+                         },
+    "positioning":  {
+                        "tracks":  [
+                                       "book quote short video",
+                                       "literary mood montage",
+                                       "self-reflection explainer",
+                                       "philosophical reading notes"
+                                   ],
+                        "platforms":  [
+                                          "Douyin",
+                                          "Xiaohongshu",
+                                          "Bilibili vertical"
+                                      ],
+                        "video_type":  "literary quote mood montage",
+                        "recommended_duration_sec":  [
+                                                         35,
+                                                         50
+                                                     ],
+                        "target_audience":  [
+                                                "viewers who consume literary and philosophical short videos",
+                                                "young adults drawn to emotionally sharp book excerpts",
+                                                "users who prefer image-led reflective content over infographic explainers"
+                                            ],
+                        "conversion_goal":  "Use one emotionally piercing literary idea to trigger save, follow, and comment intent."
+                    },
+    "new_scene_system":  [
+                             "burn_hook_scene",
+                             "book_cascade_scene",
+                             "image_panel_scene",
+                             "book_lockup_overlay",
+                             "bilingual_quote_track"
+                         ],
+    "fixed_rules":  {
+                        "visual_language":  [
+                                                "0-5s must use an emotional metaphor opener rather than a plain title card",
+                                                "after the hook, the video must pass through a real-cover bridge before entering the body",
+                                                "body scenes are image-driven narrative panels, one dominant image per segment",
+                                                "the book title lockup stays at the top during body scenes",
+                                                "on-canvas body copy remains minimal; the main information lives in subtitles"
+                                            ],
+                        "motion_language":  [
+                                                "hook uses flash, glow bloom, and push-in motion",
+                                                "book bridge uses staggered flash-card swaps and center lock-in",
+                                                "body scenes use slow pan and slow scale only",
+                                                "scene-to-scene changes are mostly hard cuts with light exposure flicker"
+                                            ],
+                        "subtitle_rules":  [
+                                               "bottom-centered bilingual subtitles",
+                                               "Chinese line in warm yellow, English gloss below in white italic",
+                                               "subtitle timing must come from generated voiceover audio"
+                                           ],
+                        "audio_rules":  [
+                                            "Chinese voiceover supported by ElevenLabs",
+                                            "no dense SFX stack; sound design should stay sparse",
+                                            "final subtitle timeline must be rebuilt from real generated audio timing"
+                                        ]
+                    },
+    "allowed_reuse_base_capabilities":  [
+                                            "audio_layer_component",
+                                            "font_loader",
+                                            "subtitle_timing_pipeline",
+                                            "basic_interpolate_utils",
+                                            "static_file_audio_mounting",
+                                            "static_file_image_loading"
+                                        ],
+    "forbidden_reuse":  [
+                            "ai_concept_analyse page structure",
+                            "new_signals timeline grammar",
+                            "comic_* panel skeletons",
+                            "minimal_psych_explainer layout system",
+                            "philosophy_montage_doctrine opener/body grammar",
+                            "tech_archive evidence-card layout"
+                        ],
+    "audio_alignment":  {
+                            "enabled":  true,
+                            "provider":  "elevenlabs",
+                            "protocol_file":  "audio_alignment_protocol.json",
+                            "audio_schema_file":  "template_data_audio_schema.json",
+                            "example_voiceover_units_file":  "example_voiceover_units.json",
+                            "final_subtitle_source":  "subtitle_timeline.generated.vertical.json"
+                        },
+    "implementation_refs":  [
+                                "video-app/src/compositions/LiteraryEmbersValidationComposition.tsx",
+                                "video-app/src/scenes/literaryEmbers/LiteraryEmbersScenes.tsx",
+                                "video-app/src/data/LiteraryEmbersValidationData.ts",
+                                "video-app/src/data/LiteraryEmbersValidationAudio.ts",
+                                "video-app/src/components/video/BilingualQuoteTrack.tsx",
+                                "scripts/generate_literary_embers_tts.py"
+                            ],
+    "approved_preview":  "video-app/out/literary-embers-validation-preview.mp4",
+    "prompt_assets":  {
+                          "image_prompt_library_file":  "image_prompt_library.json",
+                          "image_generation_rules_file":  "image_generation_rules.md",
+                          "usage":  "Generate/refresh scene images before render; keep subtitle safe zone and no-text rule.",
+                          "prompt_variants_file":  "prompt_variants.json"
+                      },
+    "quality_assets":  {
+                           "image_qc_checklist_file":  "image_qc_checklist.json",
+                           "asset_sources_file":  "asset_sources.md"
+                       },
+    "render_assets":  {
+                          "render_profile_file":  "template_render_profile.json",
+                          "one_click_pipeline_file":  "one_click_pipeline.md"
+                      },
+    "reuse_assets":  {
+                         "theme_pack_examples_dir":  "theme_pack_examples",
+                         "examples":  [
+                                          "example_data.theme_1984.json",
+                                          "example_data.theme_siddhartha.json"
+                                      ]
+                     }
+}

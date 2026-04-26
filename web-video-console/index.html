@@ -17,19 +17,35 @@
               <path d="M11 11.5 16 8.8l5 2.7v7L16 21.2l-5-2.7v-7Z" />
             </svg>
           </div>
-          <div>
+          <div class="brand-copy">
             <h1>Codex Video Console</h1>
             <p id="workspacePath">D:\program\ai_video\workflow</p>
           </div>
         </div>
+
+        <div class="top-context">
+          <div class="context-chip">
+            <span>Session</span>
+            <strong id="topSessionChip">未绑定</strong>
+          </div>
+          <div class="context-chip">
+            <span>状态</span>
+            <strong id="topStatusChip">Idle</strong>
+          </div>
+          <div class="context-chip">
+            <span>输出</span>
+            <strong id="topOutputChip">data/jobs</strong>
+          </div>
+        </div>
+
         <div class="top-actions">
-          <button class="icon-button" type="button" title="刷新状态" aria-label="刷新状态" id="refreshButton">
+          <button class="icon-button" type="button" title="刷新" aria-label="刷新" id="refreshButton">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M20 12a8 8 0 1 1-2.34-5.66" />
               <path d="M20 4v5h-5" />
             </svg>
           </button>
-          <button class="icon-button" type="button" title="打开设置" aria-label="打开设置">
+          <button class="icon-button" type="button" title="设置" aria-label="设置">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
               <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.37a1.7 1.7 0 0 0-1 .2 1.7 1.7 0 0 0-.9 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-.9-1.5 1.7 1.7 0 0 0-1-.2 1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.63 15a1.7 1.7 0 0 0-.2-1 1.7 1.7 0 0 0-1.5-.9H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-.9 1.7 1.7 0 0 0 .2-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.63a1.7 1.7 0 0 0 1-.2 1.7 1.7 0 0 0 .9-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 .9 1.5 1.7 1.7 0 0 0 1 .2 1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.37 9c.1.32.1.68 0 1 .18.63.72 1.1 1.4 1.1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5.9Z" />
@@ -39,44 +55,86 @@
       </header>
 
       <main class="workspace-grid">
-        <section class="chat-panel" aria-label="Codex 对话">
+        <section class="chat-panel" aria-label="视频任务对话">
           <div class="panel-heading">
             <div>
               <span class="eyebrow">Codex Thread</span>
               <h2>视频任务对话</h2>
             </div>
-            <span class="status-pill is-live">
+            <span class="status-pill is-live" id="connectionStatus">
               <span></span>
-              Local
+              Codex CLI
             </span>
+          </div>
+
+          <div class="chat-context-card">
+            <div class="context-line">
+              <span>账号</span>
+              <strong id="chatAccountLabel">未选择</strong>
+            </div>
+            <div class="context-line">
+              <span>模板</span>
+              <strong id="chatTemplateLabel">未选择</strong>
+            </div>
+            <div class="context-line">
+              <span>Session</span>
+              <strong id="chatSessionLabel">未绑定</strong>
+            </div>
+            <div class="context-line">
+              <span>输出</span>
+              <strong id="chatOutputLabel">data/jobs</strong>
+            </div>
+          </div>
+
+          <div class="session-strip">
+            <div class="session-select-block">
+              <label for="sessionSelect">Session</label>
+              <select id="sessionSelect" aria-label="选择本地 session"></select>
+            </div>
+            <button class="secondary-button" type="button" id="newThreadButton">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 5v14" />
+                <path d="M5 12h14" />
+              </svg>
+              新建对话
+            </button>
+          </div>
+
+          <div class="session-toolbar">
+            <button class="ghost-button is-compact" type="button" id="toggleSessionDrawerButton">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+              浏览本地 session
+            </button>
+            <div class="session-scope" aria-label="session 范围">
+              <button class="is-active" type="button" data-session-scope="workspace">当前工作区</button>
+              <button type="button" data-session-scope="all">全部</button>
+            </div>
+          </div>
+
+          <div class="session-drawer" id="sessionDrawer" hidden>
+            <div class="session-search-row">
+              <input id="sessionSearchInput" type="text" placeholder="筛选 session 名称或 ID" />
+              <button class="icon-button is-dark" type="button" id="sessionRefreshButton" title="刷新 session" aria-label="刷新 session">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M20 12a8 8 0 1 1-2.34-5.66" />
+                  <path d="M20 4v5h-5" />
+                </svg>
+              </button>
+            </div>
+            <div class="session-list" id="sessionList" aria-live="polite"></div>
           </div>
 
           <div class="thread-list" id="threadList" aria-live="polite"></div>
 
-          <div class="prompt-toolbar" aria-label="提示词快捷操作">
-            <button type="button" data-prompt="生成一个 60 秒竖屏交易教育视频，主题是假突破，节奏紧凑，适合小红书。">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="m5 12 4 4L19 6" />
-              </svg>
-              交易教育
-            </button>
-            <button type="button" data-prompt="把当前视频改成更强的开场 Hook，前三秒必须出现风险反转和大字标题。">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M13 2 4 14h7l-1 8 10-13h-7l0-7Z" />
-              </svg>
-              强化 Hook
-            </button>
-            <button type="button" data-prompt="检查最新渲染日志，定位错误并给出需要修改的 Remotion 文件。">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M9 11 12 14 22 4" />
-                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-              </svg>
-              修复渲染
-            </button>
-          </div>
-
           <form class="composer" id="composerForm">
-            <textarea id="composerInput" rows="4" placeholder="写下这条视频要做什么，风格、时长和平台都可以一起说。"></textarea>
+            <div class="active-instruction-strip" id="activeInstructionStrip"></div>
+            <textarea
+              id="composerInput"
+              rows="4"
+              placeholder="写下这条视频想做什么，风格、时长、平台和额外要求都可以一起说。"
+            ></textarea>
             <div class="composer-actions">
               <button class="ghost-button" type="button" id="attachButton">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -95,109 +153,219 @@
           </form>
         </section>
 
-        <section class="work-panel" aria-label="任务执行流">
+        <section class="work-panel" aria-label="生产工作台">
           <div class="panel-heading is-split">
             <div>
-              <span class="eyebrow">Pipeline</span>
-              <h2 id="activeJobTitle">假突破交易教育短视频</h2>
+              <span class="eyebrow">Production Workbench</span>
+              <h2 id="activeJobTitle">未开始视频任务</h2>
             </div>
             <div class="segmented-control" aria-label="任务视图">
-              <button class="is-active" type="button" data-view="timeline">任务</button>
+              <button class="is-active" type="button" data-view="workflow">流程</button>
+              <button type="button" data-view="script">脚本</button>
+              <button type="button" data-view="subtitles">字幕</button>
               <button type="button" data-view="resources">资源</button>
               <button type="button" data-view="logs">日志</button>
             </div>
           </div>
 
-          <div class="job-summary">
-            <div>
-              <span>状态</span>
-              <strong id="jobStatusLabel">规划中</strong>
+          <div class="task-header-card">
+            <div class="task-card-copy">
+              <span class="eyebrow">Task Header</span>
+              <h3 id="taskHeaderTitle">当前还没有激活任务</h3>
+              <p id="taskHeaderSummary">先选账号、模板和指令，再从左侧发起本轮视频需求。</p>
             </div>
-            <div>
-              <span>模板</span>
-              <strong id="jobTemplateLabel">new_signals</strong>
-            </div>
-            <div>
-              <span>比例</span>
-              <strong id="jobAspectLabel">9:16</strong>
-            </div>
-            <div>
-              <span>输出</span>
-              <strong id="jobOutputLabel">data/jobs</strong>
+            <div class="task-header-grid">
+              <div class="field-card">
+                <label for="accountSelect">账号</label>
+                <div class="inline-field">
+                  <select id="accountSelect" aria-label="选择账号"></select>
+                  <button class="secondary-button" type="button" id="openAccountModalButton">新增账号</button>
+                </div>
+              </div>
+              <div class="field-card">
+                <label for="templateSelect">模板</label>
+                <div class="inline-field">
+                  <select id="templateSelect" aria-label="选择模板"></select>
+                  <label class="switch-field" for="templateLockToggle">
+                    <input id="templateLockToggle" type="checkbox" />
+                    <span>锁定模板</span>
+                  </label>
+                </div>
+              </div>
+              <div class="field-card compact">
+                <span>Composition</span>
+                <strong id="compositionLabel">-</strong>
+              </div>
+              <div class="field-card compact">
+                <span>平台 / 时长 / 比例</span>
+                <div class="chip-row" id="headerMetaChips"></div>
+              </div>
             </div>
           </div>
 
-          <div class="view-stack">
-            <div class="view-page is-active" id="timelineView">
-              <ol class="step-list" id="stepList"></ol>
-            </div>
+          <div class="work-scroll">
+            <section class="account-profile-card">
+              <div class="card-heading">
+                <div>
+                  <span class="eyebrow">Account Profile</span>
+                  <h3 id="accountProfileTitle">请选择账号画像</h3>
+                </div>
+                <span class="mini-status" id="accountPlatformBadge">-</span>
+              </div>
+              <div class="profile-grid">
+                <div class="profile-item">
+                  <span>人设</span>
+                  <strong id="accountPersonaLabel">-</strong>
+                </div>
+                <div class="profile-item">
+                  <span>CTA 风格</span>
+                  <strong id="accountCtaLabel">-</strong>
+                </div>
+                <div class="profile-item profile-item-wide">
+                  <span>风格标签</span>
+                  <div class="chip-row" id="accountToneTags"></div>
+                </div>
+                <div class="profile-item profile-item-wide">
+                  <span>限制项</span>
+                  <p id="accountConstraintsLabel">-</p>
+                </div>
+              </div>
+            </section>
 
-            <div class="view-page" id="resourcesView">
-              <div class="resource-grid" id="resourceGrid"></div>
+            <section class="instruction-card">
+              <div class="card-heading">
+                <div>
+                  <span class="eyebrow">Instructions</span>
+                  <h3>内置指令与开放指令</h3>
+                </div>
+                <span class="mini-status" id="instructionScopeBadge">仅本轮</span>
+              </div>
+              <div class="preset-chip-grid" id="presetChipGrid"></div>
+              <div class="open-instruction-block">
+                <label for="openInstructionInput">开放指令</label>
+                <textarea
+                  id="openInstructionInput"
+                  rows="3"
+                  placeholder="写额外要求，例如：结尾保留明确 CTA、只改文案不改模板、字幕更大。"
+                ></textarea>
+              </div>
+              <div class="scope-toggle" aria-label="指令作用范围">
+                <button class="is-active" type="button" data-instruction-scope="run">仅本轮</button>
+                <button type="button" data-instruction-scope="session">持续作用于当前 session</button>
+              </div>
+            </section>
 
-              <div class="template-section">
-                <h3>模板</h3>
-                <div class="template-list" id="templateList" aria-label="模板列表"></div>
+            <div class="view-stack">
+              <div class="view-page is-active" id="workflowView">
+                <div class="panel-card summary-card">
+                  <div class="summary-row">
+                    <div>
+                      <span>状态</span>
+                      <strong id="jobStatusLabel">未选择</strong>
+                    </div>
+                    <div>
+                      <span>模板</span>
+                      <strong id="jobTemplateLabel">-</strong>
+                    </div>
+                    <div>
+                      <span>比例</span>
+                      <strong id="jobAspectLabel">9:16</strong>
+                    </div>
+                    <div>
+                      <span>输出</span>
+                      <strong id="jobOutputLabel">data/jobs</strong>
+                    </div>
+                  </div>
+                </div>
+                <ol class="step-list" id="stepList"></ol>
               </div>
 
-              <div class="template-section">
-                <h3>最近任务</h3>
-                <div class="template-list" id="jobHistoryList" aria-label="最近任务"></div>
+              <div class="view-page" id="scriptView">
+                <div class="script-structure" id="scriptStructure"></div>
               </div>
-            </div>
 
-            <div class="view-page" id="logsView">
-              <pre class="log-stream" id="logStream" aria-live="polite"></pre>
+              <div class="view-page" id="subtitlesView">
+                <div class="subtitle-review-card">
+                  <div class="subtitle-kicker">Current Subtitle</div>
+                  <p id="subtitleReviewText">当前还没有字幕片段。</p>
+                </div>
+                <div class="subtitle-review-card">
+                  <div class="subtitle-kicker">Subtitle Notes</div>
+                  <p id="subtitleRuleText">选择账号后，这里会显示字幕风格和高亮规则。</p>
+                </div>
+              </div>
+
+              <div class="view-page" id="resourcesView">
+                <div class="template-section">
+                  <h3>模板库</h3>
+                  <div class="template-gallery" id="templateGallery"></div>
+                </div>
+                <div class="template-section">
+                  <h3>本地素材</h3>
+                  <div class="resource-grid" id="resourceGrid"></div>
+                </div>
+                <div class="template-section">
+                  <h3>最近任务</h3>
+                  <div class="history-list" id="jobHistoryList"></div>
+                </div>
+              </div>
+
+              <div class="view-page" id="logsView">
+                <pre class="log-stream" id="logStream" aria-live="polite"></pre>
+              </div>
             </div>
           </div>
 
           <div class="work-actions">
-            <button class="secondary-button" type="button" id="generatePlanButton">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 19.5V5a2 2 0 0 1 2-2h9l5 5v11.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19.5Z" />
-                <path d="M14 3v6h6" />
-                <path d="M8 13h8M8 17h6" />
-              </svg>
-              生成计划
-            </button>
-            <button class="secondary-button" type="button" id="ttsButton">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M11 5 6 9H2v6h4l5 4V5Z" />
-                <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-                <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-              </svg>
-              配音
-            </button>
-            <button class="primary-button" type="button" id="renderButton">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="m8 5 11 7-11 7V5Z" />
-              </svg>
-              渲染
-            </button>
+            <div class="action-hints" id="actionHints"></div>
+            <div class="action-buttons">
+              <button class="secondary-button" type="button" id="generatePlanButton">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 19.5V5a2 2 0 0 1 2-2h9l5 5v11.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19.5Z" />
+                  <path d="M14 3v6h6" />
+                  <path d="M8 13h8M8 17h6" />
+                </svg>
+                生成计划
+              </button>
+              <button class="secondary-button" type="button" id="ttsButton">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M11 5 6 9H2v6h4l5 4V5Z" />
+                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                </svg>
+                配音
+              </button>
+              <button class="primary-button" type="button" id="renderButton">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m8 5 11 7-11 7V5Z" />
+                </svg>
+                渲染
+              </button>
+            </div>
           </div>
         </section>
 
-        <aside class="preview-panel" aria-label="视频预览">
+        <aside class="preview-panel" aria-label="审阅与预览">
           <div class="panel-heading">
             <div>
-              <span class="eyebrow">Preview</span>
-              <h2>竖屏预览</h2>
+              <span class="eyebrow">Review Panel</span>
+              <h2>审阅与预览</h2>
             </div>
             <span class="status-pill" id="previewStatus">
               <span></span>
-              Draft
+              Idle
             </span>
           </div>
 
           <div class="phone-frame">
             <div class="video-stage">
-              <img src="/workspace/assets/images/macd_ref_chart_2.jpg" alt="交易视频预览画面" id="previewImage" />
+              <img src="/workspace/assets/images/scenario_video_breakdown.jpg" alt="视频预览画面" id="previewImage" />
               <div class="video-overlay">
-                <div class="episode-label" id="episodeLabel">EP. 04 / Trading Signals</div>
-                <h3 id="previewHeadline">假突破最危险的地方</h3>
-                <p id="previewSummary">不是亏损，而是它会让你连续追错方向。</p>
+                <div class="episode-label" id="episodeLabel">New / Empty Thread</div>
+                <h3 id="previewHeadline">等待开始新的任务</h3>
+                <p id="previewSummary">右侧用于审阅预览、字幕、镜头说明和产物状态。</p>
               </div>
-              <div class="subtitle-band" id="subtitleBand">先等回踩确认，再判断量能是否跟上</div>
+              <div class="subtitle-band" id="subtitleBand">字幕会根据当前账号风格和任务状态更新。</div>
               <div class="progress-rail" aria-hidden="true">
                 <span id="previewProgress"></span>
               </div>
@@ -211,7 +379,7 @@
               </svg>
               预览
             </button>
-            <button class="icon-label-button" type="button" title="打开输出目录" aria-label="打开输出目录">
+            <button class="icon-label-button" type="button" title="打开目录" aria-label="打开目录">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" />
               </svg>
@@ -227,9 +395,95 @@
             </button>
           </div>
 
-          <div class="script-panel" id="scriptPanel"></div>
+          <div class="review-card">
+            <span>当前字幕</span>
+            <p id="reviewSubtitleText">暂无字幕。</p>
+          </div>
+          <div class="review-card">
+            <span>镜头说明</span>
+            <p id="reviewShotText">等待生成脚本或选择模板。</p>
+          </div>
+          <div class="review-card">
+            <span>脚本摘要</span>
+            <p id="reviewSummaryText">Hook / Body / Close 会在这里汇总。</p>
+          </div>
+          <div class="review-card">
+            <span>产物状态</span>
+            <p id="reviewOutputText">MP4、字幕和日志状态会在这里显示。</p>
+          </div>
         </aside>
       </main>
+    </div>
+
+    <div class="modal-backdrop" id="accountModal" hidden>
+      <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="accountModalTitle">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow">Create Account</span>
+            <h2 id="accountModalTitle">新增账号</h2>
+          </div>
+          <button class="icon-button" type="button" id="closeAccountModalButton" aria-label="关闭新增账号">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6 18 18" />
+              <path d="M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+
+        <form class="modal-form" id="accountForm">
+          <label>
+            <span>账号名称</span>
+            <input id="accountNameInput" name="name" type="text" required placeholder="例如：交易教育-小红书" />
+          </label>
+          <label>
+            <span>平台</span>
+            <select id="accountPlatformInput" name="platform">
+              <option value="xiaohongshu">小红书</option>
+              <option value="douyin">抖音</option>
+              <option value="bilibili">B站</option>
+              <option value="youtube">YouTube</option>
+            </select>
+          </label>
+          <label>
+            <span>人设</span>
+            <input id="accountPersonaInput" name="persona" type="text" placeholder="例如：冷静交易老师" />
+          </label>
+          <label>
+            <span>风格标签</span>
+            <input id="accountToneInput" name="toneTags" type="text" placeholder="用逗号分隔，例如：强Hook, 口语化, 节奏快" />
+          </label>
+          <label>
+            <span>默认模板</span>
+            <select id="accountTemplateInput" name="defaultTemplateId"></select>
+          </label>
+          <label>
+            <span>默认时长（秒）</span>
+            <input id="accountDurationInput" name="defaultDurationSec" type="number" min="15" step="5" value="60" />
+          </label>
+          <label>
+            <span>CTA 风格</span>
+            <input id="accountCtaInput" name="ctaStyle" type="text" placeholder="例如：行动建议型" />
+          </label>
+          <label>
+            <span>字幕风格</span>
+            <input id="accountSubtitleStyleInput" name="subtitleStyle" type="text" placeholder="例如：大字高亮" />
+          </label>
+          <label class="full-width">
+            <span>限制项</span>
+            <textarea
+              id="accountConstraintsInput"
+              name="constraints"
+              rows="3"
+              placeholder="例如：不喊单，不夸收益，不做收益承诺"
+            ></textarea>
+          </label>
+
+          <div class="modal-actions">
+            <button class="secondary-button" type="button" id="cancelAccountButton">取消</button>
+            <button class="primary-button" type="submit">创建账号</button>
+          </div>
+        </form>
+      </section>
     </div>
   </body>
 </html>

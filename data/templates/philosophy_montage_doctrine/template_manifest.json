@@ -1,0 +1,133 @@
+﻿{
+    "template_id":  "philosophy_montage_doctrine",
+    "template_name":  "Philosophy Montage Doctrine",
+    "version":  "1.2.0",
+    "status":  "template-ready",
+    "created_at":  "2026-04-24",
+    "orientation":  "horizontal",
+    "resolution":  {
+                       "width":  1920,
+                       "height":  1080,
+                       "fps":  30
+                   },
+    "source_reference":  {
+                             "video_path":  "D:/document/google/download (13).mp4",
+                             "analysis_method":  "manual frame decomposition + rebuilt validation render",
+                             "notes":  "A cinematic doctrine explainer driven by opener concept switching, one hero image per body scene, and subtitle-led narration."
+                         },
+    "positioning":  {
+                        "tracks":  [
+                                       "philosophy explainer",
+                                       "attention management",
+                                       "mindset doctrine",
+                                       "self-education"
+                                   ],
+                        "platforms":  [
+                                          "Bilibili",
+                                          "YouTube",
+                                          "Xiaohongshu horizontal"
+                                      ],
+                        "video_type":  "cinematic doctrine montage explainer",
+                        "recommended_duration_sec":  [
+                                                         40,
+                                                         75
+                                                     ],
+                        "target_audience":  [
+                                                "young adults with information overload",
+                                                "viewers who like contemplative image-led explainers",
+                                                "users interested in practical philosophy and digital habits"
+                                            ],
+                        "conversion_goal":  "Turn an abstract doctrine into a memorable emotional frame and one practical action rule."
+                    },
+    "new_scene_system":  [
+                             "opener_concept_switch_scene",
+                             "title_stack_scene",
+                             "concept_board_scene",
+                             "rumination_example_scene",
+                             "control_split_scene",
+                             "decision_prompt_scene",
+                             "axiom_wall_scene",
+                             "city_outro_scene"
+                         ],
+    "fixed_rules":  {
+                        "visual_language":  [
+                                                "0-5s opener must begin with a dedicated intro card, then switch through 8-10 doctrine terms",
+                                                "each opener term uses a different background image tied to that term instead of one shared background",
+                                                "body scenes use one bright hero image each, with no dense on-canvas paragraph copy",
+                                                "body explanation is carried by subtitles, not page text blocks",
+                                                "images should feel cinematic, bright, and emotionally specific rather than generic wallpaper"
+                                            ],
+                        "motion_language":  [
+                                                "opener uses white flash, shutter bars, push-in, and fast term switching",
+                                                "body scenes use slow drift + scale, not card-heavy dashboard motion",
+                                                "hard switch between scenes is preferred over complex nested page transitions"
+                                            ],
+                        "subtitle_rules":  [
+                                               "single subtitle track only",
+                                               "bottom centered, white text with dark stroke",
+                                               "1-2 lines per cue",
+                                               "subtitle timing must follow generated voiceover timing for final renders"
+                                           ],
+                        "audio_rules":  [
+                                            "Chinese voiceover supported by ElevenLabs",
+                                            "final subtitle timeline must be rebuilt from real generated audio timing",
+                                            "rough preview subtitles may be estimated, but final template output should use aligned timing"
+                                        ]
+                    },
+    "variable_slots":  {
+                           "replaceable_topic_fields":  [
+                                                            "opener.intro_title",
+                                                            "opener.concept_terms[]",
+                                                            "scenes[].subtitle_lines[]",
+                                                            "scenes[].image",
+                                                            "scenes[].palette",
+                                                            "meta.topic",
+                                                            "meta.tone",
+                                                            "audio.voiceover_units[]"
+                                                        ],
+                           "asset_requirements":  [
+                                                      "10 opener concept images",
+                                                      "7 body hero images",
+                                                      "1 Chinese voiceover track",
+                                                      "1 aligned subtitle timeline"
+                                                  ]
+                       },
+    "allowed_reuse_base_capabilities":  [
+                                            "subtitle_renderer",
+                                            "audio_layer_component",
+                                            "font_loader",
+                                            "image_loader",
+                                            "basic easing/interpolate utils"
+                                        ],
+    "forbidden_reuse":  [
+                            "ai_concept_analyse page structure",
+                            "new_signals timeline grammar",
+                            "comic_* page skeletons",
+                            "minimal_psych_explainer layout system",
+                            "tech_archive evidence-card scene structure"
+                        ],
+    "audio_alignment":  {
+                            "enabled":  true,
+                            "provider":  "elevenlabs",
+                            "protocol_file":  "audio_alignment_protocol.json",
+                            "audio_schema_file":  "template_data_audio_schema.json",
+                            "example_voiceover_units_file":  "example_voiceover_units.json",
+                            "final_subtitle_source":  "subtitle_timeline.generated.horizontal.json"
+                        },
+    "implementation_refs":  [
+                                "video-app/src/compositions/PhilosophyMontageValidationComposition.tsx",
+                                "video-app/src/scenes/philosophyMontage/PhilosophyMontageScenes.tsx",
+                                "video-app/src/data/PhilosophyMontageValidationData.ts",
+                                "video-app/src/data/philosophyMontageAudio.ts",
+                                "video-app/public/images/philosophy-montage/*.png",
+                                "video-app/public/audio/philosophy-montage/digital-minimalism-elevenlabs-cn.mp3"
+                            ],
+    "approved_preview":  "video-app/out/philosophy-montage-validation-preview.mp4",
+    "prompt_assets":  {
+                          "image_prompt_library_file":  "image_prompt_library.json",
+                          "prompt_variants_file":  "prompt_variants.json",
+                          "image_generation_rules_file":  "image_generation_rules.md",
+                          "usage":  "Use detailed scene prompts before image generation and keep no-text rule."
+                      },
+    "updated_at":  "2026-04-26"
+}
