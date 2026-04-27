@@ -72,6 +72,89 @@
 - npm
 - ffmpeg
 
+## 新电脑安装依赖
+
+把仓库上传到 GitHub 后，另一台电脑不需要同步 `node_modules/`、构建产物、临时目录或本地工具二进制文件。克隆仓库后按下面步骤恢复运行环境。
+
+### 1. 克隆仓库
+
+```powershell
+git clone git@github.com:maxwellin0004/Spinus-demo.git
+Set-Location ./Spinus-demo
+```
+
+如果使用 HTTPS 地址，则把上面的仓库地址替换为 GitHub 页面里的 HTTPS clone 地址。
+
+### 2. 检查系统软件
+
+目标电脑需要能直接调用这些命令：
+
+```powershell
+python --version
+node --version
+npm --version
+ffmpeg -version
+```
+
+如果 `ffmpeg -version` 不可用，需要在目标电脑安装 ffmpeg，并把 `ffmpeg.exe` 所在目录加入系统 `PATH`。仓库中的 `tools/ffmpeg.exe` 不建议上传 GitHub，应在每台电脑本地安装或单独放置。
+
+### 3. 安装 Remotion / 前端依赖
+
+`video-app/node_modules/` 不上传 GitHub。新电脑需要在 `video-app/` 目录根据 `package-lock.json` 重新安装：
+
+```powershell
+Set-Location ./video-app
+npm ci
+```
+
+如果 `npm ci` 因 lockfile 或 npm 版本问题失败，可以改用：
+
+```powershell
+npm install
+```
+
+安装完成后验证：
+
+```powershell
+npm run build
+npm run dev
+```
+
+### 4. Python 依赖
+
+当前 `scripts/` 下的 Python 工作流主要使用 Python 标准库，通常不需要额外安装 pip 包。先确认 Python 可用：
+
+```powershell
+python --version
+```
+
+如果后续脚本新增第三方库，建议在仓库根目录维护 `requirements.txt`，目标电脑执行：
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+### 5. 本地配置与密钥
+
+不要把真实 API key 提交到 GitHub。新电脑需要自行准备本地配置：
+
+```powershell
+Copy-Item .env.example .env
+```
+
+然后根据需要填写 `.env` 或 `config.local.json`。`config.local.json`、`.env`、`.env.local` 都应作为本地文件处理，不建议上传公开仓库。
+
+### 6. `.gitignore` 中忽略内容的处理方式
+
+当前 `.gitignore` 中的这些内容需要在新电脑本地重新生成或安装：
+
+- `video-app/node_modules/`：进入 `video-app/` 后执行 `npm ci` 或 `npm install` 生成。
+- `tools/ffmpeg.exe`：在目标电脑本地安装 ffmpeg，或手动放置但不提交。
+- `temp/`、`tmp/`、`tmp_video_analysis/`：运行工作流时自动生成。
+- `video-app/renders/`：Remotion 渲染输出目录，需要时重新渲染。
+- `.env`、`.env.local`：本地密钥配置，需要手动填写。
+- `__pycache__/`、`dist/`：缓存或构建产物，不需要同步。
+
 ## 常用命令
 
 ### 安装 `video-app` 依赖

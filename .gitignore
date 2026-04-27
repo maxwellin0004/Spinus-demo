@@ -7,3 +7,4 @@ tmp/
 tmp_video_analysis/
 video-app/renders/
 tools/ffmpeg.exe
+video-app/node_modules/
