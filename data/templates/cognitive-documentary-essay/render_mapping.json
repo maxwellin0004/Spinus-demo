@@ -1,0 +1,31 @@
+{
+  "composition": "cognitive-documentary-essay-preview",
+  "validatedRender": "data/jobs/cognitive-documentary-essay-elevenlabs.mp4",
+  "dataSource": "video-app/src/data/cognitiveDocumentaryEssayData.ts",
+  "audioSource": "video-app/src/data/cognitiveDocumentaryEssayAudio.ts",
+  "fieldMapping": {
+    "durationSec": "Composition.durationInFrames = durationSec * fps",
+    "scenes[].sceneType": "switch to local scene renderer in CognitiveDocumentaryEssayComposition",
+    "scenes[].startSec": "Sequence.from = startSec * fps",
+    "scenes[].durationSec": "Sequence.durationInFrames = durationSec * fps",
+    "scenes[].visual.asset": "staticFile(asset)",
+    "scenes[].visual.assetMode": "generated for final renders; local_fallback only for layout drafts",
+    "scenes[].visual.assetPromptId": "lookup key in image_prompt_library.json",
+    "scenes[].visual.fallbackAsset": "backup local asset when generated image is missing",
+    "scenes[].visual.motion": "KenBurnsImage motion preset",
+    "scenes[].visual.overlayText": "ImpactWordOverlay text",
+    "subtitleCues": "SubtitleTrack cues from cognitiveDocumentaryAlignedAudio.subtitles",
+    "audio": "AudioTrackLayer config from cognitiveDocumentaryAlignedAudio",
+    "voiceover": "staticFile('/audio/cognitive-documentary-essay/meeting-no-conclusion-elevenlabs.mp3')"
+  },
+  "new_components": [
+    "video-app/src/scenes/cognitiveDocumentary/CognitiveDocumentaryScenes.tsx",
+    "video-app/src/compositions/CognitiveDocumentaryEssayComposition.tsx",
+    "video-app/src/data/cognitiveDocumentaryEssayData.ts",
+    "video-app/src/data/cognitiveDocumentaryEssayAudio.ts"
+  ],
+  "renderCommand": [
+    "cd video-app",
+    "npx remotion render src/index.ts cognitive-documentary-essay-preview ../data/jobs/<output>.mp4 --overwrite"
+  ]
+}

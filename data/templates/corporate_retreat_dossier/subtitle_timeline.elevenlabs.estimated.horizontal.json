@@ -1,0 +1,18 @@
+{
+  "status": "estimated_after_audio_duration_fit",
+  "note": "ElevenLabs simple TTS endpoint generated the final voiceover audio without character timestamps. Cue timing was manually fit to the measured audio duration of 38.77s. For frame-accurate subtitles, use ElevenLabs with-timestamps endpoint in a later pass.",
+  "fps": 30,
+  "audio_file": "video-app/public/audio/corporate-retreat-dossier/elevenlabs-voiceover.mp3",
+  "audio_duration_sec": 38.77,
+  "cues": [
+    { "voice_id": "v01", "visual_section_id": "scene_01", "start_frame": 15, "end_frame": 84, "text": "一场行业洗牌开始了", "emphasis_words": ["洗牌"], "timing_status": "estimated_after_audio_duration_fit" },
+    { "voice_id": "v02", "visual_section_id": "scene_02", "start_frame": 90, "end_frame": 264, "text": "上百家小厂同时收缩\n只剩少数企业守住合规链条", "emphasis_words": ["收缩", "合规链条"], "timing_status": "estimated_after_audio_duration_fit" },
+    { "voice_id": "v03", "visual_section_id": "scene_03", "start_frame": 270, "end_frame": 393, "text": "这不是需求消失\n而是门槛突然抬高了", "emphasis_words": ["门槛"], "timing_status": "estimated_after_audio_duration_fit" },
+    { "voice_id": "v04", "visual_section_id": "scene_03", "start_frame": 399, "end_frame": 555, "text": "门店还亮着\n但背后的供应链正在换人", "emphasis_words": ["供应链"], "timing_status": "estimated_after_audio_duration_fit" },
+    { "voice_id": "v05", "visual_section_id": "scene_04", "start_frame": 564, "end_frame": 747, "text": "真正的分水岭\n不是价格，而是谁能把废料变成稳定产能", "emphasis_words": ["稳定产能"], "timing_status": "estimated_after_audio_duration_fit" },
+    { "voice_id": "v06", "visual_section_id": "scene_05", "start_frame": 756, "end_frame": 918, "text": "资金、牌照和客户验证\n开始同时压向同一张表", "emphasis_words": ["同一张表"], "timing_status": "estimated_after_audio_duration_fit" },
+    { "voice_id": "v07", "visual_section_id": "scene_06", "start_frame": 930, "end_frame": 1065, "text": "所以新一轮扩产\n不再是抢速度，而是抢确定性", "emphasis_words": ["确定性"], "timing_status": "estimated_after_audio_duration_fit" },
+    { "voice_id": "v08a", "visual_section_id": "scene_07", "start_frame": 1074, "end_frame": 1152, "text": "最后留下来的公司\n通常不是声音最大的", "emphasis_words": ["留下来"], "timing_status": "estimated_after_audio_duration_fit" },
+    { "voice_id": "v08b", "visual_section_id": "scene_07", "start_frame": 1153, "end_frame": 1215, "text": "而是证据链最完整的", "emphasis_words": ["证据链"], "timing_status": "estimated_after_audio_duration_fit" }
+  ]
+}

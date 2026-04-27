@@ -1,0 +1,70 @@
+{
+  "topic": "新能源汽车电池回收行业洗牌",
+  "orientation": "horizontal",
+  "duration_sec": 45,
+  "style_variant": "industrial_audit",
+  "scenes": [
+    {
+      "scene_id": "scene_01",
+      "scene_type": "shock_title",
+      "time_range": "00:00-00:03",
+      "visual_subject": "暗调城市产业带航拍感背景",
+      "caption": "一场行业洗牌开始了",
+      "asset_slots": ["city_or_industry_aerial"],
+      "motion": "暗场推进 + 白色能量丝带扫过 + 大标题弹入"
+    },
+    {
+      "scene_id": "scene_02",
+      "scene_type": "stat_dossier",
+      "time_range": "00:03-00:09",
+      "visual_subject": "产业园建筑外观和左侧黑色档案卡",
+      "caption": "上百家小厂同时收缩，只剩少数企业守住合规链条",
+      "stat_lines": ["退出 43% 小厂", "守住 12 个核心环节", "70% 利润集中在前处理"],
+      "asset_slots": ["industry_park_exterior", "stat_card"],
+      "motion": "背景慢横移，档案卡延迟 8 帧上滑出现"
+    },
+    {
+      "scene_id": "scene_03",
+      "scene_type": "evidence_montage",
+      "time_range": "00:09-00:16",
+      "visual_subject": "拆解线、湿法车间、检测报告",
+      "caption": "真正的分水岭，不是价格，而是谁能把废料变成稳定产能",
+      "evidence_labels": ["拆解线", "湿法车间", "检测报告"],
+      "asset_slots": ["factory_line", "lab_report", "inspection_closeup"],
+      "motion": "3 个证据标签按 0.7 秒间隔出现，背景横向慢移"
+    },
+    {
+      "scene_id": "scene_04",
+      "scene_type": "boardroom_montage",
+      "time_range": "00:16-00:23",
+      "visual_subject": "会议室、资质清单、审厂记录",
+      "caption": "资金、牌照和客户验证，开始同时压向同一张表",
+      "evidence_labels": ["授信会议", "资质清单", "客户审厂"],
+      "asset_slots": ["boardroom", "documents", "audit_visit"],
+      "motion": "玻璃反射遮罩 + 短促闪切"
+    },
+    {
+      "scene_id": "scene_05",
+      "scene_type": "evidence_montage",
+      "time_range": "00:23-00:31",
+      "visual_subject": "新厂施工、自动化线、订单会议",
+      "caption": "所以新一轮扩产，不再是抢速度，而是抢确定性",
+      "evidence_labels": ["新厂桩基", "自动化线", "长期订单"],
+      "asset_slots": ["construction_site", "automation_line", "sales_pipeline"],
+      "motion": "由施工现场切到产线，最后落到订单表"
+    },
+    {
+      "scene_id": "scene_06",
+      "scene_type": "final_ledger",
+      "time_range": "00:31-00:45",
+      "visual_subject": "最终结论白色档案页压在暗调城市背景上",
+      "caption": "最后留下来的公司，通常不是声音最大的，而是证据链最完整的",
+      "evidence_labels": ["原料来源可追踪", "工艺数据可复核", "交付能力可审计"],
+      "asset_slots": ["final_city", "ledger_card"],
+      "motion": "结论卡推进，三条审计项逐条显现"
+    }
+  ],
+  "subtitles": [
+    { "voice_id": "v01", "start_frame": 18, "end_frame": 82, "text": "一场行业洗牌开始了", "emphasis_words": ["洗牌"], "timing_status": "estimated" }
+  ]
+}

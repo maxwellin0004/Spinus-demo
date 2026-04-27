@@ -1,0 +1,26 @@
+{
+  "warm_archive": {
+    "description": "参考片最接近版本：暖色书房、资料片颗粒、低饱和商业/学习 B-roll。",
+    "palette": ["#1a120c", "#d7a84f", "#f5f1e6", "#101418"],
+    "subtitle": "white Chinese bold with black stroke; smaller amber italic English below",
+    "chapter_text": "large condensed yellow, slight shadow, no card container",
+    "grain": "medium",
+    "camera": "slow push or slow pan; hard cut every 3-7 seconds"
+  },
+  "cool_institutional": {
+    "description": "偏办公室与研究机构：冷蓝灰、会议室、白板、屏幕和报告页。",
+    "palette": ["#0e1418", "#8db4c7", "#f3f5f2", "#c99535"],
+    "subtitle": "same bilingual lockup, reduced yellow saturation",
+    "chapter_text": "large off-white/yellow word over dim B-roll",
+    "grain": "low",
+    "camera": "slow push with occasional lateral pan"
+  },
+  "high_contrast_warning": {
+    "description": "用于反常识/风险主题：暗部更重，红色章节警示词更强。",
+    "palette": ["#050505", "#c72c2c", "#f1e8d0", "#d9a441"],
+    "subtitle": "white Chinese, amber English, occasional red keyword stamp",
+    "chapter_text": "red/yellow impact word, center-left placement",
+    "grain": "high",
+    "camera": "impact zoom on chapter words, otherwise slow pan"
+  }
+}

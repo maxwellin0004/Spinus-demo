@@ -1,0 +1,87 @@
+[
+  {
+    "voice_id": "v01",
+    "section": "hook",
+    "text": "\u771f\u6b63\u62c9\u5f00\u56e2\u961f\u6548\u7387\u5dee\u8ddd\u7684\uff0c\u4e0d\u662f\u8c01\u8bf4\u5f97\u66f4\u591a\u3002",
+    "english_subtitle": "What really separates team efficiency is not who talks more.",
+    "target_duration_sec": 4.2,
+    "intended_pause_after_sec": 0.25,
+    "emphasis_words": [
+      "\u56e2\u961f\u6548\u7387",
+      "\u4e0d\u662f"
+    ],
+    "visual_section_id": "s01",
+    "timing_status": "estimated"
+  },
+  {
+    "voice_id": "v02",
+    "section": "hook",
+    "text": "\u800c\u662f\u8c01\u80fd\u628a\u6df7\u4e71\u7684\u4fe1\u606f\uff0c\u538b\u7f29\u6210\u4e00\u4e2a\u6e05\u6670\u7ed3\u6784\u3002",
+    "english_subtitle": "It is who can compress chaotic information into a clear structure.",
+    "target_duration_sec": 4.8,
+    "intended_pause_after_sec": 0.3,
+    "emphasis_words": [
+      "\u6df7\u4e71",
+      "\u6e05\u6670\u7ed3\u6784"
+    ],
+    "visual_section_id": "s02",
+    "timing_status": "estimated"
+  },
+  {
+    "voice_id": "v03",
+    "section": "chapter_1",
+    "text": "\u4f1a\u8bae\u5361\u4f4f\u65f6\uff0c\u8868\u9762\u4e0a\u662f\u89c2\u70b9\u4e0d\u540c\uff0c\u5e95\u5c42\u5176\u5b9e\u662f\u6807\u51c6\u4e0d\u540c\u3002",
+    "english_subtitle": "When a meeting gets stuck, the surface problem is opinions, but the deeper problem is standards.",
+    "target_duration_sec": 5.8,
+    "intended_pause_after_sec": 0.25,
+    "emphasis_words": [
+      "\u89c2\u70b9\u4e0d\u540c",
+      "\u6807\u51c6\u4e0d\u540c"
+    ],
+    "visual_section_id": "s03",
+    "timing_status": "estimated"
+  },
+  {
+    "voice_id": "v04",
+    "section": "chapter_2",
+    "text": "\u6709\u4eba\u5728\u5224\u65ad\u98ce\u9669\uff0c\u6709\u4eba\u5728\u4e89\u53d6\u8d44\u6e90\uff0c\u6709\u4eba\u53ea\u662f\u5728\u907f\u514d\u627f\u62c5\u8d23\u4efb\u3002",
+    "english_subtitle": "Some people judge risk, some fight for resources, and some avoid responsibility.",
+    "target_duration_sec": 6.2,
+    "intended_pause_after_sec": 0.3,
+    "emphasis_words": [
+      "\u98ce\u9669",
+      "\u8d44\u6e90",
+      "\u8d23\u4efb"
+    ],
+    "visual_section_id": "s04",
+    "timing_status": "estimated"
+  },
+  {
+    "voice_id": "v05",
+    "section": "chapter_3",
+    "text": "\u6240\u4ee5\u771f\u6b63\u6709\u6548\u7684\u4e3b\u6301\u4eba\uff0c\u4e0d\u662f\u8ba9\u6bcf\u4e2a\u4eba\u90fd\u53d1\u8a00\uff0c\u800c\u662f\u5148\u628a\u8981\u505a\u7684\u51b3\u5b9a\u8bf4\u6e05\u695a\u3002",
+    "english_subtitle": "An effective facilitator does not just let everyone speak. They define the decision first.",
+    "target_duration_sec": 7.2,
+    "intended_pause_after_sec": 0.35,
+    "emphasis_words": [
+      "\u4e3b\u6301\u4eba",
+      "\u51b3\u5b9a"
+    ],
+    "visual_section_id": "s06",
+    "timing_status": "estimated"
+  },
+  {
+    "voice_id": "v06",
+    "section": "close",
+    "text": "\u8868\u8fbe\u8d8a\u6e05\u6670\uff0c\u534f\u4f5c\u8d8a\u5bb9\u6613\u8fdb\u5165\u6b63\u5411\u5faa\u73af\u3002",
+    "english_subtitle": "The clearer the expression, the easier collaboration enters a positive loop.",
+    "target_duration_sec": 4.4,
+    "intended_pause_after_sec": 0.2,
+    "emphasis_words": [
+      "\u8868\u8fbe",
+      "\u6b63\u5411\u5faa\u73af"
+    ],
+    "visual_section_id": "s07",
+    "timing_status": "estimated"
+  }
+]

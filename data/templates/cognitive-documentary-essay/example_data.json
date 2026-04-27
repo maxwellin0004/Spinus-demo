@@ -1,0 +1,126 @@
+{
+  "title": "为什么会议总是没有结论",
+  "orientation": "horizontal",
+  "fps": 30,
+  "durationSec": 30,
+  "styleVariant": "warm_archive",
+  "chapters": [
+    { "id": "ch1", "timeRange": "00:00-00:15", "label": "问题不在讨论", "claim": "会议失效通常不是因为人不努力，而是信息没有被压缩成可判断的结构。" },
+    { "id": "ch2", "timeRange": "00:15-00:36", "label": "隐形分歧", "claim": "真正拖慢会议的是未命名的标准差异：目标、风险、责任、下一步。" },
+    { "id": "ch3", "timeRange": "00:36-00:49", "label": "底层逻辑", "claim": "好的会议先定义决策，再组织表达。" },
+    { "id": "ch4", "timeRange": "00:49-01:00", "label": "正向循环", "claim": "表达清晰会反过来提升协作效率。" }
+  ],
+  "scenes": [
+    {
+      "sceneId": "s01",
+      "sceneType": "DustLibraryHookScene",
+      "startSec": 0,
+      "durationSec": 4,
+      "visual": {
+        "asset": "generated/cognitive-documentary-essay/meeting-no-conclusion/s01_hook_workspace.png",
+        "assetMode": "generated",
+        "assetPromptId": "doc_hook_symbolic_environment",
+        "fallbackAsset": "images/philosophy-montage/office_desk.jpg",
+        "motion": "slow_push",
+        "overlayText": null,
+        "tint": "warm_archive"
+      },
+      "caption": { "zh": "真正拉开团队效率差距的", "en": "What really separates team efficiency" }
+    },
+    {
+      "sceneId": "s02",
+      "sceneType": "BrollEvidenceScene",
+      "startSec": 4,
+      "durationSec": 4,
+      "visual": {
+        "asset": "generated/cognitive-documentary-essay/meeting-no-conclusion/s02_clear_structure.png",
+        "assetMode": "generated",
+        "assetPromptId": "doc_process_or_structure_surface",
+        "fallbackAsset": "images/shared/scenario_ppt.jpg",
+        "motion": "slow_pan_left",
+        "overlayText": "清晰结构",
+        "tint": "warm_archive"
+      },
+      "caption": { "zh": "不是谁说得更多", "en": "is not who talks more" }
+    },
+    {
+      "sceneId": "s03",
+      "sceneType": "ChapterImpactWordScene",
+      "startSec": 8,
+      "durationSec": 5,
+      "visual": {
+        "asset": "generated/cognitive-documentary-essay/meeting-no-conclusion/s03_hidden_disagreement.png",
+        "assetMode": "generated",
+        "assetPromptId": "doc_chapter_impact_metaphor",
+        "fallbackAsset": "images/philosophy-montage/screen_overload_wall.png",
+        "motion": "impact_zoom",
+        "overlayText": "隐形分歧",
+        "tint": "high_contrast_warning"
+      },
+      "caption": { "zh": "而是谁能把分歧命名出来", "en": "but who can name the hidden disagreement" }
+    },
+    {
+      "sceneId": "s04",
+      "sceneType": "ContradictionCaseScene",
+      "startSec": 13,
+      "durationSec": 5,
+      "visual": {
+        "asset": "generated/cognitive-documentary-essay/meeting-no-conclusion/s04_meeting_case.png",
+        "assetMode": "generated",
+        "assetPromptId": "doc_workplace_case_broll",
+        "fallbackAsset": "images/corporate-retreat-dossier/boardroom.png",
+        "motion": "slow_push",
+        "overlayText": null,
+        "tint": "cool_institutional"
+      },
+      "caption": { "zh": "很多会议看起来在讨论方案", "en": "Many meetings seem to discuss a plan" }
+    },
+    {
+      "sceneId": "s06",
+      "sceneType": "RuleExtractionScene",
+      "startSec": 18,
+      "durationSec": 7,
+      "visual": {
+        "asset": "generated/cognitive-documentary-essay/meeting-no-conclusion/s06_decision_logic.png",
+        "assetMode": "generated",
+        "assetPromptId": "doc_rule_extraction_visual",
+        "fallbackAsset": "images/shared/scenario_video_breakdown.jpg",
+        "motion": "slow_push",
+        "overlayText": "底层逻辑",
+        "tint": "warm_archive"
+      },
+      "caption": { "zh": "先定义要做什么决定", "en": "Define the decision first" }
+    },
+    {
+      "sceneId": "s07",
+      "sceneType": "DocumentaryCloseScene",
+      "startSec": 25,
+      "durationSec": 5,
+      "visual": {
+        "asset": "generated/cognitive-documentary-essay/meeting-no-conclusion/s07_positive_loop.png",
+        "assetMode": "generated",
+        "assetPromptId": "doc_close_resolution_image",
+        "fallbackAsset": "images/philosophy-montage/focus_budget_workspace.png",
+        "motion": "slow_pan_left",
+        "overlayText": "正向循环",
+        "tint": "warm_archive"
+      },
+      "caption": { "zh": "再让表达服务于这个决定", "en": "then make expression serve that decision" }
+    }
+  ],
+  "subtitleCues": [
+    { "startFrame": 60, "endFrame": 149, "text": "真正拉开团队效率差距的\nWhat really separates team efficiency", "emphasisWords": ["团队效率"] },
+    { "startFrame": 180, "endFrame": 329, "text": "不是谁说得更多\nis not who talks more", "emphasisWords": ["不是"] },
+    { "startFrame": 390, "endFrame": 509, "text": "而是谁能把分歧命名出来\nbut who can name the hidden disagreement", "emphasisWords": ["分歧"] },
+    { "startFrame": 540, "endFrame": 839, "text": "很多会议看起来在讨论方案\nMany meetings seem to discuss a plan", "emphasisWords": ["讨论方案"] },
+    { "startFrame": 900, "endFrame": 1169, "text": "其实每个人心里用的是不同标准\nbut everyone uses a different standard", "emphasisWords": ["不同标准"] },
+    { "startFrame": 1200, "endFrame": 1439, "text": "先定义要做什么决定\nDefine the decision first", "emphasisWords": ["决定"] },
+    { "startFrame": 1470, "endFrame": 1769, "text": "再让表达服务于这个决定\nthen make expression serve that decision", "emphasisWords": ["表达"] }
+  ],
+  "audio": {
+    "voiceRequired": true,
+    "voiceoverSrc": null,
+    "bgmSrc": null,
+    "status": "preview_without_generated_voiceover; final subtitles must be rebuilt after audio generation"
+  }
+}

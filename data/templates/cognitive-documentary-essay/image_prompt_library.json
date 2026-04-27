@@ -1,0 +1,68 @@
+{
+  "template_id": "cognitive-documentary-essay",
+  "purpose": "Generate unique per-topic full-bleed documentary images for every scene. Local images are fallback only.",
+  "global_prompt_rules": {
+    "aspect_ratio": "16:9",
+    "resolution": "1920x1080",
+    "language": "Prompt in English; overlay text is rendered by Remotion, not baked into images.",
+    "must_have": [
+      "cinematic documentary still",
+      "realistic or high-quality editorial realism",
+      "full-bleed composition with safe lower subtitle area",
+      "room for Chinese chapter word overlay when required",
+      "subtle film grain, natural lens depth, believable lighting"
+    ],
+    "must_avoid": [
+      "no visible subtitles",
+      "no embedded Chinese or English text",
+      "no UI cards, dashboards, infographic panels, charts as primary design language",
+      "no cartoon, comic, anime, vector illustration",
+      "no brand logos or recognizable copyrighted interfaces",
+      "no distorted hands, unreadable faces, broken anatomy"
+    ]
+  },
+  "prompt_templates": [
+    {
+      "prompt_id": "doc_hook_symbolic_environment",
+      "scene_type": "DustLibraryHookScene",
+      "asset_role": "hook_environment",
+      "prompt_template": "Cinematic documentary still for a knowledge essay about {{topic}}. Show a symbolic quiet environment that implies {{section_claim}}: {{visual_metaphor}}. Warm archive lighting, shallow depth of field, subtle dust in the air, realistic objects, no readable text, no logos, lower third kept visually calm for subtitles. {{style_modifier}}",
+      "negative_prompt": "{{negative_base}}, readable text, subtitles, presenter looking at camera, UI panels, cartoon style"
+    },
+    {
+      "prompt_id": "doc_process_or_structure_surface",
+      "scene_type": "BrollEvidenceScene",
+      "asset_role": "structure_surface",
+      "prompt_template": "Editorial documentary B-roll image for {{topic}}. Visualize the process of turning messy information into structure: {{visual_metaphor}}. Use papers, whiteboard traces, sticky notes, diagrams, or work materials, but keep all text abstract and unreadable. Full-bleed cinematic frame, gentle side light, space in upper-left for a chapter word overlay, lower third calm for bilingual subtitles. {{style_modifier}}",
+      "negative_prompt": "{{negative_base}}, legible writing, software screenshot, dashboard, vector infographic, busy lower third"
+    },
+    {
+      "prompt_id": "doc_chapter_impact_metaphor",
+      "scene_type": "ChapterImpactWordScene",
+      "asset_role": "chapter_metaphor",
+      "prompt_template": "High-contrast cinematic metaphor image for chapter keyword '{{chapter_keyword}}' in a video about {{topic}}. Show {{visual_metaphor}} as a dramatic documentary scene, dark negative space on the left or top-left for large Chinese chapter text, strong directional light, controlled contrast, no embedded typography. {{style_modifier}}",
+      "negative_prompt": "{{negative_base}}, text baked into image, poster design, sci-fi HUD, neon dashboard, comic look"
+    },
+    {
+      "prompt_id": "doc_workplace_case_broll",
+      "scene_type": "ContradictionCaseScene",
+      "asset_role": "workplace_case",
+      "prompt_template": "Realistic workplace documentary still about {{topic}}. Show a believable case moment: {{visual_metaphor}}. People should appear natural and not posed, office or meeting environment, cinematic lens, low-key lighting, observational camera angle, no readable screen text, no brand logos, lower subtitle area uncluttered. {{style_modifier}}",
+      "negative_prompt": "{{negative_base}}, stock photo smile, camera-facing pose, readable slides, recognizable logo, messy subtitle area"
+    },
+    {
+      "prompt_id": "doc_rule_extraction_visual",
+      "scene_type": "RuleExtractionScene",
+      "asset_role": "rule_extraction",
+      "prompt_template": "Cinematic documentary image for extracting a practical rule in a knowledge essay about {{topic}}. Show {{visual_metaphor}} as a clean but realistic thinking surface: whiteboard, notebook, table, documents, or mapped decisions. Text and diagrams must be abstract and unreadable. Leave space for overlay keyword '{{chapter_keyword}}'. {{style_modifier}}",
+      "negative_prompt": "{{negative_base}}, polished SaaS UI, chart dashboard, legible text, corporate slide template"
+    },
+    {
+      "prompt_id": "doc_close_resolution_image",
+      "scene_type": "DocumentaryCloseScene",
+      "asset_role": "closing_resolution",
+      "prompt_template": "Warm closing documentary still for a knowledge essay about {{topic}}. Visualize the final takeaway '{{section_claim}}' through {{visual_metaphor}}. Calm composition, natural light, sense of resolution, realistic workspace or human collaboration detail, no readable text, lower third safe for final subtitles. {{style_modifier}}",
+      "negative_prompt": "{{negative_base}}, triumphant advertisement, motivational poster, text overlay, fake bokeh, cartoon"
+    }
+  ]
+}

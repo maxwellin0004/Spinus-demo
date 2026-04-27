@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CognitiveDocumentaryEssayAudioData",
+  "type": "object",
+  "required": ["voiceoverUnits", "alignmentStatus", "subtitleTimeline"],
+  "properties": {
+    "voiceoverUnits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["voice_id", "section", "text", "target_duration_sec", "intended_pause_after_sec", "emphasis_words", "visual_section_id", "timing_status"],
+        "properties": {
+          "voice_id": { "type": "string" },
+          "section": { "type": "string" },
+          "text": { "type": "string" },
+          "target_duration_sec": { "type": "number" },
+          "intended_pause_after_sec": { "type": "number" },
+          "emphasis_words": { "type": "array", "items": { "type": "string" } },
+          "visual_section_id": { "type": "string" },
+          "timing_status": { "enum": ["estimated", "aligned", "estimated_after_audio_duration_fit"] }
+        }
+      }
+    },
+    "alignmentStatus": { "type": "string" },
+    "subtitleTimeline": { "type": "array" }
+  }
+}

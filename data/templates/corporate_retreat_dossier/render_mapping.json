@@ -1,0 +1,28 @@
+{
+  "composition": "CorporateRetreatDossierComposition",
+  "scene_component_map": {
+    "shock_title": "ShockTitleScene / implemented inside DossierSceneView",
+    "stat_dossier": "StatDossierScene / implemented inside DossierSceneView",
+    "evidence_montage": "EvidenceMontageScene / implemented inside DossierSceneView",
+    "boardroom_montage": "EvidenceMontageScene with boardroom palette",
+    "final_ledger": "ResolutionLedgerScene / implemented inside DossierSceneView"
+  },
+  "field_to_prop_map": {
+    "scene_id": "scene.id",
+    "scene_type": "scene.type",
+    "time_range": "startFrame + durationInFrames",
+    "caption": "SubtitleTrack cue text",
+    "stat_lines": "DossierCard.lines",
+    "evidence_labels": "Evidence label chips",
+    "visual_subject": "procedural plate or image slot",
+    "motion": "interpolate/spring preset"
+  },
+  "audio_field_to_remotion_map": {
+    "voiceover_audio": "Audio src=staticFile('audio/corporate-retreat-dossier/elevenlabs-voiceover.mp3')",
+    "bgm_audio": "Audio src=staticFile('audio/corporate-retreat-dossier/documentary-pulse.wav')",
+    "subtitle_timeline": "corporateRetreatDossierSubtitles in video-app/src/data/corporateRetreatDossierData.ts",
+    "final_timeline_record": "data/templates/corporate_retreat_dossier/subtitle_timeline.elevenlabs.estimated.horizontal.json"
+  },
+  "reused_base_components": ["SubtitleTrack", "Remotion Audio", "staticFile"],
+  "not_reused": ["existing page masters", "existing scene skeletons", "existing template data files"]
+}

@@ -1,0 +1,68 @@
+{
+  "template_id": "corporate_retreat_dossier",
+  "template_name": "企业撤退档案片",
+  "version": "0.2.0",
+  "source_reference": {
+    "file": "D:/document/google/download (16).mp4",
+    "analysis_status": "visual_and_metadata_analyzed_audio_not_transcribed",
+    "certainty_note": "参考视频口播内容未做完整强制转写；底部字幕由关键帧人工读取，读不准处标注不确定。"
+  },
+  "orientation": ["horizontal"],
+  "duration_range_sec": [45, 270],
+  "new_scene_system_required": true,
+  "reusable_base_capabilities": [
+    "SubtitleTrack",
+    "AudioTrackLayer",
+    "font tokens",
+    "Remotion Sequence",
+    "static asset loading",
+    "basic interpolate/spring animation"
+  ],
+  "forbidden_reuse": [
+    "existing scene skeletons",
+    "existing page masters",
+    "existing comic/psych/trading/reference visual grammar"
+  ],
+  "page_masters": [
+    "shock_title_over_dark_city",
+    "stat_dossier_card_over_real_estate",
+    "industrial_evidence_montage",
+    "boardroom_decision_montage",
+    "final_ledger_statement"
+  ],
+  "scene_types": [
+    "ShockTitleScene",
+    "StatDossierScene",
+    "EvidenceMontageScene",
+    "ResolutionLedgerScene"
+  ],
+  "render_entry": {
+    "composition_id": "corporate-retreat-dossier-preview",
+    "preview_component": "video-app/src/compositions/CorporateRetreatDossierComposition.tsx",
+    "final_render_output": "temp/corporate-retreat-dossier-elevenlabs.mp4"
+  },
+  "generated_image_assets": {
+    "city_aerial": "video-app/public/images/corporate-retreat-dossier/city-aerial.png",
+    "headquarters": "video-app/public/images/corporate-retreat-dossier/headquarters.png",
+    "store_night": "video-app/public/images/corporate-retreat-dossier/store-night.png",
+    "factory_line": "video-app/public/images/corporate-retreat-dossier/factory-line.png",
+    "boardroom": "video-app/public/images/corporate-retreat-dossier/boardroom.png",
+    "construction": "video-app/public/images/corporate-retreat-dossier/construction.png"
+  },
+  "audio_pipeline": {
+    "voice_required": true,
+    "provider": "elevenlabs",
+    "generation_mode_used": "text_to_speech_simple_endpoint",
+    "voiceover_text_file": "data/templates/corporate_retreat_dossier/final_voiceover_zh.txt",
+    "generated_voiceover_audio": "video-app/public/audio/corporate-retreat-dossier/elevenlabs-voiceover.mp3",
+    "generated_voiceover_duration_sec": 38.77,
+    "bgm_audio": "video-app/public/audio/corporate-retreat-dossier/documentary-pulse.wav",
+    "subtitle_timeline": "data/templates/corporate_retreat_dossier/subtitle_timeline.elevenlabs.estimated.horizontal.json",
+    "timing_status": "estimated_after_audio_duration_fit",
+    "final_alignment_requirement": "For publish-grade renders, regenerate using ElevenLabs with-timestamps or another forced-alignment method, then write subtitle_timeline.generated.horizontal.json before rendering."
+  },
+  "commands": {
+    "generate_elevenlabs_voiceover": "python ./scripts/generate_elevenlabs_tts.py --text-file ./data/templates/corporate_retreat_dossier/final_voiceover_zh.txt --output ./video-app/public/audio/corporate-retreat-dossier/elevenlabs-voiceover.mp3",
+    "render_final_video": "cd video-app && npx.cmd remotion render src/index.ts corporate-retreat-dossier-preview ../temp/corporate-retreat-dossier-elevenlabs.mp4 --overwrite"
+  }
+}

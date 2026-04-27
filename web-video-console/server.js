@@ -24,6 +24,8 @@ const SESSION_CACHE_TTL_MS = Number(process.env.SESSION_CACHE_TTL_MS || 30000);
 const CODEX_EXEC_ARGS = [
   "exec",
   "--json",
+  "--model",
+  "gpt-5.4",
   "--sandbox",
   "read-only",
   "--skip-git-repo-check",
@@ -1116,7 +1118,7 @@ function buildCodexPrompt(job, latestMessage) {
 
 function buildCodexArgs(job, outputFile) {
   if (job.codexSessionId) {
-    return ["exec", "resume", "--json", "--skip-git-repo-check", "-o", outputFile, job.codexSessionId, "-"];
+    return ["exec", "resume", "--json", "--model", "gpt-5.4", "--skip-git-repo-check", "-o", outputFile, job.codexSessionId, "-"];
   }
   return [...CODEX_EXEC_ARGS, "-o", outputFile, "-"];
 }

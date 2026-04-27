@@ -1,0 +1,87 @@
+{
+  "template_id": "cognitive-documentary-essay",
+  "example_id": "meeting-no-conclusion",
+  "topic": "为什么会议总是没有结论",
+  "orientation": "horizontal",
+  "default_output": {
+    "width": 1920,
+    "height": 1080,
+    "format": "png",
+    "base_dir": "video-app/public/generated/cognitive-documentary-essay/meeting-no-conclusion"
+  },
+  "assets": [
+    {
+      "scene_id": "s01",
+      "scene_type": "DustLibraryHookScene",
+      "prompt_id": "doc_hook_symbolic_environment",
+      "style_variant": "warm_archive",
+      "section_claim": "团队效率差距来自信息结构化能力",
+      "chapter_keyword": "",
+      "visual_metaphor": "a quiet early-morning desk with scattered meeting notes slowly being organized into one neat stack",
+      "save_path": "video-app/public/generated/cognitive-documentary-essay/meeting-no-conclusion/s01_hook_workspace.png",
+      "fallback_asset": "images/philosophy-montage/office_desk.jpg",
+      "status": "prompt_ready"
+    },
+    {
+      "scene_id": "s02",
+      "scene_type": "BrollEvidenceScene",
+      "prompt_id": "doc_process_or_structure_surface",
+      "style_variant": "warm_archive",
+      "section_claim": "说得多不等于结构清楚",
+      "chapter_keyword": "清晰结构",
+      "visual_metaphor": "messy sticky notes and meeting papers on a table being arranged into three clear clusters",
+      "save_path": "video-app/public/generated/cognitive-documentary-essay/meeting-no-conclusion/s02_clear_structure.png",
+      "fallback_asset": "images/shared/scenario_ppt.jpg",
+      "status": "prompt_ready"
+    },
+    {
+      "scene_id": "s03",
+      "scene_type": "ChapterImpactWordScene",
+      "prompt_id": "doc_chapter_impact_metaphor",
+      "style_variant": "high_contrast_warning",
+      "section_claim": "会议卡住的底层原因是隐形分歧",
+      "chapter_keyword": "隐形分歧",
+      "visual_metaphor": "a lone person facing a wall of many dim screens and fragmented reflections, suggesting hidden disagreement and overload",
+      "save_path": "video-app/public/generated/cognitive-documentary-essay/meeting-no-conclusion/s03_hidden_disagreement.png",
+      "fallback_asset": "images/philosophy-montage/screen_overload_wall.png",
+      "status": "prompt_ready"
+    },
+    {
+      "scene_id": "s04",
+      "scene_type": "ContradictionCaseScene",
+      "prompt_id": "doc_workplace_case_broll",
+      "style_variant": "cool_institutional",
+      "section_claim": "同一场会议里每个人其实在判断不同标准",
+      "chapter_keyword": "",
+      "visual_metaphor": "a tense conference room where several people look at the same document from different angles, nobody looking at camera",
+      "save_path": "video-app/public/generated/cognitive-documentary-essay/meeting-no-conclusion/s04_meeting_case.png",
+      "fallback_asset": "images/corporate-retreat-dossier/boardroom.png",
+      "status": "prompt_ready"
+    },
+    {
+      "scene_id": "s06",
+      "scene_type": "RuleExtractionScene",
+      "prompt_id": "doc_rule_extraction_visual",
+      "style_variant": "warm_archive",
+      "section_claim": "先定义决策，再组织表达",
+      "chapter_keyword": "底层逻辑",
+      "visual_metaphor": "a clean decision map on a whiteboard with abstract boxes and arrows, viewed over the shoulder of a facilitator",
+      "save_path": "video-app/public/generated/cognitive-documentary-essay/meeting-no-conclusion/s06_decision_logic.png",
+      "fallback_asset": "images/shared/scenario_video_breakdown.jpg",
+      "status": "prompt_ready"
+    },
+    {
+      "scene_id": "s07",
+      "scene_type": "DocumentaryCloseScene",
+      "prompt_id": "doc_close_resolution_image",
+      "style_variant": "warm_archive",
+      "section_claim": "表达清晰让协作进入正向循环",
+      "chapter_keyword": "正向循环",
+      "visual_metaphor": "a calm workspace after a meeting, notes aligned, soft morning light, two people quietly reviewing a clear next-step document",
+      "save_path": "video-app/public/generated/cognitive-documentary-essay/meeting-no-conclusion/s07_positive_loop.png",
+      "fallback_asset": "images/philosophy-montage/focus_budget_workspace.png",
+      "status": "prompt_ready"
+    }
+  ],
+  "remotion_update_rule": "After images are generated, set scene.visual.asset to the generated path relative to video-app/public and keep scene.visual.fallbackAsset for fallback."
+}

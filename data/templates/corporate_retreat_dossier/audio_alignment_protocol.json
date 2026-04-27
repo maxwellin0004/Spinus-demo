@@ -1,0 +1,31 @@
+{
+  "rule": "先生成最终口播音频，再回填字幕时间轴；禁止把纯手工估算字幕当作最终发布级字幕。",
+  "provider": "elevenlabs",
+  "current_implementation": {
+    "status": "implemented_for_preview_render",
+    "endpoint_type": "text-to-speech simple endpoint",
+    "script": "scripts/generate_elevenlabs_tts.py",
+    "voiceover_text_file": "data/templates/corporate_retreat_dossier/final_voiceover_zh.txt",
+    "output_audio": "video-app/public/audio/corporate-retreat-dossier/elevenlabs-voiceover.mp3",
+    "measured_audio_duration_sec": 38.77,
+    "timeline_file": "data/templates/corporate_retreat_dossier/subtitle_timeline.elevenlabs.estimated.horizontal.json",
+    "timing_status": "estimated_after_audio_duration_fit"
+  },
+  "current_preview_steps": [
+    "1. Write final narration text to final_voiceover_zh.txt.",
+    "2. Run scripts/generate_elevenlabs_tts.py with the text file and output MP3 path.",
+    "3. Measure the generated MP3 duration with ffmpeg.",
+    "4. Fit subtitle cues and scene timing to the measured audio duration.",
+    "5. Connect the MP3 and BGM inside CorporateRetreatDossierComposition.tsx.",
+    "6. Render the final preview MP4 with Remotion."
+  ],
+  "publish_grade_steps": [
+    "1. Keep every narration sentence as a stable voice_id in example_voiceover_units.json.",
+    "2. Generate final ElevenLabs audio with the with-timestamps endpoint or run forced alignment after TTS.",
+    "3. Convert returned character/word timestamps into frame-accurate cues.",
+    "4. Write subtitle_timeline.generated.horizontal.json with timing_status=audio_aligned.",
+    "5. Ensure every subtitle cue maps to voice_id and visual_section_id.",
+    "6. Make Remotion read the aligned timeline as the source of truth before final render."
+  ],
+  "fallback": "If timestamp alignment is unavailable, fit subtitle cues to the measured audio duration and label the result as estimated_after_audio_duration_fit, as done in the current ElevenLabs preview."
+}

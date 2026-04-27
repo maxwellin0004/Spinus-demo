@@ -19,9 +19,11 @@ const els = {
   sessionSearchInput: document.querySelector("#sessionSearchInput"),
   sessionRefreshButton: document.querySelector("#sessionRefreshButton"),
   sessionList: document.querySelector("#sessionList"),
+  chatStatusBanner: document.querySelector("#chatStatusBanner"),
   threadList: document.querySelector("#threadList"),
   composerForm: document.querySelector("#composerForm"),
   composerInput: document.querySelector("#composerInput"),
+  composerSubmitButton: document.querySelector("#composerSubmitButton"),
   attachButton: document.querySelector("#attachButton"),
 
   activeJobTitle: document.querySelector("#activeJobTitle"),
@@ -88,6 +90,7 @@ const els = {
   accountCtaInput: document.querySelector("#accountCtaInput"),
   accountSubtitleStyleInput: document.querySelector("#accountSubtitleStyleInput"),
   accountConstraintsInput: document.querySelector("#accountConstraintsInput"),
+  toastStack: document.querySelector("#toastStack"),
 };
 
 const EMPTY_PREVIEW = {
@@ -116,6 +119,9 @@ const state = {
   draftConfig: null,
   activeView: "workflow",
   instructionTimer: null,
+  pendingSessionLabel: "",
+  busyReason: "",
+  toastTimer: 0,
 };
 
 function escapeHtml(value) {
@@ -128,19 +134,66 @@ function escapeHtml(value) {
 }
 
 async function requestJson(url, options = {}) {
-  const response = await fetch(url, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-    ...options,
-  });
+  const timeoutMs = Number(options.timeoutMs || 0);
+  const controller = timeoutMs > 0 ? new AbortController() : null;
+  const timeoutHandle =
+    controller && timeoutMs > 0
+      ? window.setTimeout(() => {
+          controller.abort(new Error(`Timeout after ${timeoutMs}ms`));
+        }, timeoutMs)
+      : 0;
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      },
+      signal: controller?.signal,
+      ...options,
+    });
 
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(payload.error || `Request failed: ${response.status}`);
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(payload.error || `Request failed: ${response.status}`);
+    }
+    return payload;
+  } catch (error) {
+    if (error?.name === "AbortError") {
+      throw new Error(`Request timeout: ${url}`);
+    }
+    throw error;
+  } finally {
+    if (timeoutHandle) window.clearTimeout(timeoutHandle);
   }
-  return payload;
+}
+
+function setBanner(message = "", tone = "info") {
+  els.chatStatusBanner.textContent = message;
+  els.chatStatusBanner.className = "chat-status-banner";
+  if (!message) {
+    els.chatStatusBanner.classList.add("is-hidden");
+    return;
+  }
+  els.chatStatusBanner.classList.add(`is-${tone}`);
+}
+
+function showToast(message, tone = "info") {
+  if (!message) return;
+  const toast = document.createElement("div");
+  toast.className = `toast is-${tone}`;
+  toast.textContent = message;
+  els.toastStack.appendChild(toast);
+
+  window.setTimeout(() => {
+    toast.remove();
+  }, 3200);
+}
+
+function setBusy(isBusy, reason = "") {
+  state.busyReason = isBusy ? reason : "";
+  els.sessionSelect.disabled = isBusy;
+  els.newThreadButton.disabled = isBusy;
+  els.composerSubmitButton.disabled = isBusy;
 }
 
 function formatTimestamp(value) {
@@ -315,8 +368,14 @@ function buildActiveInstructionTags(config) {
   return chips;
 }
 
+function getDisplayedSessionLabel(job) {
+  if (job?.codexSessionId) return `${job.codexSessionId.slice(0, 8)}...`;
+  if (state.pendingSessionLabel) return state.pendingSessionLabel;
+  return "未绑定";
+}
+
 function renderTopContext(config, job) {
-  const sessionLabel = job?.codexSessionId ? `${job.codexSessionId.slice(0, 8)}…` : "未绑定";
+  const sessionLabel = getDisplayedSessionLabel(job);
   els.topSessionChip.textContent = sessionLabel;
   els.topStatusChip.textContent = localizeJobStatus(job?.status || "idle");
   els.topOutputChip.textContent = job?.outputDir || "data/jobs";
@@ -566,7 +625,7 @@ function renderInstructionArea(config) {
 function renderHeader(config, job) {
   const account = getAccountById(config.accountId);
   const template = getTemplateById(config.templateId);
-  const sessionLabel = job?.codexSessionId ? `${job.codexSessionId.slice(0, 8)}…` : "未绑定";
+  const sessionLabel = getDisplayedSessionLabel(job);
 
   els.taskHeaderTitle.textContent = job?.title || "配置下一条视频";
   els.taskHeaderSummary.textContent = [
@@ -730,6 +789,9 @@ function renderEmptyJob() {
 
 function renderJob(job) {
   state.activeJob = job;
+  if (job.codexSessionId) {
+    state.pendingSessionLabel = "";
+  }
   if (job.id !== "__pending_job__") {
     mergeJob(job);
   }
@@ -809,6 +871,7 @@ function connectToEvents(jobId) {
   });
 
   eventSource.onerror = () => {
+    setBanner("实时事件流已断开，页面仍可继续操作。", "error");
     eventSource.close();
   };
 
@@ -855,10 +918,21 @@ async function loadBootstrap(options = {}) {
 }
 
 async function selectJob(jobId) {
-  const job = await requestJson(`/api/jobs/${encodeURIComponent(jobId)}`);
-  renderJob(job);
-  bindDynamicLists();
-  connectToEvents(jobId);
+  setBusy(true, "load-job");
+  setBanner("正在读取任务详情...", "info");
+  try {
+    const job = await requestJson(`/api/jobs/${encodeURIComponent(jobId)}`, {timeoutMs: 10000});
+    renderJob(job);
+    bindDynamicLists();
+    connectToEvents(jobId);
+    setBanner("任务已切换。", "success");
+  } catch (error) {
+    setBanner(`读取任务失败：${error.message}`, "error");
+    showToast(`读取任务失败：${error.message}`, "error");
+    throw error;
+  } finally {
+    setBusy(false);
+  }
 }
 
 async function syncCollections(options = {}) {
@@ -887,13 +961,20 @@ async function applyConfigPatch(patch) {
   }
 
   if (canConfigureJob(state.activeJob)) {
-    const job = await requestJson(`/api/jobs/${encodeURIComponent(state.activeJob.id)}/config`, {
-      method: "PATCH",
-      body: JSON.stringify(nextConfig),
-    });
-    renderJob(job);
-    bindDynamicLists();
-    return;
+    try {
+      const job = await requestJson(`/api/jobs/${encodeURIComponent(state.activeJob.id)}/config`, {
+        method: "PATCH",
+        body: JSON.stringify(nextConfig),
+        timeoutMs: 10000,
+      });
+      renderJob(job);
+      bindDynamicLists();
+      return;
+    } catch (error) {
+      setBanner(`配置更新失败：${error.message}`, "error");
+      showToast(`配置更新失败：${error.message}`, "error");
+      throw error;
+    }
   }
 
   setDraftConfig(nextConfig);
@@ -902,18 +983,36 @@ async function applyConfigPatch(patch) {
 }
 
 async function createSession() {
-  const job = await requestJson("/api/sessions", {
-    method: "POST",
-    body: JSON.stringify({config: getCurrentConfig()}),
-  });
-  renderJob(job);
-  bindDynamicLists();
-  connectToEvents(job.id);
-  await syncCollections({forceRefresh: true});
+  setBusy(true, "create-session");
+  state.pendingSessionLabel = "新建中...";
+  setBanner("正在创建本地 session...", "info");
+  try {
+    const job = await requestJson("/api/sessions", {
+      method: "POST",
+      body: JSON.stringify({config: getCurrentConfig()}),
+      timeoutMs: 20000,
+    });
+    renderJob(job);
+    bindDynamicLists();
+    connectToEvents(job.id);
+    await syncCollections({forceRefresh: true});
+    setBanner("本地 session 已创建并绑定。", "success");
+    showToast("本地 session 已创建。", "success");
+  } catch (error) {
+    state.pendingSessionLabel = "";
+    setBanner(`创建 session 失败：${error.message}`, "error");
+    showToast(`创建 session 失败：${error.message}`, "error");
+    throw error;
+  } finally {
+    setBusy(false);
+  }
 }
 
 async function createJob(prompt) {
   const pendingConfig = getCurrentConfig();
+  setBusy(true, "create-job");
+  state.pendingSessionLabel = "连接中...";
+  setBanner("正在发送消息并创建任务...", "info");
   renderJob({
     id: "__pending_job__",
     source: "runtime",
@@ -947,26 +1046,53 @@ async function createJob(prompt) {
     scriptSections: [],
   });
   bindDynamicLists();
-
-  const job = await requestJson("/api/jobs", {
-    method: "POST",
-    body: JSON.stringify({prompt, config: getCurrentConfig()}),
-  });
-  renderJob(job);
-  bindDynamicLists();
-  connectToEvents(job.id);
-  await syncCollections({forceRefresh: true});
+  try {
+    const job = await requestJson("/api/jobs", {
+      method: "POST",
+      body: JSON.stringify({prompt, config: getCurrentConfig()}),
+    });
+    renderJob(job);
+    bindDynamicLists();
+    connectToEvents(job.id);
+    await syncCollections({forceRefresh: true});
+    setBanner("任务已创建，Codex 回复已同步。", "success");
+  } catch (error) {
+    state.pendingSessionLabel = "";
+    setBanner(`发送失败：${error.message}`, "error");
+    showToast(`发送失败：${error.message}`, "error");
+    renderEmptyJob();
+    throw error;
+  } finally {
+    setBusy(false);
+  }
 }
 
 async function attachSession(sessionId) {
-  const job = await requestJson("/api/jobs", {
-    method: "POST",
-    body: JSON.stringify({sessionId, config: getCurrentConfig()}),
-  });
-  renderJob(job);
-  bindDynamicLists();
-  connectToEvents(job.id);
-  await syncCollections({forceRefresh: false});
+  setBusy(true, "attach-session");
+  state.pendingSessionLabel = `${sessionId.slice(0, 8)}...`;
+  renderHeader(getCurrentConfig(), state.activeJob);
+  setBanner("正在绑定本地 session...", "info");
+  try {
+    const job = await requestJson("/api/jobs", {
+      method: "POST",
+      body: JSON.stringify({sessionId, config: getCurrentConfig()}),
+      timeoutMs: 15000,
+    });
+    renderJob(job);
+    bindDynamicLists();
+    connectToEvents(job.id);
+    await syncCollections({forceRefresh: false});
+    setBanner(`已绑定 session ${sessionId.slice(0, 8)}...`, "success");
+    showToast("Session 绑定成功。", "success");
+  } catch (error) {
+    state.pendingSessionLabel = "";
+    renderHeader(getCurrentConfig(), state.activeJob);
+    setBanner(`绑定 session 失败：${error.message}`, "error");
+    showToast(`绑定 session 失败：${error.message}`, "error");
+    throw error;
+  } finally {
+    setBusy(false);
+  }
 }
 
 async function sendMessage(message) {
@@ -974,14 +1100,24 @@ async function sendMessage(message) {
     await createJob(message);
     return;
   }
-
-  const job = await requestJson(`/api/jobs/${encodeURIComponent(state.activeJob.id)}/codex/message`, {
-    method: "POST",
-    body: JSON.stringify({message}),
-  });
-  renderJob(job);
-  bindDynamicLists();
-  connectToEvents(job.id);
+  setBusy(true, "send-message");
+  setBanner("消息已发送，正在等待 Codex 回复...", "info");
+  try {
+    const job = await requestJson(`/api/jobs/${encodeURIComponent(state.activeJob.id)}/codex/message`, {
+      method: "POST",
+      body: JSON.stringify({message}),
+    });
+    renderJob(job);
+    bindDynamicLists();
+    connectToEvents(job.id);
+    setBanner("Codex 回复已同步。", "success");
+  } catch (error) {
+    setBanner(`发送失败：${error.message}`, "error");
+    showToast(`发送失败：${error.message}`, "error");
+    throw error;
+  } finally {
+    setBusy(false);
+  }
 }
 
 async function runAction(action) {
@@ -1090,8 +1226,10 @@ els.sessionSearchInput.addEventListener("input", () => {
 els.sessionSelect.addEventListener("change", async () => {
   const sessionId = els.sessionSelect.value;
   if (!sessionId) {
+    state.pendingSessionLabel = "";
     closeEventSource();
     renderEmptyJob();
+    setBanner("", "info");
     els.composerInput.focus();
     return;
   }
@@ -1245,6 +1383,8 @@ els.accountModal.addEventListener("click", (event) => {
 
 loadBootstrap().catch((error) => {
   console.error(error);
+  setBanner(`本地 API 未连接：${error.message}`, "error");
+  showToast(`本地 API 未连接：${error.message}`, "error");
   els.threadList.innerHTML = `
     <article class="message assistant">
       <div class="meta">System</div>

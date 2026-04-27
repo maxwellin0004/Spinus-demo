@@ -1,0 +1,32 @@
+[
+  {
+    "voice_id": "v01",
+    "section": "hook",
+    "text": "一场行业洗牌开始了。",
+    "target_duration_sec": 2.4,
+    "intended_pause_after_sec": 0.2,
+    "emphasis_words": ["洗牌"],
+    "visual_section_id": "scene_01",
+    "timing_status": "estimated"
+  },
+  {
+    "voice_id": "v02",
+    "section": "retreat_fact",
+    "text": "上百家小厂同时收缩，只剩少数企业守住合规链条。",
+    "target_duration_sec": 5.2,
+    "intended_pause_after_sec": 0.3,
+    "emphasis_words": ["收缩", "合规链条"],
+    "visual_section_id": "scene_02",
+    "timing_status": "estimated"
+  },
+  {
+    "voice_id": "v03",
+    "section": "mechanism",
+    "text": "真正的分水岭，不是价格，而是谁能把废料变成稳定产能。",
+    "target_duration_sec": 6.0,
+    "intended_pause_after_sec": 0.25,
+    "emphasis_words": ["稳定产能"],
+    "visual_section_id": "scene_03",
+    "timing_status": "estimated"
+  }
+]

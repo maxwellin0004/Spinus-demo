@@ -113,6 +113,8 @@
             </div>
           </div>
 
+          <div class="chat-status-banner is-hidden" id="chatStatusBanner" role="status" aria-live="polite"></div>
+
           <div class="session-drawer" id="sessionDrawer" hidden>
             <div class="session-search-row">
               <input id="sessionSearchInput" type="text" placeholder="筛选 session 名称或 ID" />
@@ -142,7 +144,7 @@
                 </svg>
                 素材
               </button>
-              <button class="primary-button" type="submit">
+              <button class="primary-button" type="submit" id="composerSubmitButton">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="m22 2-7 20-4-9-9-4 20-7Z" />
                   <path d="M22 2 11 13" />
@@ -485,5 +487,7 @@
         </form>
       </section>
     </div>
+
+    <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
   </body>
 </html>

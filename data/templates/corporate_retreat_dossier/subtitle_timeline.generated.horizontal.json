@@ -1,0 +1,10 @@
+{
+  "status": "estimated_preview_only",
+  "note": "当前为粗预览字幕时间轴；最终成片必须先生成口播音频再回填。",
+  "fps": 30,
+  "cues": [
+    { "voice_id": "v01", "visual_section_id": "scene_01", "start_frame": 18, "end_frame": 82, "text": "一场行业洗牌开始了", "emphasis_words": ["洗牌"], "timing_status": "estimated" },
+    { "voice_id": "v02", "visual_section_id": "scene_02", "start_frame": 95, "end_frame": 178, "text": "上百家小厂同时收缩\n只剩少数企业守住合规链条", "emphasis_words": ["收缩", "合规链条"], "timing_status": "estimated" },
+    { "voice_id": "v03", "visual_section_id": "scene_03", "start_frame": 294, "end_frame": 394, "text": "真正的分水岭\n不是价格，而是谁能把废料变成稳定产能", "emphasis_words": ["稳定产能"], "timing_status": "estimated" }
+  ]
+}

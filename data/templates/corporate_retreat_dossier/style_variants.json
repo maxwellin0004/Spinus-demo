@@ -1,0 +1,28 @@
+{
+  "variants": [
+    {
+      "id": "cold_newsroom",
+      "name": "冷调新闻档案",
+      "palette": ["#11161b", "#dfe5e4", "#f0cc68", "#2d3236"],
+      "texture": "film_grain_dark_vignette",
+      "subtitle": "bold_white_with_black_stroke",
+      "best_for": "企业收缩、行业出清、供应链重组"
+    },
+    {
+      "id": "warm_boardroom",
+      "name": "暖调会议纪实",
+      "palette": ["#1d2023", "#998b77", "#f4ead8", "#6f5639"],
+      "texture": "glass_reflection_and_shadow",
+      "subtitle": "bold_white_low_bottom",
+      "best_for": "并购、谈判、组织调整"
+    },
+    {
+      "id": "industrial_audit",
+      "name": "工业审计感",
+      "palette": ["#1f3035", "#6e8583", "#d7e2e0", "#f0cc68"],
+      "texture": "factory_grid_and_scan_lines",
+      "subtitle": "bold_white_with_key_word_gold",
+      "best_for": "工厂、产线、制造业、物流系统"
+    }
+  ]
+}

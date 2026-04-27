@@ -1,0 +1,26 @@
+{
+  "template_id": "cognitive-documentary-essay",
+  "negative_base": "low quality, blurry, watermark, visible logo, malformed hands, distorted face, duplicate people, oversaturated colors, fantasy art, illustration, cartoon, anime, vector art, rendered UI, text artifacts",
+  "style_variants": {
+    "warm_archive": {
+      "prompt_modifier": "Warm archive documentary look, amber practical light, brown and charcoal shadows, subtle film grain, old-library and serious editorial mood, realistic lens compression, understated contrast.",
+      "color_notes": "Amber, muted brown, ivory highlights, dark charcoal shadow.",
+      "best_for": ["knowledge gaps", "learning", "memory", "thinking", "quiet reflection"]
+    },
+    "cool_institutional": {
+      "prompt_modifier": "Cool institutional documentary look, blue-gray office light, glass meeting rooms, research workplace atmosphere, restrained contrast, realistic modern corporate texture, not futuristic.",
+      "color_notes": "Blue-gray, soft white, deep navy, muted steel.",
+      "best_for": ["workplace cases", "meetings", "management", "organizational systems"]
+    },
+    "high_contrast_warning": {
+      "prompt_modifier": "High-contrast warning documentary look, dark environment, red or amber accent light, dramatic negative space, tension without horror, editorial realism, no neon cyberpunk.",
+      "color_notes": "Black, dark red, amber, pale highlights.",
+      "best_for": ["contradictions", "hidden risks", "cognitive traps", "chapter impact words"]
+    }
+  },
+  "switching_rule": {
+    "field": "styleVariant or scene.visual.tint",
+    "behavior": "Apply matching prompt_modifier before image generation. Remotion tint still applies on top, but generated image content should already match the selected style.",
+    "fallback": "If no style is specified, use warm_archive for hook/close, cool_institutional for workplace cases, high_contrast_warning for chapter impact scenes."
+  }
+}

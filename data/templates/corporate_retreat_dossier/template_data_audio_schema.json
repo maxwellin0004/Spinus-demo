@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CorporateRetreatDossierAudioData",
+  "type": "object",
+  "required": ["voiceover_units", "alignment_protocol"],
+  "properties": {
+    "voiceover_units": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["voice_id", "section", "text", "target_duration_sec", "visual_section_id", "timing_status"],
+        "properties": {
+          "voice_id": { "type": "string" },
+          "section": { "type": "string" },
+          "text": { "type": "string" },
+          "target_duration_sec": { "type": "number" },
+          "intended_pause_after_sec": { "type": "number" },
+          "emphasis_words": { "type": "array", "items": { "type": "string" } },
+          "visual_section_id": { "type": "string" },
+          "timing_status": { "enum": ["estimated", "audio_aligned", "estimated_after_audio_duration_fit"] }
+        }
+      }
+    },
+    "alignment_protocol": { "type": "string" }
+  }
+}

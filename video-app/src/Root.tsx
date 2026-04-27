@@ -28,6 +28,17 @@ import {
   LiteraryEmbersValidationComposition,
   LITERARY_EMBERS_VERTICAL_DURATION_IN_FRAMES,
 } from "./compositions/LiteraryEmbersValidationComposition";
+import {
+  CorporateRetreatDossierComposition,
+} from "./compositions/CorporateRetreatDossierComposition";
+import { CORPORATE_RETREAT_DOSSIER_DURATION } from "./data/corporateRetreatDossierData";
+import {
+  CognitiveDocumentaryEssayComposition,
+} from "./compositions/CognitiveDocumentaryEssayComposition";
+import {
+  COGNITIVE_DOC_DURATION_IN_FRAMES,
+  COGNITIVE_DOC_FPS,
+} from "./data/cognitiveDocumentaryEssayData";
 import { VIDEO_PROFILES } from "./theme/videoProfiles";
 
 const AGENT_DURATION_IN_FRAMES = 70 * VIDEO_PROFILES.youtubeHorizontal.fps;
@@ -170,6 +181,22 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={720}
         height={960}
+      />
+      <Composition
+        id="corporate-retreat-dossier-preview"
+        component={CorporateRetreatDossierComposition}
+        durationInFrames={CORPORATE_RETREAT_DOSSIER_DURATION}
+        fps={VIDEO_PROFILES.youtubeHorizontal.fps}
+        width={VIDEO_PROFILES.youtubeHorizontal.width}
+        height={VIDEO_PROFILES.youtubeHorizontal.height}
+      />
+      <Composition
+        id="cognitive-documentary-essay-preview"
+        component={CognitiveDocumentaryEssayComposition}
+        durationInFrames={COGNITIVE_DOC_DURATION_IN_FRAMES}
+        fps={COGNITIVE_DOC_FPS}
+        width={VIDEO_PROFILES.youtubeHorizontal.width}
+        height={VIDEO_PROFILES.youtubeHorizontal.height}
       />
     </>
   );

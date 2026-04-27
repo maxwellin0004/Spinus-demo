@@ -1,0 +1,13 @@
+{
+  "rule": "先生成或定位最终口播音频，再回填字幕时间轴；手写时间只能用于粗预览。",
+  "steps": [
+    "Generate final voiceover from example_voiceover_units.json or record human narration.",
+    "Measure actual audio duration.",
+    "Run transcription or forced alignment to recover sentence/word timestamps.",
+    "Map every cue to voice_id and visual_section_id.",
+    "Write subtitle_timeline.generated.horizontal.json with frame-accurate startFrame/endFrame.",
+    "Update Remotion data to read generated subtitle timeline before final render."
+  ],
+  "fallback": "If forced alignment is unavailable, mark cues as estimated_after_audio_duration_fit and distribute timings by measured audio duration.",
+  "rough_preview_status": "current preview uses estimated subtitle timing and no generated voiceover"
+}

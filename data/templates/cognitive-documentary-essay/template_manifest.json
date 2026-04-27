@@ -1,0 +1,62 @@
+{
+  "template_id": "cognitive-documentary-essay",
+  "version": "1.0.0",
+  "name": "认知纪录片式解释模板",
+  "source_reference": {
+    "path": "D:\\document\\google\\download (17).mp4",
+    "duration_sec": 645.954,
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "metadata_status": "title/description/platform unknown"
+  },
+  "orientation": "horizontal",
+  "template_type": "long-form cinematic knowledge essay",
+  "asset_strategy": {
+    "default_mode": "generate_per_topic_scene_images",
+    "fallback_mode": "local_static_assets",
+    "required_before_final_render": [
+      "derive scene visual intent from topic and script",
+      "generate or source a unique image for every scene asset slot",
+      "write generated asset paths back to scene data",
+      "keep local bundled images only as fallback or layout placeholders"
+    ],
+    "prompt_files": [
+      "image_prompt_schema.json",
+      "image_prompt_library.json",
+      "style_to_prompt_mapping.json",
+      "asset_generation_plan.json"
+    ]
+  },
+  "new_scene_system_required": true,
+  "reused_foundation_only": [
+    "Remotion Sequence/AbsoluteFill/interpolate/spring/staticFile",
+    "video-app/src/components/video/SubtitleTrack.tsx",
+    "video-app/src/components/video/AudioTrackLayer.tsx",
+    "video-app/src/theme/tokens.ts",
+    "local public image loading"
+  ],
+  "forbidden_reuse": [
+    "existing composition page masters",
+    "existing scene component skeletons",
+    "existing HUD/trading/comic/archive/psych layout systems"
+  ],
+  "scene_types": [
+    "DustLibraryHookScene",
+    "BrollEvidenceScene",
+    "ChapterImpactWordScene",
+    "ContradictionCaseScene",
+    "RuleExtractionScene",
+    "DocumentaryCloseScene"
+  ],
+  "status": "packaged_template",
+  "validated_example": {
+    "topic": "为什么会议总是没有结论",
+    "composition_id": "cognitive-documentary-essay-preview",
+    "preview_video": "data/jobs/cognitive-documentary-essay-elevenlabs.mp4",
+    "voiceover_audio": "video-app/public/audio/cognitive-documentary-essay/meeting-no-conclusion-elevenlabs.mp3",
+    "subtitle_timeline": "data/templates/cognitive-documentary-essay/subtitle_timeline.generated.horizontal.json",
+    "duration_sec": 30.058667,
+    "audio_alignment": "elevenlabs_with_timestamps"
+  }
+}

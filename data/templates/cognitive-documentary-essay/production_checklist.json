@@ -1,0 +1,29 @@
+{
+  "template_id": "cognitive-documentary-essay",
+  "packaged_version": "1.0.0",
+  "required_before_new_render": [
+    "new topic voiceover_units with stable voice_id values",
+    "new per-topic asset_generation_plan generated from the script",
+    "topic-specific images generated or sourced for every scene",
+    "scene data using only cognitiveDocumentary scene types",
+    "local or licensed full-bleed B-roll/image assets",
+    "ElevenLabs or human voiceover audio",
+    "subtitle_timeline.generated.horizontal.json rebuilt from real audio timing"
+  ],
+  "render_ready_when": [
+    "cognitiveDocumentaryEssayAudio.ts points to final audio",
+    "all subtitles map to voice_id and visual_section_id",
+    "composition duration covers final audio plus 2-3 seconds tail",
+    "all staticFile assets exist under video-app/public",
+    "scene visual.asset paths point to generated or licensed assets, not only local fallback placeholders",
+    "preview render is visually nonblank and subtitles do not collide with chapter text"
+  ],
+  "do_not_reuse": [
+    "old template scene skeletons",
+    "old page masters",
+    "HUD panels",
+    "trading chart pages",
+    "comic panel systems",
+    "dossier cards"
+  ]
+}

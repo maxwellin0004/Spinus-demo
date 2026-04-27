@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CorporateRetreatDossierData",
+  "type": "object",
+  "required": ["topic", "orientation", "duration_sec", "scenes", "subtitles"],
+  "properties": {
+    "topic": { "type": "string" },
+    "orientation": { "enum": ["horizontal"] },
+    "duration_sec": { "type": "number", "minimum": 30, "maximum": 300 },
+    "style_variant": { "type": "string" },
+    "scenes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["scene_id", "scene_type", "time_range", "visual_subject", "caption"],
+        "properties": {
+          "scene_id": { "type": "string" },
+          "scene_type": {
+            "enum": ["shock_title", "stat_dossier", "evidence_montage", "boardroom_montage", "final_ledger"]
+          },
+          "time_range": { "type": "string" },
+          "visual_subject": { "type": "string" },
+          "caption": { "type": "string" },
+          "stat_lines": { "type": "array", "items": { "type": "string" } },
+          "evidence_labels": { "type": "array", "items": { "type": "string" } },
+          "asset_slots": { "type": "array", "items": { "type": "string" } },
+          "motion": { "type": "string" }
+        }
+      }
+    },
+    "subtitles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["voice_id", "start_frame", "end_frame", "text", "timing_status"],
+        "properties": {
+          "voice_id": { "type": "string" },
+          "start_frame": { "type": "integer" },
+          "end_frame": { "type": "integer" },
+          "text": { "type": "string" },
+          "emphasis_words": { "type": "array", "items": { "type": "string" } },
+          "timing_status": { "enum": ["estimated", "audio_aligned", "estimated_after_audio_duration_fit"] }
+        }
+      }
+    }
+  }
+}

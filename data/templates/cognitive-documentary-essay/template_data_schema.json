@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CognitiveDocumentaryEssayData",
+  "type": "object",
+  "required": ["title", "orientation", "fps", "durationSec", "chapters", "scenes", "subtitleCues", "audio"],
+  "properties": {
+    "title": { "type": "string" },
+    "orientation": { "enum": ["horizontal", "vertical"] },
+    "fps": { "type": "number" },
+    "durationSec": { "type": "number" },
+    "styleVariant": { "type": "string" },
+    "chapters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "timeRange", "label", "claim"],
+        "properties": {
+          "id": { "type": "string" },
+          "timeRange": { "type": "string" },
+          "label": { "type": "string" },
+          "claim": { "type": "string" }
+        }
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sceneId", "sceneType", "startSec", "durationSec", "visual", "caption"],
+        "properties": {
+          "sceneId": { "type": "string" },
+          "sceneType": { "type": "string" },
+          "startSec": { "type": "number" },
+          "durationSec": { "type": "number" },
+          "visual": {
+            "type": "object",
+            "required": ["asset", "assetMode", "motion"],
+            "properties": {
+              "asset": { "type": "string" },
+              "assetMode": {
+                "enum": ["generated", "local_fallback", "licensed_external", "recorded_screen"]
+              },
+              "assetPromptId": { "type": "string" },
+              "assetPrompt": { "type": "string" },
+              "negativePrompt": { "type": "string" },
+              "generatedAssetPath": { "type": "string" },
+              "fallbackAsset": { "type": "string" },
+              "motion": { "enum": ["slow_push", "slow_pan_left", "slow_pan_right", "static_hold", "impact_zoom"] },
+              "overlayText": { "type": "string" },
+              "tint": { "type": "string" }
+            }
+          },
+          "caption": {
+            "type": "object",
+            "required": ["zh", "en"],
+            "properties": {
+              "zh": { "type": "string" },
+              "en": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "subtitleCues": { "type": "array" },
+    "audio": { "type": "object" }
+  }
+}
