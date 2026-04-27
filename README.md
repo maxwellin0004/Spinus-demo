@@ -10,26 +10,101 @@
 
 ## 目录结构
 
-根目录关键内容如下：
+根目录关键内容如下。
 
+### 根目录文件
+
+- `README.md`
+  - 仓库总说明与新电脑安装入口。
+- `QUICKSTART.md`
+  - 快速接手流程。
+- `INSTALL_FOR_NEW_MACHINE.md`
+  - 新电脑迁移和安装清单。
+- `AGENTS.md`
+  - 给 Codex/代理阅读的仓库工作指南。
+- `.gitignore`
+  - Git 忽略规则，主要排除依赖、缓存、构建产物、本地密钥和本地工具。
+- `.env.example`
+  - 环境变量示例，不包含真实密钥。
 - `config.py`
   - 顶层模型配置与本地配置读取入口。
 - `config.local.json`
-  - 本地运行配置文件。
+  - 本地运行配置文件，可能包含真实 API key，不建议上传公开仓库。
 - `elevenlabs_config.py`
-  - ElevenLabs TTS 配置。
+  - ElevenLabs TTS 配置入口。
+
+### 根目录文件夹
+
 - `scripts/`
-  - Python 主工作流脚本目录。
+  - Python 主工作流脚本目录，负责视频分析、抽帧、转写、模型调用、TTS 生成和批量音频生成。
 - `data/`
-  - 输入数据、预处理产物、分析结果、模板协议、任务目录。
+  - 工作流数据目录，包含输入视频、预处理产物、分析结果、模板协议、任务目录和音频脚本文本。
 - `assets/`
-  - 仓库共享字体和图片资源。
+  - 仓库共享静态资源目录，当前主要包含 `fonts/` 和 `images/`。
 - `video-app/`
-  - Remotion + React + TypeScript 视频模板工程。
+  - Remotion + React + TypeScript 视频模板工程，负责预览、构建和渲染视频。
 - `web-video-console/`
-  - 静态控制台原型，目前不是正式后端。
+  - 静态 Web 控制台原型，用于工作流界面设计和 mock，不是正式后端。
+- `project-skills/`
+  - 仓库附带的 Codex skills，用于视频分析、脚本生成、TTS、Remotion 渲染等专项流程。
+- `docs/`
+  - 项目补充文档目录。
 - `tools/`
-  - 本地工具目录。
+  - 本地工具目录，例如可放置本机使用的 `ffmpeg.exe`，通常不建议把大型二进制提交到 GitHub。
+- `.analysis/`
+  - 临时分析输出目录，通常保存抽帧和 montage 等中间产物，不应优先作为稳定输入。
+- `.playwright-mcp/`
+  - Playwright/MCP 调试日志和页面快照目录，属于本地调试产物。
+- `temp/`
+  - 临时文件目录。
+- `tmp_video_analysis/`
+  - 视频分析临时目录。
+- `__pycache__/`
+  - Python 字节码缓存目录。
+
+### `data/` 子目录
+
+- `data/source_videos/`
+  - 原始参考视频输入目录，通常按 `<source_id>/source.mp4` 和 `<source_id>/meta.json` 组织。
+- `data/preprocess/`
+  - 预处理产物目录，包含抽帧、音频、转写、帧索引和帧摘要等。
+- `data/jobs/`
+  - 分析任务运行目录，保存 job 配置、状态、日志、partial 结果和部分导出产物。
+- `data/analyses/`
+  - 已完成的视频分析结果目录，通常包含 `.analysis.json` 和 `.summary.json`。
+- `data/templates/`
+  - 模板协议和模板数据目录，用于沉淀可复用的视频结构。
+- `data/audio_scripts/`
+  - 配音脚本、voiceover units、字幕时间轴和音频 manifest 等文本数据。
+
+### `video-app/` 子目录
+
+- `video-app/src/`
+  - Remotion 源码目录。
+- `video-app/src/compositions/`
+  - Remotion composition 入口，每个文件通常对应一个可预览或渲染的视频成片。
+- `video-app/src/scenes/`
+  - 场景组件目录，按题材或模板类型拆分画面结构。
+- `video-app/src/components/`
+  - 通用 React/Remotion 组件目录，例如字幕轨、音频轨和画面基础组件。
+- `video-app/src/data/`
+  - 视频模板使用的结构化数据、音频配置和字幕数据。
+- `video-app/src/lib/`
+  - 通用工具函数和类型辅助。
+- `video-app/src/theme/`
+  - 视觉主题、设计 token 和视频规格配置。
+- `video-app/public/`
+  - Remotion 可直接引用的公开静态资源目录，包含音频、图片和生成素材。
+- `video-app/skills/`
+  - Remotion 相关本地 skill 资料。
+- `video-app/build/`
+  - Remotion bundle 构建产物，可重新生成，不建议提交。
+- `video-app/out/`
+  - 本地视频预览或导出产物目录，不建议提交。
+- `video-app/renders/`
+  - Remotion 渲染输出目录，不建议提交。
+- `video-app/node_modules/`
+  - npm 安装的依赖目录，应通过 `npm ci` 或 `npm install` 在本地生成，不应提交。
 
 ## 核心工作流
 
