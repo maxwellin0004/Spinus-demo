@@ -1,0 +1,45 @@
+{
+  "template_id": "future_income_tracks_card",
+  "render_engine": "React + Remotion",
+  "composition": {
+    "id": "future-income-tracks-preview",
+    "component": "FutureIncomeTracksComposition",
+    "file": "video-app/src/compositions/FutureIncomeTracksComposition.tsx",
+    "fps": 30,
+    "width": 1080,
+    "height": 1920,
+    "duration_frames": 150
+  },
+  "data_files": {
+    "default_props": "video-app/src/data/futureIncomeTracksData.ts",
+    "template_example": "data/templates/future_income_tracks_card/example_data.json",
+    "schema": "data/templates/future_income_tracks_card/template_data_schema.json"
+  },
+  "component_mapping": {
+    "header.kicker": "Top pill label",
+    "header.titleLines": "Large stacked title rendered directly on background",
+    "header.footerLead": "Bottom-left checklist text",
+    "header.footnote": "Bottom-right disclaimer chip",
+    "tracks[].rank": "Number badge in each trapezoid tier",
+    "tracks[].title": "Tier headline",
+    "tracks[].thesis": "Tier middle reasoning sentence",
+    "tracks[].keywords": "Keyword pills in each tier",
+    "tracks[].accent": "Number badge color and right-side card highlight",
+    "tracks[].softAccent": "Left-side translucent card fill",
+    "visual.background": "Full-screen CSS background",
+    "visual.titleColor": "Main title color",
+    "visual.titleShadow": "Main title text-shadow",
+    "visual.kickerBackground": "Top pill background",
+    "visual.kickerColor": "Top pill text color",
+    "visual.footerColor": "Footer text color",
+    "visual.cardTextColor": "Card body text color",
+    "visual.gridOpacity": "Background grid opacity"
+  },
+  "render_rules": [
+    "Do not render an outer frame behind the title area.",
+    "Keep exactly five tiers unless tierLayout is redesigned in the Remotion component.",
+    "Keep each keyword short; long keywords should be split or reduced to avoid overflow.",
+    "Use high-contrast card text because the template is meant for mobile viewing.",
+    "Default preview is silent unless audio is explicitly added."
+  ]
+}

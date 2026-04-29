@@ -1,0 +1,63 @@
+{
+  "template_id": "future_income_tracks_card",
+  "template_name": "Future Income Tracks Perspective Card",
+  "template_name_zh": "未来高增长赛道透视阶梯信息图",
+  "version": "1.0.0",
+  "status": "packaged_preview_ready",
+  "template_type": "vertical_perspective_ranked_infographic",
+  "orientation": "vertical",
+  "aspect_ratio": "9:16",
+  "preview_audio": false,
+  "render_entry": {
+    "composition_id": "future-income-tracks-preview",
+    "composition_module": "video-app/src/compositions/FutureIncomeTracksComposition.tsx",
+    "data_module": "video-app/src/data/futureIncomeTracksData.ts",
+    "fps": 30,
+    "width": 1080,
+    "height": 1920,
+    "duration_frames": 150,
+    "duration_sec": 5
+  },
+  "style_grammar": {
+    "background": "neon green to lemon yellow gradient with subtle grid and diagonal light sweep",
+    "title": "large heavy Chinese headline directly on background, no outer title panel",
+    "layout": "five perspective trapezoid cards stacked from narrow top to wide bottom",
+    "cards": "alternating mint, cyan and acid yellow glass cards with black outline and soft shadows",
+    "motion": "title spring reveal, bottom-to-top tier entrance, slow camera push, soft shimmer sweep",
+    "safe_area": "keep all text inside central 90 percent width and avoid bottom app control overlays"
+  },
+  "editable_fields": [
+    "header.kicker",
+    "header.titleLines",
+    "header.footerLead",
+    "header.footnote",
+    "tracks[].rank",
+    "tracks[].title",
+    "tracks[].thesis",
+    "tracks[].keywords",
+    "tracks[].accent",
+    "tracks[].softAccent",
+    "visual.background",
+    "visual.titleColor",
+    "visual.titleShadow",
+    "visual.kickerBackground",
+    "visual.kickerColor",
+    "visual.footerColor",
+    "visual.cardTextColor",
+    "visual.gridOpacity"
+  ],
+  "asset_roots": {
+    "template_example": "data/templates/future_income_tracks_card/example_data.json",
+    "schema": "data/templates/future_income_tracks_card/template_data_schema.json",
+    "preview_output": "video-app/renders/future-income-tracks-preview.mp4",
+    "verification_frame": "video-app/renders/future-income-tracks-preview-frame120.png"
+  },
+  "prompt_assets": {
+    "image_prompt_pack": "data/templates/future_income_tracks_card/image_prompt_pack.md"
+  },
+  "render_commands": {
+    "preview": "npm run dev",
+    "render": "npm run render:future-income",
+    "still_frame_120": "npx.cmd remotion still src/index.ts future-income-tracks-preview renders/future-income-tracks-preview-frame120.png --frame=120"
+  }
+}

@@ -53,9 +53,13 @@ import {
   CombinatorialParadoxCinematicComposition,
 } from "./compositions/CombinatorialParadoxCinematicComposition";
 import {
-  FUTURE_INCOME_TRACKS_DURATION_IN_FRAMES,
   FutureIncomeTracksComposition,
 } from "./compositions/FutureIncomeTracksComposition";
+import {
+  defaultFutureIncomeTracksProps,
+  FUTURE_INCOME_TRACKS_DURATION_IN_FRAMES,
+  futureIncomeTracksTemplateSchema,
+} from "./data/futureIncomeTracksData";
 import {
   COGNITIVE_DOC_DURATION_IN_FRAMES,
   COGNITIVE_DOC_FPS,
@@ -252,6 +256,8 @@ export const RemotionRoot: React.FC = () => {
         fps={VIDEO_PROFILES.tiktokVertical.fps}
         width={VIDEO_PROFILES.tiktokVertical.width}
         height={VIDEO_PROFILES.tiktokVertical.height}
+        defaultProps={defaultFutureIncomeTracksProps}
+        schema={futureIncomeTracksTemplateSchema}
       />
       <Composition
         id="combinatorial-paradox-cinematic-preview"

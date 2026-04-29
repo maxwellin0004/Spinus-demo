@@ -7,15 +7,15 @@ import {
   useVideoConfig,
 } from "remotion";
 import {
-  futureIncomeTracks,
-  futureIncomeTracksHeader,
+  defaultFutureIncomeTracksProps,
   FUTURE_INCOME_TRACKS_DURATION_IN_FRAMES,
   type FutureIncomeTrack,
+  type FutureIncomeTracksTemplateProps,
 } from "../data/futureIncomeTracksData";
 
 export { FUTURE_INCOME_TRACKS_DURATION_IN_FRAMES };
 
-const layout = [
+const tierLayout = [
   { top: 488, width: 660, height: 224 },
   { top: 724, width: 744, height: 228 },
   { top: 966, width: 826, height: 232 },
@@ -31,11 +31,13 @@ const clamp = {
 const TrackTier: React.FC<{
   item: FutureIncomeTrack;
   index: number;
-}> = ({ item, index }) => {
+  trackCount: number;
+  cardTextColor: string;
+}> = ({ item, index, trackCount, cardTextColor }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const tier = layout[index];
-  const buildOrder = futureIncomeTracks.length - 1 - index;
+  const tier = tierLayout[index];
+  const buildOrder = trackCount - 1 - index;
   const entrance = spring({
     frame: frame - (18 + buildOrder * 8),
     fps,
@@ -99,7 +101,7 @@ const TrackTier: React.FC<{
           style={{
             position: "absolute",
             inset: "26px 58px 22px",
-            color: "#06110c",
+            color: cardTextColor,
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
@@ -185,7 +187,13 @@ const TrackTier: React.FC<{
   );
 };
 
-export const FutureIncomeTracksComposition: React.FC = () => {
+export const FutureIncomeTracksComposition: React.FC<
+  FutureIncomeTracksTemplateProps
+> = ({
+  header = defaultFutureIncomeTracksProps.header,
+  tracks = defaultFutureIncomeTracksProps.tracks,
+  visual = defaultFutureIncomeTracksProps.visual,
+}) => {
   const frame = useCurrentFrame();
   const { durationInFrames, fps } = useVideoConfig();
   const titleIn = spring({
@@ -201,8 +209,7 @@ export const FutureIncomeTracksComposition: React.FC = () => {
   return (
     <AbsoluteFill
       style={{
-        background:
-          "radial-gradient(circle at 50% 7%, rgba(189, 255, 120, 0.75), transparent 23%), radial-gradient(circle at 18% 78%, rgba(35, 226, 156, 0.42), transparent 25%), linear-gradient(180deg, #0a2a1c 0%, #5ee994 43%, #c9ff79 100%)",
+        background: visual.background,
         overflow: "hidden",
         fontFamily: "NotoSansSC, sans-serif",
       }}
@@ -211,8 +218,7 @@ export const FutureIncomeTracksComposition: React.FC = () => {
         style={{
           position: "absolute",
           inset: 0,
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px)",
+          backgroundImage: `linear-gradient(rgba(255,255,255,${visual.gridOpacity}) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,${visual.gridOpacity * 0.875}) 1px, transparent 1px)`,
           backgroundSize: "44px 44px",
           maskImage: "linear-gradient(180deg, rgba(0,0,0,0.65), transparent 72%)",
         }}
@@ -225,22 +231,8 @@ export const FutureIncomeTracksComposition: React.FC = () => {
           width: 520,
           height: 2350,
           transform: "rotate(18deg)",
-          background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          left: 62,
-          right: 62,
-          top: 52,
-          height: 240,
-          borderRadius: 48,
-          background: "rgba(4, 15, 10, 0.34)",
-          border: "1px solid rgba(235, 255, 198, 0.28)",
-          boxShadow: "0 30px 80px rgba(0, 0, 0, 0.24)",
-          opacity: interpolate(titleIn, [0, 1], [0, 1], clamp),
-          transform: `translateY(${interpolate(titleIn, [0, 1], [-34, 0])}px)`,
+          background:
+            "linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)",
         }}
       />
       <div
@@ -251,6 +243,7 @@ export const FutureIncomeTracksComposition: React.FC = () => {
           right: 70,
           textAlign: "center",
           transform: `scale(${interpolate(titleIn, [0, 1], [0.94, 1], clamp)})`,
+          opacity: interpolate(titleIn, [0, 1], [0, 1], clamp),
         }}
       >
         <div
@@ -260,27 +253,27 @@ export const FutureIncomeTracksComposition: React.FC = () => {
             justifyContent: "center",
             padding: "8px 20px",
             borderRadius: 999,
-            background: "rgba(8, 25, 17, 0.82)",
-            color: "#dfff86",
+            background: visual.kickerBackground,
+            color: visual.kickerColor,
             fontSize: 25,
             fontWeight: 700,
             letterSpacing: "0.08em",
           }}
         >
-          {futureIncomeTracksHeader.kicker}
+          {header.kicker}
         </div>
         <div
           style={{
             marginTop: 18,
-            color: "#06110b",
+            color: visual.titleColor,
             fontSize: 74,
             lineHeight: 1.08,
             fontWeight: 700,
             letterSpacing: "-0.055em",
-            textShadow: "0 4px 0 rgba(208, 255, 95, 0.45), 0 18px 36px rgba(0,0,0,0.2)",
+            textShadow: visual.titleShadow,
           }}
         >
-          {futureIncomeTracksHeader.titleLines.map((line) => (
+          {header.titleLines.map((line) => (
             <div key={line}>{line}</div>
           ))}
         </div>
@@ -293,8 +286,14 @@ export const FutureIncomeTracksComposition: React.FC = () => {
           transformOrigin: "50% 62%",
         }}
       >
-        {futureIncomeTracks.map((item, index) => (
-          <TrackTier key={item.rank} item={item} index={index} />
+        {tracks.map((item, index) => (
+          <TrackTier
+            key={`${item.rank}-${item.title}`}
+            cardTextColor={visual.cardTextColor}
+            index={index}
+            item={item}
+            trackCount={tracks.length}
+          />
         ))}
       </div>
       <div
@@ -307,13 +306,13 @@ export const FutureIncomeTracksComposition: React.FC = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          color: "#07130e",
+          color: visual.footerColor,
           fontSize: 25,
           fontWeight: 700,
           letterSpacing: "-0.03em",
         }}
       >
-        <span>收藏前先判断：需求频次 / 客单价 / 复购 / 交付难度</span>
+        <span>{header.footerLead}</span>
         <span
           style={{
             padding: "10px 18px",
@@ -322,7 +321,7 @@ export const FutureIncomeTracksComposition: React.FC = () => {
             border: "1px solid rgba(4, 18, 12, 0.18)",
           }}
         >
-          {futureIncomeTracksHeader.footnote}
+          {header.footnote}
         </span>
       </div>
     </AbsoluteFill>

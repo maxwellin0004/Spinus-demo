@@ -1,0 +1,35 @@
+{
+  "template_id": "future_income_tracks_card",
+  "variants": [
+    {
+      "id": "neon_growth_green",
+      "name": "Neon Growth Green",
+      "description": "Default mint green to lemon yellow growth infographic.",
+      "visual": {
+        "background": "radial-gradient(circle at 50% 7%, rgba(189, 255, 120, 0.75), transparent 23%), radial-gradient(circle at 18% 78%, rgba(35, 226, 156, 0.42), transparent 25%), linear-gradient(180deg, #0a2a1c 0%, #5ee994 43%, #c9ff79 100%)",
+        "titleColor": "#06110b",
+        "titleShadow": "0 4px 0 rgba(208, 255, 95, 0.45), 0 18px 36px rgba(0,0,0,0.2)",
+        "kickerBackground": "rgba(8, 25, 17, 0.82)",
+        "kickerColor": "#dfff86",
+        "footerColor": "#07130e",
+        "cardTextColor": "#06110c",
+        "gridOpacity": 0.08
+      }
+    },
+    {
+      "id": "blue_cyan_signal",
+      "name": "Blue Cyan Signal",
+      "description": "Cooler technology-analysis look for AI, robotics and software topics.",
+      "visual": {
+        "background": "radial-gradient(circle at 50% 8%, rgba(115, 236, 255, 0.72), transparent 24%), radial-gradient(circle at 18% 76%, rgba(0, 164, 255, 0.36), transparent 25%), linear-gradient(180deg, #061826 0%, #1fbdd2 46%, #d7fff8 100%)",
+        "titleColor": "#031116",
+        "titleShadow": "0 4px 0 rgba(132, 246, 255, 0.52), 0 18px 36px rgba(0,0,0,0.22)",
+        "kickerBackground": "rgba(3, 18, 24, 0.84)",
+        "kickerColor": "#a8f7ff",
+        "footerColor": "#031116",
+        "cardTextColor": "#031116",
+        "gridOpacity": 0.09
+      }
+    }
+  ]
+}

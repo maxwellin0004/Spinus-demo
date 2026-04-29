@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FutureIncomeTracksTemplateData",
+  "type": "object",
+  "required": ["header", "tracks", "visual"],
+  "properties": {
+    "header": {
+      "type": "object",
+      "required": ["kicker", "titleLines", "footerLead", "footnote"],
+      "properties": {
+        "kicker": {
+          "type": "string",
+          "description": "Small pill label above the title"
+        },
+        "titleLines": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 4,
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Large title lines rendered directly on the background"
+        },
+        "footerLead": {
+          "type": "string",
+          "description": "Bottom-left judgment prompt"
+        },
+        "footnote": {
+          "type": "string",
+          "description": "Bottom-right disclaimer chip"
+        }
+      }
+    },
+    "tracks": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["rank", "title", "thesis", "keywords", "accent", "softAccent"],
+        "properties": {
+          "rank": { "type": "integer", "minimum": 1, "maximum": 99 },
+          "title": { "type": "string", "minLength": 1 },
+          "thesis": {
+            "type": "string",
+            "minLength": 1,
+            "description": "One-sentence reason or judgment logic"
+          },
+          "keywords": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 6,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "accent": {
+            "type": "string",
+            "description": "Card highlight color, CSS color string"
+          },
+          "softAccent": {
+            "type": "string",
+            "description": "Translucent card base color, CSS color string"
+          }
+        }
+      }
+    },
+    "visual": {
+      "type": "object",
+      "required": [
+        "background",
+        "titleColor",
+        "titleShadow",
+        "kickerBackground",
+        "kickerColor",
+        "footerColor",
+        "cardTextColor",
+        "gridOpacity"
+      ],
+      "properties": {
+        "background": { "type": "string" },
+        "titleColor": { "type": "string" },
+        "titleShadow": { "type": "string" },
+        "kickerBackground": { "type": "string" },
+        "kickerColor": { "type": "string" },
+        "footerColor": { "type": "string" },
+        "cardTextColor": { "type": "string" },
+        "gridOpacity": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    }
+  }
+}
