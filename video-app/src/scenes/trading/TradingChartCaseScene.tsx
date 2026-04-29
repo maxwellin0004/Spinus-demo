@@ -11,6 +11,13 @@ type TradingChartCaseSceneProps = {
   variant?: TradingSceneVariant;
 };
 
+const clampLines = (lines: number) => ({
+  display: "-webkit-box",
+  WebkitBoxOrient: "vertical" as const,
+  WebkitLineClamp: lines,
+  overflow: "hidden",
+});
+
 export const TradingChartCaseScene: React.FC<TradingChartCaseSceneProps> = ({
   badge,
   title,
@@ -30,13 +37,13 @@ export const TradingChartCaseScene: React.FC<TradingChartCaseSceneProps> = ({
         background: variant === "light" ? "linear-gradient(180deg, #fbfdff 0%, #edf4fb 100%)" : "linear-gradient(180deg, #090c14 0%, #04060b 100%)",
         color: palette.textPrimary,
         fontFamily: THEME.fonts.bodyZh,
-        padding: "84px 88px",
+        padding: "74px 72px",
       }}
     >
-      <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 34, height: "100%" }}>
+      <div style={{ display: "grid", gridTemplateRows: "520px 1fr", gap: 28, height: "100%" }}>
         <div
           style={{
-            borderRadius: 30,
+            borderRadius: 26,
             overflow: "hidden",
             border: `1px solid ${palette.borderStrong}`,
             position: "relative",
@@ -54,20 +61,20 @@ export const TradingChartCaseScene: React.FC<TradingChartCaseSceneProps> = ({
         </div>
         <div
           style={{
-            borderRadius: 30,
+            borderRadius: 26,
             border: `1px solid ${palette.borderStrong}`,
             background: palette.panel,
-            padding: "34px 34px 28px",
+            padding: "30px 30px 28px",
             transform: `translateY(${(1 - intro) * 28}px)`,
             opacity: intro,
           }}
         >
-          <div style={{ fontSize: 22, letterSpacing: 2, color: palette.accent, marginBottom: 18 }}>{badge}</div>
-          <div style={{ fontFamily: THEME.fonts.headlineZh, fontWeight: 700, fontSize: 62, lineHeight: 1.06, marginBottom: 18 }}>
+          <div style={{ fontSize: 20, letterSpacing: 0, color: palette.accent, marginBottom: 14 }}>{badge}</div>
+          <div style={{ fontFamily: THEME.fonts.headlineZh, fontWeight: 700, fontSize: 58, lineHeight: 1.08, marginBottom: 16, ...clampLines(2) }}>
             {title}
           </div>
-          <div style={{ fontSize: 27, lineHeight: 1.55, color: palette.textSecondary, marginBottom: 28 }}>{takeaway}</div>
-          <div style={{ display: "grid", gap: 14 }}>
+          <div style={{ fontSize: 26, lineHeight: 1.42, color: palette.textSecondary, marginBottom: 24, ...clampLines(3) }}>{takeaway}</div>
+          <div style={{ display: "grid", gap: 12 }}>
             {bullets.map((bullet, index) => {
               const bulletIntro = spring({ fps, frame: frame - index * 5, config: { damping: 15, stiffness: 120 } });
               return (
@@ -75,8 +82,8 @@ export const TradingChartCaseScene: React.FC<TradingChartCaseSceneProps> = ({
                   key={bullet}
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "26px 1fr",
-                    gap: 14,
+                    gridTemplateColumns: "22px 1fr",
+                    gap: 12,
                     alignItems: "start",
                     opacity: bulletIntro,
                     transform: `translateX(${(1 - bulletIntro) * 16}px)`,
@@ -92,7 +99,7 @@ export const TradingChartCaseScene: React.FC<TradingChartCaseSceneProps> = ({
                       boxShadow: variant === "light" ? "0 0 18px rgba(47,125,246,0.24)" : "0 0 18px rgba(255,108,74,0.42)",
                     }}
                   />
-                  <div style={{ fontSize: 25, lineHeight: 1.45 }}>{bullet}</div>
+                  <div style={{ fontSize: 24, lineHeight: 1.38, ...clampLines(2) }}>{bullet}</div>
                 </div>
               );
             })}

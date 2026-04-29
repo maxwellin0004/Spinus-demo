@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Codex Video Console</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23111a21' d='M6 8.5 16 3l10 5.5v15L16 29 6 23.5v-15Z'/%3E%3Cpath fill='%2316c89a' d='M11 11.5 16 8.8l5 2.7v7L16 21.2l-5-2.7v-7Z'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="./styles.css" />
     <script defer src="./app.js"></script>
   </head>
@@ -39,13 +40,27 @@
         </div>
 
         <div class="top-actions">
+          <a class="secondary-button" href="/monitor">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 3v18h18" />
+              <path d="M7 15 11 11l3 3 5-6" />
+            </svg>
+            账号监控
+          </a>
+          <button class="secondary-button" type="button" id="openTaskModalButton">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5v14" />
+              <path d="M5 12h14" />
+            </svg>
+            新建视频任务
+          </button>
           <button class="icon-button" type="button" title="刷新" aria-label="刷新" id="refreshButton">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M20 12a8 8 0 1 1-2.34-5.66" />
               <path d="M20 4v5h-5" />
             </svg>
           </button>
-          <button class="icon-button" type="button" title="设置" aria-label="设置">
+          <button class="icon-button" type="button" title="设置" aria-label="设置" id="settingsButton">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
               <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.37a1.7 1.7 0 0 0-1 .2 1.7 1.7 0 0 0-.9 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-.9-1.5 1.7 1.7 0 0 0-1-.2 1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.63 15a1.7 1.7 0 0 0-.2-1 1.7 1.7 0 0 0-1.5-.9H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-.9 1.7 1.7 0 0 0 .2-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.63a1.7 1.7 0 0 0 1-.2 1.7 1.7 0 0 0 .9-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 .9 1.5 1.7 1.7 0 0 0 1 .2 1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.37 9c.1.32.1.68 0 1 .18.63.72 1.1 1.4 1.1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5.9Z" />
@@ -117,7 +132,7 @@
 
           <div class="session-drawer" id="sessionDrawer" hidden>
             <div class="session-search-row">
-              <input id="sessionSearchInput" type="text" placeholder="筛选 session 名称或 ID" />
+              <input id="sessionSearchInput" type="text" placeholder="筛选本地 session 名称或 ID" />
               <button class="icon-button is-dark" type="button" id="sessionRefreshButton" title="刷新 session" aria-label="刷新 session">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M20 12a8 8 0 1 1-2.34-5.66" />
@@ -127,7 +142,7 @@
             </div>
             <div class="session-list" id="sessionList" aria-live="polite"></div>
             <div class="session-drawer-footer">
-              <small id="sessionListMeta">0 / 0 sessions</small>
+              <small id="sessionListMeta">0 / 0 个 session</small>
               <button class="secondary-button is-small" type="button" id="sessionLoadMoreButton" hidden>加载更多</button>
             </div>
           </div>
@@ -139,7 +154,7 @@
             <textarea
               id="composerInput"
               rows="4"
-              placeholder="写下这条视频想做什么，风格、时长、平台和额外要求都可以一起说。"
+              placeholder="写下这条视频要做什么，风格、时长、平台和额外要求都可以一起说。"
             ></textarea>
             <div class="composer-actions">
               <button class="ghost-button" type="button" id="attachButton">
@@ -210,6 +225,7 @@
           </div>
 
           <div class="pipeline-banner is-hidden" id="pipelineBanner" role="status" aria-live="polite"></div>
+          <section class="stats-strip" id="statsGrid" aria-label="工作台统计"></section>
 
           <div class="work-scroll">
             <section class="account-profile-card">
@@ -218,7 +234,12 @@
                   <span class="eyebrow">Account Profile</span>
                   <h3 id="accountProfileTitle">请选择账号画像</h3>
                 </div>
-                <span class="mini-status" id="accountPlatformBadge">-</span>
+                <div class="card-heading-actions">
+                  <span class="mini-status" id="accountPlatformBadge">-</span>
+                  <button class="secondary-button is-small" type="button" id="editAccountButton">编辑</button>
+                  <button class="secondary-button is-small" type="button" id="archiveAccountButton">归档</button>
+                  <button class="secondary-button is-small is-danger" type="button" id="deleteAccountButton">删除</button>
+                </div>
               </div>
               <div class="profile-grid">
                 <div class="profile-item">
@@ -305,7 +326,104 @@
 
               <div class="view-page" id="resourcesView">
                 <div class="template-section">
+                  <h3>项目与批量生产</h3>
+                  <div class="scale-panel">
+                    <div class="scale-grid">
+                      <label class="scale-field" for="campaignSelect">
+                        <span>当前项目</span>
+                        <select id="campaignSelect" aria-label="选择项目"></select>
+                      </label>
+                      <label class="scale-field" for="campaignNameInput">
+                        <span>新项目名称</span>
+                        <input id="campaignNameInput" type="text" placeholder="例如：五月交易教育短视频" />
+                      </label>
+                      <button class="secondary-button" type="button" id="createCampaignButton">新建项目</button>
+                    </div>
+                    <div class="scale-grid">
+                      <label class="scale-field" for="activitySelect">
+                        <span>当前活动</span>
+                        <select id="activitySelect" aria-label="选择活动"></select>
+                      </label>
+                      <label class="scale-field" for="activityNameInput">
+                        <span>新活动名称</span>
+                        <input id="activityNameInput" type="text" placeholder="例如：假突破主题周" />
+                      </label>
+                      <button class="secondary-button" type="button" id="createActivityButton">新建活动</button>
+                    </div>
+                    <div class="topic-pool-panel">
+                      <div class="batch-toolbar">
+                        <div>
+                          <strong>选题池</strong>
+                          <span>先沉淀选题，再按账号批量生成任务。</span>
+                        </div>
+                        <button class="secondary-button" type="button" id="createTopicButton">加入选题池</button>
+                      </div>
+                      <textarea id="topicPoolInput" rows="2" placeholder="输入一个选题，例如：假突破之后为什么不要急着反手？"></textarea>
+                      <div class="topic-pool-list" id="topicPoolList"></div>
+                    </div>
+                    <label class="scale-field scale-field-wide" for="batchTopicInput">
+                      <span>同题批量选题</span>
+                      <textarea id="batchTopicInput" rows="3" placeholder="输入一个选题，会按所选账号风格创建多条可执行任务。"></textarea>
+                    </label>
+                    <div class="batch-toolbar">
+                      <div>
+                        <strong>选择账号</strong>
+                        <span>默认使用当前账号；也可以多选账号做同题不同风格。</span>
+                      </div>
+                      <button class="primary-button" type="button" id="createBatchButton">创建批量任务</button>
+                    </div>
+                    <div class="batch-account-grid" id="batchAccountGrid"></div>
+                  </div>
+                  <div class="batch-console-toolbar">
+                    <label class="scale-field" for="batchStatusFilter">
+                      <span>批量状态</span>
+                      <select id="batchStatusFilter">
+                        <option value="all">全部</option>
+                        <option value="queued">排队中</option>
+                        <option value="running">运行中</option>
+                        <option value="paused">已暂停</option>
+                        <option value="canceled">已取消</option>
+                        <option value="planned">已生成计划</option>
+                        <option value="voiced">已配音</option>
+                        <option value="completed">已渲染</option>
+                        <option value="partial">部分失败</option>
+                        <option value="failed">失败</option>
+                        <option value="draft">草稿</option>
+                      </select>
+                    </label>
+                    <label class="scale-field" for="batchSearchInput">
+                      <span>筛选批量任务</span>
+                      <input id="batchSearchInput" type="text" placeholder="搜索选题、项目或活动" />
+                    </label>
+                    <button class="secondary-button" type="button" id="refreshBatchesButton">刷新批量状态</button>
+                  </div>
+                  <div class="retry-queue-list" id="retryQueueList"></div>
+                  <div class="batch-list" id="batchList"></div>
+                </div>
+                <div class="template-section">
                   <h3>模板库</h3>
+                  <div class="template-governance-card" id="templateGovernanceCard">
+                    <div class="template-governance-grid">
+                      <div>
+                        <span>Version</span>
+                        <strong id="templateVersionLabel">-</strong>
+                      </div>
+                      <div>
+                        <span>发布状态</span>
+                        <strong id="templatePublishLabel">-</strong>
+                      </div>
+                      <div>
+                        <span>Owner</span>
+                        <strong id="templateOwnerLabel">-</strong>
+                      </div>
+                      <div>
+                        <span>最近更新</span>
+                        <strong id="templateUpdatedLabel">-</strong>
+                      </div>
+                    </div>
+                    <p id="templateDescriptionText">模板说明会显示在这里。</p>
+                    <small id="templatePathLabel">data/templates</small>
+                  </div>
                   <div class="template-gallery" id="templateGallery"></div>
                 </div>
                 <div class="template-section">
@@ -314,7 +432,24 @@
                 </div>
                 <div class="template-section">
                   <h3>最近任务</h3>
+                  <div class="history-toolbar" id="historyToolbar">
+                    <div class="history-filter-bar">
+                      <button type="button" class="ghost-button is-compact is-active" data-history-filter="all">全部</button>
+                      <button type="button" class="ghost-button is-compact" data-history-filter="active">进行中</button>
+                      <button type="button" class="ghost-button is-compact" data-history-filter="completed">已完成</button>
+                      <button type="button" class="ghost-button is-compact" data-history-filter="failed">失败</button>
+                      <button type="button" class="ghost-button is-compact" data-history-filter="archived">已归档</button>
+                    </div>
+                    <div class="history-actions">
+                      <button type="button" class="secondary-button is-small" id="recoverJobButton">恢复任务</button>
+                      <button type="button" class="secondary-button is-small" id="archiveJobButton">归档任务</button>
+                    </div>
+                  </div>
                   <div class="history-list" id="jobHistoryList"></div>
+                </div>
+                <div class="template-section">
+                  <h3>操作记录</h3>
+                  <div class="audit-list" id="auditEventList"></div>
                 </div>
               </div>
 
@@ -348,6 +483,14 @@
                   <path d="m8 5 11 7-11 7V5Z" />
                 </svg>
                 渲染
+              </button>
+              <button class="primary-button" type="button" id="runAllButton">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12h8" />
+                  <path d="m11 6 6 6-6 6" />
+                  <path d="M4 5v14" />
+                </svg>
+                一键生成 MP4
               </button>
             </div>
           </div>
@@ -388,13 +531,13 @@
               </svg>
               预览
             </button>
-            <button class="icon-label-button" type="button" title="打开目录" aria-label="打开目录">
+            <button class="icon-label-button" type="button" title="打开目录" aria-label="打开目录" id="openOutputButton">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" />
               </svg>
               目录
             </button>
-            <button class="icon-label-button" type="button" title="导出视频" aria-label="导出视频">
+            <button class="icon-label-button" type="button" title="导出视频" aria-label="导出视频" id="exportButton">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 3v12" />
                 <path d="m7 10 5 5 5-5" />
@@ -425,11 +568,123 @@
       </main>
     </div>
 
+    <div class="modal-backdrop" id="taskCreateModal" hidden>
+      <section class="modal-card task-create-card" role="dialog" aria-modal="true" aria-labelledby="taskCreateModalTitle">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow">Create Video Task</span>
+            <h2 id="taskCreateModalTitle">新建视频任务</h2>
+          </div>
+          <button class="icon-button" type="button" id="closeTaskCreateModalButton" aria-label="关闭新建视频任务">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6 18 18" />
+              <path d="M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+
+        <form class="modal-form task-create-form" id="taskCreateForm">
+          <label>
+            <span>任务类型</span>
+            <select id="taskCreateModeInput" name="mode">
+              <option value="single">单条视频</option>
+              <option value="batch">同题批量</option>
+            </select>
+          </label>
+          <label>
+            <span>模板</span>
+            <select id="taskCreateTemplateInput" name="templateId"></select>
+          </label>
+          <label class="full-width">
+            <span>视频需求 / 选题</span>
+            <textarea id="taskCreatePromptInput" name="prompt" rows="4" required placeholder="写清楚主题、平台、时长、风格和额外要求。"></textarea>
+          </label>
+          <label id="taskCreateSessionField">
+            <span>本地 session</span>
+            <select id="taskCreateSessionInput" name="sessionId"></select>
+          </label>
+          <label>
+            <span>创建后动作</span>
+            <select id="taskCreateAfterInput" name="afterAction">
+              <option value="none">只创建任务</option>
+              <option value="plan">创建后生成计划</option>
+              <option value="full">创建后生成到 MP4</option>
+            </select>
+          </label>
+          <div class="task-create-accounts full-width">
+            <div>
+              <span>账号</span>
+              <strong id="taskCreateAccountHint">单条视频会使用第一个选中的账号；批量任务会使用所有选中的账号。</strong>
+            </div>
+            <div class="task-create-account-grid" id="taskCreateAccountGrid"></div>
+          </div>
+          <div class="modal-actions">
+            <button class="secondary-button" type="button" id="cancelTaskCreateButton">取消</button>
+            <button class="primary-button" type="submit" id="submitTaskCreateButton">创建任务</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="renderConfirmModal" hidden>
+      <section class="modal-card modal-card-compact" role="dialog" aria-modal="true" aria-labelledby="renderConfirmTitle">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow">Render Review</span>
+            <h2 id="renderConfirmTitle">渲染前确认</h2>
+          </div>
+          <button class="icon-button" type="button" id="closeRenderConfirmButton" aria-label="关闭渲染确认">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6 18 18" />
+              <path d="M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+        <div class="render-confirm-copy">
+          <p id="renderConfirmSummary">请确认脚本、配音和输出目录，再开始渲染。</p>
+          <div class="render-confirm-grid" id="renderConfirmGrid"></div>
+        </div>
+        <div class="modal-actions">
+          <button class="secondary-button" type="button" id="cancelRenderConfirmButton">取消</button>
+          <button class="primary-button" type="button" id="confirmRenderButton">确认渲染</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop batch-drawer-backdrop" id="batchDetailDrawer" hidden>
+      <section class="batch-drawer" role="dialog" aria-modal="true" aria-labelledby="batchDrawerTitle">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow">Batch Queue</span>
+            <h2 id="batchDrawerTitle">批量队列详情</h2>
+          </div>
+          <button class="icon-button" type="button" id="closeBatchDrawerButton" aria-label="关闭批量队列详情">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6 18 18" />
+              <path d="M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+        <div class="batch-drawer-body">
+          <div class="batch-drawer-meta" id="batchDrawerMeta"></div>
+          <div class="batch-drawer-actions">
+            <button class="secondary-button is-small" type="button" id="pauseBatchButton">暂停队列</button>
+            <button class="secondary-button is-small" type="button" id="resumeBatchButton">继续队列</button>
+            <button class="secondary-button is-small is-danger" type="button" id="cancelBatchButton">取消队列</button>
+            <button class="secondary-button is-small is-danger" type="button" id="forceCancelBatchButton">强制取消当前 job</button>
+            <button class="primary-button is-small" type="button" id="downloadBatchButton">下载渲染产物</button>
+          </div>
+          <div class="batch-drawer-jobs" id="batchDrawerJobs"></div>
+          <div class="batch-drawer-artifacts" id="batchDrawerArtifacts"></div>
+        </div>
+      </section>
+    </div>
+
     <div class="modal-backdrop" id="accountModal" hidden>
       <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="accountModalTitle">
         <div class="modal-header">
           <div>
-            <span class="eyebrow">Create Account</span>
+            <span class="eyebrow" id="accountModalEyebrow">Create Account</span>
             <h2 id="accountModalTitle">新增账号</h2>
           </div>
           <button class="icon-button" type="button" id="closeAccountModalButton" aria-label="关闭新增账号">
@@ -460,7 +715,7 @@
           </label>
           <label>
             <span>风格标签</span>
-            <input id="accountToneInput" name="toneTags" type="text" placeholder="用逗号分隔，例如：强Hook, 口语化, 节奏快" />
+            <input id="accountToneInput" name="toneTags" type="text" placeholder="用逗号分隔，例如：强 Hook, 口语化, 节奏快" />
           </label>
           <label>
             <span>默认模板</span>
@@ -490,7 +745,7 @@
 
           <div class="modal-actions">
             <button class="secondary-button" type="button" id="cancelAccountButton">取消</button>
-            <button class="primary-button" type="submit">创建账号</button>
+            <button class="primary-button" type="submit" id="accountSubmitButton">创建账号</button>
           </div>
         </form>
       </section>

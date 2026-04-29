@@ -9,6 +9,13 @@ type TradingRiskCloseSceneProps = {
   variant?: TradingSceneVariant;
 };
 
+const clampLines = (lines: number) => ({
+  display: "-webkit-box",
+  WebkitBoxOrient: "vertical" as const,
+  WebkitLineClamp: lines,
+  overflow: "hidden",
+});
+
 export const TradingRiskCloseScene: React.FC<TradingRiskCloseSceneProps> = ({
   title,
   body,
@@ -29,7 +36,7 @@ export const TradingRiskCloseScene: React.FC<TradingRiskCloseSceneProps> = ({
             : "radial-gradient(circle at bottom, rgba(255,108,74,0.16), transparent 32%), linear-gradient(180deg, #05070d 0%, #030407 100%)",
         color: palette.textPrimary,
         fontFamily: THEME.fonts.bodyZh,
-        padding: "92px 108px",
+        padding: "86px 72px",
       }}
     >
       <div
@@ -42,19 +49,19 @@ export const TradingRiskCloseScene: React.FC<TradingRiskCloseSceneProps> = ({
       />
       <div
         style={{
-          width: 1100,
+          width: "100%",
           margin: "0 auto",
-          marginTop: 140,
+          marginTop: 170,
           textAlign: "center",
           opacity: intro,
           transform: `translateY(${(1 - intro) * 26}px)`,
         }}
       >
-        <div style={{ fontSize: 24, letterSpacing: 3, color: palette.accent, marginBottom: 18 }}>最后的边界</div>
-        <div style={{ fontFamily: THEME.fonts.headlineZh, fontWeight: 700, fontSize: 74, lineHeight: 1.08, marginBottom: 22 }}>
+        <div style={{ fontSize: 22, letterSpacing: 0, color: palette.accent, marginBottom: 18 }}>最后的边界</div>
+        <div style={{ fontFamily: THEME.fonts.headlineZh, fontWeight: 700, fontSize: 66, lineHeight: 1.08, marginBottom: 22, ...clampLines(3) }}>
           {title}
         </div>
-        <div style={{ fontSize: 30, lineHeight: 1.58, color: palette.textSecondary, marginBottom: 38 }}>{body}</div>
+        <div style={{ fontSize: 29, lineHeight: 1.46, color: palette.textSecondary, marginBottom: 38, ...clampLines(3) }}>{body}</div>
         <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
           {tags.map((tag) => (
             <div
@@ -64,7 +71,7 @@ export const TradingRiskCloseScene: React.FC<TradingRiskCloseSceneProps> = ({
                 borderRadius: 999,
                 border: `1px solid ${palette.borderStrong}`,
                 background: palette.panel,
-                fontSize: 22,
+                fontSize: 21,
               }}
             >
               {tag}

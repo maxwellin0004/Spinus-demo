@@ -1,0 +1,28 @@
+[
+  {
+    "id": "activity-default",
+    "projectId": "workspace-default",
+    "name": "默认活动",
+    "objective": "常规选题生产",
+    "status": "active",
+    "tags": [
+      "default"
+    ],
+    "createdAt": "2026-04-29T17:02:06.361Z",
+    "updatedAt": "2026-04-29T17:02:06.361Z",
+    "archived": false,
+    "archivedAt": ""
+  },
+  {
+    "id": "workspace-default-5",
+    "projectId": "workspace-default",
+    "name": "阶段5批量控制台验证活动",
+    "objective": "验证活动层级",
+    "status": "active",
+    "tags": [],
+    "createdAt": "2026-04-29T17:02:06.361Z",
+    "updatedAt": "2026-04-29T17:02:06.361Z",
+    "archived": false,
+    "archivedAt": ""
+  }
+]

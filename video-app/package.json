@@ -35,6 +35,7 @@
   "scripts": {
     "dev": "remotion studio",
     "build": "remotion bundle",
+    "render:future-income": "remotion render src/index.ts future-income-tracks-preview renders/future-income-tracks-preview.mp4",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc"
   },

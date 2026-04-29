@@ -53,6 +53,10 @@ import {
   CombinatorialParadoxCinematicComposition,
 } from "./compositions/CombinatorialParadoxCinematicComposition";
 import {
+  FUTURE_INCOME_TRACKS_DURATION_IN_FRAMES,
+  FutureIncomeTracksComposition,
+} from "./compositions/FutureIncomeTracksComposition";
+import {
   COGNITIVE_DOC_DURATION_IN_FRAMES,
   COGNITIVE_DOC_FPS,
 } from "./data/cognitiveDocumentaryEssayData";
@@ -237,6 +241,14 @@ export const RemotionRoot: React.FC = () => {
         id="social-post-preview"
         component={SocialPostPreviewComposition}
         durationInFrames={SOCIAL_POST_PREVIEW_DURATION_IN_FRAMES}
+        fps={VIDEO_PROFILES.tiktokVertical.fps}
+        width={VIDEO_PROFILES.tiktokVertical.width}
+        height={VIDEO_PROFILES.tiktokVertical.height}
+      />
+      <Composition
+        id="future-income-tracks-preview"
+        component={FutureIncomeTracksComposition}
+        durationInFrames={FUTURE_INCOME_TRACKS_DURATION_IN_FRAMES}
         fps={VIDEO_PROFILES.tiktokVertical.fps}
         width={VIDEO_PROFILES.tiktokVertical.width}
         height={VIDEO_PROFILES.tiktokVertical.height}

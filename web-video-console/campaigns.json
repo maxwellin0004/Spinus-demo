@@ -1,0 +1,28 @@
+[
+  {
+    "id": "workspace-default",
+    "name": "默认项目",
+    "objective": "常规视频生产",
+    "status": "active",
+    "owner": "workspace",
+    "tags": [
+      "default"
+    ],
+    "createdAt": "2026-04-29T16:33:08.427Z",
+    "updatedAt": "2026-04-29T16:33:08.427Z",
+    "archived": false,
+    "archivedAt": ""
+  },
+  {
+    "id": "5",
+    "name": "阶段5验证项目",
+    "objective": "验证项目层和批量创建链路",
+    "status": "active",
+    "owner": "workspace",
+    "tags": [],
+    "createdAt": "2026-04-29T16:33:08.426Z",
+    "updatedAt": "2026-04-29T16:33:08.426Z",
+    "archived": false,
+    "archivedAt": ""
+  }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "id": "batch_1777482126382_5",
+    "topic": "阶段5选题池验证：回踩确认",
+    "campaignId": "workspace-default",
+    "campaignName": "默认项目",
+    "activityId": "workspace-default-5",
+    "activityName": "阶段5批量控制台验证活动",
+    "topicId": "workspace-default-workspace-default-5-5",
+    "topicTitle": "阶段5选题池验证：回踩确认",
+    "accountIds": [
+      "trading_xhs",
+      "trading_bili"
+    ],
+    "templateId": "",
+    "jobIds": [
+      "job_ui_1777482126382_video-video5video-video-video-vi",
+      "job_ui_1777482126389_video-video5video-video-video-vi"
+    ],
+    "status": "draft",
+    "createdAt": "2026-04-29T17:02:06.382Z",
+    "updatedAt": "2026-04-29T17:02:06.382Z",
+    "archived": false
+  },
+  {
+    "id": "batch_1777480388444_5",
+    "topic": "阶段5批量验证：假突破复盘",
+    "campaignId": "5",
+    "campaignName": "阶段5验证项目",
+    "accountIds": [
+      "trading_xhs",
+      "trading_bili"
+    ],
+    "templateId": "",
+    "jobIds": [
+      "job_ui_1777480388445_video-video5video-video-video-vi",
+      "job_ui_1777480388452_video-video5video-video-video-vi"
+    ],
+    "status": "draft",
+    "createdAt": "2026-04-29T16:33:08.444Z",
+    "updatedAt": "2026-04-29T16:33:08.444Z",
+    "archived": false
+  }
+]

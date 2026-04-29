@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>账号数据看板</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Syne:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <header class="header">
+    <div class="header-inner">
+      <h1 class="title"><span class="title-mark">Monitor</span> 社媒数据</h1>
+      <p class="subtitle">YouTube · TikTok · 来自本地 config.yaml</p>
+      <div class="toolbar">
+        <button type="button" class="btn btn-primary" id="btn-refresh">刷新数据</button>
+        <label class="chk"><input type="checkbox" id="only-youtube" /> 仅 YouTube</label>
+        <label class="chk"><input type="checkbox" id="only-tiktok" /> 仅 TikTok</label>
+        <span class="muted" id="status-text">就绪</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="panel account-admin-panel">
+      <div class="account-admin-head">
+        <div>
+          <p class="eyebrow">Accounts</p>
+          <h2 class="admin-title">新增监控账号</h2>
+          <p class="muted admin-copy">这里直接维护监控账号列表，保存后会写回本地配置文件。</p>
+        </div>
+        <p class="meta-line muted" id="config-path"></p>
+      </div>
+
+      <form class="account-form" id="account-form">
+        <label class="field">
+          <span>平台</span>
+          <select id="account-platform">
+            <option value="youtube">YouTube</option>
+            <option value="tiktok">TikTok</option>
+          </select>
+        </label>
+        <label class="field field-wide">
+          <span>账号</span>
+          <input id="account-input" type="text" placeholder="例如：@handle、UC...、TikTok 用户名或完整链接" />
+        </label>
+        <button type="submit" class="btn btn-primary">添加账号</button>
+      </form>
+
+      <div class="account-groups">
+        <section class="account-group">
+          <div class="account-group-head">
+            <h3>YouTube</h3>
+            <span class="muted" id="youtube-count">0 个</span>
+          </div>
+          <div class="account-chip-list" id="youtube-accounts"></div>
+        </section>
+        <section class="account-group">
+          <div class="account-group-head">
+            <h3>TikTok</h3>
+            <span class="muted" id="tiktok-count">0 个</span>
+          </div>
+          <div class="account-chip-list" id="tiktok-accounts"></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-meta">
+      <p class="meta-line"><span class="label">拉取时间</span> <strong id="meta-time">—</strong></p>
+      <p class="meta-line muted" id="meta-note"></p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title yt"><span>YouTube</span></h2>
+      <div id="youtube-root" class="cards"></div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title tt"><span>TikTok</span></h2>
+      <div id="tiktok-root" class="cards"></div>
+    </section>
+  </main>
+
+  <template id="tpl-yt-card">
+    <article class="card card-yt">
+      <header class="card-head">
+        <span class="badge yt">YouTube</span>
+        <h3 class="card-title card-title-account" tabindex="0" role="button"></h3>
+        <p class="card-sub"></p>
+      </header>
+      <div class="error-msg error-msg-home hidden"></div>
+      <div class="card-preview hidden">
+        <p class="card-preview-label">最新视频</p>
+        <div class="card-preview-table-wrap">
+          <table class="vid-table">
+            <thead>
+              <tr>
+                <th>标题</th>
+                <th>发布时间</th>
+                <th>播放</th>
+                <th>点赞</th>
+                <th>评论</th>
+              </tr>
+            </thead>
+            <tbody class="tbody-preview"></tbody>
+          </table>
+        </div>
+        <p class="card-preview-empty muted hidden">暂无视频</p>
+      </div>
+      <div class="card-detail">
+        <div class="stats-row"></div>
+        <div class="error-msg error-msg-detail hidden"></div>
+        <table class="vid-table">
+          <thead>
+            <tr>
+              <th>标题</th>
+              <th>发布时间</th>
+              <th>播放</th>
+              <th>点赞</th>
+              <th>评论</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </article>
+  </template>
+
+  <template id="tpl-tt-card">
+    <article class="card card-tt">
+      <header class="card-head">
+        <span class="badge tt">TikTok</span>
+        <h3 class="card-title card-title-account" tabindex="0" role="button"></h3>
+        <p class="card-sub"></p>
+      </header>
+      <div class="error-msg error-msg-home hidden"></div>
+      <div class="card-preview hidden">
+        <p class="card-preview-label">最新视频</p>
+        <div class="card-preview-table-wrap">
+          <table class="vid-table vid-table-tt">
+            <thead>
+              <tr>
+                <th>描述</th>
+                <th>发布时间</th>
+                <th>播放</th>
+                <th>点赞</th>
+                <th>收藏</th>
+              </tr>
+            </thead>
+            <tbody class="tbody-preview"></tbody>
+          </table>
+        </div>
+        <p class="card-preview-empty muted hidden">暂无视频</p>
+      </div>
+      <div class="card-detail">
+        <div class="stats-row"></div>
+        <div class="error-msg error-msg-detail hidden"></div>
+        <table class="vid-table vid-table-tt">
+          <thead>
+            <tr>
+              <th>描述</th>
+              <th>发布时间</th>
+              <th>播放</th>
+              <th>点赞</th>
+              <th>收藏</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </article>
+  </template>
+
+  <template id="tpl-section-loading">
+    <div class="section-loading">
+      <div class="spinner spinner-inline" aria-hidden="true"></div>
+      <p>正在获取数据…</p>
+    </div>
+  </template>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

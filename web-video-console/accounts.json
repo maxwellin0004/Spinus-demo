@@ -83,9 +83,9 @@
   },
   {
     "id": "account-1777020066096",
-    "name": "心理行为",
+    "name": "行为心理-小红书",
     "platform": "xiaohongshu",
-    "persona": "内容账号",
+    "persona": "行为心理解释者",
     "toneTags": [],
     "defaultTemplateId": "ai_concept_analyse",
     "defaultCompositionId": "AiConceptAnalyse",

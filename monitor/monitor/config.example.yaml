@@ -1,0 +1,25 @@
+# 复制为 config.yaml 后填写真实值。不要将含密钥的 config.yaml 提交到公开仓库。
+
+youtube:
+  # Google Cloud 启用 YouTube Data API v3 后的「API 密钥」
+  api_key: "YOUR_YOUTUBE_DATA_API_KEY"
+  # 频道：支持 @handle（推荐）或 24 位频道 ID（UC...）
+  channels:
+    - "@YouTube"
+    # - "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+
+tiktok:
+  # 可选：浏览器打开 tiktok.com → 开发者工具 → Application → Cookies → msToken
+  # 留空或 null 也可尝试，遇风控再配置
+  ms_token: null
+  # 被判定为机器人时：改为 false（会打开可见浏览器窗口），并尝试 browser: webkit
+  headless: true
+  browser: chromium
+  users:
+    - "tiktok"
+  # 每个用户最多拉取几条视频（分页由库内部处理）
+  max_videos_per_user: 15
+
+limits:
+  # 每个 YouTube 频道最多统计最近几条视频（节省配额）
+  max_videos_per_youtube_channel: 25

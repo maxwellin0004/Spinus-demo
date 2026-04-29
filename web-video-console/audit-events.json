@@ -1,0 +1,88 @@
+[
+  {
+    "id": "audit_1777485148092_19a778",
+    "action": "batch.canceled",
+    "entityType": "batch",
+    "entityId": "batch_1777482126382_5",
+    "metadata": {
+      "action": ""
+    },
+    "createdAt": "2026-04-29T17:52:28.092Z",
+    "actor": "local"
+  },
+  {
+    "id": "audit_1777482126396_afa672",
+    "action": "batch.created",
+    "entityType": "batch",
+    "entityId": "batch_1777482126382_5",
+    "metadata": {
+      "topic": "阶段5选题池验证：回踩确认",
+      "campaignId": "workspace-default",
+      "activityId": "workspace-default-5",
+      "topicId": "workspace-default-workspace-default-5-5",
+      "jobCount": 2
+    },
+    "createdAt": "2026-04-29T17:02:06.396Z",
+    "actor": "local"
+  },
+  {
+    "id": "audit_1777482126395_d7b005",
+    "action": "topic.updated",
+    "entityType": "topic",
+    "entityId": "workspace-default-workspace-default-5-5",
+    "metadata": {
+      "title": "阶段5选题池验证：回踩确认"
+    },
+    "createdAt": "2026-04-29T17:02:06.395Z",
+    "actor": "local"
+  },
+  {
+    "id": "audit_1777482126373_794f20",
+    "action": "topic.created",
+    "entityType": "topic",
+    "entityId": "workspace-default-workspace-default-5-5",
+    "metadata": {
+      "title": "阶段5选题池验证：回踩确认",
+      "projectId": "workspace-default",
+      "activityId": "workspace-default-5"
+    },
+    "createdAt": "2026-04-29T17:02:06.373Z",
+    "actor": "local"
+  },
+  {
+    "id": "audit_1777482126364_275074",
+    "action": "activity.created",
+    "entityType": "activity",
+    "entityId": "workspace-default-5",
+    "metadata": {
+      "name": "阶段5批量控制台验证活动",
+      "projectId": "workspace-default"
+    },
+    "createdAt": "2026-04-29T17:02:06.364Z",
+    "actor": "local"
+  },
+  {
+    "id": "audit_1777480388462_3be1c8",
+    "action": "batch.created",
+    "entityType": "batch",
+    "entityId": "batch_1777480388444_5",
+    "metadata": {
+      "topic": "阶段5批量验证：假突破复盘",
+      "campaignId": "5",
+      "jobCount": 2
+    },
+    "createdAt": "2026-04-29T16:33:08.462Z",
+    "actor": "local"
+  },
+  {
+    "id": "audit_1777480388431_252d3f",
+    "action": "campaign.created",
+    "entityType": "campaign",
+    "entityId": "5",
+    "metadata": {
+      "name": "阶段5验证项目"
+    },
+    "createdAt": "2026-04-29T16:33:08.431Z",
+    "actor": "local"
+  }
+]

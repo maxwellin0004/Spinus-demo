@@ -17,6 +17,13 @@ type TradingIndicatorMechanismSceneProps = {
   variant?: TradingSceneVariant;
 };
 
+const clampLines = (lines: number) => ({
+  display: "-webkit-box",
+  WebkitBoxOrient: "vertical" as const,
+  WebkitLineClamp: lines,
+  overflow: "hidden",
+});
+
 export const TradingIndicatorMechanismScene: React.FC<TradingIndicatorMechanismSceneProps> = ({
   tag,
   title,
@@ -40,20 +47,21 @@ export const TradingIndicatorMechanismScene: React.FC<TradingIndicatorMechanismS
             : "radial-gradient(circle at top right, rgba(255,171,64,0.16), transparent 24%), linear-gradient(180deg, #080b12 0%, #05070d 100%)",
         color: palette.textPrimary,
         fontFamily: THEME.fonts.bodyZh,
-        padding: "82px 88px",
+        padding: "74px 72px",
         overflow: "hidden",
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-        <div style={{ width: 860 }}>
-          <div style={{ color: palette.accent, fontSize: 24, letterSpacing: 2, marginBottom: 18 }}>{tag}</div>
+      <div style={{ display: "grid", gap: 22 }}>
+        <div>
+          <div style={{ color: palette.accent, fontSize: 21, letterSpacing: 0, marginBottom: 14 }}>{tag}</div>
           <div
             style={{
               fontFamily: THEME.fonts.headlineZh,
               fontWeight: 700,
-              fontSize: 76,
-              lineHeight: 1.05,
-              marginBottom: 18,
+              fontSize: 62,
+              lineHeight: 1.08,
+              marginBottom: 16,
+              ...clampLines(2),
             }}
           >
             {title}
@@ -65,21 +73,23 @@ export const TradingIndicatorMechanismScene: React.FC<TradingIndicatorMechanismS
               borderRadius: 18,
               border: `1px solid ${variant === "light" ? "rgba(47,125,246,0.28)" : "rgba(255,176,77,0.42)"}`,
               fontFamily: THEME.fonts.numbers,
-              fontSize: 30,
-              marginBottom: 22,
+              fontSize: 24,
+              marginBottom: 18,
               background: palette.accentSoft,
+              maxWidth: "100%",
+              overflow: "hidden",
             }}
           >
             {formula}
           </div>
-          <div style={{ fontSize: 30, lineHeight: 1.5, color: palette.textSecondary }}>{description}</div>
+          <div style={{ fontSize: 27, lineHeight: 1.42, color: palette.textSecondary, ...clampLines(3) }}>{description}</div>
         </div>
         {imageSrc ? (
           <div
             style={{
-              width: 760,
-              height: 420,
-              borderRadius: 28,
+              width: "100%",
+              height: 300,
+              borderRadius: 24,
               overflow: "hidden",
               border: `1px solid ${palette.borderStrong}`,
               boxShadow: palette.shadow,
@@ -89,23 +99,24 @@ export const TradingIndicatorMechanismScene: React.FC<TradingIndicatorMechanismS
           </div>
         ) : null}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 24, marginTop: 52 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 18, marginTop: 28 }}>
         {cards.map((card, index) => {
           const cardIntro = spring({ fps, frame: frame - index * 6, config: { damping: 16, stiffness: 130 } });
           return (
             <div
               key={card.title}
               style={{
-                borderRadius: 24,
+                borderRadius: 22,
                 border: `1px solid ${palette.border}`,
-                padding: "26px 24px",
+                padding: "22px 20px",
                 background: palette.panelSoft,
                 transform: `translateY(${(1 - cardIntro) * 36}px)`,
                 opacity: cardIntro,
+                minHeight: 158,
               }}
             >
-              <div style={{ fontSize: 28, fontWeight: 700, marginBottom: 12, color: palette.accent }}>{card.title}</div>
-              <div style={{ fontSize: 23, lineHeight: 1.5, color: palette.textSecondary }}>{card.body}</div>
+              <div style={{ fontSize: 25, fontWeight: 700, marginBottom: 10, color: palette.accent, ...clampLines(1) }}>{card.title}</div>
+              <div style={{ fontSize: 22, lineHeight: 1.42, color: palette.textSecondary, ...clampLines(3) }}>{card.body}</div>
             </div>
           );
         })}

@@ -16,6 +16,13 @@ type TradingCaseShockSceneProps = {
   variant?: TradingSceneVariant;
 };
 
+const clampLines = (lines: number) => ({
+  display: "-webkit-box",
+  WebkitBoxOrient: "vertical" as const,
+  WebkitLineClamp: lines,
+  overflow: "hidden",
+});
+
 export const TradingCaseShockScene: React.FC<TradingCaseShockSceneProps> = ({
   kicker,
   headline,
@@ -69,22 +76,23 @@ export const TradingCaseShockScene: React.FC<TradingCaseShockSceneProps> = ({
         <div
           style={{
             position: "absolute",
-            right: 88,
-            top: 84,
-            width: 480,
-            padding: "26px 24px 32px",
+            right: 66,
+            top: 640,
+            width: 360,
+            padding: "22px 20px 26px",
             borderRadius: 18,
             background: "#ece8de",
             color: "#111",
             transform: `rotate(-3deg) scale(${0.96 + intro * 0.04})`,
             boxShadow: "0 30px 80px rgba(0,0,0,0.24)",
             border: "6px solid #dad3c6",
+            opacity: 0.2,
           }}
         >
           <div
             style={{
-              fontSize: 24,
-              letterSpacing: 2,
+              fontSize: 18,
+              letterSpacing: 0,
               color: "#5e5c55",
               marginBottom: 20,
               textTransform: "uppercase",
@@ -97,10 +105,10 @@ export const TradingCaseShockScene: React.FC<TradingCaseShockSceneProps> = ({
               key={line}
               style={{
                 fontFamily: THEME.fonts.headlineEn,
-                fontSize: 72,
+                fontSize: 50,
                 lineHeight: 0.92,
                 marginBottom: 6,
-                letterSpacing: 1,
+                letterSpacing: 0,
               }}
             >
               {line}
@@ -112,7 +120,7 @@ export const TradingCaseShockScene: React.FC<TradingCaseShockSceneProps> = ({
       <div
         style={{
           position: "absolute",
-          inset: 24,
+          inset: 20,
           border: `1px solid ${palette.border}`,
           borderRadius: 28,
         }}
@@ -120,14 +128,14 @@ export const TradingCaseShockScene: React.FC<TradingCaseShockSceneProps> = ({
       <div
         style={{
           position: "absolute",
-          top: 82,
-          left: 88,
+          top: 72,
+          left: 72,
           display: "flex",
           alignItems: "center",
           gap: 12,
-          letterSpacing: 2,
+          letterSpacing: 0,
           textTransform: "uppercase",
-          fontSize: 24,
+          fontSize: 20,
           color: palette.textMuted,
         }}
       >
@@ -137,31 +145,33 @@ export const TradingCaseShockScene: React.FC<TradingCaseShockSceneProps> = ({
       <div
         style={{
           position: "absolute",
-          left: 88,
-          top: 168,
-          width: 920,
-          transform: `translateY(${interpolate(intro, [0, 1], [32, 0])}px)`,
-          opacity: intro,
+          left: 72,
+          top: 132,
+          width: 910,
+          transform: `translateY(${interpolate(intro, [0, 1], [12, 0])}px)`,
+          opacity: Math.max(0.82, intro),
         }}
       >
         <div
           style={{
             fontFamily: THEME.fonts.headlineZh,
             fontWeight: 700,
-            fontSize: 92,
-            lineHeight: 1,
-            letterSpacing: 1,
-            marginBottom: 20,
+            fontSize: 74,
+            lineHeight: 1.06,
+            letterSpacing: 0,
+            marginBottom: 18,
+            ...clampLines(2),
           }}
         >
           {headline}
         </div>
         <div
           style={{
-            fontSize: 34,
+            fontSize: 30,
             lineHeight: 1.45,
             color: palette.textSecondary,
-            maxWidth: 860,
+            maxWidth: 850,
+            ...clampLines(3),
           }}
         >
           {subheadline}
@@ -170,11 +180,11 @@ export const TradingCaseShockScene: React.FC<TradingCaseShockSceneProps> = ({
       <div
         style={{
           position: "absolute",
-          right: 92,
-          bottom: 108,
-          width: 560,
-          padding: "28px 30px 30px",
-          borderRadius: 28,
+          left: 72,
+          bottom: 112,
+          width: 640,
+          padding: "24px 26px 26px",
+          borderRadius: 24,
           background: palette.panelSolid,
           border: `1px solid ${variant === "light" ? "rgba(47,125,246,0.28)" : "rgba(255,108,74,0.35)"}`,
           backdropFilter: "blur(10px)",
@@ -186,10 +196,10 @@ export const TradingCaseShockScene: React.FC<TradingCaseShockSceneProps> = ({
         {insetImageSrc ? (
           <div
             style={{
-              height: 180,
-              borderRadius: 18,
+              height: 150,
+              borderRadius: 16,
               overflow: "hidden",
-              marginBottom: 22,
+              marginBottom: 18,
               border: `1px solid ${palette.border}`,
               position: "relative",
             }}
@@ -201,23 +211,24 @@ export const TradingCaseShockScene: React.FC<TradingCaseShockSceneProps> = ({
         <div
           style={{
             fontFamily: THEME.fonts.numbers,
-            fontSize: 80,
+            fontSize: 66,
             lineHeight: 1,
             color: palette.accentStrong,
-            marginBottom: 14,
+            marginBottom: 12,
           }}
         >
           {stat}
         </div>
-        <div style={{ fontSize: 30, lineHeight: 1.35, marginBottom: 20 }}>{statLabel}</div>
-        <div style={{ fontSize: 22, color: palette.textMuted }}>{dateLabel}</div>
+        <div style={{ fontSize: 28, lineHeight: 1.32, marginBottom: 14, ...clampLines(2) }}>{statLabel}</div>
+        <div style={{ fontSize: 21, color: palette.textMuted, ...clampLines(1) }}>{dateLabel}</div>
         {sourceLabel ? (
           <div
             style={{
               marginTop: 14,
               fontSize: 18,
-              letterSpacing: 1,
+              letterSpacing: 0,
               color: palette.textMuted,
+              ...clampLines(1),
             }}
           >
             {sourceLabel}

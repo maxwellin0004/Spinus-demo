@@ -1,0 +1,19 @@
+# Core workflow scripts currently use the Python standard library.
+# The packages below are required by the optional monitor/dashboard workflow.
+
+# YouTube Data API v3
+google-api-python-client>=2.100.0
+google-auth>=2.23.0
+
+# Config files
+PyYAML>=6.0.1
+
+# TikTok/social statistics collection
+httpx>=0.27.0
+yt-dlp>=2024.12.0
+TikTokApi>=7.3.0
+playwright>=1.40.0
+
+# Monitor web dashboard
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0

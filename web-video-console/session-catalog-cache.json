@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-04-29T09:55:55.704Z",
+  "savedAt": "2026-04-29T19:41:51.763Z",
   "sessions": {
     "019dd51c-ad67-7142-b2c0-59484a762e03": {
       "id": "019dd51c-ad67-7142-b2c0-59484a762e03",
@@ -362,6 +362,50 @@
       "filePath": "C:\\Users\\81422\\.codex\\archived_sessions\\rollout-2026-03-25T19-32-36-019d24c4-951a-7770-819a-0029526c6897.jsonl",
       "previewText": "",
       "metaVersion": "2026-03-25T11:32:46.9776533Z",
+      "previewVersion": ""
+    },
+    "019dd8fc-dbef-72c0-8ed8-7c321516c364": {
+      "id": "019dd8fc-dbef-72c0-8ed8-7c321516c364",
+      "threadName": "上传文件夹到GitHub",
+      "updatedAt": "2026-04-29T11:26:01.6392067Z",
+      "cwd": "D:\\program\\ai_video\\workflow",
+      "archived": false,
+      "filePath": "C:\\Users\\81422\\.codex\\sessions\\2026\\04\\29\\rollout-2026-04-29T19-25-43-019dd8fc-dbef-72c0-8ed8-7c321516c364.jsonl",
+      "previewText": "",
+      "metaVersion": "2026-04-29T11:26:01.6392067Z",
+      "previewVersion": ""
+    },
+    "019dda81-267a-7cf2-9917-9206c7e51e3f": {
+      "id": "019dda81-267a-7cf2-9917-9206c7e51e3f",
+      "threadName": "拆解视频模板复刻爆款",
+      "updatedAt": "2026-04-29T18:30:26.6299792Z",
+      "cwd": "D:\\program\\ai_video\\workflow",
+      "archived": false,
+      "filePath": "C:\\Users\\81422\\.codex\\sessions\\2026\\04\\30\\rollout-2026-04-30T02-29-50-019dda81-267a-7cf2-9917-9206c7e51e3f.jsonl",
+      "previewText": "",
+      "metaVersion": "2026-04-29T18:30:26.6299792Z",
+      "previewVersion": ""
+    },
+    "019ddaaf-249b-7c50-bb84-6640df0e4792": {
+      "id": "019ddaaf-249b-7c50-bb84-6640df0e4792",
+      "threadName": "添加监控页面",
+      "updatedAt": "2026-04-29T19:21:06.3314485Z",
+      "cwd": "D:\\program\\ai_video\\workflow",
+      "archived": false,
+      "filePath": "C:\\Users\\81422\\.codex\\sessions\\2026\\04\\30\\rollout-2026-04-30T03-20-04-019ddaaf-249b-7c50-bb84-6640df0e4792.jsonl",
+      "previewText": "",
+      "metaVersion": "2026-04-29T19:21:06.3314485Z",
+      "previewVersion": ""
+    },
+    "019ddabf-a57e-7523-a807-bced26152b5f": {
+      "id": "019ddabf-a57e-7523-a807-bced26152b5f",
+      "threadName": "优化提示词并生成视频",
+      "updatedAt": "2026-04-29T19:38:49.4578169Z",
+      "cwd": "D:\\program\\ai_video\\workflow",
+      "archived": false,
+      "filePath": "C:\\Users\\81422\\.codex\\sessions\\2026\\04\\30\\rollout-2026-04-30T03-38-06-019ddabf-a57e-7523-a807-bced26152b5f.jsonl",
+      "previewText": "",
+      "metaVersion": "2026-04-29T19:38:49.4578169Z",
       "previewVersion": ""
     }
   }
