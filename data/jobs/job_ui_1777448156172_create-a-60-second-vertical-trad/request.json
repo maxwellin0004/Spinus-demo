@@ -1,0 +1,16 @@
+{
+  "id": "job_ui_1777448156172_create-a-60-second-vertical-trad",
+  "prompt": "Create a 60-second vertical trading education video about false breakouts for Xiaohongshu.",
+  "accountId": "trading_xhs",
+  "templateId": "new_signals",
+  "compositionId": "codex-job-preview",
+  "durationSec": 60,
+  "aspectRatio": "9:16",
+  "activePresetIds": [
+    "strong_hook",
+    "xiaohongshu_style"
+  ],
+  "openInstruction": "Keep a clear 3-step decision flow and end with one concrete action.",
+  "instructionScope": "run",
+  "updatedAt": "2026-04-29T07:37:05.937Z"
+}

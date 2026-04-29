@@ -196,7 +196,7 @@ module.exports = function (url, options) {
 
 /***/ },
 
-/***/ 4947
+/***/ 3023
 (__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) {
 
 
@@ -8050,29 +8050,29 @@ const literaryEmbersScenes = [
   {
     id: "le_s01",
     type: "burnHook",
-    duration: 150,
+    duration: 144,
     accentText: "\u523A\u75DB\u6240\u6709\u4E0D\u7518\u5FC3\u5374\u4E00\u76F4\u66FF\u522B\u4EBA\u6D3B\u7684\u4EBA"
   },
-  { id: "le_s02", type: "bookCascade", duration: 84, accentText: "\u4ECA\u5929\u5206\u4EAB" },
+  { id: "le_s02", type: "bookCascade", duration: 94, accentText: "\u4ECA\u5929\u5206\u4EAB" },
   {
     id: "le_s03",
     type: "deskPanel",
-    duration: 126,
+    duration: 124,
     accentText: "\u4E0D\u662F\u6CA1\u60F3\u8FC7",
     note: "office life and stacked books"
   },
   {
     id: "le_s04",
     type: "streetPanel",
-    duration: 150,
+    duration: 156,
     accentText: "\u800C\u662F\u4E0D\u6562\u504F\u79BB",
     note: "street window and walking figure"
   },
   {
     id: "le_s05",
     type: "windowPanel",
-    duration: 112,
-    accentText: "\u6C89\u9ED8\u5730\u5411\u5185\u575D\u5851",
+    duration: 128,
+    accentText: "\u6C89\u9ED8\u5730\u5411\u5185\u574D\u584C",
     note: "ledge and city view"
   },
   {
@@ -8085,14 +8085,14 @@ const literaryEmbersScenes = [
   {
     id: "le_s07",
     type: "collapsePanel",
-    duration: 164,
+    duration: 173,
     accentText: "\u542C\u89C1\u5185\u5FC3\u5374\u4E00\u6B21\u6B21\u6309\u56DE\u53BB",
     note: "room corner and crouched figure"
   },
   {
     id: "le_s08",
     type: "walkawayPanel",
-    duration: 142,
+    duration: 129,
     accentText: "\u5982\u679C\u603B\u6015\u5931\u53BB\u638C\u58F0",
     note: "bright road and back view"
   }
@@ -8105,63 +8105,63 @@ const literaryEmbersEstimatedSubtitleCues = [
   {
     voiceId: "le_v01",
     startFrame: 0,
-    endFrame: 140,
+    endFrame: 139,
     textZh: "\u8FD9\u53E5\u8BDD\u4F1A\u523A\u75DB\u6240\u6709\n\u4E0D\u7518\u5FC3\u5374\u4E00\u76F4\u66FF\u522B\u4EBA\u6D3B\u7684\u4EBA",
-    textEn: "This hits everyone\nwho keeps living for other eyes.",
+    textEn: "This line hits everyone\nwho keeps living for other eyes.",
     emphasisWords: ["\u66FF\u522B\u4EBA\u6D3B"]
   },
   {
     voiceId: "le_v02",
-    startFrame: 145,
-    endFrame: 255,
+    startFrame: 144,
+    endFrame: 233,
     textZh: "\u4ECA\u5929\u5206\u4EAB\u300A\u6708\u4EAE\u4E0E\u516D\u4FBF\u58EB\u300B",
     textEn: "Today: The Moon and Sixpence.",
     emphasisWords: ["\u300A\u6708\u4EAE\u4E0E\u516D\u4FBF\u58EB\u300B"]
   },
   {
     voiceId: "le_v03",
-    startFrame: 260,
-    endFrame: 430,
+    startFrame: 238,
+    endFrame: 360,
     textZh: "\u5F88\u591A\u4EBA\u4E0D\u662F\u6CA1\u6709\u5929\u8D4B\uFF0C\n\u53EA\u662F\u4ECE\u6765\u6CA1\u66FF\u81EA\u5DF1\u6D3B\u8FC7",
     textEn: "Many people lack not talent,\nbut the courage to live for themselves.",
     emphasisWords: ["\u66FF\u81EA\u5DF1\u6D3B\u8FC7"]
   },
   {
     voiceId: "le_v04",
-    startFrame: 435,
-    endFrame: 585,
+    startFrame: 362,
+    endFrame: 516,
     textZh: "\u4F60\u62B1\u6028\u751F\u6D3B\u6C89\u95F7\uFF0C\n\u5374\u628A\u6BCF\u6B21\u9009\u62E9\u90FD\u4EA4\u7ED9\u4F53\u9762\u548C\u76EE\u5149",
     textEn: "You resent a dull life,\nyet hand every choice to approval and safety.",
     emphasisWords: ["\u4F53\u9762", "\u76EE\u5149"]
   },
   {
     voiceId: "le_v05",
-    startFrame: 590,
-    endFrame: 760,
+    startFrame: 518,
+    endFrame: 641,
     textZh: "\u4E8E\u662F\u5DE5\u4F5C\u662F\u4E3A\u4E86\u4EA4\u4EE3\uFF0C\n\u52AA\u529B\u662F\u4E3A\u4E86\u6BD4\u8F83",
     textEn: "Work becomes explanation,\nand effort becomes comparison.",
     emphasisWords: ["\u4EA4\u4EE3", "\u6BD4\u8F83"]
   },
   {
     voiceId: "le_v06",
-    startFrame: 765,
-    endFrame: 930,
+    startFrame: 646,
+    endFrame: 799,
     textZh: "\u771F\u6B63\u56F0\u4F4F\u4EBA\u7684\u4E0D\u662F\u8D77\u70B9\uFF0C\n\u800C\u662F\u542C\u89C1\u5185\u5FC3\u540E\u53C8\u628A\u5B83\u6309\u56DE\u53BB",
     textEn: "What traps you is not the start,\nbut silencing what you already heard inside.",
     emphasisWords: ["\u6309\u56DE\u53BB"]
   },
   {
     voiceId: "le_v07",
-    startFrame: 935,
-    endFrame: 1085,
+    startFrame: 802,
+    endFrame: 972,
     textZh: "\u4E0D\u662F\u6BCF\u4E2A\u4EBA\u90FD\u8981\u79BB\u5F00\u73B0\u5B9E\uFF0C\n\u4F46\u6BCF\u4E2A\u4EBA\u90FD\u8BE5\u6709\u4E00\u6B21\u4E3A\u81EA\u5DF1\u8D1F\u8D23\u7684\u51B3\u5B9A",
     textEn: "Not everyone must flee reality,\nbut everyone deserves one decision owned by the self.",
     emphasisWords: ["\u4E3A\u81EA\u5DF1\u8D1F\u8D23"]
   },
   {
     voiceId: "le_v08",
-    startFrame: 1090,
-    endFrame: 1255,
+    startFrame: 975,
+    endFrame: 1104,
     textZh: "\u5982\u679C\u4F60\u603B\u6015\u5931\u53BB\u638C\u58F0\uFF0C\n\u6700\u540E\u5931\u53BB\u7684\u5F80\u5F80\u5C31\u662F\u81EA\u5DF1",
     textEn: "If you fear losing applause,\nyou may end up losing yourself.",
     emphasisWords: ["\u81EA\u5DF1"]
@@ -8385,7 +8385,7 @@ const BookCard = ({ title, author, paletteStops, coverImage, style }) => {
             },
             children: [
               title,
-              " \xB7 ",
+              " \u8DEF ",
               author
             ]
           }
@@ -8466,7 +8466,7 @@ const BookCascadeScene = ({ scene }) => {
           letterSpacing: 10,
           color: "rgba(255,244,225,0.68)"
         },
-        children: "\u4ECE\u5176\u4ED6\u4EBA\u751F\u91CC\u62FD\u56DE\u81EA\u5DF1"
+        children: "\u4ECE\u4ED6\u4EBA\u4EBA\u751F\u91CC\u62BD\u56DE\u81EA\u5DF1"
       }
     ),
     /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: filmGrain }),
@@ -8556,6 +8556,2263 @@ const LiteraryEmbersValidationComposition = () => {
   ] });
 };
 
+;// ./src/data/corporateRetreatDossierData.ts
+
+const CORPORATE_RETREAT_DOSSIER_FPS = 30;
+const CORPORATE_RETREAT_DOSSIER_DURATION = 45 * CORPORATE_RETREAT_DOSSIER_FPS;
+const corporateRetreatDossierScenes = [
+  {
+    id: "scene_01",
+    type: "shockTitle",
+    startFrame: 0,
+    durationInFrames: 90,
+    skylineLabel: "\u9502\u7535\u56DE\u6536\u4EA7\u4E1A\u5E26",
+    headline: "\u5DE8\u5934\u9000\u573A",
+    subline: "\u4E00\u573A\u884C\u4E1A\u6D17\u724C\u5F00\u59CB\u4E86",
+    assetSrc: "images/corporate-retreat-dossier/city-aerial.png"
+  },
+  {
+    id: "scene_02",
+    type: "statDossier",
+    startFrame: 90,
+    durationInFrames: 180,
+    location: "\u6CBF\u6D77\u4EA7\u4E1A\u56ED",
+    caption: "\u4E0A\u767E\u5BB6\u5C0F\u5382\u540C\u65F6\u6536\u7F29\uFF0C\u53EA\u5269\u5C11\u6570\u4F01\u4E1A\u5B88\u4F4F\u5408\u89C4\u94FE\u6761",
+    statLines: ["\u9000\u51FA 43% \u5C0F\u5382", "\u5B88\u4F4F 12 \u4E2A\u6838\u5FC3\u73AF\u8282", "70% \u5229\u6DA6\u96C6\u4E2D\u5728\u524D\u5904\u7406"],
+    buildingLabel: "REGIONAL MATERIALS HUB",
+    assetSrc: "images/corporate-retreat-dossier/headquarters.png"
+  },
+  {
+    id: "scene_03",
+    type: "evidenceMontage",
+    startFrame: 270,
+    durationInFrames: 150,
+    caption: "\u95E8\u5E97\u8FD8\u4EAE\u7740\uFF0C\u4F46\u80CC\u540E\u7684\u4F9B\u5E94\u94FE\u6B63\u5728\u6362\u4EBA",
+    evidenceLabels: ["\u95E8\u5E97\u4ECD\u5728", "\u80A1\u6743\u540E\u79FB", "\u8FD0\u8425\u91CD\u7EC4"],
+    palette: "boardroom",
+    assetSrc: "images/corporate-retreat-dossier/store-night.png"
+  },
+  {
+    id: "scene_04",
+    type: "evidenceMontage",
+    startFrame: 420,
+    durationInFrames: 210,
+    caption: "\u771F\u6B63\u7684\u5206\u6C34\u5CAD\uFF0C\u4E0D\u662F\u4EF7\u683C\uFF0C\u800C\u662F\u8C01\u80FD\u628A\u5E9F\u6599\u53D8\u6210\u7A33\u5B9A\u4EA7\u80FD",
+    evidenceLabels: ["\u62C6\u89E3\u7EBF", "\u6E7F\u6CD5\u8F66\u95F4", "\u68C0\u6D4B\u62A5\u544A"],
+    palette: "factory",
+    assetSrc: "images/corporate-retreat-dossier/factory-line.png"
+  },
+  {
+    id: "scene_05",
+    type: "evidenceMontage",
+    startFrame: 630,
+    durationInFrames: 210,
+    caption: "\u8D44\u91D1\u3001\u724C\u7167\u548C\u5BA2\u6237\u9A8C\u8BC1\uFF0C\u5F00\u59CB\u540C\u65F6\u538B\u5411\u540C\u4E00\u5F20\u8868",
+    evidenceLabels: ["\u6388\u4FE1\u4F1A\u8BAE", "\u8D44\u8D28\u6E05\u5355", "\u5BA2\u6237\u5BA1\u5382"],
+    palette: "boardroom",
+    assetSrc: "images/corporate-retreat-dossier/boardroom.png"
+  },
+  {
+    id: "scene_06",
+    type: "evidenceMontage",
+    startFrame: 780,
+    durationInFrames: 150,
+    caption: "\u6240\u4EE5\u65B0\u4E00\u8F6E\u6269\u4EA7\uFF0C\u4E0D\u518D\u662F\u62A2\u901F\u5EA6\uFF0C\u800C\u662F\u62A2\u786E\u5B9A\u6027",
+    evidenceLabels: ["\u65B0\u5382\u6869\u57FA", "\u81EA\u52A8\u5316\u7EBF", "\u957F\u671F\u8BA2\u5355"],
+    palette: "construction",
+    assetSrc: "images/corporate-retreat-dossier/construction.png"
+  },
+  {
+    id: "scene_07",
+    type: "resolutionLedger",
+    startFrame: 930,
+    durationInFrames: 420,
+    caption: "\u6700\u540E\u7559\u4E0B\u6765\u7684\u516C\u53F8\uFF0C\u901A\u5E38\u4E0D\u662F\u58F0\u97F3\u6700\u5927\u7684\uFF0C\u800C\u662F\u8BC1\u636E\u94FE\u6700\u5B8C\u6574\u7684",
+    thesis: "\u884C\u4E1A\u9000\u6F6E\u540E\uFF0C\u771F\u6B63\u503C\u94B1\u7684\u662F\u53EF\u9A8C\u8BC1\u7684\u4F9B\u5E94\u94FE\u4FE1\u7528\u3002",
+    bullets: ["\u539F\u6599\u6765\u6E90\u53EF\u8FFD\u8E2A", "\u5DE5\u827A\u6570\u636E\u53EF\u590D\u6838", "\u4EA4\u4ED8\u80FD\u529B\u53EF\u5BA1\u8BA1"],
+    assetSrc: "images/corporate-retreat-dossier/city-aerial.png"
+  }
+];
+const corporateRetreatDossierSubtitles = [
+  { startFrame: 15, endFrame: 84, text: "\u4E00\u573A\u884C\u4E1A\u6D17\u724C\u5F00\u59CB\u4E86", emphasisWords: ["\u6D17\u724C"] },
+  { startFrame: 90, endFrame: 264, text: "\u4E0A\u767E\u5BB6\u5C0F\u5382\u540C\u65F6\u6536\u7F29\n\u53EA\u5269\u5C11\u6570\u4F01\u4E1A\u5B88\u4F4F\u5408\u89C4\u94FE\u6761", emphasisWords: ["\u6536\u7F29", "\u5408\u89C4\u94FE\u6761"] },
+  { startFrame: 270, endFrame: 393, text: "\u8FD9\u4E0D\u662F\u9700\u6C42\u6D88\u5931\n\u800C\u662F\u95E8\u69DB\u7A81\u7136\u62AC\u9AD8\u4E86", emphasisWords: ["\u95E8\u69DB"] },
+  { startFrame: 399, endFrame: 555, text: "\u95E8\u5E97\u8FD8\u4EAE\u7740\n\u4F46\u80CC\u540E\u7684\u4F9B\u5E94\u94FE\u6B63\u5728\u6362\u4EBA", emphasisWords: ["\u4F9B\u5E94\u94FE"] },
+  { startFrame: 564, endFrame: 747, text: "\u771F\u6B63\u7684\u5206\u6C34\u5CAD\n\u4E0D\u662F\u4EF7\u683C\uFF0C\u800C\u662F\u8C01\u80FD\u628A\u5E9F\u6599\u53D8\u6210\u7A33\u5B9A\u4EA7\u80FD", emphasisWords: ["\u7A33\u5B9A\u4EA7\u80FD"] },
+  { startFrame: 756, endFrame: 918, text: "\u8D44\u91D1\u3001\u724C\u7167\u548C\u5BA2\u6237\u9A8C\u8BC1\n\u5F00\u59CB\u540C\u65F6\u538B\u5411\u540C\u4E00\u5F20\u8868", emphasisWords: ["\u540C\u4E00\u5F20\u8868"] },
+  { startFrame: 930, endFrame: 1065, text: "\u6240\u4EE5\u65B0\u4E00\u8F6E\u6269\u4EA7\n\u4E0D\u518D\u662F\u62A2\u901F\u5EA6\uFF0C\u800C\u662F\u62A2\u786E\u5B9A\u6027", emphasisWords: ["\u786E\u5B9A\u6027"] },
+  { startFrame: 1074, endFrame: 1152, text: "\u6700\u540E\u7559\u4E0B\u6765\u7684\u516C\u53F8\n\u901A\u5E38\u4E0D\u662F\u58F0\u97F3\u6700\u5927\u7684", emphasisWords: ["\u7559\u4E0B\u6765"] },
+  { startFrame: 1153, endFrame: 1215, text: "\u800C\u662F\u8BC1\u636E\u94FE\u6700\u5B8C\u6574\u7684", emphasisWords: ["\u8BC1\u636E\u94FE"] }
+];
+
+;// ./src/scenes/corporateRetreatDossier/DossierScenes.tsx
+/* unused harmony import specifier */ var DossierScenes_jsxs;
+/* unused harmony import specifier */ var DossierScenes_jsx;
+/* unused harmony import specifier */ var interpolate;
+/* unused harmony import specifier */ var AbsoluteFill;
+
+
+
+const font = "'IBM Plex Sans', 'Inter', 'Microsoft YaHei', sans-serif";
+const noise = "radial-gradient(circle at 18% 16%, rgba(255,255,255,0.16) 0 1px, transparent 1px), radial-gradient(circle at 71% 41%, rgba(0,0,0,0.18) 0 1px, transparent 1px)";
+const FrameGrade = () => /* @__PURE__ */ (0,jsx_runtime.jsx)(
+  esm.AbsoluteFill,
+  {
+    style: {
+      background: "linear-gradient(90deg, rgba(0,0,0,0.36), transparent 22%, transparent 78%, rgba(0,0,0,0.3)), linear-gradient(180deg, rgba(0,0,0,0.24), transparent 48%, rgba(0,0,0,0.28))",
+      mixBlendMode: "multiply"
+    },
+    children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          inset: 0,
+          backgroundImage: noise,
+          backgroundSize: "5px 5px, 7px 7px",
+          opacity: 0.22
+        }
+      }
+    )
+  }
+);
+const PhotoPlate = ({ src, localFrame, duration, dark, pan = "in" }) => {
+  const progress = (0,esm.interpolate)(localFrame, [0, duration], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp"
+  });
+  const scale = pan === "in" ? 1.045 + progress * 0.045 : 1.09;
+  const x = pan === "left" ? (0,esm.interpolate)(progress, [0, 1], [28, -34]) : pan === "right" ? (0,esm.interpolate)(progress, [0, 1], [-34, 28]) : 0;
+  const y = pan === "in" ? (0,esm.interpolate)(progress, [0, 1], [12, -12]) : 0;
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { overflow: "hidden", background: "#10151a" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Img,
+      {
+        src: (0,esm.staticFile)(src),
+        style: {
+          position: "absolute",
+          inset: "-3%",
+          width: "106%",
+          height: "106%",
+          objectFit: "cover",
+          transform: `translate(${x}px, ${y}px) scale(${scale})`,
+          filter: dark ? "brightness(0.42) contrast(1.14) saturate(0.86)" : "brightness(0.9) contrast(1.1) saturate(0.92)"
+        }
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(90deg, rgba(4,8,12,0.52), rgba(4,8,12,0.08) 40%, rgba(4,8,12,0.28)), linear-gradient(180deg, rgba(3,7,11,0.24), transparent 52%, rgba(3,7,11,0.5))"
+        }
+      }
+    )
+  ] });
+};
+const CityPlate = ({
+  label,
+  localFrame,
+  dark
+}) => {
+  const drift = interpolate(localFrame, [0, 180], [0, -42], { extrapolateRight: "clamp" });
+  return /* @__PURE__ */ DossierScenes_jsxs(
+    AbsoluteFill,
+    {
+      style: {
+        overflow: "hidden",
+        background: dark ? "linear-gradient(180deg, #17202a 0%, #2d3135 52%, #0d1216 100%)" : "linear-gradient(180deg, #c9e4f2 0%, #e6eef0 48%, #27313a 100%)"
+      },
+      children: [
+        /* @__PURE__ */ DossierScenes_jsxs(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              inset: "-6% -4%",
+              transform: `translateX(${drift}px) scale(1.04)`
+            },
+            children: [
+              Array.from({ length: 16 }).map((_, index) => {
+                const height = 210 + index * 57 % 310;
+                const left = index * 145 - 80;
+                return /* @__PURE__ */ DossierScenes_jsx(
+                  "div",
+                  {
+                    style: {
+                      position: "absolute",
+                      left,
+                      bottom: 185 + index * 19 % 56,
+                      width: 86 + index * 13 % 70,
+                      height,
+                      background: index % 3 === 0 ? "linear-gradient(90deg, #9ca8af, #edf2f3 42%, #68747a)" : "linear-gradient(90deg, #2d3a42, #6f8188 50%, #1c252b)",
+                      boxShadow: "0 24px 50px rgba(0,0,0,0.34)",
+                      opacity: dark ? 0.72 : 0.92
+                    },
+                    children: /* @__PURE__ */ DossierScenes_jsx(
+                      "div",
+                      {
+                        style: {
+                          position: "absolute",
+                          inset: 10,
+                          background: "repeating-linear-gradient(180deg, rgba(255,255,255,0.28) 0 3px, transparent 3px 17px)"
+                        }
+                      }
+                    )
+                  },
+                  index
+                );
+              }),
+              /* @__PURE__ */ DossierScenes_jsx(
+                "div",
+                {
+                  style: {
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    height: 230,
+                    background: "linear-gradient(180deg, rgba(43,50,55,0.3), rgba(10,14,18,0.92)), repeating-linear-gradient(115deg, rgba(255,255,255,0.16) 0 2px, transparent 2px 38px)"
+                  }
+                }
+              )
+            ]
+          }
+        ),
+        /* @__PURE__ */ DossierScenes_jsx(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              right: 76,
+              top: 72,
+              color: "rgba(255,255,255,0.72)",
+              fontFamily: font,
+              fontWeight: 800,
+              letterSpacing: 2,
+              fontSize: 22
+            },
+            children: label
+          }
+        )
+      ]
+    }
+  );
+};
+const DossierCard = ({ lines, localFrame }) => {
+  const enter = (0,esm.spring)({ fps: 30, frame: localFrame - 8, config: { damping: 18, stiffness: 95 } });
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    "div",
+    {
+      style: {
+        position: "absolute",
+        left: 110,
+        top: 160,
+        width: 450,
+        minHeight: 390,
+        padding: "34px 38px",
+        background: "rgba(19,22,24,0.86)",
+        border: "1px solid rgba(238,224,190,0.64)",
+        boxShadow: "0 30px 70px rgba(0,0,0,0.34)",
+        opacity: enter,
+        transform: `translateY(${(1 - enter) * 26}px)`,
+        color: "#f4ead8",
+        fontFamily: font
+      },
+      children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { fontSize: 24, color: "#d8c7a1", fontWeight: 900, marginBottom: 30 }, children: "\u64A4\u9000\u89C2\u5BDF" }),
+        lines.map((line, index) => /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              fontSize: index === 0 ? 44 : 34,
+              fontWeight: 900,
+              marginBottom: 22,
+              color: index === 0 ? "#f0cc68" : "#f8f4ed"
+            },
+            children: line
+          },
+          line
+        ))
+      ]
+    }
+  );
+};
+const IndustrialPlate = ({
+  palette,
+  localFrame
+}) => {
+  const pan = interpolate(localFrame, [0, 210], [0, -70], { extrapolateRight: "clamp" });
+  const colors = {
+    factory: ["#d7e2e0", "#6e8583", "#1f3035"],
+    boardroom: ["#e9ece8", "#998b77", "#1d2023"],
+    construction: ["#d8e8ef", "#b99054", "#20262a"]
+  }[palette];
+  return /* @__PURE__ */ DossierScenes_jsx(AbsoluteFill, { style: { background: colors[0], overflow: "hidden" }, children: /* @__PURE__ */ DossierScenes_jsxs("div", { style: { position: "absolute", inset: -40, transform: `translateX(${pan}px) scale(1.04)` }, children: [
+    /* @__PURE__ */ DossierScenes_jsx(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          inset: 0,
+          background: `linear-gradient(180deg, ${colors[0]} 0%, #f9faf8 45%, ${colors[2]} 100%)`
+        }
+      }
+    ),
+    Array.from({ length: 9 }).map((_, index) => /* @__PURE__ */ DossierScenes_jsx(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: 160 + index * 190,
+          top: 140 + index * 41 % 280,
+          width: palette === "boardroom" ? 130 : 46,
+          height: palette === "boardroom" ? 86 : 460,
+          border: `7px solid ${colors[1]}`,
+          background: "rgba(255,255,255,0.18)",
+          transform: `skewX(${palette === "construction" ? -10 : 0}deg)`,
+          opacity: 0.82
+        }
+      },
+      index
+    )),
+    /* @__PURE__ */ DossierScenes_jsx(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 120,
+          height: 190,
+          background: palette === "boardroom" ? "linear-gradient(90deg, rgba(0,0,0,0.36), transparent), repeating-linear-gradient(90deg, rgba(255,255,255,0.38) 0 120px, rgba(0,0,0,0.12) 120px 126px)" : "repeating-linear-gradient(90deg, rgba(0,0,0,0.32) 0 20px, transparent 20px 76px)"
+        }
+      }
+    )
+  ] }) });
+};
+const DossierSceneView = ({ scene }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps } = (0,esm.useVideoConfig)();
+  const localFrame = frame;
+  const fade = (0,esm.interpolate)(localFrame, [0, 12, scene.durationInFrames - 16, scene.durationInFrames], [0, 1, 1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp"
+  });
+  if (scene.type === "shockTitle") {
+    const titleSpring = (0,esm.spring)({ fps, frame: localFrame - 14, config: { damping: 14, stiffness: 120 } });
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { opacity: fade, background: "#121820" }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(PhotoPlate, { src: scene.assetSrc, localFrame, duration: scene.durationInFrames, dark: true, pan: "in" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        "div",
+        {
+          style: {
+            position: "absolute",
+            inset: 0,
+            background: "radial-gradient(circle at 54% 32%, rgba(255,255,255,0.28), transparent 18%), linear-gradient(115deg, transparent 0 42%, rgba(255,255,255,0.34) 45%, transparent 50%)",
+            filter: "blur(4px)",
+            opacity: (0,esm.interpolate)(localFrame, [4, 28, 74], [0, 1, 0.52], { extrapolateRight: "clamp" })
+          }
+        }
+      ),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        "div",
+        {
+          style: {
+            position: "absolute",
+            top: 330,
+            left: 0,
+            right: 0,
+            textAlign: "center",
+            fontFamily: font,
+            color: "white",
+            fontSize: 118,
+            fontWeight: 1e3,
+            textShadow: "0 7px 18px rgba(0,0,0,0.62)",
+            transform: `scale(${0.84 + titleSpring * 0.16})`
+          },
+          children: scene.headline
+        }
+      ),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(FrameGrade, {})
+    ] });
+  }
+  if (scene.type === "statDossier") {
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { opacity: fade }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(PhotoPlate, { src: scene.assetSrc, localFrame, duration: scene.durationInFrames, pan: "left" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        "div",
+        {
+          style: {
+            position: "absolute",
+            right: 76,
+            top: 72,
+            color: "rgba(255,255,255,0.78)",
+            fontFamily: font,
+            fontWeight: 800,
+            letterSpacing: 2,
+            fontSize: 22
+          },
+          children: scene.buildingLabel
+        }
+      ),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(DossierCard, { lines: scene.statLines, localFrame }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(FrameGrade, {})
+    ] });
+  }
+  if (scene.type === "evidenceMontage") {
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { opacity: fade }, children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        PhotoPlate,
+        {
+          src: scene.assetSrc,
+          localFrame,
+          duration: scene.durationInFrames,
+          pan: scene.palette === "boardroom" ? "right" : "left"
+        }
+      ),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        "div",
+        {
+          style: {
+            position: "absolute",
+            left: 86,
+            top: 74,
+            display: "flex",
+            gap: 16,
+            fontFamily: font
+          },
+          children: scene.evidenceLabels.map((label, index) => /* @__PURE__ */ (0,jsx_runtime.jsx)(
+            "div",
+            {
+              style: {
+                padding: "10px 16px",
+                background: "rgba(0,0,0,0.56)",
+                color: index === 0 ? "#f0cc68" : "#ffffff",
+                fontSize: 25,
+                fontWeight: 900,
+                border: "1px solid rgba(255,255,255,0.22)",
+                opacity: (0,esm.interpolate)(localFrame, [index * 20, index * 20 + 18], [0, 1], {
+                  extrapolateLeft: "clamp",
+                  extrapolateRight: "clamp"
+                })
+              },
+              children: label
+            },
+            label
+          ))
+        }
+      ),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(FrameGrade, {})
+    ] });
+  }
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { opacity: fade, background: "#dfe5e4" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(PhotoPlate, { src: scene.assetSrc, localFrame, duration: scene.durationInFrames, dark: true, pan: "in" }),
+    /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: 180,
+          right: 180,
+          top: 190,
+          padding: "48px 58px",
+          background: "rgba(246,242,232,0.9)",
+          borderLeft: "10px solid #2d3236",
+          fontFamily: font,
+          color: "#202326",
+          boxShadow: "0 28px 80px rgba(0,0,0,0.34)"
+        },
+        children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { fontSize: 58, lineHeight: 1.12, fontWeight: 1e3, marginBottom: 42 }, children: scene.thesis }),
+          scene.bullets.map((bullet, index) => /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { fontSize: 34, fontWeight: 850, marginTop: 22, color: "#475058" }, children: [
+            "0",
+            index + 1,
+            " / ",
+            bullet
+          ] }, bullet))
+        ]
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(FrameGrade, {})
+  ] });
+};
+
+;// ./src/compositions/CorporateRetreatDossierComposition.tsx
+
+
+
+
+
+
+const CorporateRetreatDossierComposition = () => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { background: "#11161b" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Audio, { src: (0,esm.staticFile)("audio/corporate-retreat-dossier/documentary-pulse.wav"), volume: 0.055 }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Audio, { src: (0,esm.staticFile)("audio/corporate-retreat-dossier/elevenlabs-voiceover.mp3"), volume: 1 }),
+    corporateRetreatDossierScenes.map((scene) => /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: scene.startFrame, durationInFrames: scene.durationInFrames, children: /* @__PURE__ */ (0,jsx_runtime.jsx)(DossierSceneView, { scene }) }, scene.id)),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(SubtitleTrack, { cues: corporateRetreatDossierSubtitles })
+  ] });
+};
+
+;// ./src/data/cognitiveDocumentaryEssayData.ts
+
+const COGNITIVE_DOC_FPS = 30;
+const COGNITIVE_DOC_DURATION_SEC = 30;
+const COGNITIVE_DOC_DURATION_IN_FRAMES = COGNITIVE_DOC_FPS * COGNITIVE_DOC_DURATION_SEC;
+const cognitiveDocumentaryScenes = [
+  {
+    sceneId: "s01",
+    sceneType: "DustLibraryHookScene",
+    startSec: 0,
+    durationSec: 4,
+    visual: {
+      asset: "images/philosophy-montage/office_desk.jpg",
+      assetMode: "local_fallback",
+      assetPromptId: "doc_hook_symbolic_environment",
+      generatedAssetPath: "generated/cognitive-documentary-essay/meeting-no-conclusion/s01_hook_workspace.png",
+      fallbackAsset: "images/philosophy-montage/office_desk.jpg",
+      motion: "slow_push",
+      tint: "warm_archive"
+    },
+    caption: {
+      zh: "\u771F\u6B63\u62C9\u5F00\u56E2\u961F\u6548\u7387\u5DEE\u8DDD\u7684",
+      en: "What really separates team efficiency"
+    }
+  },
+  {
+    sceneId: "s02",
+    sceneType: "BrollEvidenceScene",
+    startSec: 4,
+    durationSec: 4,
+    visual: {
+      asset: "images/shared/scenario_ppt.jpg",
+      assetMode: "local_fallback",
+      assetPromptId: "doc_process_or_structure_surface",
+      generatedAssetPath: "generated/cognitive-documentary-essay/meeting-no-conclusion/s02_clear_structure.png",
+      fallbackAsset: "images/shared/scenario_ppt.jpg",
+      motion: "slow_pan_left",
+      overlayText: "\u6E05\u6670\u7ED3\u6784",
+      tint: "warm_archive"
+    },
+    caption: {
+      zh: "\u4E0D\u662F\u8C01\u8BF4\u5F97\u66F4\u591A",
+      en: "is not who talks more"
+    }
+  },
+  {
+    sceneId: "s03",
+    sceneType: "ChapterImpactWordScene",
+    startSec: 8,
+    durationSec: 5,
+    visual: {
+      asset: "images/philosophy-montage/screen_overload_wall.png",
+      assetMode: "local_fallback",
+      assetPromptId: "doc_chapter_impact_metaphor",
+      generatedAssetPath: "generated/cognitive-documentary-essay/meeting-no-conclusion/s03_hidden_disagreement.png",
+      fallbackAsset: "images/philosophy-montage/screen_overload_wall.png",
+      motion: "impact_zoom",
+      overlayText: "\u9690\u5F62\u5206\u6B67",
+      tint: "high_contrast_warning"
+    },
+    caption: {
+      zh: "\u800C\u662F\u8C01\u80FD\u628A\u5206\u6B67\u547D\u540D\u51FA\u6765",
+      en: "but who can name the hidden disagreement"
+    }
+  },
+  {
+    sceneId: "s04",
+    sceneType: "ContradictionCaseScene",
+    startSec: 13,
+    durationSec: 5,
+    visual: {
+      asset: "images/corporate-retreat-dossier/boardroom.png",
+      assetMode: "local_fallback",
+      assetPromptId: "doc_workplace_case_broll",
+      generatedAssetPath: "generated/cognitive-documentary-essay/meeting-no-conclusion/s04_meeting_case.png",
+      fallbackAsset: "images/corporate-retreat-dossier/boardroom.png",
+      motion: "slow_push",
+      tint: "cool_institutional"
+    },
+    caption: {
+      zh: "\u5F88\u591A\u4F1A\u8BAE\u770B\u8D77\u6765\u5728\u8BA8\u8BBA\u65B9\u6848",
+      en: "Many meetings seem to discuss a plan"
+    }
+  },
+  {
+    sceneId: "s06",
+    sceneType: "RuleExtractionScene",
+    startSec: 18,
+    durationSec: 7,
+    visual: {
+      asset: "images/shared/scenario_video_breakdown.jpg",
+      assetMode: "local_fallback",
+      assetPromptId: "doc_rule_extraction_visual",
+      generatedAssetPath: "generated/cognitive-documentary-essay/meeting-no-conclusion/s06_decision_logic.png",
+      fallbackAsset: "images/shared/scenario_video_breakdown.jpg",
+      motion: "slow_push",
+      overlayText: "\u5E95\u5C42\u903B\u8F91",
+      tint: "warm_archive"
+    },
+    caption: {
+      zh: "\u5148\u5B9A\u4E49\u8981\u505A\u4EC0\u4E48\u51B3\u5B9A",
+      en: "Define the decision first"
+    }
+  },
+  {
+    sceneId: "s07",
+    sceneType: "DocumentaryCloseScene",
+    startSec: 25,
+    durationSec: 5,
+    visual: {
+      asset: "images/philosophy-montage/focus_budget_workspace.png",
+      assetMode: "local_fallback",
+      assetPromptId: "doc_close_resolution_image",
+      generatedAssetPath: "generated/cognitive-documentary-essay/meeting-no-conclusion/s07_positive_loop.png",
+      fallbackAsset: "images/philosophy-montage/focus_budget_workspace.png",
+      motion: "slow_pan_left",
+      overlayText: "\u6B63\u5411\u5FAA\u73AF",
+      tint: "warm_archive"
+    },
+    caption: {
+      zh: "\u518D\u8BA9\u8868\u8FBE\u670D\u52A1\u4E8E\u8FD9\u4E2A\u51B3\u5B9A",
+      en: "then make expression serve that decision"
+    }
+  }
+];
+const cognitiveDocumentarySubtitles = [
+  {
+    startFrame: 60,
+    endFrame: 149,
+    text: "\u771F\u6B63\u62C9\u5F00\u56E2\u961F\u6548\u7387\u5DEE\u8DDD\u7684\nWhat really separates team efficiency",
+    emphasisWords: ["\u56E2\u961F\u6548\u7387"]
+  },
+  {
+    startFrame: 180,
+    endFrame: 329,
+    text: "\u4E0D\u662F\u8C01\u8BF4\u5F97\u66F4\u591A\nis not who talks more",
+    emphasisWords: ["\u4E0D\u662F"]
+  },
+  {
+    startFrame: 390,
+    endFrame: 509,
+    text: "\u800C\u662F\u8C01\u80FD\u628A\u5206\u6B67\u547D\u540D\u51FA\u6765\nbut who can name the hidden disagreement",
+    emphasisWords: ["\u5206\u6B67"]
+  },
+  {
+    startFrame: 540,
+    endFrame: 839,
+    text: "\u5F88\u591A\u4F1A\u8BAE\u770B\u8D77\u6765\u5728\u8BA8\u8BBA\u65B9\u6848\nMany meetings seem to discuss a plan",
+    emphasisWords: ["\u8BA8\u8BBA\u65B9\u6848"]
+  },
+  {
+    startFrame: 900,
+    endFrame: 1169,
+    text: "\u5176\u5B9E\u6BCF\u4E2A\u4EBA\u5FC3\u91CC\u7528\u7684\u662F\u4E0D\u540C\u6807\u51C6\nbut everyone uses a different standard",
+    emphasisWords: ["\u4E0D\u540C\u6807\u51C6"]
+  },
+  {
+    startFrame: 1200,
+    endFrame: 1439,
+    text: "\u5148\u5B9A\u4E49\u8981\u505A\u4EC0\u4E48\u51B3\u5B9A\nDefine the decision first",
+    emphasisWords: ["\u51B3\u5B9A"]
+  },
+  {
+    startFrame: 1470,
+    endFrame: 1769,
+    text: "\u518D\u8BA9\u8868\u8FBE\u670D\u52A1\u4E8E\u8FD9\u4E2A\u51B3\u5B9A\nthen make expression serve that decision",
+    emphasisWords: ["\u8868\u8FBE"]
+  }
+];
+const cognitiveDocumentaryAudio = {
+  voiceover: null,
+  bgm: null,
+  sfx: [],
+  subtitles: cognitiveDocumentarySubtitles
+};
+
+;// ./src/data/cognitiveDocumentaryEssayAudio.ts
+
+const cognitiveDocumentaryAlignedAudio = {
+  voiceover: {
+    src: "/audio/cognitive-documentary-essay/meeting-no-conclusion-elevenlabs.mp3",
+    startFrame: 0,
+    volume: 1,
+    enabled: true
+  },
+  bgm: null,
+  sfx: [],
+  subtitles: [
+    {
+      "startFrame": 0,
+      "endFrame": 130,
+      "text": "\u771F\u6B63\u62C9\u5F00\u56E2\u961F\u6548\u7387\u5DEE\u8DDD\u7684\uFF0C\u4E0D\u662F\u8C01\u8BF4\u5F97\u66F4\u591A\u3002\nWhat really separates team efficiency is not who talks more.",
+      "emphasisWords": [
+        "\u56E2\u961F\u6548\u7387",
+        "\u4E0D\u662F"
+      ]
+    },
+    {
+      "startFrame": 133,
+      "endFrame": 276,
+      "text": "\u800C\u662F\u8C01\u80FD\u628A\u6DF7\u4E71\u7684\u4FE1\u606F\uFF0C\u538B\u7F29\u6210\u4E00\u4E2A\u6E05\u6670\u7ED3\u6784\u3002\nIt is who can compress chaotic information into a clear structure.",
+      "emphasisWords": [
+        "\u6DF7\u4E71",
+        "\u6E05\u6670\u7ED3\u6784"
+      ]
+    },
+    {
+      "startFrame": 280,
+      "endFrame": 442,
+      "text": "\u4F1A\u8BAE\u5361\u4F4F\u65F6\uFF0C\u8868\u9762\u4E0A\u662F\u89C2\u70B9\u4E0D\u540C\uFF0C\u5E95\u5C42\u5176\u5B9E\u662F\u6807\u51C6\u4E0D\u540C\u3002\nWhen a meeting gets stuck, the surface problem is opinions, but the deeper problem is standards.",
+      "emphasisWords": [
+        "\u89C2\u70B9\u4E0D\u540C",
+        "\u6807\u51C6\u4E0D\u540C"
+      ]
+    },
+    {
+      "startFrame": 444,
+      "endFrame": 631,
+      "text": "\u6709\u4EBA\u5728\u5224\u65AD\u98CE\u9669\uFF0C\u6709\u4EBA\u5728\u4E89\u53D6\u8D44\u6E90\uFF0C\u6709\u4EBA\u53EA\u662F\u5728\u907F\u514D\u627F\u62C5\u8D23\u4EFB\u3002\nSome people judge risk, some fight for resources, and some avoid responsibility.",
+      "emphasisWords": [
+        "\u98CE\u9669",
+        "\u8D44\u6E90",
+        "\u8D23\u4EFB"
+      ]
+    },
+    {
+      "startFrame": 634,
+      "endFrame": 835,
+      "text": "\u6240\u4EE5\u771F\u6B63\u6709\u6548\u7684\u4E3B\u6301\u4EBA\uFF0C\u4E0D\u662F\u8BA9\u6BCF\u4E2A\u4EBA\u90FD\u53D1\u8A00\uFF0C\u800C\u662F\u5148\u628A\u8981\u505A\u7684\u51B3\u5B9A\u8BF4\u6E05\u695A\u3002\nAn effective facilitator does not just let everyone speak. They define the decision first.",
+      "emphasisWords": [
+        "\u4E3B\u6301\u4EBA",
+        "\u51B3\u5B9A"
+      ]
+    },
+    {
+      "startFrame": 838,
+      "endFrame": 953,
+      "text": "\u8868\u8FBE\u8D8A\u6E05\u6670\uFF0C\u534F\u4F5C\u8D8A\u5BB9\u6613\u8FDB\u5165\u6B63\u5411\u5FAA\u73AF\u3002\nThe clearer the expression, the easier collaboration enters a positive loop.",
+      "emphasisWords": [
+        "\u8868\u8FBE",
+        "\u6B63\u5411\u5FAA\u73AF"
+      ]
+    }
+  ]
+};
+
+;// ./src/scenes/cognitiveDocumentary/CognitiveDocumentaryScenes.tsx
+
+
+
+
+const tintStyles = {
+  warm_archive: {
+    background: "linear-gradient(90deg, rgba(36,20,8,0.52), rgba(10,9,8,0.18), rgba(0,0,0,0.46))"
+  },
+  cool_institutional: {
+    background: "linear-gradient(90deg, rgba(7,16,22,0.48), rgba(7,18,28,0.18), rgba(0,0,0,0.4))"
+  },
+  high_contrast_warning: {
+    background: "linear-gradient(90deg, rgba(0,0,0,0.62), rgba(62,7,7,0.18), rgba(0,0,0,0.7))"
+  }
+};
+const motionTransform = (motion, progress) => {
+  const push = (0,esm.interpolate)(progress, [0, 1], [1.02, 1.08]);
+  const impact = (0,esm.interpolate)(progress, [0, 0.18, 1], [1.12, 1.04, 1.07]);
+  if (motion === "slow_pan_left") {
+    return `scale(1.08) translateX(${(0,esm.interpolate)(progress, [0, 1], [22, -22])}px)`;
+  }
+  if (motion === "slow_pan_right") {
+    return `scale(1.08) translateX(${(0,esm.interpolate)(progress, [0, 1], [-22, 22])}px)`;
+  }
+  if (motion === "impact_zoom") {
+    return `scale(${impact})`;
+  }
+  if (motion === "static_hold") {
+    return "scale(1.04)";
+  }
+  return `scale(${push})`;
+};
+const FilmTexture = () => /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
+  /* @__PURE__ */ (0,jsx_runtime.jsx)(
+    esm.AbsoluteFill,
+    {
+      style: {
+        background: "radial-gradient(circle at 50% 45%, transparent 0%, rgba(0,0,0,0.18) 62%, rgba(0,0,0,0.64) 100%)"
+      }
+    }
+  ),
+  /* @__PURE__ */ (0,jsx_runtime.jsx)(
+    esm.AbsoluteFill,
+    {
+      style: {
+        opacity: 0.13,
+        backgroundImage: "repeating-linear-gradient(0deg, rgba(255,255,255,0.16) 0, rgba(255,255,255,0.16) 1px, transparent 1px, transparent 3px)",
+        mixBlendMode: "overlay"
+      }
+    }
+  )
+] });
+const ImpactWord = ({
+  text,
+  variant
+}) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps } = (0,esm.useVideoConfig)();
+  const enter = (0,esm.spring)({
+    frame,
+    fps,
+    config: { damping: 16, stiffness: 180 }
+  });
+  const isWarning = variant === "high_contrast_warning";
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+    "div",
+    {
+      style: {
+        position: "absolute",
+        left: isWarning ? 88 : 96,
+        top: isWarning ? 104 : 86,
+        transform: `scale(${0.92 + enter * 0.08})`,
+        transformOrigin: "left center",
+        opacity: Math.min(1, enter * 1.25),
+        fontFamily: THEME.fonts.headlineZh,
+        fontSize: isWarning ? 92 : 78,
+        lineHeight: 0.95,
+        fontWeight: 950,
+        color: isWarning ? "#f53b31" : "#f0b62d",
+        textShadow: "0 5px 0 rgba(0,0,0,0.32), 0 16px 34px rgba(0,0,0,0.45)",
+        letterSpacing: 0
+      },
+      children: text
+    }
+  );
+};
+const CognitiveDocumentaryScene = ({ scene }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps } = (0,esm.useVideoConfig)();
+  const durationFrames = Math.max(1, Math.round(scene.durationSec * fps));
+  const progress = Math.min(1, frame / durationFrames);
+  const text = scene.visual.overlayText;
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#070605", overflow: "hidden" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Img,
+      {
+        src: (0,esm.staticFile)(scene.visual.asset),
+        style: {
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          transform: motionTransform(scene.visual.motion, progress),
+          filter: "contrast(1.08) saturate(0.84)"
+        }
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.AbsoluteFill, { style: tintStyles[scene.visual.tint] }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(FilmTexture, {}),
+    /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: 26,
+          top: 20,
+          color: "rgba(255,255,255,0.42)",
+          fontFamily: THEME.fonts.ui,
+          fontSize: 16,
+          fontWeight: 700,
+          lineHeight: 1.05,
+          textShadow: "0 1px 3px rgba(0,0,0,0.5)"
+        },
+        children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { children: "@MindHacker" }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { children: "\u8BA4\u77E5\u523A\u5BA2" })
+        ]
+      }
+    ),
+    text ? /* @__PURE__ */ (0,jsx_runtime.jsx)(ImpactWord, { text, variant: scene.visual.tint }) : null
+  ] });
+};
+
+;// ./src/compositions/CognitiveDocumentaryEssayComposition.tsx
+
+
+
+
+
+
+
+
+const CognitiveDocumentaryEssayComposition = () => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#050403" }, children: [
+    cognitiveDocumentaryScenes.map((scene) => /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Sequence,
+      {
+        from: Math.round(scene.startSec * COGNITIVE_DOC_FPS),
+        durationInFrames: Math.round(scene.durationSec * COGNITIVE_DOC_FPS),
+        children: /* @__PURE__ */ (0,jsx_runtime.jsx)(CognitiveDocumentaryScene, { scene })
+      },
+      scene.sceneId
+    )),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AudioTrackLayer, { config: cognitiveDocumentaryAlignedAudio }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(SubtitleTrack, { cues: cognitiveDocumentaryAlignedAudio.subtitles ?? [] })
+  ] });
+};
+
+;// ./src/data/sleepPostureTaxonomyData.ts
+
+const SLEEP_POSTURE_TAXONOMY_FPS = 30;
+const SLEEP_POSTURE_TAXONOMY_DURATION_IN_FRAMES = 42 * SLEEP_POSTURE_TAXONOMY_FPS;
+const sleepPostureTaxonomyData = {
+  meta: {
+    templateId: "sleep_posture_taxonomy_card",
+    topic: "\u4F60\u662F\u54EA\u79CD\u5237\u624B\u673A\u59FF\u52BF\uFF1F",
+    orientation: "horizontal",
+    durationSec: 42,
+    styleVariant: "clean_white_psychology_card",
+    timingStatus: "estimated_after_audio_duration_fit"
+  },
+  header: {
+    channelLabel: "\u624B\u673A\u59FF\u52BF\u66B4\u9732\u72B6\u6001",
+    eyebrow: "\u5FC3\u7406\u77E5\u8BC6\uFF5C\u4ECE\u5237\u624B\u673A\u59FF\u52BF\u770B\u653E\u677E\u65B9\u5F0F",
+    question: "\u4F60\u662F\u54EA\u79CD\u5237\u624B\u673A\u59FF\u52BF",
+    sourceNote: "@\u884C\u4E3A\u89C2\u5BDF"
+  },
+  items: [
+    {
+      id: "bed_phone",
+      letter: "A",
+      label: "\u4EF0\u8EBA\u4E3E\u5C4F\u578B",
+      pose: "bed_phone",
+      imageSrc: "images/sleep-posture-taxonomy/bed_phone.png",
+      shortTrait: "\u5F7B\u5E95\u653E\u7A7A"
+    },
+    {
+      id: "curled_scroll",
+      letter: "B",
+      label: "\u8737\u7F29\u8FDE\u5237\u578B",
+      pose: "curled_scroll",
+      imageSrc: "images/sleep-posture-taxonomy/curled_scroll.png",
+      shortTrait: "\u5B89\u5168\u611F\u5145\u7535"
+    },
+    {
+      id: "one_hand_slouch",
+      letter: "C",
+      label: "\u6B6A\u5750\u5355\u624B\u578B",
+      pose: "one_hand_slouch",
+      imageSrc: "images/sleep-posture-taxonomy/one_hand_slouch.png",
+      shortTrait: "\u8FB9\u770B\u8FB9\u98D8"
+    },
+    {
+      id: "desk_scroll",
+      letter: "D",
+      label: "\u8DB4\u684C\u5077\u770B\u578B",
+      pose: "desk_scroll",
+      imageSrc: "images/sleep-posture-taxonomy/desk_scroll.png",
+      shortTrait: "\u5047\u88C5\u5FD9\u788C"
+    },
+    {
+      id: "walking_phone",
+      letter: "E",
+      label: "\u8FB9\u8D70\u8FB9\u5237\u578B",
+      pose: "walking_phone",
+      imageSrc: "images/sleep-posture-taxonomy/walking_phone.png",
+      shortTrait: "\u505C\u4E0D\u4E0B\u6765"
+    },
+    {
+      id: "blanket_phone",
+      letter: "F",
+      label: "\u88AB\u7A9D\u591C\u5237\u578B",
+      pose: "blanket_phone",
+      imageSrc: "images/sleep-posture-taxonomy/blanket_phone.png",
+      shortTrait: "\u665A\u7761\u9884\u8B66"
+    }
+  ],
+  timeline: [
+    {
+      id: "scene_01",
+      startFrame: 0,
+      endFrame: 149,
+      sceneType: "TaxonomyOpenerScene",
+      caption: "\u5237\u624B\u673A\u59FF\u52BF\u5176\u5B9E\u4F1A\u66B4\u9732\u4F60\u7684\u653E\u677E\u65B9\u5F0F",
+      activeItemIds: [],
+      voiceId: "v01"
+    },
+    {
+      id: "scene_02",
+      startFrame: 150,
+      endFrame: 299,
+      sceneType: "PostureStripScene",
+      caption: "\u540C\u6837\u662F\u5237\u5C4F\uFF0C\u6BCF\u4E2A\u4EBA\u8EAB\u4F53\u6700\u8BDA\u5B9E\u7684\u53CD\u5E94\u90FD\u4E0D\u4E00\u6837",
+      activeItemIds: [],
+      voiceId: "v02"
+    },
+    {
+      id: "scene_03",
+      startFrame: 300,
+      endFrame: 449,
+      sceneType: "CaptionRevealScene",
+      caption: "\u4EF0\u8EBA\u4E3E\u5C4F\u7684\u4EBA\uFF0C\u901A\u5E38\u662F\u771F\u7684\u60F3\u628A\u8111\u5B50\u5B8C\u5168\u653E\u7A7A",
+      activeItemIds: ["bed_phone"],
+      voiceId: "v03"
+    },
+    {
+      id: "scene_04",
+      startFrame: 450,
+      endFrame: 599,
+      sceneType: "CaptionRevealScene",
+      caption: "\u8737\u7F29\u8FDE\u5237\u7684\u4EBA\uFF0C\u5237\u7684\u4E0D\u662F\u5185\u5BB9\uFF0C\u662F\u4E00\u70B9\u5B89\u5168\u611F",
+      activeItemIds: ["curled_scroll"],
+      voiceId: "v04"
+    },
+    {
+      id: "scene_05",
+      startFrame: 600,
+      endFrame: 749,
+      sceneType: "CaptionRevealScene",
+      caption: "\u6B6A\u5750\u5355\u624B\u5237\u7684\u4EBA\uFF0C\u6CE8\u610F\u529B\u5E38\u5E38\u5728\u73B0\u5B9E\u548C\u5C4F\u5E55\u4E2D\u95F4\u6447\u6446",
+      activeItemIds: ["one_hand_slouch"],
+      voiceId: "v05"
+    },
+    {
+      id: "scene_06",
+      startFrame: 750,
+      endFrame: 929,
+      sceneType: "CaptionRevealScene",
+      caption: "\u8DB4\u684C\u5077\u770B\u7684\u4EBA\uFF0C\u5F80\u5F80\u662F\u5728\u5FD9\u788C\u91CC\u7ED9\u81EA\u5DF1\u5077\u4E00\u53E3\u6C14",
+      activeItemIds: ["desk_scroll"],
+      voiceId: "v06"
+    },
+    {
+      id: "scene_07",
+      startFrame: 930,
+      endFrame: 1109,
+      sceneType: "CaptionRevealScene",
+      caption: "\u8FB9\u8D70\u8FB9\u5237\u7684\u4EBA\uFF0C\u4E0D\u662F\u95F2\u4E0D\u4F4F\uFF0C\u662F\u5927\u8111\u5F88\u96BE\u771F\u6B63\u505C\u673A",
+      activeItemIds: ["walking_phone"],
+      voiceId: "v07"
+    },
+    {
+      id: "scene_08",
+      startFrame: 1110,
+      endFrame: 1259,
+      sceneType: "ResultPromptScene",
+      caption: "\u4F60\u662F\u54EA\u4E00\u79CD\uFF1F\u628A\u7ED3\u679C\u6253\u5728\u8BC4\u8BBA\u533A",
+      activeItemIds: [],
+      voiceId: "v08"
+    }
+  ]
+};
+
+;// ./src/data/sleepPostureTaxonomyAudio.ts
+
+
+const sleepPostureTaxonomyAudio = {
+  voiceover: {
+    src: "audio/sleep-posture-taxonomy/voiceover.mp3",
+    startFrame: 0,
+    volume: 1,
+    enabled: true
+  },
+  bgm: {
+    src: "audio/sleep-posture-taxonomy/soft-pulse.wav",
+    startFrame: 0,
+    volume: 0.08,
+    loop: false,
+    enabled: true
+  },
+  sfx: [],
+  duckingRules: [
+    {
+      target: "bgm",
+      when: "voiceover_active",
+      gain: 0.35
+    }
+  ],
+  subtitles: sleepPostureTaxonomyData.timeline.map((segment) => ({
+    startFrame: segment.startFrame,
+    endFrame: segment.endFrame,
+    text: segment.caption,
+    emphasisWords: []
+  }))
+};
+
+;// ./src/scenes/sleepPostureTaxonomy/SleepPostureTaxonomyScenes.tsx
+
+
+
+
+const STYLE = {
+  bg: "#ffffff",
+  ink: "#171717",
+  muted: "#5c626b",
+  blue: "#22aeea",
+  lightBlue: "rgba(34, 174, 234, 0.14)",
+  divider: "#171717"
+};
+const FIGURE_PALETTES = [
+  { outfit: "#4f8df7", shade: "#2f65c8", prop: "#7dd3fc" },
+  { outfit: "#ff8a65", shade: "#d76545", prop: "#ffd166" },
+  { outfit: "#7c6ee6", shade: "#594ec0", prop: "#a7f3d0" },
+  { outfit: "#34b88a", shade: "#248967", prop: "#fca5a5" },
+  { outfit: "#f3b43f", shade: "#c78312", prop: "#93c5fd" },
+  { outfit: "#e06aa3", shade: "#b84a80", prop: "#c4b5fd" }
+];
+const poseHead = {
+  bed_phone: { cx: 38, cy: 93, hair: "M18 92 C22 72 52 70 58 92 C48 84 31 84 18 92 Z" },
+  curled_scroll: { cx: 76, cy: 48, hair: "M57 47 C60 28 91 27 96 49 C86 41 68 40 57 47 Z" },
+  one_hand_slouch: { cx: 70, cy: 41, hair: "M51 40 C55 20 87 19 92 42 C82 34 63 33 51 40 Z" },
+  desk_scroll: { cx: 48, cy: 86, hair: "M28 84 C32 64 64 64 70 86 C58 78 41 77 28 84 Z" },
+  walking_phone: { cx: 72, cy: 39, hair: "M53 38 C56 18 88 16 93 39 C85 31 65 30 53 38 Z" },
+  blanket_phone: { cx: 73, cy: 56, hair: "M54 55 C57 35 88 35 94 57 C84 49 65 48 54 55 Z" }
+};
+const ChibiHead = ({ cx, cy, hair, scale = 1 }) => /* @__PURE__ */ (0,jsx_runtime.jsxs)("g", { transform: `translate(${cx} ${cy}) scale(${scale}) translate(${-cx} ${-cy})`, children: [
+  /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx, cy, r: "22", fill: "#ffe1c8", stroke: "#232323", strokeWidth: "4" }),
+  /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: hair, fill: "#2e2e2e" }),
+  /* @__PURE__ */ (0,jsx_runtime.jsx)(
+    "path",
+    {
+      d: `M${cx - 10} ${cy + 8} C${cx - 5} ${cy + 14} ${cx + 7} ${cy + 14} ${cx + 12} ${cy + 8}`,
+      fill: "none",
+      stroke: "#232323",
+      strokeWidth: "3.4",
+      strokeLinecap: "round"
+    }
+  ),
+  /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: cx - 7, cy, r: "2.4", fill: "#232323" }),
+  /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: cx + 8, cy, r: "2.4", fill: "#232323" }),
+  /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: cx - 14, cy: cy + 7, r: "3.4", fill: "#ffb4a8", opacity: "0.72" }),
+  /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: cx + 15, cy: cy + 7, r: "3.4", fill: "#ffb4a8", opacity: "0.72" })
+] });
+const AnimePhone = ({ x, y, color, rotate = 0 }) => /* @__PURE__ */ (0,jsx_runtime.jsxs)("g", { transform: `rotate(${rotate} ${x + 13} ${y + 18})`, children: [
+  /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x, y, width: "26", height: "36", rx: "6", fill: color, stroke: "#232323", strokeWidth: "4" }),
+  /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: x + 7, y: y + 5, width: "12", height: "4", rx: "2", fill: "#ffffff", opacity: "0.58" })
+] });
+const ChibiLimb = ({ x, y, width, height, color, rotate = 0, radius = 12 }) => /* @__PURE__ */ (0,jsx_runtime.jsx)("g", { transform: `rotate(${rotate} ${x + width / 2} ${y + height / 2})`, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x, y, width, height, rx: radius, fill: color, stroke: "#232323", strokeWidth: "4" }) });
+const ChibiShoe = ({ x, y, rotate = 0 }) => /* @__PURE__ */ (0,jsx_runtime.jsx)("g", { transform: `rotate(${rotate} ${x + 13} ${y + 8})`, children: /* @__PURE__ */ (0,jsx_runtime.jsx)("ellipse", { cx: x + 13, cy: y + 8, rx: "17", ry: "9", fill: "#2f3136", stroke: "#232323", strokeWidth: "3" }) });
+const AnimeFigure = ({ pose, active, palette }) => {
+  const phoneColor = active ? palette.prop : "#ffffff";
+  if (pose === "bed_phone") {
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M15 137 C43 126 91 126 130 139", fill: "none", stroke: "#c7d2fe", strokeWidth: "10" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "14", y: "125", width: "38", height: "22", rx: "9", fill: "#eef2ff", stroke: "#c7d2fe", strokeWidth: "3" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("g", { transform: "translate(10 22) rotate(-28 72 96)", children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("ellipse", { cx: "70", cy: "100", rx: "40", ry: "24", fill: palette.outfit, stroke: "#232323", strokeWidth: "4" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "31", y: "95", width: "36", height: "18", color: palette.outfit, rotate: -20 }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "75", y: "103", width: "42", height: "20", color: palette.shade, rotate: -42 }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiShoe, { x: "104", y: "87", rotate: -40 }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiShoe, { x: "18", y: "104", rotate: 12 })
+      ] }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiHead, { cx: 43, cy: 89, hair: poseHead.bed_phone.hair }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimePhone, { x: 84, y: 28, color: phoneColor })
+    ] });
+  }
+  if (pose === "curled_scroll") {
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("ellipse", { cx: "75", cy: "114", rx: "42", ry: "38", fill: palette.outfit, stroke: "#232323", strokeWidth: "4" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "39", y: "111", width: "44", height: "20", color: palette.shade, rotate: -45 }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "70", y: "126", width: "45", height: "20", color: palette.shade, rotate: 25 }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "82", y: "91", width: "34", height: "17", color: palette.outfit, rotate: 32 }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiShoe, { x: "33", y: "132", rotate: -18 }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiShoe, { x: "89", y: "144", rotate: 12 }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiHead, { cx: 74, cy: 48, hair: poseHead.curled_scroll.hair }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimePhone, { x: 96, y: 84, color: phoneColor })
+    ] });
+  }
+  if (pose === "one_hand_slouch") {
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("g", { transform: "rotate(-13 75 95)", children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("ellipse", { cx: "75", cy: "98", rx: "33", ry: "47", fill: palette.outfit, stroke: "#232323", strokeWidth: "4" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "96", y: "88", width: "35", height: "17", color: palette.outfit, rotate: 18 }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "44", y: "89", width: "20", height: "40", color: palette.outfit, rotate: 16 }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "55", y: "132", width: "45", height: "20", color: palette.shade, rotate: -34 }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "82", y: "126", width: "48", height: "20", color: palette.shade, rotate: 26 })
+      ] }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiHead, { cx: 70, cy: 41, hair: poseHead.one_hand_slouch.hair }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiShoe, { x: "42", y: "141", rotate: -28 }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiShoe, { x: "115", y: "143", rotate: 22 }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimePhone, { x: 106, y: 92, color: phoneColor })
+    ] });
+  }
+  if (pose === "desk_scroll") {
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "20", y: "104", width: "108", height: "20", rx: "6", fill: "#fff7ed", stroke: "#fdba74", strokeWidth: "4" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M30 123 L22 168 M115 123 L126 168", stroke: "#fdba74", strokeWidth: "5", strokeLinecap: "round" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsxs)("g", { transform: "rotate(6 74 105)", children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)("ellipse", { cx: "78", cy: "109", rx: "40", ry: "23", fill: palette.outfit, stroke: "#232323", strokeWidth: "4" }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "36", y: "107", width: "48", height: "18", color: palette.outfit, rotate: -5 }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "91", y: "105", width: "34", height: "18", color: palette.outfit, rotate: 4 }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "51", y: "126", width: "25", height: "32", color: palette.shade, rotate: 25 }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "95", y: "125", width: "25", height: "35", color: palette.shade, rotate: -12 })
+      ] }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiHead, { cx: 47, cy: 86, hair: poseHead.desk_scroll.hair, scale: 0.92 }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimePhone, { x: 98, y: 83, color: phoneColor })
+    ] });
+  }
+  if (pose === "walking_phone") {
+    return /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("path", { d: "M18 72 C27 67 34 67 42 72 M14 94 C25 90 33 90 43 95", stroke: "#bae6fd", strokeWidth: "4", strokeLinecap: "round" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)("ellipse", { cx: "74", cy: "102", rx: "31", ry: "47", fill: palette.outfit, stroke: "#232323", strokeWidth: "4" }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "99", y: "88", width: "34", height: "17", color: palette.outfit, rotate: 44 }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "42", y: "89", width: "20", height: "40", color: palette.outfit, rotate: -18 }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "48", y: "133", width: "49", height: "20", color: palette.shade, rotate: -47 }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "82", y: "133", width: "51", height: "20", color: palette.shade, rotate: 31 }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiHead, { cx: 72, cy: 39, hair: poseHead.walking_phone.hair }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiShoe, { x: "34", y: "153", rotate: -32 }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiShoe, { x: "122", y: "148", rotate: 24 }),
+      /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimePhone, { x: 102, y: 93, color: phoneColor })
+    ] });
+  }
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "path",
+      {
+        d: "M28 96 C44 78 102 78 119 101 C127 118 124 148 109 167 L39 167 C24 147 19 118 28 96 Z",
+        fill: "#fce7f3",
+        stroke: "#f9a8d4",
+        strokeWidth: "5"
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)("ellipse", { cx: "74", cy: "119", rx: "31", ry: "43", fill: palette.outfit, stroke: "#232323", strokeWidth: "4" }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "46", y: "126", width: "42", height: "19", color: palette.shade, rotate: 45 }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiLimb, { x: "75", y: "126", width: "43", height: "19", color: palette.shade, rotate: -45 }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(ChibiHead, { cx: 73, cy: 56, hair: poseHead.blanket_phone.hair }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimePhone, { x: 87, y: 96, color: phoneColor })
+  ] });
+};
+const MeetingFigure = ({ item, active, index }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const pulse = active ? (0,esm.spring)({ frame: frame % 45, fps: 30, config: { damping: 14, stiffness: 110 } }) : 0;
+  const lift = active ? -8 - pulse * 2 : 0;
+  const opacity = active ? 1 : 0.88;
+  const palette = FIGURE_PALETTES[index % FIGURE_PALETTES.length];
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    "div",
+    {
+      style: {
+        width: 188,
+        height: 250,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        transform: `translateY(${lift}px)`,
+        opacity
+      },
+      children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "relative", width: 146, height: 184 }, children: [
+          active ? /* @__PURE__ */ (0,jsx_runtime.jsx)(
+            "div",
+            {
+              style: {
+                position: "absolute",
+                left: 4,
+                top: 2,
+                width: 136,
+                height: 152,
+                border: `5px solid ${STYLE.blue}`,
+                borderRadius: 18,
+                background: active ? STYLE.lightBlue : "transparent",
+                transform: `scale(${1 + pulse * 0.04})`
+              }
+            }
+          ) : null,
+          item.imageSrc ? /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
+            /* @__PURE__ */ (0,jsx_runtime.jsx)(
+              esm.Img,
+              {
+                src: (0,esm.staticFile)(item.imageSrc),
+                style: {
+                  position: "absolute",
+                  left: -27,
+                  top: -18,
+                  width: 200,
+                  height: 200,
+                  objectFit: "contain",
+                  filter: active ? "drop-shadow(0 12px 18px rgba(34, 174, 234, 0.24))" : "drop-shadow(0 8px 12px rgba(0, 0, 0, 0.08))",
+                  transform: `scale(${active ? 1.04 + pulse * 0.02 : 1})`
+                }
+              }
+            ),
+            /* @__PURE__ */ (0,jsx_runtime.jsx)(
+              "div",
+              {
+                style: {
+                  position: "absolute",
+                  left: 54,
+                  bottom: 0,
+                  width: 26,
+                  height: 26,
+                  borderRadius: 13,
+                  background: active ? STYLE.blue : STYLE.ink,
+                  color: "#fff",
+                  fontFamily: THEME.fonts.ui,
+                  fontSize: 16,
+                  fontWeight: 800,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                },
+                children: item.letter
+              }
+            ),
+            /* @__PURE__ */ (0,jsx_runtime.jsx)(
+              "div",
+              {
+                style: {
+                  position: "absolute",
+                  right: 4,
+                  top: 12,
+                  color: "#b9b9b9",
+                  fontFamily: THEME.fonts.ui,
+                  fontSize: 14
+                },
+                children: String(index + 1).padStart(2, "0")
+              }
+            )
+          ] }) : /* @__PURE__ */ (0,jsx_runtime.jsxs)("svg", { viewBox: "0 0 146 184", width: "146", height: "184", style: { position: "relative" }, children: [
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("rect", { x: "34", y: "18", width: "78", height: "121", rx: "16", fill: "#fff", stroke: "#d9d9d9", strokeWidth: "2" }),
+            /* @__PURE__ */ (0,jsx_runtime.jsx)(AnimeFigure, { pose: item.pose, active, palette }),
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("circle", { cx: "66", cy: "174", r: "13", fill: active ? STYLE.blue : STYLE.ink }),
+            /* @__PURE__ */ (0,jsx_runtime.jsx)(
+              "text",
+              {
+                x: "66",
+                y: "179",
+                fill: "#fff",
+                textAnchor: "middle",
+                fontSize: "16",
+                fontFamily: THEME.fonts.ui,
+                fontWeight: "800",
+                children: item.letter
+              }
+            ),
+            /* @__PURE__ */ (0,jsx_runtime.jsx)("text", { x: "124", y: "22", fill: "#b9b9b9", textAnchor: "middle", fontSize: "14", fontFamily: THEME.fonts.ui, children: String(index + 1).padStart(2, "0") })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              marginTop: 4,
+              color: STYLE.ink,
+              fontFamily: THEME.fonts.bodyZh,
+              fontSize: 24,
+              fontWeight: 800,
+              lineHeight: 1.05,
+              textAlign: "center",
+              whiteSpace: "nowrap"
+            },
+            children: item.label
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              marginTop: 6,
+              color: active ? STYLE.blue : STYLE.muted,
+              fontFamily: THEME.fonts.bodyZh,
+              fontSize: 18,
+              fontWeight: 700,
+              textAlign: "center"
+            },
+            children: item.shortTrait
+          }
+        )
+      ]
+    }
+  );
+};
+const TopLabels = ({ header }) => /* @__PURE__ */ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, { children: [
+  /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    "div",
+    {
+      style: {
+        position: "absolute",
+        left: 48,
+        top: 34,
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        color: STYLE.ink,
+        fontFamily: THEME.fonts.bodyZh,
+        fontSize: 24,
+        fontWeight: 900
+      },
+      children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "span",
+          {
+            style: {
+              width: 15,
+              height: 15,
+              border: `4px solid ${STYLE.blue}`,
+              display: "inline-block",
+              boxSizing: "border-box"
+            }
+          }
+        ),
+        header.channelLabel
+      ]
+    }
+  ),
+  /* @__PURE__ */ (0,jsx_runtime.jsx)(
+    "div",
+    {
+      style: {
+        position: "absolute",
+        right: 58,
+        top: 38,
+        color: "#4a4f56",
+        fontFamily: THEME.fonts.bodyZh,
+        fontSize: 18,
+        fontWeight: 700
+      },
+      children: header.eyebrow
+    }
+  ),
+  /* @__PURE__ */ (0,jsx_runtime.jsx)(
+    "div",
+    {
+      style: {
+        position: "absolute",
+        right: 80,
+        top: 642,
+        color: STYLE.ink,
+        fontFamily: THEME.fonts.bodyZh,
+        fontSize: 21,
+        fontWeight: 800
+      },
+      children: header.sourceNote
+    }
+  )
+] });
+const BottomNarrationBand = ({ caption, variant }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps } = (0,esm.useVideoConfig)();
+  const intro = (0,esm.spring)({ frame, fps, config: { damping: 18, stiffness: 130 } });
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+    "div",
+    {
+      style: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        bottom: 118,
+        paddingTop: 28,
+        borderTop: `4px solid ${STYLE.divider}`,
+        display: "flex",
+        justifyContent: "center",
+        transform: `translateY(${(1 - intro) * 14}px)`,
+        opacity: intro
+      },
+      children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        "div",
+        {
+          style: {
+            maxWidth: 1420,
+            padding: "0 36px",
+            color: variant === "cta" ? STYLE.blue : STYLE.ink,
+            fontFamily: THEME.fonts.bodyZh,
+            fontSize: variant === "cta" ? 58 : 50,
+            lineHeight: 1.16,
+            fontWeight: 950,
+            textAlign: "center",
+            letterSpacing: 0
+          },
+          children: caption
+        }
+      )
+    }
+  );
+};
+const TaxonomyBoard = ({ header, items, segment, cta }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps } = (0,esm.useVideoConfig)();
+  const intro = (0,esm.spring)({ frame, fps, config: { damping: 22, stiffness: 105 } });
+  const scale = (0,esm.interpolate)(frame, [0, 1260], [1, 1.018], { extrapolateRight: "clamp" });
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { background: STYLE.bg, overflow: "hidden" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          inset: 0,
+          transform: `scale(${scale})`,
+          transformOrigin: "center 42%"
+        },
+        children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)(TopLabels, { header }),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)(
+            "div",
+            {
+              style: {
+                position: "absolute",
+                top: 128,
+                left: 0,
+                right: 0,
+                textAlign: "center",
+                color: STYLE.blue,
+                fontFamily: THEME.fonts.bodyZh,
+                fontSize: 70,
+                lineHeight: 1,
+                fontWeight: 950,
+                letterSpacing: 0,
+                opacity: intro,
+                transform: `translateY(${(1 - intro) * 18}px)`
+              },
+              children: header.question
+            }
+          ),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)(
+            "div",
+            {
+              style: {
+                position: "absolute",
+                top: 258,
+                left: 0,
+                right: 0,
+                display: "flex",
+                justifyContent: "center",
+                gap: 20
+              },
+              children: items.map((item, index) => /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                MeetingFigure,
+                {
+                  item,
+                  index,
+                  active: segment.activeItemIds.includes(item.id)
+                },
+                item.id
+              ))
+            }
+          )
+        ]
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(BottomNarrationBand, { caption: segment.caption, variant: cta ? "cta" : "normal" }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: 54,
+          bottom: 42,
+          color: "#8b8f94",
+          fontFamily: THEME.fonts.ui,
+          fontSize: 18,
+          fontWeight: 700
+        },
+        children: "timing: estimated_after_audio_duration_fit"
+      }
+    )
+  ] });
+};
+const TaxonomyOpenerScene = (props) => /* @__PURE__ */ (0,jsx_runtime.jsx)(TaxonomyBoard, { ...props });
+const PostureStripScene = (props) => /* @__PURE__ */ (0,jsx_runtime.jsx)(TaxonomyBoard, { ...props });
+const CaptionRevealScene = (props) => /* @__PURE__ */ (0,jsx_runtime.jsx)(TaxonomyBoard, { ...props });
+const ResultPromptScene = (props) => /* @__PURE__ */ (0,jsx_runtime.jsx)(TaxonomyBoard, { ...props, cta: true });
+
+;// ./src/compositions/SleepPostureTaxonomyComposition.tsx
+
+
+
+
+
+
+
+
+const sceneComponents = {
+  TaxonomyOpenerScene: TaxonomyOpenerScene,
+  PostureStripScene: PostureStripScene,
+  CaptionRevealScene: CaptionRevealScene,
+  ResultPromptScene: ResultPromptScene
+};
+const SleepPostureTaxonomyComposition = () => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#ffffff" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AudioTrackLayer, { config: sleepPostureTaxonomyAudio }),
+    sleepPostureTaxonomyData.timeline.map((segment) => {
+      const Scene = sceneComponents[segment.sceneType];
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+        esm.Sequence,
+        {
+          from: segment.startFrame,
+          durationInFrames: segment.endFrame - segment.startFrame + 1,
+          children: /* @__PURE__ */ (0,jsx_runtime.jsx)(Scene, { header: sleepPostureTaxonomyData.header, items: sleepPostureTaxonomyData.items, segment })
+        },
+        segment.id
+      );
+    })
+  ] });
+};
+
+;// ./src/data/socialPostPreviewData.ts
+
+const SOCIAL_POST_TEMPLATE_ID = "social_post_overlay_card";
+const SOCIAL_POST_PREVIEW_FPS = 30;
+const socialPostPreviewData = {
+  meta: {
+    templateId: SOCIAL_POST_TEMPLATE_ID,
+    topic: "\u57CE\u5E02\u591C\u666F\u5E16\u6587\u6D6E\u5C42\u9884\u89C8",
+    orientation: "vertical",
+    durationSec: 10,
+    styleVariant: "warm-paper-night-street"
+  },
+  background: {
+    imageSrc: "images/social-post-preview/night-street-background.png",
+    location: "\u4E0A\u6D77",
+    sideBlur: true
+  },
+  card: {
+    anchor: "upper-center",
+    width: 680,
+    top: 168,
+    left: 166,
+    avatarText: "YD"
+  },
+  post: {
+    author: "\u57CE\u5E02\u591C\u8BFB\u5C40",
+    badge: "\u521B\u4F5C\u4EBA",
+    metaLine: "04-28 21:17 \u6765\u81EA iPhone 15 Pro",
+    paragraphs: [
+      "\u771F\u6B63\u80FD\u8BA9\u4EBA\u5E73\u9759\u4E0B\u6765\u7684\uFF0C\u4E0D\u662F\u7B54\u6848\uFF0C\u800C\u662F\u4F60\u7EC8\u4E8E\u5141\u8BB8\u81EA\u5DF1\u5148\u505C\u4E00\u505C\u3002",
+      "\u5141\u8BB8\u4E8B\u60C5\u6682\u65F6\u6CA1\u6709\u7ED3\u679C\uFF0C\u5141\u8BB8\u5173\u7CFB\u91CC\u6709\u6C89\u9ED8\uFF0C\u5141\u8BB8\u4F60\u4ECA\u665A\u53EA\u505A\u4E00\u4EF6\u5C0F\u4E8B\u3002",
+      "\u5F88\u591A\u65F6\u5019\uFF0C\u751F\u6D3B\u4E0D\u662F\u9A6C\u4E0A\u53D8\u597D\uFF0C\u800C\u662F\u4F60\u4E0D\u518D\u6025\u7740\u8BC1\u660E\u81EA\u5DF1\u8FC7\u5F97\u597D\u3002"
+    ]
+  },
+  motion: {
+    backgroundScaleFrom: 1.04,
+    backgroundScaleTo: 1.1,
+    backgroundShiftY: -60,
+    cardTranslateYIn: 90,
+    cardScaleFrom: 0.94,
+    glowPeakOpacity: 0.8
+  }
+};
+const SOCIAL_POST_PREVIEW_DURATION_IN_FRAMES = socialPostPreviewData.meta.durationSec * SOCIAL_POST_PREVIEW_FPS;
+
+;// ./src/compositions/SocialPostPreviewComposition.tsx
+
+
+
+
+const cardShadow = "0 28px 80px rgba(0, 0, 0, 0.26)";
+const SocialPostPreviewComposition = () => {
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps } = (0,esm.useVideoConfig)();
+  const intro = (0,esm.spring)({
+    fps,
+    frame,
+    config: { damping: 18, stiffness: 120 }
+  });
+  const cardOpacity = (0,esm.interpolate)(
+    frame,
+    [0, 8, SOCIAL_POST_PREVIEW_DURATION_IN_FRAMES - 14, SOCIAL_POST_PREVIEW_DURATION_IN_FRAMES],
+    [0, 1, 1, 0],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp"
+    }
+  );
+  const bgScale = (0,esm.interpolate)(
+    frame,
+    [0, SOCIAL_POST_PREVIEW_DURATION_IN_FRAMES],
+    [socialPostPreviewData.motion.backgroundScaleFrom, socialPostPreviewData.motion.backgroundScaleTo],
+    {
+      extrapolateRight: "clamp"
+    }
+  );
+  const bgY = (0,esm.interpolate)(
+    frame,
+    [0, SOCIAL_POST_PREVIEW_DURATION_IN_FRAMES],
+    [0, socialPostPreviewData.motion.backgroundShiftY],
+    {
+      extrapolateRight: "clamp"
+    }
+  );
+  const cardY = (0,esm.interpolate)(intro, [0, 1], [socialPostPreviewData.motion.cardTranslateYIn, 0]);
+  const cardScale = (0,esm.interpolate)(intro, [0, 1], [socialPostPreviewData.motion.cardScaleFrom, 1]);
+  const glowOpacity = (0,esm.interpolate)(frame, [0, 16, 60], [0, socialPostPreviewData.motion.glowPeakOpacity, 0.28], {
+    extrapolateRight: "clamp"
+  });
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    esm.AbsoluteFill,
+    {
+      style: {
+        backgroundColor: "#17110a",
+        overflow: "hidden",
+        fontFamily: "NotoSansSC, sans-serif"
+      },
+      children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          esm.AbsoluteFill,
+          {
+            style: {
+              transform: `scale(${bgScale}) translateY(${bgY}px)`
+            },
+            children: /* @__PURE__ */ (0,jsx_runtime.jsx)(
+              esm.Img,
+              {
+                src: (0,esm.staticFile)(socialPostPreviewData.background.imageSrc),
+                style: { width: "100%", height: "100%", objectFit: "cover" }
+              }
+            )
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          esm.AbsoluteFill,
+          {
+            style: {
+              background: "linear-gradient(180deg, rgba(11,11,12,0.08) 0%, rgba(11,11,12,0.18) 38%, rgba(11,11,12,0.28) 100%)"
+            }
+          }
+        ),
+        socialPostPreviewData.background.sideBlur ? /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              justifyContent: "space-between"
+            },
+            children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                "div",
+                {
+                  style: {
+                    width: 120,
+                    height: "100%",
+                    background: "rgba(32, 24, 18, 0.46)",
+                    backdropFilter: "blur(28px)"
+                  }
+                }
+              ),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                "div",
+                {
+                  style: {
+                    width: 120,
+                    height: "100%",
+                    background: "rgba(32, 24, 18, 0.46)",
+                    backdropFilter: "blur(28px)"
+                  }
+                }
+              )
+            ]
+          }
+        ) : null,
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              left: socialPostPreviewData.card.left,
+              top: socialPostPreviewData.card.top,
+              width: socialPostPreviewData.card.width,
+              padding: "34px 38px 38px",
+              borderRadius: 10,
+              backgroundColor: "rgba(249, 246, 241, 0.90)",
+              boxShadow: cardShadow,
+              opacity: cardOpacity,
+              transform: `translateY(${cardY}px) scale(${cardScale})`
+            },
+            children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                "div",
+                {
+                  style: {
+                    position: "absolute",
+                    inset: -24,
+                    background: "radial-gradient(circle, rgba(255, 238, 185, 0.42) 0%, rgba(255, 238, 185, 0) 70%)",
+                    opacity: glowOpacity
+                  }
+                }
+              ),
+              /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { position: "relative", display: "flex", gap: 18 }, children: [
+                /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                  "div",
+                  {
+                    style: {
+                      width: 64,
+                      height: 64,
+                      borderRadius: 32,
+                      background: "linear-gradient(135deg, #f1d2a4 0%, #ad7648 52%, #59402a 100%)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "white",
+                      fontWeight: 700,
+                      fontSize: 20,
+                      fontFamily: "SourceSans3, sans-serif"
+                    },
+                    children: socialPostPreviewData.card.avatarText
+                  }
+                ),
+                /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "column", gap: 4 }, children: [
+                  /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
+                    /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { fontSize: 28, fontWeight: 700, color: "#46382d" }, children: socialPostPreviewData.post.author }),
+                    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                      "div",
+                      {
+                        style: {
+                          borderRadius: 999,
+                          backgroundColor: "rgba(216, 155, 53, 0.18)",
+                          color: "#8d6414",
+                          padding: "4px 10px",
+                          fontSize: 18,
+                          fontWeight: 700
+                        },
+                        children: socialPostPreviewData.post.badge
+                      }
+                    )
+                  ] }),
+                  /* @__PURE__ */ (0,jsx_runtime.jsxs)("div", { style: { fontSize: 19, color: "#7e7265" }, children: [
+                    socialPostPreviewData.post.metaLine,
+                    /* @__PURE__ */ (0,jsx_runtime.jsxs)("span", { style: { marginLeft: 10 }, children: [
+                      "\u53D1\u5E03\u4E8E ",
+                      socialPostPreviewData.background.location
+                    ] })
+                  ] })
+                ] })
+              ] }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                "div",
+                {
+                  style: {
+                    position: "relative",
+                    marginTop: 26,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 18,
+                    fontSize: 34,
+                    lineHeight: 1.6,
+                    color: "#2c2622",
+                    letterSpacing: 0
+                  },
+                  children: socialPostPreviewData.post.paragraphs.map((paragraph) => /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { children: paragraph }, paragraph))
+                }
+              )
+            ]
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: 220,
+              background: "linear-gradient(180deg, rgba(10,10,12,0) 0%, rgba(10,10,12,0.28) 100%)"
+            }
+          }
+        )
+      ]
+    }
+  );
+};
+
+;// ./src/data/combinatorialParadoxCinematicData.ts
+
+const COMBINATORIAL_PARADOX_FPS = 30;
+const COMBINATORIAL_PARADOX_DURATION = 1380;
+const combinatorialParadoxScenes = [
+  {
+    id: "scene_01",
+    type: "ParadoxColdOpenScene",
+    startFrame: 0,
+    durationInFrames: 300,
+    headlineValue: "50.7%",
+    badgeCount: 23,
+    accentPhrase: "23 \u4EBA"
+  },
+  {
+    id: "scene_02",
+    type: "RuleTheaterScene",
+    startFrame: 300,
+    durationInFrames: 215,
+    nodeCount: 23,
+    pairCounterTarget: 253
+  },
+  {
+    id: "scene_03",
+    type: "MechanismGridScene",
+    startFrame: 515,
+    durationInFrames: 186,
+    focusIndex: 22,
+    connectionTarget: 22
+  },
+  {
+    id: "scene_04",
+    type: "ProbabilityBoardScene",
+    startFrame: 701,
+    durationInFrames: 353,
+    probabilityValue: 50.7
+  },
+  {
+    id: "scene_05",
+    type: "ReflectiveCloseScene",
+    startFrame: 1054,
+    durationInFrames: 326,
+    leftLabel: "\u5355\u70B9\u76F4\u89C9",
+    rightLabel: "\u6210\u7EC4\u5173\u7CFB",
+    closingRule: "\u522B\u7528\u5355\u70B9\u76F4\u89C9\u770B\u7EC4\u5408\u4E16\u754C"
+  }
+];
+const combinatorialParadoxSubtitleCues = [
+  { startFrame: 0, endFrame: 149, text: "\u53EA\u8981\u4E8C\u5341\u4E09\u4E2A\u4EBA\uFF0C\n\u540C\u4E00\u5929\u751F\u65E5\u649E\u4E0A\u7684\u6982\u7387\u5C31\u5DF2\u7ECF\u8D85\u8FC7\u4E00\u534A\u3002", emphasisWords: ["\u4E8C\u5341\u4E09\u4E2A\u4EBA", "\u8D85\u8FC7\u4E00\u534A"] },
+  { startFrame: 151, endFrame: 298, text: "\u8FD9\u4E0D\u662F\u76F4\u89C9\u9519\u4E00\u70B9\uFF0C\n\u800C\u662F\u4F60\u7684\u8BA1\u6570\u65B9\u5F0F\u4ECE\u4E00\u5F00\u59CB\u5C31\u9519\u4E86\u3002", emphasisWords: ["\u8BA1\u6570\u65B9\u5F0F"] },
+  { startFrame: 300, endFrame: 511, text: "\u5927\u591A\u6570\u4EBA\u4F1A\u76EF\u7740\u4E09\u767E\u516D\u5341\u4E94\u5929\uFF0C\n\u5374\u5FFD\u7565\u4E86\u4E8C\u5341\u4E09\u4E2A\u4EBA\u4E4B\u95F4\u4F1A\u4EA7\u751F\u4E8C\u767E\u4E94\u5341\u4E09\u7EC4\u914D\u5BF9\u3002", emphasisWords: ["\u4E09\u767E\u516D\u5341\u4E94\u5929", "\u4E8C\u767E\u4E94\u5341\u4E09\u7EC4\u914D\u5BF9"] },
+  { startFrame: 515, endFrame: 698, text: "\u6BCF\u591A\u4E00\u4E2A\u4EBA\uFF0C\n\u4E0D\u662F\u591A\u4E00\u4E2A\u53EF\u80FD\uFF0C\u800C\u662F\u540C\u65F6\u548C\u524D\u9762\u6240\u6709\u4EBA\u90FD\u65B0\u589E\u4E00\u6B21\u6BD4\u8F83\u3002", emphasisWords: ["\u6240\u6709\u4EBA", "\u65B0\u589E\u4E00\u6B21\u6BD4\u8F83"] },
+  { startFrame: 701, endFrame: 862, text: "\u6240\u4EE5\u6982\u7387\u4E0A\u5347\u5F97\u4E0D\u662F\u7EBF\u6027\uFF0C\n\u800C\u662F\u7EC4\u5408\u6570\u5728\u628A\u7A7A\u95F4\u5FEB\u901F\u538B\u6241\u3002", emphasisWords: ["\u4E0D\u662F\u7EBF\u6027", "\u7EC4\u5408\u6570"] },
+  { startFrame: 865, endFrame: 1049, text: "\u5F53\u4EBA\u6570\u6765\u5230\u4E8C\u5341\u4E09\uFF0C\n\u81F3\u5C11\u4E00\u5BF9\u540C\u751F\u65E5\u7684\u6982\u7387\u5927\u7EA6\u662F\u767E\u5206\u4E4B\u4E94\u5341\u70B9\u4E03\u3002", emphasisWords: ["\u4E8C\u5341\u4E09", "\u767E\u5206\u4E4B\u4E94\u5341\u70B9\u4E03"] },
+  { startFrame: 1054, endFrame: 1222, text: "\u8FD9\u7C7B\u6096\u8BBA\u771F\u6B63\u63D0\u9192\u4F60\u7684\uFF0C\n\u662F\u522B\u518D\u7528\u5355\u70B9\u76F4\u89C9\u53BB\u770B\u6210\u7EC4\u5173\u7CFB\u3002", emphasisWords: ["\u5355\u70B9\u76F4\u89C9", "\u6210\u7EC4\u5173\u7CFB"] },
+  { startFrame: 1226, endFrame: 1354, text: "\u5F88\u591A\u770B\u4E0A\u53BB\u4E0D\u53EF\u80FD\u7684\u4E8B\uFF0C\n\u6362\u4E00\u4E2A\u8BA1\u6570\u6846\u67B6\uFF0C\u7ACB\u523B\u5C31\u53D8\u5F97\u5408\u7406\u3002", emphasisWords: ["\u8BA1\u6570\u6846\u67B6"] }
+];
+const combinatorialParadoxAudioConfig = {
+  voiceover: {
+    src: "/audio/combinatorial-paradox/birthday-paradox-elevenlabs.mp3",
+    startFrame: 0,
+    volume: 1,
+    enabled: true
+  },
+  bgm: null,
+  sfx: []
+};
+
+;// ./src/scenes/paradoxLab/ProbabilityParadoxLabScenes.tsx
+
+
+
+
+const ProbabilityParadoxLabScenes_palette = {
+  ink: "#17130e",
+  paper: "#efe2c0",
+  amber: "#f0a04a",
+  rust: "#9d4f29",
+  teal: "#6ba5a2",
+  shadow: "rgba(0,0,0,0.34)"
+};
+const overlayLabel = {
+  fontFamily: THEME.fonts.bodyZh,
+  fontWeight: 800,
+  letterSpacing: 0
+};
+const SceneImagePlate = ({ src, kicker, title, caption, pan = "push" }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps } = (0,esm.useVideoConfig)();
+  const intro = (0,esm.spring)({ fps, frame, config: { damping: 18, stiffness: 110 } });
+  const scale = (0,esm.interpolate)(frame, [0, 180], [1.02, 1.08], { extrapolateRight: "clamp" });
+  const shiftX = pan === "left" ? (0,esm.interpolate)(frame, [0, 180], [20, -28], { extrapolateRight: "clamp" }) : pan === "right" ? (0,esm.interpolate)(frame, [0, 180], [-20, 28], { extrapolateRight: "clamp" }) : 0;
+  const shiftY = (0,esm.interpolate)(frame, [0, 180], [8, -10], { extrapolateRight: "clamp" });
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#12100d", overflow: "hidden" }, children: [
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Img,
+      {
+        src: (0,esm.staticFile)(src),
+        style: {
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          transform: `translate(${shiftX}px, ${shiftY}px) scale(${scale})`,
+          filter: "saturate(1.02) contrast(1.04)"
+        }
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(180deg, rgba(0,0,0,0.32), transparent 22%, transparent 74%, rgba(0,0,0,0.52)), radial-gradient(circle at 50% 16%, rgba(240,160,74,0.10), transparent 24%)"
+        }
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: 60,
+          top: 42,
+          display: "flex",
+          alignItems: "center",
+          gap: 14,
+          transform: `translateY(${(1 - intro) * 10}px)`,
+          opacity: intro
+        },
+        children: [
+          /* @__PURE__ */ (0,jsx_runtime.jsx)(
+            "div",
+            {
+              style: {
+                ...overlayLabel,
+                fontSize: 20,
+                color: "#fff1dc",
+                background: "rgba(18,15,11,0.84)",
+                padding: "8px 14px",
+                boxShadow: `0 12px 24px ${ProbabilityParadoxLabScenes_palette.shadow}`
+              },
+              children: kicker
+            }
+          ),
+          /* @__PURE__ */ (0,jsx_runtime.jsx)(
+            "div",
+            {
+              style: {
+                ...overlayLabel,
+                fontSize: 18,
+                color: "rgba(255,240,220,0.82)",
+                textShadow: "0 2px 8px rgba(0,0,0,0.4)"
+              },
+              children: title
+            }
+          )
+        ]
+      }
+    ),
+    caption ? /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          right: 60,
+          bottom: 144,
+          maxWidth: 520,
+          padding: "14px 18px",
+          background: "rgba(20,16,11,0.58)",
+          border: "1px solid rgba(240,160,74,0.22)",
+          boxShadow: `0 14px 24px ${ProbabilityParadoxLabScenes_palette.shadow}`,
+          fontFamily: THEME.fonts.bodyZh,
+          fontSize: 24,
+          lineHeight: 1.35,
+          fontWeight: 700,
+          color: "#fff2de",
+          opacity: 0.92
+        },
+        children: caption
+      }
+    ) : null
+  ] });
+};
+const PaperCloseScene = ({ leftLabel, rightLabel, closingRule }) => {
+  const frame = (0,esm.useCurrentFrame)();
+  const { fps } = (0,esm.useVideoConfig)();
+  const merge = (0,esm.spring)({ fps, frame, config: { damping: 18, stiffness: 110 } });
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+    esm.AbsoluteFill,
+    {
+      style: {
+        backgroundColor: ProbabilityParadoxLabScenes_palette.paper,
+        backgroundImage: [
+          "linear-gradient(180deg, rgba(255,255,255,0.38), rgba(0,0,0,0.04))",
+          "repeating-linear-gradient(0deg, rgba(120,94,63,0.032) 0 2px, transparent 2px 6px)",
+          "repeating-linear-gradient(90deg, rgba(120,94,63,0.024) 0 3px, transparent 3px 10px)",
+          "radial-gradient(circle at 18% 12%, rgba(255,248,232,0.78), transparent 22%)",
+          "radial-gradient(circle at 78% 24%, rgba(240,143,54,0.16), transparent 24%)"
+        ].join(", ")
+      },
+      children: [
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              inset: 24,
+              border: "2px solid rgba(61, 38, 21, 0.16)",
+              boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.26), inset 0 0 120px rgba(0,0,0,0.08)`
+            }
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              left: 72,
+              top: 48,
+              display: "flex",
+              gap: 16,
+              alignItems: "center"
+            },
+            children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsx)(
+                "div",
+                {
+                  style: {
+                    ...overlayLabel,
+                    fontSize: 20,
+                    color: "#fff1dc",
+                    background: "rgba(18,15,11,0.86)",
+                    padding: "8px 14px"
+                  },
+                  children: "\u65B9\u6CD5\u8BBA\u6536\u675F"
+                }
+              ),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { ...overlayLabel, fontSize: 18, color: "rgba(23,19,14,0.72)" }, children: "\u53CD\u76F4\u89C9\u9898\u7684\u771F\u6B63\u4EF7\u503C" })
+            ]
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              left: 124 - merge * 30,
+              top: 244,
+              width: 418,
+              height: 324,
+              background: "rgba(255,250,240,0.78)",
+              border: `2px solid rgba(35,25,18,0.16)`,
+              boxShadow: `0 18px 30px ${ProbabilityParadoxLabScenes_palette.shadow}`,
+              padding: 28
+            },
+            children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { ...overlayLabel, fontSize: 24, color: ProbabilityParadoxLabScenes_palette.rust }, children: leftLabel }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { ...overlayLabel, fontSize: 42, marginTop: 18, color: ProbabilityParadoxLabScenes_palette.ink }, children: "\u53EA\u76EF\u5355\u4E2A\u5BF9\u8C61" }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { ...overlayLabel, fontSize: 28, marginTop: 18, color: "rgba(23,19,14,0.68)" }, children: "\u4F1A\u4E25\u91CD\u4F4E\u4F30\u5173\u7CFB\u589E\u957F" })
+            ]
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsxs)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              right: 124 - merge * 30,
+              top: 244,
+              width: 418,
+              height: 324,
+              background: "rgba(255,250,240,0.78)",
+              border: `2px solid rgba(35,25,18,0.16)`,
+              boxShadow: `0 18px 30px ${ProbabilityParadoxLabScenes_palette.shadow}`,
+              padding: 28
+            },
+            children: [
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { ...overlayLabel, fontSize: 24, color: ProbabilityParadoxLabScenes_palette.teal }, children: rightLabel }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { ...overlayLabel, fontSize: 42, marginTop: 18, color: ProbabilityParadoxLabScenes_palette.ink }, children: "\u5148\u770B\u6210\u7EC4\u5173\u7CFB" }),
+              /* @__PURE__ */ (0,jsx_runtime.jsx)("div", { style: { ...overlayLabel, fontSize: 28, marginTop: 18, color: "rgba(23,19,14,0.68)" }, children: "\u5F88\u591A\u53CD\u76F4\u89C9\u90FD\u4F1A\u7ACB\u523B\u53D8\u6E05\u695A" })
+            ]
+          }
+        ),
+        /* @__PURE__ */ (0,jsx_runtime.jsx)(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              left: "50%",
+              top: 648,
+              transform: `translateX(-50%) scale(${0.94 + merge * 0.06})`,
+              width: 980,
+              padding: "22px 30px",
+              background: "rgba(25,19,14,0.9)",
+              color: "#fff7e8",
+              textAlign: "center",
+              fontFamily: THEME.fonts.bodyZh,
+              fontSize: 42,
+              fontWeight: 800,
+              lineHeight: 1.24,
+              boxShadow: `0 18px 28px ${ProbabilityParadoxLabScenes_palette.shadow}`
+            },
+            children: closingRule
+          }
+        )
+      ]
+    }
+  );
+};
+const ParadoxColdOpenScene = () => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+    SceneImagePlate,
+    {
+      src: "/images/combinatorial-paradox/panel-1-cold-open.png",
+      kicker: "\u53CD\u76F4\u89C9\u95EE\u9898",
+      title: "\u51B7\u5F00\u573A",
+      caption: "\u5148\u629B\u95EE\u9898\uFF0C\u4E0D\u5148\u89E3\u91CA\u3002",
+      pan: "push"
+    }
+  );
+};
+const RuleTheaterScene = () => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+    SceneImagePlate,
+    {
+      src: "/images/combinatorial-paradox/panel-2-wrong-path.png",
+      kicker: "\u9519\u8BEF\u76F4\u89C9",
+      title: "\u5148\u8BA9\u89C2\u4F17\u7AD9\u9519\u4E00\u6B21",
+      caption: "\u5148\u770B\u8D77\u6765\u5408\u7406\uFF0C\u518D\u663E\u51FA\u5B83\u4E3A\u4EC0\u4E48\u9519\u3002",
+      pan: "right"
+    }
+  );
+};
+const MechanismGridScene = () => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+    SceneImagePlate,
+    {
+      src: "/images/combinatorial-paradox/panel-3-mechanism.png",
+      kicker: "\u673A\u5236\u63ED\u793A",
+      title: "\u771F\u6B63\u53EF\u590D\u7528\u7684 scene",
+      caption: "\u65B0\u589E\u4E00\u4E2A\u5BF9\u8C61\uFF0C\u4F1A\u628A\u6BD4\u8F83\u5173\u7CFB\u6574\u6392\u5E26\u51FA\u6765\u3002",
+      pan: "left"
+    }
+  );
+};
+const ProbabilityBoardScene = () => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(
+    SceneImagePlate,
+    {
+      src: "/images/combinatorial-paradox/panel-4-probability.png",
+      kicker: "\u7ED3\u8BBA\u843D\u5730",
+      title: "\u4E0D\u662F\u731C\u5BF9\u4E86\uFF0C\u662F\u7B97\u51FA\u6765\u4E86",
+      caption: "\u6570\u5B57\u5FC5\u987B\u50CF\u63A8\u5BFC\u540E\u7684\u7ED3\u679C\uFF0C\u800C\u4E0D\u662F\u6D77\u62A5\u53E3\u53F7\u3002",
+      pan: "push"
+    }
+  );
+};
+const ReflectiveCloseScene = ({
+  scene
+}) => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsx)(PaperCloseScene, { leftLabel: scene.leftLabel, rightLabel: scene.rightLabel, closingRule: scene.closingRule });
+};
+
+;// ./src/compositions/CombinatorialParadoxCinematicComposition.tsx
+
+
+
+
+
+
+
+const renderScene = (scene) => {
+  switch (scene.type) {
+    case "ParadoxColdOpenScene":
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(ParadoxColdOpenScene, { scene });
+    case "RuleTheaterScene":
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(RuleTheaterScene, { scene });
+    case "MechanismGridScene":
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(MechanismGridScene, { scene });
+    case "ProbabilityBoardScene":
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(ProbabilityBoardScene, { scene });
+    case "ReflectiveCloseScene":
+      return /* @__PURE__ */ (0,jsx_runtime.jsx)(ReflectiveCloseScene, { scene });
+    default:
+      return null;
+  }
+};
+
+const CombinatorialParadoxCinematicComposition = () => {
+  return /* @__PURE__ */ (0,jsx_runtime.jsxs)(esm.AbsoluteFill, { style: { backgroundColor: "#efe4c8" }, children: [
+    combinatorialParadoxScenes.map((scene) => /* @__PURE__ */ (0,jsx_runtime.jsx)(esm.Sequence, { from: scene.startFrame, durationInFrames: scene.durationInFrames, children: renderScene(scene) }, scene.id)),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(AudioTrackLayer, { config: combinatorialParadoxAudioConfig }),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(SubtitleTrack, { cues: combinatorialParadoxSubtitleCues })
+  ] });
+};
+
 ;// ./src/theme/videoProfiles.ts
 
 const VIDEO_PROFILES = {
@@ -8574,6 +10831,14 @@ const VIDEO_PROFILES = {
 };
 
 ;// ./src/Root.tsx
+
+
+
+
+
+
+
+
 
 
 
@@ -8780,6 +11045,61 @@ const RemotionRoot = () => {
         fps: 30,
         width: 720,
         height: 960
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Composition,
+      {
+        id: "corporate-retreat-dossier-preview",
+        component: CorporateRetreatDossierComposition,
+        durationInFrames: CORPORATE_RETREAT_DOSSIER_DURATION,
+        fps: VIDEO_PROFILES.youtubeHorizontal.fps,
+        width: VIDEO_PROFILES.youtubeHorizontal.width,
+        height: VIDEO_PROFILES.youtubeHorizontal.height
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Composition,
+      {
+        id: "cognitive-documentary-essay-preview",
+        component: CognitiveDocumentaryEssayComposition,
+        durationInFrames: COGNITIVE_DOC_DURATION_IN_FRAMES,
+        fps: COGNITIVE_DOC_FPS,
+        width: VIDEO_PROFILES.youtubeHorizontal.width,
+        height: VIDEO_PROFILES.youtubeHorizontal.height
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Composition,
+      {
+        id: "sleep-posture-taxonomy-validation-preview",
+        component: SleepPostureTaxonomyComposition,
+        durationInFrames: SLEEP_POSTURE_TAXONOMY_DURATION_IN_FRAMES,
+        fps: VIDEO_PROFILES.youtubeHorizontal.fps,
+        width: VIDEO_PROFILES.youtubeHorizontal.width,
+        height: VIDEO_PROFILES.youtubeHorizontal.height
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Composition,
+      {
+        id: "social-post-preview",
+        component: SocialPostPreviewComposition,
+        durationInFrames: SOCIAL_POST_PREVIEW_DURATION_IN_FRAMES,
+        fps: VIDEO_PROFILES.tiktokVertical.fps,
+        width: VIDEO_PROFILES.tiktokVertical.width,
+        height: VIDEO_PROFILES.tiktokVertical.height
+      }
+    ),
+    /* @__PURE__ */ (0,jsx_runtime.jsx)(
+      esm.Composition,
+      {
+        id: "combinatorial-paradox-cinematic-preview",
+        component: CombinatorialParadoxCinematicComposition,
+        durationInFrames: COMBINATORIAL_PARADOX_DURATION,
+        fps: VIDEO_PROFILES.youtubeHorizontal.fps,
+        width: VIDEO_PROFILES.youtubeHorizontal.width,
+        height: VIDEO_PROFILES.youtubeHorizontal.height
       }
     )
   ] });
@@ -37016,7 +39336,7 @@ var NoReactInternals = {
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
 /******/ 	__webpack_require__(6507);
-/******/ 	__webpack_require__(4947);
+/******/ 	__webpack_require__(3023);
 /******/ 	__webpack_require__(3610);
 /******/ 	var __webpack_exports__ = __webpack_require__(3482);
 /******/ 	

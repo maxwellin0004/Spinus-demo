@@ -1,0 +1,47 @@
+{
+  "default_variant": "amber_lab_noir",
+  "variants": [
+    {
+      "id": "amber_lab_noir",
+      "intent": "最接近参考视频的纸面实验室 + 电影级高光",
+      "palette": {
+        "paper": "#efe4c8",
+        "ink": "#1b160f",
+        "amber": "#f28f34",
+        "rust": "#a54f1f",
+        "teal": "#5d9ea0",
+        "shadow": "#0f0d0a"
+      },
+      "lighting": "top spotlight + side glows + charred vignette",
+      "subtitle_style": "white hard subtitle with dark stroke; emphasis in amber"
+    },
+    {
+      "id": "oxide_math_theater",
+      "intent": "更偏黑板与机械剧场，适合定理证明和链路演示",
+      "palette": {
+        "paper": "#d8cfb8",
+        "ink": "#151311",
+        "amber": "#d86d2b",
+        "rust": "#7f331f",
+        "teal": "#447d7a",
+        "shadow": "#0b0a08"
+      },
+      "lighting": "side-lit chalk stage with dim practical highlights",
+      "subtitle_style": "white hard subtitle with narrow line breaks and strong edge contrast"
+    },
+    {
+      "id": "cool_probability_room",
+      "intent": "适合统计图和现代概率实验演示，冷暖对比更强",
+      "palette": {
+        "paper": "#ece7db",
+        "ink": "#11131a",
+        "amber": "#f49b3f",
+        "rust": "#8f4330",
+        "teal": "#5fa9c8",
+        "shadow": "#091019"
+      },
+      "lighting": "cool backlight + warm data highlights",
+      "subtitle_style": "white hard subtitle with cyan micro-accent for chart labels"
+    }
+  ]
+}

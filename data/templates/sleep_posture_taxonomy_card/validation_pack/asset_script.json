@@ -1,0 +1,32 @@
+[
+  {
+    "asset_id": "figures_programmatic",
+    "target_section": "all",
+    "asset_type": "programmatic_react_svg",
+    "asset_description": "6 个黑白会议姿势小人：前倾记录、抱臂观察、托腮思考、低头看屏、举手补充、后仰旁观",
+    "source_guidance": "在新 scene 系统中绘制",
+    "required": true,
+    "fallback_plan": "用文字分类卡临时替代，但会降低参考贴近度",
+    "notes": "不复用旧模板素材"
+  },
+  {
+    "asset_id": "fonts_local",
+    "target_section": "all",
+    "asset_type": "local_font_system",
+    "asset_description": "使用现有字体系统渲染中文标题与字幕",
+    "source_guidance": "video-app/src/theme/tokens.ts",
+    "required": true,
+    "fallback_plan": "系统 sans-serif",
+    "notes": "属于底层能力复用"
+  },
+  {
+    "asset_id": "voiceover_final",
+    "target_section": "all",
+    "asset_type": "audio",
+    "asset_description": "正式口播音频",
+    "source_guidance": "后续 TTS 生成或人工导入",
+    "required": false,
+    "fallback_plan": "粗预览使用静音和估算字幕",
+    "notes": "正式成片需要真实音频回填字幕"
+  }
+]

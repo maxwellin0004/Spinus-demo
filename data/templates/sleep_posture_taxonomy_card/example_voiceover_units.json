@@ -1,0 +1,82 @@
+[
+  {
+    "voice_id": "v01",
+    "section": "hook",
+    "text": "刷手机姿势其实会暴露你的放松方式。",
+    "target_duration_sec": 4.8,
+    "intended_pause_after_sec": 0.2,
+    "emphasis_words": ["刷手机姿势", "放松方式"],
+    "visual_section_id": "scene_01",
+    "timing_status": "estimated_after_audio_duration_fit"
+  },
+  {
+    "voice_id": "v02",
+    "section": "setup",
+    "text": "同样是刷屏，每个人身体最诚实的反应都不一样。",
+    "target_duration_sec": 4.8,
+    "intended_pause_after_sec": 0.2,
+    "emphasis_words": ["刷屏", "身体"],
+    "visual_section_id": "scene_02",
+    "timing_status": "estimated_after_audio_duration_fit"
+  },
+  {
+    "voice_id": "v03",
+    "section": "type_a",
+    "text": "仰躺举屏的人，通常是真的想把脑子完全放空。",
+    "target_duration_sec": 4.8,
+    "intended_pause_after_sec": 0.2,
+    "emphasis_words": ["仰躺举屏", "完全放空"],
+    "visual_section_id": "scene_03",
+    "timing_status": "estimated_after_audio_duration_fit"
+  },
+  {
+    "voice_id": "v04",
+    "section": "type_b",
+    "text": "蜷缩连刷的人，刷的不是内容，是一点安全感。",
+    "target_duration_sec": 4.8,
+    "intended_pause_after_sec": 0.2,
+    "emphasis_words": ["蜷缩连刷", "安全感"],
+    "visual_section_id": "scene_04",
+    "timing_status": "estimated_after_audio_duration_fit"
+  },
+  {
+    "voice_id": "v05",
+    "section": "type_c",
+    "text": "歪坐单手刷的人，注意力常常在现实和屏幕中间摇摆。",
+    "target_duration_sec": 4.8,
+    "intended_pause_after_sec": 0.2,
+    "emphasis_words": ["歪坐单手刷", "摇摆"],
+    "visual_section_id": "scene_05",
+    "timing_status": "estimated_after_audio_duration_fit"
+  },
+  {
+    "voice_id": "v06",
+    "section": "type_d",
+    "text": "趴桌偷看的人，往往是在忙碌里给自己偷一口气。",
+    "target_duration_sec": 5.8,
+    "intended_pause_after_sec": 0.2,
+    "emphasis_words": ["趴桌偷看", "偷一口气"],
+    "visual_section_id": "scene_06",
+    "timing_status": "estimated_after_audio_duration_fit"
+  },
+  {
+    "voice_id": "v07",
+    "section": "type_e",
+    "text": "边走边刷的人，不是闲不住，是大脑很难真正停机。",
+    "target_duration_sec": 5.8,
+    "intended_pause_after_sec": 0.2,
+    "emphasis_words": ["边走边刷", "停机"],
+    "visual_section_id": "scene_07",
+    "timing_status": "estimated_after_audio_duration_fit"
+  },
+  {
+    "voice_id": "v08",
+    "section": "cta",
+    "text": "你是哪一种？把结果打在评论区。",
+    "target_duration_sec": 4.8,
+    "intended_pause_after_sec": 0,
+    "emphasis_words": ["哪一种", "评论区"],
+    "visual_section_id": "scene_08",
+    "timing_status": "estimated_after_audio_duration_fit"
+  }
+]

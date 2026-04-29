@@ -1,0 +1,26 @@
+[
+  {
+    "section": "hook",
+    "objective": "用反常识打开兴趣",
+    "core_message": "开会姿势会透露工作状态",
+    "spoken_draft": "开会姿势其实会暴露你的工作状态。"
+  },
+  {
+    "section": "setup",
+    "objective": "建立分类测试语境",
+    "core_message": "同一会议场景里，不同姿势代表不同防御方式",
+    "spoken_draft": "同一张会议桌上，每个人的防御方式都不一样。"
+  },
+  {
+    "section": "types",
+    "objective": "逐个解释典型姿势",
+    "core_message": "前倾、抱臂、托腮、看屏、举手分别对应不同会议状态",
+    "spoken_draft": "前倾记录的人在确认重点；抱臂观察的人还没信任结论；托腮的人在组织逻辑；看屏的人已经分心；举手的人愿意推进讨论。"
+  },
+  {
+    "section": "cta",
+    "objective": "引导评论区打结果",
+    "core_message": "用户自我归类并互动",
+    "spoken_draft": "你是哪一种？把结果打在评论区。"
+  }
+]

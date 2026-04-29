@@ -3,6 +3,11 @@ import { Composition } from "remotion";
 import { AgentHorizontalComposition } from "./compositions/AgentHorizontalComposition";
 import { ComicEmotionalScrollComposition } from "./compositions/ComicEmotionalScrollComposition";
 import { ComicHabitSpiralComposition } from "./compositions/ComicHabitSpiralComposition";
+import {
+  CodexJobComposition,
+  defaultCodexJobProps,
+  getCodexJobDurationFromProps,
+} from "./compositions/CodexJobComposition";
 import { MacdIndicatorComposition } from "./compositions/MacdIndicatorComposition";
 import { MinimalPsychExplainerComposition } from "./compositions/MinimalPsychExplainerComposition";
 import { NewSignalsComposition } from "./compositions/NewSignalsComposition";
@@ -36,6 +41,18 @@ import {
   CognitiveDocumentaryEssayComposition,
 } from "./compositions/CognitiveDocumentaryEssayComposition";
 import {
+  SleepPostureTaxonomyComposition,
+  SLEEP_POSTURE_TAXONOMY_DURATION_IN_FRAMES,
+} from "./compositions/SleepPostureTaxonomyComposition";
+import {
+  SOCIAL_POST_PREVIEW_DURATION_IN_FRAMES,
+} from "./data/socialPostPreviewData";
+import { SocialPostPreviewComposition } from "./compositions/SocialPostPreviewComposition";
+import {
+  COMBINATORIAL_PARADOX_DURATION,
+  CombinatorialParadoxCinematicComposition,
+} from "./compositions/CombinatorialParadoxCinematicComposition";
+import {
   COGNITIVE_DOC_DURATION_IN_FRAMES,
   COGNITIVE_DOC_FPS,
 } from "./data/cognitiveDocumentaryEssayData";
@@ -50,6 +67,7 @@ const NEW_SIGNALS_VOLUME_DURATION_IN_FRAMES = 60 * VIDEO_PROFILES.youtubeHorizon
 const COMIC_HABIT_SPIRAL_DURATION_IN_FRAMES = 60 * VIDEO_PROFILES.youtubeHorizontal.fps;
 const COMIC_EMOTIONAL_SCROLL_DURATION_IN_FRAMES = 60 * VIDEO_PROFILES.youtubeHorizontal.fps;
 const MINIMAL_PSYCH_EXPLAINER_DURATION_IN_FRAMES = 38 * VIDEO_PROFILES.youtubeHorizontal.fps;
+const CODEX_JOB_DURATION_IN_FRAMES = getCodexJobDurationFromProps(defaultCodexJobProps);
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -85,6 +103,15 @@ export const RemotionRoot: React.FC = () => {
         fps={VIDEO_PROFILES.youtubeHorizontal.fps}
         width={VIDEO_PROFILES.youtubeHorizontal.width}
         height={VIDEO_PROFILES.youtubeHorizontal.height}
+      />
+      <Composition
+        id="codex-job-preview"
+        component={CodexJobComposition}
+        durationInFrames={CODEX_JOB_DURATION_IN_FRAMES}
+        fps={VIDEO_PROFILES.tiktokVertical.fps}
+        width={VIDEO_PROFILES.tiktokVertical.width}
+        height={VIDEO_PROFILES.tiktokVertical.height}
+        defaultProps={defaultCodexJobProps}
       />
       <Composition
         id="mcp-horizontal-preview"
@@ -195,6 +222,30 @@ export const RemotionRoot: React.FC = () => {
         component={CognitiveDocumentaryEssayComposition}
         durationInFrames={COGNITIVE_DOC_DURATION_IN_FRAMES}
         fps={COGNITIVE_DOC_FPS}
+        width={VIDEO_PROFILES.youtubeHorizontal.width}
+        height={VIDEO_PROFILES.youtubeHorizontal.height}
+      />
+      <Composition
+        id="sleep-posture-taxonomy-validation-preview"
+        component={SleepPostureTaxonomyComposition}
+        durationInFrames={SLEEP_POSTURE_TAXONOMY_DURATION_IN_FRAMES}
+        fps={VIDEO_PROFILES.youtubeHorizontal.fps}
+        width={VIDEO_PROFILES.youtubeHorizontal.width}
+        height={VIDEO_PROFILES.youtubeHorizontal.height}
+      />
+      <Composition
+        id="social-post-preview"
+        component={SocialPostPreviewComposition}
+        durationInFrames={SOCIAL_POST_PREVIEW_DURATION_IN_FRAMES}
+        fps={VIDEO_PROFILES.tiktokVertical.fps}
+        width={VIDEO_PROFILES.tiktokVertical.width}
+        height={VIDEO_PROFILES.tiktokVertical.height}
+      />
+      <Composition
+        id="combinatorial-paradox-cinematic-preview"
+        component={CombinatorialParadoxCinematicComposition}
+        durationInFrames={COMBINATORIAL_PARADOX_DURATION}
+        fps={VIDEO_PROFILES.youtubeHorizontal.fps}
         width={VIDEO_PROFILES.youtubeHorizontal.width}
         height={VIDEO_PROFILES.youtubeHorizontal.height}
       />

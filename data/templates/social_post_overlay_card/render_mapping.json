@@ -1,0 +1,43 @@
+{
+  "template_id": "social_post_overlay_card",
+  "render_engine": "React + Remotion",
+  "composition": {
+    "id": "social-post-preview",
+    "component": "SocialPostPreviewComposition",
+    "file": "video-app/src/compositions/SocialPostPreviewComposition.tsx",
+    "fps": 30,
+    "width": 1080,
+    "height": 1920,
+    "duration_source": "meta.durationSec * fps"
+  },
+  "data_files": {
+    "visual_data": "video-app/src/data/socialPostPreviewData.ts",
+    "template_example": "data/templates/social_post_overlay_card/example_data.json",
+    "schema": "data/templates/social_post_overlay_card/template_data_schema.json"
+  },
+  "component_mapping": {
+    "background.imageSrc": "Background Img src",
+    "background.location": "Post meta suffix",
+    "background.sideBlur": "Left and right blur strips visibility",
+    "card.width": "Overlay card width",
+    "card.top": "Overlay card top offset",
+    "card.left": "Overlay card left offset",
+    "card.avatarText": "Avatar circle text",
+    "post.author": "Card header author",
+    "post.badge": "Badge label",
+    "post.metaLine": "Meta line prefix",
+    "post.paragraphs": "Body paragraphs",
+    "motion.backgroundScaleFrom": "Background scale start",
+    "motion.backgroundScaleTo": "Background scale end",
+    "motion.backgroundShiftY": "Background Y drift",
+    "motion.cardTranslateYIn": "Card rise-in offset",
+    "motion.cardScaleFrom": "Card intro scale",
+    "motion.glowPeakOpacity": "Glow peak opacity"
+  },
+  "render_rules": [
+    "Keep the background free of generated UI or text.",
+    "Post card must remain inside safe area and leave visible environment below it.",
+    "Default preview is silent unless a user explicitly requests audio.",
+    "Do not add right-side social controls in this template."
+  ]
+}

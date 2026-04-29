@@ -1,0 +1,30 @@
+[2026-04-29T01:27:09+0800] Runner started for source=manual_download21, mode=auto, provider=bltcy, mock=False
+[2026-04-29T01:27:09+0800] Stage entered: extracting_basic_meta
+[2026-04-29T01:27:09+0800] Stage entered: extracting_audio
+[2026-04-29T01:27:10+0800] Audio extraction succeeded; path=data\preprocess\manual_download21\audio.wav
+[2026-04-29T01:27:10+0800] Stage entered: extracting_keyframes
+[2026-04-29T01:27:17+0800] Keyframe extraction source=ffmpeg_fps_1 success=True count=205
+[2026-04-29T01:27:18+0800] Stage entered: transcribing_audio
+[2026-04-29T01:27:44+0800] Transcription source=mock_fallback segments=1
+[2026-04-29T01:27:44+0800] Stage entered: analyzing_title
+[2026-04-29T01:27:51+0800] Title analysis mode=api model=gpt-5.4-nano
+[2026-04-29T01:27:51+0800] Stage entered: analyzing_description
+[2026-04-29T01:27:57+0800] Description analysis mode=api model=gpt-5.4-nano
+[2026-04-29T01:27:57+0800] Stage entered: analyzing_hook
+[2026-04-29T01:28:07+0800] Hook analysis mode=api model=gpt-5.4-nano
+[2026-04-29T01:28:07+0800] Stage entered: analyzing_structure
+[2026-04-29T01:28:15+0800] Structure analysis mode=api model=gpt-5.4-nano
+[2026-04-29T01:28:15+0800] Stage entered: analyzing_script_style
+[2026-04-29T01:28:21+0800] Script style analysis mode=api model=gpt-5.4-nano
+[2026-04-29T01:28:21+0800] Stage entered: analyzing_visual_rhythm
+[2026-04-29T01:28:23+0800] Visual rhythm analysis mode=mock_fallback model=gemini-3.1-flash-lite-preview-thinking-minimal
+[2026-04-29T01:28:23+0800] Stage entered: analyzing_visual_style
+[2026-04-29T01:28:23+0800] Visual style selected_frames=5
+[2026-04-29T01:29:16+0800] Visual style analysis mode=api model=gemini-3.1-flash-lite-preview-thinking-minimal frame_sources=['api', 'api', 'api', 'api', 'api']
+[2026-04-29T01:29:16+0800] Stage entered: analyzing_subtitle_audio
+[2026-04-29T01:29:34+0800] Subtitle/audio analysis mode=api model=gpt-5.4-nano
+[2026-04-29T01:29:35+0800] Stage entered: building_summary
+[2026-04-29T01:29:35+0800] Preparing summary payload from accumulated analysis modules
+[2026-04-29T01:30:55+0800] Summary build mode=api model=gpt-5.4-nano
+[2026-04-29T01:30:55+0800] Analysis written to manual_download21.analysis.json and manual_download21.summary.json
+[2026-04-29T01:30:55+0800] Runner completed successfully

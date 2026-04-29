@@ -126,6 +126,10 @@
               </button>
             </div>
             <div class="session-list" id="sessionList" aria-live="polite"></div>
+            <div class="session-drawer-footer">
+              <small id="sessionListMeta">0 / 0 sessions</small>
+              <button class="secondary-button is-small" type="button" id="sessionLoadMoreButton" hidden>加载更多</button>
+            </div>
           </div>
 
           <div class="thread-list" id="threadList" aria-live="polite"></div>
@@ -204,6 +208,8 @@
               </div>
             </div>
           </div>
+
+          <div class="pipeline-banner is-hidden" id="pipelineBanner" role="status" aria-live="polite"></div>
 
           <div class="work-scroll">
             <section class="account-profile-card">
@@ -361,6 +367,7 @@
 
           <div class="phone-frame">
             <div class="video-stage">
+              <video id="previewVideo" class="preview-video" controls playsinline hidden></video>
               <img src="/workspace/assets/images/scenario_video_breakdown.jpg" alt="视频预览画面" id="previewImage" />
               <div class="video-overlay">
                 <div class="episode-label" id="episodeLabel">New / Empty Thread</div>
@@ -412,6 +419,7 @@
           <div class="review-card">
             <span>产物状态</span>
             <p id="reviewOutputText">MP4、字幕和日志状态会在这里显示。</p>
+            <div class="artifact-list" id="artifactList"></div>
           </div>
         </aside>
       </main>

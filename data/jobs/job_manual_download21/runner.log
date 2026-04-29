@@ -1,0 +1,30 @@
+[2026-04-29T01:26:10+0800] Runner started for source=manual_download21, mode=auto, provider=bltcy, mock=False
+[2026-04-29T01:26:10+0800] Stage entered: extracting_basic_meta
+[2026-04-29T01:26:11+0800] Stage entered: extracting_audio
+[2026-04-29T01:26:11+0800] Audio extraction failed; path=n/a
+[2026-04-29T01:26:11+0800] Stage entered: extracting_keyframes
+[2026-04-29T01:26:11+0800] Keyframe extraction source=missing_ffmpeg success=False count=0
+[2026-04-29T01:26:11+0800] Stage entered: transcribing_audio
+[2026-04-29T01:26:11+0800] Transcription source=mock segments=1
+[2026-04-29T01:26:11+0800] Stage entered: analyzing_title
+[2026-04-29T01:26:11+0800] Title analysis mode=mock_fallback model=gpt-5.4-nano
+[2026-04-29T01:26:11+0800] Stage entered: analyzing_description
+[2026-04-29T01:26:11+0800] Description analysis mode=mock_fallback model=gpt-5.4-nano
+[2026-04-29T01:26:11+0800] Stage entered: analyzing_hook
+[2026-04-29T01:26:11+0800] Hook analysis mode=mock_fallback model=gpt-5.4-nano
+[2026-04-29T01:26:11+0800] Stage entered: analyzing_structure
+[2026-04-29T01:26:11+0800] Structure analysis mode=mock_fallback model=gpt-5.4-nano
+[2026-04-29T01:26:11+0800] Stage entered: analyzing_script_style
+[2026-04-29T01:26:11+0800] Script style analysis mode=mock_fallback model=gpt-5.4-nano
+[2026-04-29T01:26:12+0800] Stage entered: analyzing_visual_rhythm
+[2026-04-29T01:26:12+0800] Visual rhythm analysis mode=mock_fallback model=gemini-3.1-flash-lite-preview-thinking-minimal
+[2026-04-29T01:26:12+0800] Stage entered: analyzing_visual_style
+[2026-04-29T01:26:12+0800] Visual style selected_frames=0
+[2026-04-29T01:26:12+0800] Visual style analysis mode=mock_fallback model=gemini-3.1-flash-lite-preview-thinking-minimal frame_sources=[]
+[2026-04-29T01:26:12+0800] Stage entered: analyzing_subtitle_audio
+[2026-04-29T01:26:12+0800] Subtitle/audio analysis mode=mock_fallback model=gpt-5.4-nano
+[2026-04-29T01:26:12+0800] Stage entered: building_summary
+[2026-04-29T01:26:12+0800] Preparing summary payload from accumulated analysis modules
+[2026-04-29T01:26:12+0800] Summary build mode=mock_fallback model=gpt-5.4-nano
+[2026-04-29T01:26:12+0800] Analysis written to manual_download21.analysis.json and manual_download21.summary.json
+[2026-04-29T01:26:12+0800] Runner completed successfully

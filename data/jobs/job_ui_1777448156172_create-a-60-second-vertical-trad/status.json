@@ -1,0 +1,14 @@
+{
+  "id": "job_ui_1777448156172_create-a-60-second-vertical-trad",
+  "status": "completed",
+  "progress": 100,
+  "message": "Render completed",
+  "updated_at": "2026-04-29T07:39:04.187Z",
+  "output_dir": "data/jobs/job_ui_1777448156172_create-a-60-second-vertical-trad",
+  "artifacts": {
+    "plan": "data/jobs/job_ui_1777448156172_create-a-60-second-vertical-trad/video_plan.json",
+    "subtitles": "data/jobs/job_ui_1777448156172_create-a-60-second-vertical-trad/subtitles.json",
+    "audio": "video-app/public/generated-jobs/job_ui_1777448156172_create-a-60-second-vertical-trad/voiceover.mp3",
+    "video": "data/jobs/job_ui_1777448156172_create-a-60-second-vertical-trad/output.mp4"
+  }
+}

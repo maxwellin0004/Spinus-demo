@@ -1,0 +1,11 @@
+{
+  "topic": "Monty Hall problem",
+  "slug": "monty-hall-problem",
+  "question_hook": "Why does switching doors improve your odds in a three-door game?",
+  "style_variant": null,
+  "key_number": "2/3",
+  "relationship_object": "three old game-show doors, one hidden prize marker, and one host reveal marker",
+  "comparison_unit": "the host's constrained reveal redistributes probability across the remaining unopened doors",
+  "closing_takeaway": "The puzzle changes once you count information flow instead of just visible choices.",
+  "scene_overrides_used": false
+}

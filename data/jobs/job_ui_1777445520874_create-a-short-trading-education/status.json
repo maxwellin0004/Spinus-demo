@@ -1,0 +1,14 @@
+{
+  "id": "job_ui_1777445520874_create-a-short-trading-education",
+  "status": "failed",
+  "progress": 90,
+  "message": "Pipeline failed",
+  "updated_at": "2026-04-29T06:53:34.571Z",
+  "output_dir": "data/jobs/job_ui_1777445520874_create-a-short-trading-education",
+  "artifacts": {
+    "plan": "data/jobs/job_ui_1777445520874_create-a-short-trading-education/video_plan.json",
+    "subtitles": "data/jobs/job_ui_1777445520874_create-a-short-trading-education/subtitles.json",
+    "audio": "video-app/public/generated-jobs/job_ui_1777445520874_create-a-short-trading-education/voiceover.mp3",
+    "video": null
+  }
+}

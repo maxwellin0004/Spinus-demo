@@ -1,0 +1,57 @@
+{
+  "template_id": "social_post_overlay_card",
+  "template_name": "Social Post Overlay Card",
+  "template_name_zh": "夜景帖文浮层模板",
+  "version": "1.0.0",
+  "status": "packaged_preview_ready",
+  "template_type": "vertical_background_plus_social_post_card",
+  "orientation": "vertical",
+  "aspect_ratio": "9:16",
+  "preview_audio": false,
+  "render_entry": {
+    "composition_id": "social-post-preview",
+    "composition_module": "video-app/src/compositions/SocialPostPreviewComposition.tsx",
+    "data_module": "video-app/src/data/socialPostPreviewData.ts",
+    "fps": 30,
+    "width": 1080,
+    "height": 1920
+  },
+  "style_grammar": {
+    "background": "realistic smartphone night street photo with upper-middle negative space",
+    "card": "warm white semi-transparent paper card with soft glow and subtle shadow",
+    "layout": "single large post card in upper center over photo background",
+    "motion": "slow background push with soft card rise-in",
+    "ui_rules": [
+      "No right-side interaction buttons",
+      "No bottom label strip",
+      "No audio track by default"
+    ]
+  },
+  "editable_fields": [
+    "background.imageSrc",
+    "background.location",
+    "card.width",
+    "card.top",
+    "card.left",
+    "card.avatarText",
+    "post.author",
+    "post.badge",
+    "post.metaLine",
+    "post.paragraphs",
+    "meta.durationSec",
+    "meta.styleVariant"
+  ],
+  "asset_roots": {
+    "background_images": "video-app/public/images/social-post-preview/",
+    "preview_output": "video-app/out/social-post-preview-10s.mp4",
+    "template_example": "data/templates/social_post_overlay_card/example_data.json"
+  },
+  "prompt_assets": {
+    "background_prompt_file": "data/templates/social_post_overlay_card/prompt_variants.json"
+  },
+  "prompt_groups": [
+    "background_prompts",
+    "post_style_prompts",
+    "cover_scene_prompts"
+  }
+}

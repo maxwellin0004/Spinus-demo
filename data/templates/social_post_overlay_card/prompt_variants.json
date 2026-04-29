@@ -1,0 +1,64 @@
+{
+  "template_id": "social_post_overlay_card",
+  "usage_note": "Background prompts are for generating clean source photos only. Post style prompts define card rendering direction. Cover scene prompts describe the final composite mood and can be used for ideation or QA, but production text should still be rendered by the Remotion template rather than painted by the image model.",
+  "background_prompts": [
+    {
+      "id": "night_street_cafe_cn",
+      "label": "Chinese city night cafe",
+      "goal": "Generate a realistic city-night base image with clear negative space for the post card.",
+      "prompt": "A realistic vertical 9:16 night street photograph in a modern Chinese city, shot like a high-end smartphone photo. View from an outdoor cafe or sidewalk seating area, with a few young adults seated in the lower foreground, warm tungsten lighting, traffic light streaks, trees along the street, mid-rise residential buildings and one illuminated office tower in the distance. Keep the composition clean and cinematic, with clear negative space in the upper-middle area for adding a large social-media post card overlay later. No text, no user interface, no icons, no social media elements, no watermark. Natural perspective, believable lighting, detailed urban atmosphere."
+    },
+    {
+      "id": "rainy_window_train_cn",
+      "label": "Rainy train window city",
+      "goal": "Generate a reflective, quieter urban background with negative space for the card.",
+      "prompt": "A realistic vertical 9:16 smartphone photograph looking out from a dim train or bus window into a rainy Chinese city at night. Reflections on glass, blurred street lights, wet road glow, soft interior edge framing, and a calm cinematic mood. Leave generous clean negative space in the upper-middle area for a large social post overlay card. No text, no app interface, no icons, no watermark."
+    },
+    {
+      "id": "rooftop_evening_cn",
+      "label": "Rooftop dusk city",
+      "goal": "Generate a cleaner, more open skyline composition for lighter emotional posts.",
+      "prompt": "A realistic vertical 9:16 dusk photograph from a rooftop or high terrace in a Chinese city. Foreground hints of chairs, railing, or a small table, soft ambient city lights beginning to glow, layered apartment blocks and towers in the background, calm summer atmosphere, natural smartphone-camera realism. Preserve a broad, uncluttered upper-middle area for adding a large social-media post overlay card later. No text, no user interface, no watermark."
+    }
+  ],
+  "post_style_prompts": [
+    {
+      "id": "warm_paper_microblog",
+      "label": "Warm paper microblog",
+      "goal": "Guide the card styling toward a realistic Chinese microblog screenshot feel.",
+      "prompt": "Large semi-transparent warm-white social post card, soft paper-like white panel, subtle shadow, compact avatar row, Chinese author name, small badge, timestamp line, calm realistic typography, understated premium screenshot aesthetic, no exaggerated gradients, no decorative app chrome."
+    },
+    {
+      "id": "minimal_clean_journal",
+      "label": "Minimal clean journal",
+      "goal": "Guide the card styling toward a quieter editorial note look.",
+      "prompt": "Minimal translucent white journal-card overlay, restrained typography, generous paragraph spacing, soft neutral shadow, subtle glass-paper feel, elegant but believable mobile screenshot styling, quiet editorial mood, no social buttons, no extra labels."
+    },
+    {
+      "id": "night_mood_diary",
+      "label": "Night mood diary",
+      "goal": "Guide the card styling toward a more emotional, intimate late-night post.",
+      "prompt": "Soft warm-white diary-style mobile post card floating over a dark urban night photo, intimate and reflective mood, balanced Chinese text layout, gentle glow around the card, premium but realistic social-note aesthetic, no flashy UI."
+    }
+  ],
+  "cover_scene_prompts": [
+    {
+      "id": "city_reflection_cover",
+      "label": "City reflection cover",
+      "goal": "Describe the intended final composite look for QA or ideation.",
+      "prompt": "Vertical short-video cover style composition: a realistic Chinese city night background photo with a large floating social post card in the upper-middle area. Tone is reflective, urban, intimate, and cinematic. The lower half should retain strong environmental storytelling with seated people, street depth, and warm night lighting. No right-side platform buttons, no bottom label strip, no audio indicators, no watermark."
+    },
+    {
+      "id": "quiet_commute_cover",
+      "label": "Quiet commute cover",
+      "goal": "Describe a calmer final composite with public transport or commute energy.",
+      "prompt": "Vertical social-post cover composition with a realistic Chinese nighttime commute background and a clean floating post card overlay placed high in frame. Visual tone should feel thoughtful, calm, and slightly lonely, with believable urban detail and enough empty space around the card for readability. No social platform controls, no captions baked into the image, no watermark."
+    },
+    {
+      "id": "rooftop_confession_cover",
+      "label": "Rooftop confession cover",
+      "goal": "Describe a more open, airy final composite for emotional confession-style posts.",
+      "prompt": "Vertical mobile-video cover image showing a realistic Chinese city rooftop or terrace at dusk or night, with a large translucent social post card floating in the upper-center area. The image should feel personal, modern, and quietly dramatic, with clean composition and believable smartphone-photo lighting. No side UI, no bottom tags, no watermark."
+    }
+  ]
+}

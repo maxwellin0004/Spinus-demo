@@ -1,0 +1,127 @@
+{
+  "template_id": "combinatorial_paradox_cinematic",
+  "topic": "Monty Hall problem",
+  "slug": "monty-hall-problem",
+  "style_variant_default": null,
+  "global_prompt_rules": {
+    "aspect_ratio": "16:9",
+    "resolution": "1920x1080",
+    "language": "Prompt in English; all title, subtitle, and numeric overlays stay in Remotion, not inside the image.",
+    "must_have": [
+      "cinematic math explainer still",
+      "editorial realism with tactile materials",
+      "room for lower-third subtitles",
+      "high-end educational tone",
+      "clear visual hierarchy"
+    ],
+    "must_avoid": [
+      "no embedded text or captions",
+      "no dashboard UI or chart software screenshots",
+      "no cartoon, anime, comic, or cute mascot style",
+      "no neon cyberpunk HUD",
+      "no brand logos or copyrighted interfaces"
+    ]
+  },
+  "rendered_prompts": [
+    {
+      "scene_id": "scene_01",
+      "scene_type": "ParadoxColdOpenScene",
+      "prompt_id": "cpc_cold_open_evidence",
+      "style_variant": "amber_lab_noir",
+      "prompt": "Cinematic intellectual evidence frame for a math explainer about Monty Hall problem. Present the question 'Why does switching doors improve your odds in a three-door game?' through a dark evidence table where the core question is presented like a sealed piece of proof. Dark studio table, parchment and black metal materials, practical spotlight, floating dust, restrained amber highlights, subtle teal helper accents, realistic paper grain, full-bleed 16:9 composition, center-weighted structure, calm lower third for subtitles, no embedded text. Warm amber practical light, dark charcoal shadows, tactile parchment grain, quiet laboratory tension, premium editorial realism, restrained teal helper accents, no neon.",
+      "negative_prompt": "low quality, blurry, watermark, visible logo, malformed anatomy, duplicate objects, oversaturated colors, fantasy art, vector illustration, flat infographic, rendered UI, text artifacts, readable text, subtitles, stock office photo, app UI, comic style, childish props",
+      "output": {
+        "width": 1920,
+        "height": 1080,
+        "format": "png",
+        "save_path": "video-app/public/generated/combinatorial-paradox-cinematic/monty-hall-problem/scene_01-cold-open.png"
+      },
+      "remotion_mapping": {
+        "scene_id": "scene_01",
+        "visual.asset": "generated/combinatorial-paradox-cinematic/monty-hall-problem/scene_01-cold-open.png",
+        "visual.assetMode": "generated",
+        "visual.fallbackAsset": "assets/images/panel-1-cold-open.png"
+      }
+    },
+    {
+      "scene_id": "scene_02",
+      "scene_type": "RuleTheaterScene",
+      "prompt_id": "cpc_wrong_path_tableau",
+      "style_variant": "velvet_stage_math",
+      "prompt": "Premium mathematical tableau for Monty Hall problem. Show the tempting but incomplete intuition behind 'The obvious intuition looks reasonable because it focuses on the wrong unit of counting.' using three old game-show doors, one hidden prize marker, and one host reveal marker arranged as a staged arrangement of puzzle objects where a few elegant wrong paths are visible in muted warning accents. Several wrong or partial paths should be visible but elegant, with muted red warning accents only where needed. Cinematic top-down or stage-like composition, tactile paper surface, charcoal linework, editorial realism, no text baked into the image. Stage-like composition with velvet-dark background, focused spotlights, stronger theatrical contrast, richer shadows, elegant tension without spectacle.",
+      "negative_prompt": "low quality, blurry, watermark, visible logo, malformed anatomy, duplicate objects, oversaturated colors, fantasy art, vector illustration, flat infographic, rendered UI, text artifacts, flat infographic, bright warning graphics, game over screen, powerpoint slide, cartoon diagram",
+      "output": {
+        "width": 1920,
+        "height": 1080,
+        "format": "png",
+        "save_path": "video-app/public/generated/combinatorial-paradox-cinematic/monty-hall-problem/scene_02-wrong-path.png"
+      },
+      "remotion_mapping": {
+        "scene_id": "scene_02",
+        "visual.asset": "generated/combinatorial-paradox-cinematic/monty-hall-problem/scene_02-wrong-path.png",
+        "visual.assetMode": "generated",
+        "visual.fallbackAsset": "assets/images/panel-2-wrong-path.png"
+      }
+    },
+    {
+      "scene_id": "scene_03",
+      "scene_type": "MechanismGridScene",
+      "prompt_id": "cpc_hidden_mechanism_reveal",
+      "style_variant": "amber_lab_noir",
+      "prompt": "Sophisticated mechanism-reveal still for Monty Hall problem. Reveal that the real driver is the host's constrained reveal redistributes probability across the remaining unopened doors rather than single-point intuition. Use three old game-show doors, one hidden prize marker, and one host reveal marker and one highlighted object linking outward into a larger structured field of related objects so one highlighted element connects outward into a hidden structure. Warm parchment texture, charcoal and graphite linework, amber line illumination, subtle depth, high clarity, premium documentary math aesthetic, subtitle-safe lower third, no embedded text. Warm amber practical light, dark charcoal shadows, tactile parchment grain, quiet laboratory tension, premium editorial realism, restrained teal helper accents, no neon.",
+      "negative_prompt": "low quality, blurry, watermark, visible logo, malformed anatomy, duplicate objects, oversaturated colors, fantasy art, vector illustration, flat infographic, rendered UI, text artifacts, chaotic spaghetti lines, trading terminal, meme layout, glossy sci-fi interface, toy-like characters",
+      "output": {
+        "width": 1920,
+        "height": 1080,
+        "format": "png",
+        "save_path": "video-app/public/generated/combinatorial-paradox-cinematic/monty-hall-problem/scene_03-mechanism-reveal.png"
+      },
+      "remotion_mapping": {
+        "scene_id": "scene_03",
+        "visual.asset": "generated/combinatorial-paradox-cinematic/monty-hall-problem/scene_03-mechanism-reveal.png",
+        "visual.assetMode": "generated",
+        "visual.fallbackAsset": "assets/images/panel-3-mechanism.png"
+      }
+    },
+    {
+      "scene_id": "scene_04",
+      "scene_type": "ProbabilityBoardScene",
+      "prompt_id": "cpc_probability_compression_board",
+      "style_variant": "graphite_editorial",
+      "prompt": "Cinematic probability-board still for Monty Hall problem. Visualize 'Once the hidden mechanism is counted correctly, the result moves fast and becomes visually decisive.' through compressed curves, dense traces, or shrinking safe-space regions converging into one dominant result marker with one dominant outcome marker representing 2/3. The frame should feel like a hard-won numeric conclusion after a hidden structure is exposed. Refined academic composition, compressed curves or relationship traces, warm parchment, graphite blacks, amber focal highlight, high contrast but restrained, no image text. Graphite-heavy editorial look, ivory paper highlights, controlled contrast, museum-catalog seriousness, cleaner geometry, very restrained warm glow.",
+      "negative_prompt": "low quality, blurry, watermark, visible logo, malformed anatomy, duplicate objects, oversaturated colors, fantasy art, vector illustration, flat infographic, rendered UI, text artifacts, poster typography, dashboard widgets, flat chart pack, low-detail blur, purple HUD",
+      "output": {
+        "width": 1920,
+        "height": 1080,
+        "format": "png",
+        "save_path": "video-app/public/generated/combinatorial-paradox-cinematic/monty-hall-problem/scene_04-probability-board.png"
+      },
+      "remotion_mapping": {
+        "scene_id": "scene_04",
+        "visual.asset": "generated/combinatorial-paradox-cinematic/monty-hall-problem/scene_04-probability-board.png",
+        "visual.assetMode": "generated",
+        "visual.fallbackAsset": "assets/images/panel-4-probability.png"
+      }
+    },
+    {
+      "scene_id": "scene_05",
+      "scene_type": "ReflectiveCloseScene",
+      "prompt_id": "cpc_reflective_close_resolution",
+      "style_variant": "amber_lab_noir",
+      "prompt": "Reflective closing still for a philosophical math explainer about Monty Hall problem. Contrast intuition with deeper structure and express the takeaway 'The puzzle changes once you count information flow instead of just visible choices.' using two contrasting note cards or boards that reconcile into one calm final insight. Mature editorial tone, two-column or mirrored composition, aged paper and shadow texture, cinematic restraint, subtle human traces but no posed stock-photo look, safe center area for the final line and safe lower third for subtitles. Warm amber practical light, dark charcoal shadows, tactile parchment grain, quiet laboratory tension, premium editorial realism, restrained teal helper accents, no neon.",
+      "negative_prompt": "low quality, blurry, watermark, visible logo, malformed anatomy, duplicate objects, oversaturated colors, fantasy art, vector illustration, flat infographic, rendered UI, text artifacts, motivational poster, business slide, emoji metaphor, cartoon figures, bright candy colors",
+      "output": {
+        "width": 1920,
+        "height": 1080,
+        "format": "png",
+        "save_path": "video-app/public/generated/combinatorial-paradox-cinematic/monty-hall-problem/scene_05-reflective-close.png"
+      },
+      "remotion_mapping": {
+        "scene_id": "scene_05",
+        "visual.asset": "generated/combinatorial-paradox-cinematic/monty-hall-problem/scene_05-reflective-close.png",
+        "visual.assetMode": "generated",
+        "visual.fallbackAsset": "assets/images/panel-4-probability.png"
+      }
+    }
+  ]
+}

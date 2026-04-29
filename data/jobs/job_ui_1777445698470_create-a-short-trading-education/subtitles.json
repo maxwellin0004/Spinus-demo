@@ -1,0 +1,111 @@
+[
+  {
+    "voiceId": "v01",
+    "visualSectionId": "news_context",
+    "start_sec": 0.0,
+    "end_sec": 1.763,
+    "startFrame": 0,
+    "endFrame": 53,
+    "text": "Create a shor\nt trading ed…。",
+    "emphasisWords": [
+      "Create a short trading ed…",
+      "new_signals",
+      "Create"
+    ]
+  },
+  {
+    "voiceId": "v02",
+    "visualSectionId": "case_shock",
+    "start_sec": 1.803,
+    "end_sec": 12.244,
+    "startFrame": 54,
+    "endFrame": 367,
+    "text": "先给结论：Create a short trading education video pl…里最容易出错的，\n不是你没看懂，而是你太早动作。",
+    "emphasisWords": [
+      "Create a short trading ed…",
+      "new_signals",
+      "Create"
+    ]
+  },
+  {
+    "voiceId": "v03",
+    "visualSectionId": "indicator_mechanism",
+    "start_sec": 12.364,
+    "end_sec": 23.928,
+    "startFrame": 371,
+    "endFrame": 718,
+    "text": "先把 Create a short trading education video pl… 拆成一个核心判断。\n先拆核心判断，再给执行顺序，避免把信息铺得太散。",
+    "emphasisWords": [
+      "Create a short trading ed…",
+      "new_signals",
+      "Create"
+    ]
+  },
+  {
+    "voiceId": "v04",
+    "visualSectionId": "chart_case_1",
+    "start_sec": 24.035,
+    "end_sec": 29.609,
+    "startFrame": 721,
+    "endFrame": 888,
+    "text": "第一步，先看结构位置，\n不要在最热的时候直接追进去。",
+    "emphasisWords": [
+      "第一步",
+      "结构位置"
+    ]
+  },
+  {
+    "voiceId": "v05",
+    "visualSectionId": "chart_case_2",
+    "start_sec": 29.716,
+    "end_sec": 35.61,
+    "startFrame": 891,
+    "endFrame": 1068,
+    "text": "第二步，\n再看量能、动能或者内部证据有没有同步跟上。",
+    "emphasisWords": [
+      "第二步",
+      "量能",
+      "动能"
+    ]
+  },
+  {
+    "voiceId": "v06",
+    "visualSectionId": "chart_case_3",
+    "start_sec": 35.77,
+    "end_sec": 41.45,
+    "startFrame": 1073,
+    "endFrame": 1244,
+    "text": "第三步，只在确认动作出现以后，\n再决定要不要执行。",
+    "emphasisWords": [
+      "第三步",
+      "确认动作"
+    ]
+  },
+  {
+    "voiceId": "v07",
+    "visualSectionId": "checklist",
+    "start_sec": 41.53,
+    "end_sec": 48.49,
+    "startFrame": 1246,
+    "endFrame": 1455,
+    "text": "不要把预警当成动作，\n把判断顺序做对，节奏就会稳很多。",
+    "emphasisWords": [
+      "预警",
+      "判断顺序"
+    ]
+  },
+  {
+    "voiceId": "v08",
+    "visualSectionId": "risk_close",
+    "start_sec": 48.65,
+    "end_sec": 54.97,
+    "startFrame": 1460,
+    "endFrame": 1649,
+    "text": "结尾按 行动建议型 收束：给\n观众一个能立刻执行的下一步。",
+    "emphasisWords": [
+      "Create a short trading ed…",
+      "new_signals",
+      "Create"
+    ]
+  }
+]

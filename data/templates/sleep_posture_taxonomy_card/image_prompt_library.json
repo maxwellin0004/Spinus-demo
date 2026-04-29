@@ -1,0 +1,40 @@
+{
+  "template_id": "sleep_posture_taxonomy_card",
+  "validation_topic": "你是哪种刷手机姿势？",
+  "purpose": "如果后续不用程序化 SVG，而改用 AI 位图插画，则按这些提示词生成统一人物素材。当前推荐使用彩色扁平插画，而不是黑白剪影，因为人物会更亲和，动作也更容易识别。",
+  "global_style_prompt": "cute flat editorial cartoon character, soft pastel colors, clean vector illustration, rounded head, friendly simple face, warm skin tone, colorful hoodie or casual home clothes, thick clean dark outline, expressive exaggerated body posture, minimal prop only when needed, pure white background, no scene background, no shadows, no gradients, consistent character proportions across all poses, psychology quiz card illustration, high legibility at small size, polished social media infographic style",
+  "negative_prompt": "ugly, creepy, distorted body, extra limbs, same pose repeated, stiff stick figure, black blob silhouette, realistic photo, 3D render, anime eyes, overly detailed face, messy sketch, heavy texture, colored background, low contrast, dramatic lighting, clutter, watermark, text, logo, cropped body, inconsistent style, scary smile",
+  "character_prompts": [
+    {
+      "asset_id": "phone_pose_bed_phone",
+      "label": "仰躺举屏型",
+      "prompt": "A cute flat vector cartoon person lying on their back on a simple pastel pillow line, holding a smartphone above their face with both hands, legs relaxed outward, warm skin tone, blue casual hoodie, thick clean dark outline, friendly tiny smile, very clear lying silhouette, pure white background, social media psychology quiz card style"
+    },
+    {
+      "asset_id": "phone_pose_curled_scroll",
+      "label": "蜷缩连刷型",
+      "prompt": "A cute flat vector cartoon person curled into a small seated ball while scrolling a smartphone, knees pulled close, head bent forward, cozy safe-feeling posture, orange casual outfit, warm skin tone, thick clean dark outline, friendly simple face, pure white background, social media psychology quiz card style"
+    },
+    {
+      "asset_id": "phone_pose_one_hand_slouch",
+      "label": "歪坐单手型",
+      "prompt": "A cute flat vector cartoon person slouching sideways while holding a smartphone in one hand, one shoulder low, one leg stretched out, relaxed crooked posture, purple casual outfit, warm skin tone, thick clean dark outline, friendly simple face, pure white background, social media psychology quiz card style"
+    },
+    {
+      "asset_id": "phone_pose_desk_scroll",
+      "label": "趴桌偷看型",
+      "prompt": "A cute flat vector cartoon person leaning over a simple light wooden desk, one arm on the tabletop, secretly looking at a smartphone near the table edge, green casual outfit, warm skin tone, thick clean dark outline, playful but clean expression, pure white background, social media psychology quiz card style"
+    },
+    {
+      "asset_id": "phone_pose_walking_phone",
+      "label": "边走边刷型",
+      "prompt": "A cute flat vector cartoon person walking while looking at a smartphone, one leg forward and one leg back, small pastel motion lines behind the body, yellow casual outfit, warm skin tone, thick clean dark outline, friendly simple face, pure white background, social media psychology quiz card style"
+    },
+    {
+      "asset_id": "phone_pose_blanket_phone",
+      "label": "被窝夜刷型",
+      "prompt": "A cute flat vector cartoon person hiding under a rounded pink blanket with only the head and smartphone visible, cozy late-night phone scrolling posture, warm skin tone, thick clean dark outline, sleepy friendly face, pure white background, social media psychology quiz card style"
+    }
+  ],
+  "composition_prompt": "Six consistent cute flat vector cartoon characters in very different phone-scrolling postures: lying on back holding phone overhead, curled up scrolling, slouching sideways with one hand, leaning over a simple desk secretly checking phone, walking while looking at phone, hiding under a rounded blanket with phone. Use soft pastel outfits, warm skin tone, thick clean dark outlines, friendly simple faces, high pose readability, arranged in one clean horizontal row with enough spacing, pure white background, social media psychology quiz card illustration, no labels, no text, no watermark."
+}

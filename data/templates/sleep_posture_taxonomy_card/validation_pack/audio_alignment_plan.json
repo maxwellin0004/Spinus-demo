@@ -1,0 +1,11 @@
+{
+  "final_required": true,
+  "current_preview_status": "estimated_after_audio_duration_fit",
+  "steps": [
+    "用 voiceover_script.json 生成最终口播音频。",
+    "读取音频真实时长。",
+    "按 voice_id 对齐每句时间戳。",
+    "重写 subtitle_timeline.generated.horizontal.json。",
+    "让 Remotion 数据读取最终字幕时间轴。"
+  ]
+}

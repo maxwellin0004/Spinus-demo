@@ -1,0 +1,13 @@
+{
+  "full_text": "系统占位转写，用于驱动第二阶段分析工作流。",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 205.13,
+      "text": "系统占位转写，用于驱动第二阶段分析工作流。"
+    }
+  ],
+  "generated": true,
+  "source": "mock_fallback",
+  "fallback_reason": "Network error calling https://api.bltcy.ai/v1/audio/transcriptions: [WinError 10054] 远程主机强迫关闭了一个现有的连接。"
+}

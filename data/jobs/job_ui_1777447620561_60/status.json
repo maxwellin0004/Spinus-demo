@@ -1,0 +1,14 @@
+{
+  "id": "job_ui_1777447620561_60",
+  "status": "planning",
+  "progress": 52,
+  "message": "Plan generated",
+  "updated_at": "2026-04-29T07:27:56.581Z",
+  "output_dir": "data/jobs/job_ui_1777447620561_60",
+  "artifacts": {
+    "plan": "data/jobs/job_ui_1777447620561_60/video_plan.json",
+    "subtitles": null,
+    "audio": null,
+    "video": null
+  }
+}

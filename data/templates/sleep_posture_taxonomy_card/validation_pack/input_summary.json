@@ -1,0 +1,13 @@
+{
+  "topic": "你是哪种开会姿势？",
+  "duration_sec": 42,
+  "language": "zh-CN",
+  "target_platforms": ["Bilibili", "视频号", "YouTube"],
+  "video_goal": "验证白底分类心理卡模板能迁移到职场行为主题，并引导评论区互动",
+  "style_direction": "clean_white_psychology_card",
+  "tone": "轻科普、轻测试、直接、低压力",
+  "audience": "对职场沟通、行为观察、心理测试感兴趣的泛用户",
+  "subtitle_required": true,
+  "voice_required": true,
+  "orientation": "horizontal"
+}

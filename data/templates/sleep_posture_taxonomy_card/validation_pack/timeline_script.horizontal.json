@@ -1,0 +1,10 @@
+[
+  { "time_range": "0.00-5.00", "scene": "TaxonomyOpenerScene", "layer_target": "board/question/items/caption", "action": "整页淡入，分类行常驻，字幕出现", "sync_target": "v01", "notes": "0-5 秒 Hook 重点" },
+  { "time_range": "5.00-10.00", "scene": "PostureStripScene", "layer_target": "caption", "action": "主体不切，字幕替换", "sync_target": "v02", "notes": "分类测试建立" },
+  { "time_range": "10.00-15.00", "scene": "CaptionRevealScene", "layer_target": "lean_forward", "action": "A 项蓝圈高亮，字幕解释", "sync_target": "v03", "notes": "元素层高亮" },
+  { "time_range": "15.00-20.00", "scene": "CaptionRevealScene", "layer_target": "arms_crossed", "action": "B 项蓝圈高亮，字幕解释", "sync_target": "v04", "notes": "元素层高亮" },
+  { "time_range": "20.00-25.00", "scene": "CaptionRevealScene", "layer_target": "chin_hand", "action": "C 项蓝圈高亮，字幕解释", "sync_target": "v05", "notes": "元素层高亮" },
+  { "time_range": "25.00-31.00", "scene": "CaptionRevealScene", "layer_target": "phone_check", "action": "D 项蓝圈高亮，字幕解释", "sync_target": "v06", "notes": "元素层高亮" },
+  { "time_range": "31.00-37.00", "scene": "CaptionRevealScene", "layer_target": "hands_up", "action": "E 项蓝圈高亮，字幕解释", "sync_target": "v07", "notes": "元素层高亮" },
+  { "time_range": "37.00-42.00", "scene": "ResultPromptScene", "layer_target": "caption", "action": "高亮消失，CTA 停留", "sync_target": "v08", "notes": "评论区引导" }
+]

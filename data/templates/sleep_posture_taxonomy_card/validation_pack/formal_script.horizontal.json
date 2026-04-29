@@ -1,0 +1,6 @@
+[
+  { "time_range": "0.00-5.00", "section": "hook", "visual_description": "白底中上显示“你是哪种开会姿势”，中部一排会议姿势小人，底部字幕引入", "audio_description": "口播：开会姿势其实会暴露你的工作状态", "notes": "参考视频式静态分类卡" },
+  { "time_range": "5.00-10.00", "section": "setup", "visual_description": "画面主体不变，底部字幕替换", "audio_description": "口播解释同一会议桌上状态不同", "notes": "无页面切换" },
+  { "time_range": "10.00-37.00", "section": "types", "visual_description": "逐个圈选小人并同步底部解释字幕", "audio_description": "逐类解释前倾、抱臂、托腮、看屏、举手", "notes": "低频字幕驱动" },
+  { "time_range": "37.00-42.00", "section": "cta", "visual_description": "分类行回常态，底部显示评论引导", "audio_description": "口播：你是哪一种？把结果打在评论区", "notes": "结尾停留" }
+]

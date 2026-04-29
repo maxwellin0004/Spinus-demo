@@ -1,0 +1,16 @@
+{
+  "template_id": "sleep_posture_taxonomy_card",
+  "final_timing_rule": "先生成或导入口播音频，再用真实音频时长或强制对齐结果回填字幕时间轴。",
+  "rough_preview_rule": "允许使用 estimated_after_audio_duration_fit 生成无口播或临时口播预览，但必须在产物中标注。",
+  "alignment_steps": [
+    "读取 example_voiceover_units.json 中的 voice_id 顺序。",
+    "生成或导入最终 voiceover 音频。",
+    "读取真实音频总时长；如有转写/强制对齐能力，按句恢复时间戳。",
+    "写入 subtitle_timeline.generated.horizontal.json，确保每条 cue 含 voiceId 与 visualSectionId。",
+    "Remotion 渲染时只读取回填后的 subtitle timeline。"
+  ],
+  "fallback": {
+    "mode": "estimated_after_audio_duration_fit",
+    "description": "如果无法强制对齐，则按真实音频总时长和 voiceover unit 目标时长比例分配 cue。"
+  }
+}

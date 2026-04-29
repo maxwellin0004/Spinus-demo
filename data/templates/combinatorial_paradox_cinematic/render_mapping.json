@@ -1,0 +1,39 @@
+{
+  "composition_id": "combinatorial-paradox-cinematic-preview",
+  "orientation": "horizontal",
+  "scene_data_source": "video-app/src/data/combinatorialParadoxCinematicData.ts",
+  "component_mapping": {
+    "ParadoxColdOpenScene": "video-app/src/scenes/paradoxLab/ProbabilityParadoxLabScenes.tsx",
+    "RuleTheaterScene": "video-app/src/scenes/paradoxLab/ProbabilityParadoxLabScenes.tsx",
+    "MechanismGridScene": "video-app/src/scenes/paradoxLab/ProbabilityParadoxLabScenes.tsx",
+    "ProbabilityBoardScene": "video-app/src/scenes/paradoxLab/ProbabilityParadoxLabScenes.tsx",
+    "ReflectiveCloseScene": "video-app/src/scenes/paradoxLab/ProbabilityParadoxLabScenes.tsx"
+  },
+  "foundation_reuse_only": {
+    "subtitles": "video-app/src/components/video/SubtitleTrack.tsx",
+    "audio": "video-app/src/components/video/AudioTrackLayer.tsx",
+    "fonts_and_tokens": "video-app/src/theme/tokens.ts"
+  },
+  "prop_mapping": [
+    {
+      "from": "example_data.json.scenes[]",
+      "to": "ParadoxLabComposition.scenes[]",
+      "notes": "Each scene drives its own geometry, labels, counters, and color accents. No legacy page master is imported."
+    },
+    {
+      "from": "example_data.json.subtitleCues[]",
+      "to": "SubtitleTrack.cues",
+      "notes": "Final render must swap this source to subtitle_timeline.generated.horizontal.json after audio alignment."
+    },
+    {
+      "from": "example_voiceover_units.json.voiceover_units[]",
+      "to": "future AudioTrackLayer voiceover config + subtitle timeline rebuild",
+      "notes": "Current preview keeps audio empty and subtitles estimated."
+    }
+  ],
+  "render_notes": [
+    "Preview composition is intentionally programmatic so it does not depend on external images.",
+    "Publish-grade version should replace key backgrounds with topic-specific generated stills using promptKit.",
+    "The visual grammar is centered on mechanism reveal, pair growth, and probability compression rather than existing workflow templates."
+  ]
+}

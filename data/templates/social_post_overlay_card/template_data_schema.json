@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SocialPostOverlayCardData",
+  "type": "object",
+  "required": ["meta", "background", "card", "post", "motion"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["templateId", "topic", "orientation", "durationSec", "styleVariant"],
+      "properties": {
+        "templateId": { "const": "social_post_overlay_card" },
+        "topic": { "type": "string" },
+        "orientation": { "const": "vertical" },
+        "durationSec": { "type": "number", "minimum": 3, "maximum": 30 },
+        "styleVariant": { "type": "string" }
+      }
+    },
+    "background": {
+      "type": "object",
+      "required": ["imageSrc", "location", "sideBlur"],
+      "properties": {
+        "imageSrc": {
+          "type": "string",
+          "description": "Path relative to video-app/public/"
+        },
+        "location": { "type": "string" },
+        "sideBlur": { "type": "boolean" }
+      }
+    },
+    "card": {
+      "type": "object",
+      "required": ["anchor", "width", "top", "left", "avatarText"],
+      "properties": {
+        "anchor": { "const": "upper-center" },
+        "width": { "type": "number", "minimum": 520, "maximum": 820 },
+        "top": { "type": "number", "minimum": 80, "maximum": 360 },
+        "left": { "type": "number", "minimum": 80, "maximum": 260 },
+        "avatarText": { "type": "string", "minLength": 1, "maxLength": 3 }
+      }
+    },
+    "post": {
+      "type": "object",
+      "required": ["author", "badge", "metaLine", "paragraphs"],
+      "properties": {
+        "author": { "type": "string" },
+        "badge": { "type": "string" },
+        "metaLine": { "type": "string" },
+        "paragraphs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "motion": {
+      "type": "object",
+      "required": [
+        "backgroundScaleFrom",
+        "backgroundScaleTo",
+        "backgroundShiftY",
+        "cardTranslateYIn",
+        "cardScaleFrom",
+        "glowPeakOpacity"
+      ],
+      "properties": {
+        "backgroundScaleFrom": { "type": "number" },
+        "backgroundScaleTo": { "type": "number" },
+        "backgroundShiftY": { "type": "number" },
+        "cardTranslateYIn": { "type": "number" },
+        "cardScaleFrom": { "type": "number" },
+        "glowPeakOpacity": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    }
+  }
+}

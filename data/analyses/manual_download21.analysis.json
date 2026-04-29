@@ -1,0 +1,372 @@
+{
+  "source_video_id": "manual_download21",
+  "status": "draft",
+  "engine": {
+    "provider": "bltcy",
+    "mock_analysis": false,
+    "models": {
+      "analyze_title": "gpt-5.4-nano",
+      "analyze_description": "gpt-5.4-nano",
+      "analyze_hook": "gpt-5.4-nano",
+      "analyze_structure": "gpt-5.4-nano",
+      "analyze_script_style": "gpt-5.4-nano",
+      "analyze_visual_rhythm": "gemini-3.1-flash-lite-preview-thinking-minimal",
+      "analyze_visual_style": "gemini-3.1-flash-lite-preview-thinking-minimal",
+      "analyze_subtitle_audio": "gpt-5.4-nano",
+      "build_summary": "gpt-5.4-nano",
+      "transcribe_audio": "gpt-4o-mini-transcribe"
+    }
+  },
+  "meta": {
+    "title": null,
+    "description": null,
+    "cover_text": null,
+    "first_frame_text": null,
+    "platform": "uncertain",
+    "track": "uncertain",
+    "duration_sec": 205.13,
+    "language": "zh"
+  },
+  "transcript": {
+    "full_text": "系统占位转写，用于驱动第二阶段分析工作流。",
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 205.13,
+        "text": "系统占位转写，用于驱动第二阶段分析工作流。"
+      }
+    ],
+    "generated": true,
+    "source": "mock_fallback",
+    "fallback_reason": "Network error calling https://api.bltcy.ai/v1/audio/transcriptions: [WinError 10054] 远程主机强迫关闭了一个现有的连接。"
+  },
+  "title_analysis": {
+    "raw_title": "None",
+    "cover_text": "None",
+    "first_frame_text": "None",
+    "title_type": "missing_or_unknown",
+    "formula": "N/A",
+    "conclusion_first": false,
+    "contains": {
+      "risk": false,
+      "benefit": false,
+      "conflict": false,
+      "number": false,
+      "contrast": false,
+      "promise": false
+    },
+    "relationship_between_surfaces": {
+      "title_vs_cover": "无法判断：标题与封面文本均为“None”（缺失/未知）。",
+      "title_vs_first_frame": "无法判断：标题与首屏大字均为“None”（缺失/未知）。"
+    },
+    "keyword_slots": [],
+    "variable_candidates": [],
+    "confidence": 0.15
+  },
+  "description_analysis": {
+    "raw_description": "",
+    "description_type": "empty_or_missing",
+    "description_formula": "N/A (no description provided)",
+    "opening_role": "none",
+    "has_call_to_action": false,
+    "call_to_action_type": null,
+    "tone": "unknown",
+    "title_relation": "unknown (title is None/absent, no content to relate)",
+    "keyword_clusters": [],
+    "hashtag_strategy": {
+      "count": 0,
+      "hashtags": [],
+      "language_mix": "unknown",
+      "mix_type": "none",
+      "broad_tags": [],
+      "niche_tags": [],
+      "brand_or_account_tags": []
+    },
+    "variable_candidates": [],
+    "confidence": 0.1
+  },
+  "hook_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "structure_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "script_style_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "rhythm_engine": {
+    "mode": "mock_fallback",
+    "model": "gemini-3.1-flash-lite-preview-thinking-minimal",
+    "reason": "HTTP 429 calling https://api.bltcy.ai/v1/chat/completions: {\"error\":{\"message\":\"当前分组上游负载已饱和，请稍后再试\",\"type\":\"new_api_error\",\"param\":\"\",\"code\":429}}"
+  },
+  "visual_engine": {
+    "mode": "api",
+    "model": "gemini-3.1-flash-lite-preview-thinking-minimal"
+  },
+  "subtitle_audio_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "hook_analysis": {
+    "time_range_sec": [
+      0,
+      5
+    ],
+    "hook_text": "",
+    "hook_type": "unknown",
+    "core_mechanism": "转写内容仅为系统占位/空信息，缺少可用于判定的口播、画面或字幕细节，因此无法提取具体 Hook 文案或机制。",
+    "conclusion_first": false,
+    "devices": {
+      "risk": false,
+      "conflict": false,
+      "promise": false,
+      "question": false,
+      "surprise": false,
+      "contrarian": false
+    },
+    "visual_support": "unknown（未提供首屏/封面/文字/画面信息）",
+    "surface_dependency": "high（当前仅有系统占位转写，且缺少标题、封面文字、首屏大字与节奏摘要，无法判断是否依赖字幕/画面/音频触发注意力）",
+    "template_rule_candidates": [],
+    "confidence": 0
+  },
+  "structure_analysis": [
+    {
+      "id": "S1",
+      "start_sec": 0,
+      "end_sec": 205.13,
+      "label": "transcript_unavailable_minimal_placeholder",
+      "purpose": "由于仅提供了占位转写且未给出可分析内容，采用最小连续结构划分以满足模板系统的段落要求。",
+      "summary": "整段视频无可用叙事证据（转写为系统占位语），无法判断具体情节/卖点/步骤/反转/结尾等结构模块，因此归为单段占位。",
+      "transition_to_next": "none (only segment due to missing transcript evidence)",
+      "information_density": "very_low",
+      "confidence": 0.1
+    }
+  ],
+  "global_structure_pattern": "single_segment_placeholder_no_evidence",
+  "script_analysis": {
+    "tone": "uncertain（仅有系统占位文本，缺少可分析的口播语义与情绪表达）",
+    "sentence_style": "uncertain（文本为固定说明语句与占位符，非真实内容表达）",
+    "sentence_length_pattern": "uncertain（可见句子数量过少，且为模板说明，不代表常规口播节奏）",
+    "conclusion_first": false,
+    "dominant_modes": [],
+    "density_pattern": "uncertain（未出现信息点密集度可评估的内容）",
+    "paragraph_organization": "uncertain（仅有一段占位说明，无段落组织规律可提取）",
+    "rule_candidates": [],
+    "confidence": 0.05
+  },
+  "rhythm_analysis": {
+    "scene_changes": [
+      {
+        "time_sec": 0.0,
+        "approximate": false,
+        "change_strength": "hard_change",
+        "change_type": "opening-frame",
+        "from_visual": "intro",
+        "to_visual": "hook frame",
+        "purpose": "start with a decisive opening visual",
+        "linked_to_audio_emphasis": true
+      },
+      {
+        "time_sec": 3.0,
+        "approximate": true,
+        "change_strength": "soft_change",
+        "change_type": "supporting-layout-shift",
+        "from_visual": "hook frame",
+        "to_visual": "setup frame",
+        "purpose": "move from hook into explanation",
+        "linked_to_audio_emphasis": true
+      },
+      {
+        "time_sec": 8.0,
+        "approximate": true,
+        "change_strength": "hard_change",
+        "change_type": "evidence-cut",
+        "from_visual": "setup frame",
+        "to_visual": "body evidence frame",
+        "purpose": "introduce proof or demonstration",
+        "linked_to_audio_emphasis": false
+      }
+    ],
+    "section_rhythm": {
+      "hook": {
+        "avg_change_interval_sec": 1.0,
+        "rhythm_level": "high"
+      },
+      "body": {
+        "avg_change_interval_sec": 3.0,
+        "rhythm_level": "medium"
+      },
+      "outro": {
+        "avg_change_interval_sec": 2.5,
+        "rhythm_level": "medium"
+      }
+    },
+    "peak_moments": [
+      "0.0s opening-frame",
+      "3.0s supporting-layout-shift"
+    ],
+    "rhythm_rule_candidates": [
+      "Use a harder visual change at the opening than in the middle section",
+      "Keep body rhythm slower than hook rhythm while maintaining steady motion"
+    ],
+    "confidence": 0.59
+  },
+  "visual_analysis": [
+    {
+      "section_id": "S1",
+      "visual_type": "科普/科幻数据可视化演示",
+      "layout": "中心聚焦式构图，结合底部字幕条与顶部水印，采用多层级信息叠加布局",
+      "asset_types": [
+        "光效/粒子特效",
+        "数学公式/图表",
+        "机械/科幻装置模型",
+        "字幕条",
+        "人物特写"
+      ],
+      "style_markers": [
+        "赛博朋克/科技感色调",
+        "高对比度光效",
+        "数据可视化图表",
+        "低景深人物特写",
+        "强描边文字"
+      ],
+      "fixed_elements": [
+        "底部居中字幕条",
+        "顶部左侧水印",
+        "中心关键结论数字/图表区域"
+      ],
+      "variable_elements": [
+        "背景视觉素材（从实验场景到数据图表）",
+        "核心演示内容（公式、爆炸特效、统计图）",
+        "人物微表情特写"
+      ],
+      "recreation_difficulty": "hard",
+      "confidence": 0.85
+    }
+  ],
+  "subtitle_analysis": {
+    "position": "居下偏中（安全区），遇到信息密集帧时可能上移至中下部以避免遮挡；开场与关键转场时字幕更靠中以增强可见性（依据“硬字幕/硬转场”倾向推断）",
+    "line_count_pattern": "默认2行硬字幕；hook段更可能用1-2行短句（2行为主、每行更短），body段转为2行（偶发3行仅在证据/解释句较长时）；outro继续2行，收束句可能压缩为1行",
+    "line_length_pattern": "单行短句型（中文更偏“控制字数”而非长句铺满），每行字数大致在12-18字区间波动；hook段更短（约8-14字/行），body段略长（约12-20字/行），证据切换点（~8s附近）可能出现更密集的关键短语导致行长略增",
+    "highlight_strategy": "关键词高亮以“加粗/颜色/描边”之一实现；高亮对象倾向为：结论性词（例如“关键/所以/结论/必须”）、证据相关名词或数据短语；开场（0s）与~3s转场附近的重点句更高亮；其余句子保持常规白字或单色为主",
+    "timing_pattern": "字幕逐句滚动/分句切换与画面节奏同步：0s开场出现首条硬字幕并伴随视觉硬切；~3s处因布局变化更换字幕块（前后通常是不同句组）；~8s证据切换处可能进行字幕内容替换或强调词刷新；整体表现为“转场点换字幕块、句内保持相对稳定”的同步模式（推断基于scene_changes与“硬字幕”）",
+    "confidence": 0.52
+  },
+  "audio_analysis": {
+    "voice_style": "偏短视频讲解/带节奏的解说型配音（信息导向、语气明确、常用强调词）；语态可能为“先抛结论/再解释/再给证据”的口播结构",
+    "pace_wpm_estimate": 210,
+    "pause_pattern": "在hook与关键转场附近更频繁停顿：0s处几乎无缓冲（快进开场句）；~3s支持解释切换时有一次明显换段停顿；~8s证据/演示开始前可能有短暂停顿（0.2-0.5s级别）以承接；其余句间停顿较短（0.1-0.25s），句尾略拉长以完成字幕块",
+    "bgm_style": "偏快节奏的短视频背景音乐（鼓点/打击乐为主的轻电子或节奏型flow），音量在hook增强、body中等、outro略收；转场点可能伴随一次音效/鼓点强调（推断）",
+    "hook_sfx_likely": [
+      "whoosh/上场滑音（开场硬切配合）",
+      "hit/砰击音（0s主强调）",
+      "glitch/电音碎裂（用于“关键点”提示，可能出现在~3s）"
+    ],
+    "sync_pattern": "字幕与音频遵循“句组级同步”：当配音进入新句组（尤其是开场结论、~3s解释展开、~8s证据引入）时字幕整体刷新/换块；句内尽量保持同一字幕块不频繁闪动；同时在音频强调词处触发关键词高亮（推断基于硬字幕与scene_changes）",
+    "confidence": 0.56
+  },
+  "review": {
+    "mode": "auto",
+    "reviewed": false,
+    "notes": ""
+  },
+  "summary": {
+    "top_template_rules": [
+      {
+        "rule_id": "T1",
+        "rule": "开场使用“硬切/强视觉帧”建立注意力：0s采用比中段更强的画面变化（hard_change opening-frame），同时字幕首条在hook段靠中更易读。"
+      },
+      {
+        "rule_id": "T2",
+        "rule": "hook与body分节节奏：hook段保持更高切换频率（约1s级），body段降为中等节奏（约3s级），避免全程快切导致信息疲劳。"
+      },
+      {
+        "rule_id": "T3",
+        "rule": "证据/演示引入用“硬转场点”刷新字幕块：在关键切换点（如~8s evidence-cut）更换字幕内容/强调词，并让音频在该处做简短停顿以承接。"
+      },
+      {
+        "rule_id": "T4",
+        "rule": "字幕采用“2行硬字幕”为主，句内短句控制：中文单行字数大致12-18字；hook更短（8-14字/行），body略长（12-20字/行），并在转场点集中替换字幕块。"
+      },
+      {
+        "rule_id": "T5",
+        "rule": "视觉信息密度高且可复用的赛博数据演示模板：中心聚焦+底部字幕条+顶部水印固定框架；通过可变背景素材与可变“核心演示内容（公式/图表/装置爆炸特效/统计图）”完成主题替换。"
+      }
+    ],
+    "key_packaging_features": [
+      {
+        "feature_id": "P1",
+        "feature": "固定信息叠加层：底部居中字幕条（安全区偏中）、顶部左侧水印、中心关键结论数字/图表区域同时存在。"
+      },
+      {
+        "feature_id": "P2",
+        "feature": "关键词高亮策略：在音频强调词/结论性词（如关键/所以/结论/必须）触发加粗/颜色/描边之一，且在开场与~3s转场附近更密集。"
+      },
+      {
+        "feature_id": "P3",
+        "feature": "音视频句组同步：当配音进入新句组（hook结论、~3s解释展开、~8s证据引入）时字幕整体刷新/换块，并在转场前后伴随轻SFX（whoosh/hit/glitch倾向）。"
+      }
+    ],
+    "best_variable_candidates": [
+      {
+        "var_id": "V1",
+        "name": "hook结论句",
+        "type": "text",
+        "description": "0s首条硬字幕对应的结论/观点短句（1-2行，约8-14字/行），不依赖标题信息。"
+      },
+      {
+        "var_id": "V2",
+        "name": "解释展开句组",
+        "type": "list[text]",
+        "description": "~3s支持解释段落使用的句组字幕（2行硬字幕为主，可包含1次高亮关键词）。"
+      },
+      {
+        "var_id": "V3",
+        "name": "证据/演示内容",
+        "type": "object",
+        "description": "用于~8s evidence-cut的核心可视化变量：公式/统计图/装置演示/爆炸或粒子特效/关键数据短语（选择其一或组合）。"
+      },
+      {
+        "var_id": "V4",
+        "name": "关键高亮关键词",
+        "type": "list[text]",
+        "description": "字幕高亮的触发词集合（结论性词+证据相关名词/数据短语），用于控制哪些词加粗/变色/描边。"
+      },
+      {
+        "var_id": "V5",
+        "name": "可变背景视觉素材",
+        "type": "asset",
+        "description": "赛博数据可视化的背景素材（实验场景/科幻装置/数据空间等），用于替换视觉主题但保持布局不变。"
+      }
+    ],
+    "best_fixed_rules": [
+      {
+        "fixed_id": "F1",
+        "rule": "字幕布局固定：默认2行硬字幕，位置居下偏中（必要时中下部），开场与硬转场点字幕更靠中以增强可读性。"
+      },
+      {
+        "fixed_id": "F2",
+        "rule": "转场与字幕同步固定：scene变化对应字幕块刷新；句内尽量保持同一字幕块不频繁闪动。"
+      },
+      {
+        "fixed_id": "F3",
+        "rule": "节奏固定：hook段采用更快节奏（~1s/次变化），body段放慢至中等节奏（~3s/次变化），outro保持中等（~2.5s/次变化）。"
+      },
+      {
+        "fixed_id": "F4",
+        "rule": "视觉框架固定：中心聚焦构图+底部居中字幕条+顶部左侧水印；中心区域用于承载可变“核心结论数字/图表”。"
+      },
+      {
+        "fixed_id": "F5",
+        "rule": "风格固定：科普/科幻数据可视化演示风格（赛博科技感色调、高对比光效、数据图表、强描边文字、必要时低景深人物特写）。"
+      }
+    ]
+  },
+  "summary_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  }
+}

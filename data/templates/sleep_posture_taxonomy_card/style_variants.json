@@ -1,0 +1,26 @@
+{
+  "clean_white_psychology_card": {
+    "background": "#ffffff",
+    "questionColor": "#22aeea",
+    "inkColor": "#171717",
+    "mutedInk": "#5f6368",
+    "captionColor": "#101010",
+    "dividerColor": "#121212",
+    "accentColor": "#22aeea",
+    "figureStyle": "ai_generated_anime_character_png",
+    "motionDensity": "low",
+    "transitionStyle": "static_hold_caption_reveal"
+  },
+  "warm_classroom_card": {
+    "background": "#fffdf8",
+    "questionColor": "#1f9bd1",
+    "inkColor": "#1a1a1a",
+    "mutedInk": "#6f6b63",
+    "captionColor": "#111111",
+    "dividerColor": "#181818",
+    "accentColor": "#f0a23a",
+    "figureStyle": "ai_generated_soft_color_character_png",
+    "motionDensity": "low",
+    "transitionStyle": "gentle_push_caption_reveal"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "composition": "SleepPostureTaxonomyComposition",
+  "composition_id": "sleep-posture-taxonomy-validation-preview",
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "duration_in_frames": 1260,
+  "source_modules": {
+    "composition": "video-app/src/compositions/SleepPostureTaxonomyComposition.tsx",
+    "scenes": "video-app/src/scenes/sleepPostureTaxonomy/SleepPostureTaxonomyScenes.tsx",
+    "data": "video-app/src/data/sleepPostureTaxonomyData.ts",
+    "audio": "video-app/src/data/sleepPostureTaxonomyAudio.ts"
+  },
+  "data_to_props": {
+    "header.channelLabel": "WhiteBoardTaxonomyMaster.channelLabel",
+    "header.eyebrow": "WhiteBoardTaxonomyMaster.eyebrow",
+    "header.question": "CenteredQuestionMaster.question",
+    "header.sourceNote": "WhiteBoardTaxonomyMaster.sourceNote",
+    "items[]": "IconRowComparisonMaster.items",
+    "items[].imageSrc": "IconRowComparisonMaster.characterImage",
+    "items[].label": "IconRowComparisonMaster.itemLabel",
+    "items[].shortTrait": "IconRowComparisonMaster.itemTrait",
+    "timeline[].caption": "BottomNarrationBandMaster.caption",
+    "timeline[].activeItemIds": "IconRowComparisonMaster.activeItemIds",
+    "timeline[].sceneType": "Remotion Sequence component selector",
+    "audio.voiceover.src": "AudioTrackLayer.voiceover",
+    "audio.bgm.src": "AudioTrackLayer.bgm",
+    "audio.subtitles[]": "bottom caption cue source"
+  },
+  "scene_mapping": [
+    {
+      "sceneType": "TaxonomyOpenerScene",
+      "component": "TaxonomyOpenerScene",
+      "purpose": "0-5 秒建立问题、分类行和底部口播字幕"
+    },
+    {
+      "sceneType": "PostureStripScene",
+      "component": "PostureStripScene",
+      "purpose": "展示完整分类行并承接口播，不做页面级切换"
+    },
+    {
+      "sceneType": "CaptionRevealScene",
+      "component": "CaptionRevealScene",
+      "purpose": "逐条解释分类，通过蓝色框选与底部字幕推进内容"
+    },
+    {
+      "sceneType": "ResultPromptScene",
+      "component": "ResultPromptScene",
+      "purpose": "评论区结果引导，保留主体分类行"
+    }
+  ],
+  "render_command": "cd video-app && npx remotion render src/index.ts sleep-posture-taxonomy-validation-preview ../data/jobs/sleep-posture-taxonomy-validation-preview.mp4"
+}

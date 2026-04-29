@@ -1,0 +1,34 @@
+[
+  {
+    "section": "hook",
+    "visual_goal": "复刻参考视频的一页分类卡开场",
+    "visual_content": "白底，顶部栏目，中心蓝色问题“你是哪种开会姿势”，下方 6 个黑白会议姿势小人",
+    "asset_needs": "程序化小人 SVG/React 绘制",
+    "motion_transition": "0.2 秒淡入，整体 1.5% 慢推",
+    "notes": "不使用现有模板页面结构"
+  },
+  {
+    "section": "setup",
+    "visual_goal": "保持主视觉不变，用底部字幕推进",
+    "visual_content": "分类小人常驻，底部出现解释字幕",
+    "asset_needs": "无新增",
+    "motion_transition": "字幕 5 帧淡入",
+    "notes": "页面不切换"
+  },
+  {
+    "section": "types",
+    "visual_goal": "逐个解释分类并给用户对照",
+    "visual_content": "对应小人出现蓝色细圈和轻微上浮，其余保持灰黑",
+    "asset_needs": "无新增",
+    "motion_transition": "每 5-6 秒替换字幕和高亮目标",
+    "notes": "高亮是元素层动效，不是页面转场"
+  },
+  {
+    "section": "cta",
+    "visual_goal": "评论互动",
+    "visual_content": "全部小人回到常态，底部 CTA 加粗",
+    "asset_needs": "无新增",
+    "motion_transition": "字幕停留到结尾",
+    "notes": "保留白底简洁"
+  }
+]

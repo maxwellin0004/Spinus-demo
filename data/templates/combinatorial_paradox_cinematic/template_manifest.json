@@ -1,0 +1,92 @@
+{
+  "template_id": "combinatorial_paradox_cinematic",
+  "version": "1.0.0",
+  "name": "组合悖论电影化讲解模板",
+  "source_reference": {
+    "path": "D:\\document\\google\\download (21).mp4",
+    "analysis_report": "data/templates/combinatorial_paradox_cinematic/workflow_report.md",
+    "duration_sec": 205.13,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "metadata_status": "title/description unavailable; visual evidence and hard-subtitle evidence partially confirmed"
+  },
+  "orientation": "horizontal",
+  "template_type": "cinematic combinatorial paradox explainer",
+  "asset_strategy": {
+    "default_mode": "generate_per_topic_scene_images",
+    "fallback_mode": "bundled_validation_panels",
+    "required_before_final_render": [
+      "derive new scene prompts from the new topic instead of reusing the birthday-paradox panels",
+      "generate or source one topic-specific image per scene asset slot",
+      "write the generated image paths back into scene data",
+      "keep bundled validation images only as fallback or temporary layout placeholders"
+    ],
+    "prompt_files": [
+      "image_prompt_schema.json",
+      "image_prompt_library.json",
+      "style_to_prompt_mapping.json",
+      "asset_generation_plan.json"
+    ]
+  },
+  "new_scene_system_required": true,
+  "reused_foundation_only": [
+    "video-app/src/components/video/SubtitleTrack.tsx",
+    "video-app/src/components/video/AudioTrackLayer.tsx",
+    "video-app/src/theme/tokens.ts",
+    "Remotion core primitives",
+    "static image/public asset loading",
+    "basic spring/interpolate motion helpers"
+  ],
+  "forbidden_reuse": [
+    "existing composition page masters",
+    "existing scene component skeletons",
+    "existing comic/trading/psych/archive/dossier layout systems",
+    "existing montage timing presets tied to other templates"
+  ],
+  "scene_types": [
+    "ParadoxColdOpenScene",
+    "RuleTheaterScene",
+    "MechanismGridScene",
+    "PairCascadeScene",
+    "ProbabilityBoardScene",
+    "ReflectiveCloseScene"
+  ],
+  "page_masters": [
+    "master_cold_lab_frame",
+    "master_rule_board",
+    "master_grid_demonstration",
+    "master_numeric_compression",
+    "master_reflective_epilogue"
+  ],
+  "style_variant_file": "style_variants.json",
+  "example_data_file": "example_data.json",
+  "render_mapping_file": "render_mapping.json",
+  "audio_support": {
+    "voiceover_supported": true,
+    "example_voiceover_units_file": "example_voiceover_units.json",
+    "audio_schema_file": "template_data_audio_schema.json",
+    "alignment_protocol_file": "audio_alignment_protocol.json",
+    "final_subtitle_source": "subtitle_timeline.generated.horizontal.json",
+    "timing_rule": "voiceover_units are estimates until final audio is generated and subtitle_timeline.generated.horizontal.json is rebuilt from real audio timing"
+  },
+  "validation_pack": {
+    "topic": "为什么只要 23 个人，撞生日的概率就已经超过一半",
+    "script_pack_file": "validation_pack/script_pack.json",
+    "production_plan_file": "validation_pack/production_plan.md",
+    "preview_composition_id": "combinatorial-paradox-cinematic-preview",
+    "preview_render_target": "video-app/renders/combinatorial-paradox-cinematic-preview-audio.mp4",
+    "preview_audio_file": "video-app/public/audio/combinatorial-paradox/birthday-paradox-elevenlabs.mp3",
+    "preview_status": "rendered_audio_preview_with_aligned_subtitles",
+    "bundled_template_assets": {
+      "image_panels": [
+        "assets/images/panel-1-cold-open.png",
+        "assets/images/panel-2-wrong-path.png",
+        "assets/images/panel-3-mechanism.png",
+        "assets/images/panel-4-probability.png"
+      ],
+      "voiceover_audio": "assets/audio/birthday-paradox-elevenlabs.mp3"
+    }
+  },
+  "status": "packaged_template"
+}

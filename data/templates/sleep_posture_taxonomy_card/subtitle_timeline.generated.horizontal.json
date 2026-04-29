@@ -1,0 +1,72 @@
+{
+  "fps": 30,
+  "orientation": "horizontal",
+  "timing_status": "estimated_after_audio_duration_fit",
+  "source": "elevenlabs_voiceover_preview_duration_36_68s_video_duration_42_05s",
+  "cues": [
+    {
+      "startFrame": 0,
+      "endFrame": 149,
+      "text": "刷手机姿势其实会暴露你的放松方式",
+      "voiceId": "v01",
+      "visualSectionId": "scene_01",
+      "timingStatus": "estimated_after_audio_duration_fit"
+    },
+    {
+      "startFrame": 150,
+      "endFrame": 299,
+      "text": "同样是刷屏，每个人身体最诚实的反应都不一样",
+      "voiceId": "v02",
+      "visualSectionId": "scene_02",
+      "timingStatus": "estimated_after_audio_duration_fit"
+    },
+    {
+      "startFrame": 300,
+      "endFrame": 449,
+      "text": "仰躺举屏的人，通常是真的想把脑子完全放空",
+      "voiceId": "v03",
+      "visualSectionId": "scene_03",
+      "timingStatus": "estimated_after_audio_duration_fit"
+    },
+    {
+      "startFrame": 450,
+      "endFrame": 599,
+      "text": "蜷缩连刷的人，刷的不是内容，是一点安全感",
+      "voiceId": "v04",
+      "visualSectionId": "scene_04",
+      "timingStatus": "estimated_after_audio_duration_fit"
+    },
+    {
+      "startFrame": 600,
+      "endFrame": 749,
+      "text": "歪坐单手刷的人，注意力常常在现实和屏幕中间摇摆",
+      "voiceId": "v05",
+      "visualSectionId": "scene_05",
+      "timingStatus": "estimated_after_audio_duration_fit"
+    },
+    {
+      "startFrame": 750,
+      "endFrame": 929,
+      "text": "趴桌偷看的人，往往是在忙碌里给自己偷一口气",
+      "voiceId": "v06",
+      "visualSectionId": "scene_06",
+      "timingStatus": "estimated_after_audio_duration_fit"
+    },
+    {
+      "startFrame": 930,
+      "endFrame": 1109,
+      "text": "边走边刷的人，不是闲不住，是大脑很难真正停机",
+      "voiceId": "v07",
+      "visualSectionId": "scene_07",
+      "timingStatus": "estimated_after_audio_duration_fit"
+    },
+    {
+      "startFrame": 1110,
+      "endFrame": 1259,
+      "text": "你是哪一种？把结果打在评论区",
+      "voiceId": "v08",
+      "visualSectionId": "scene_08",
+      "timingStatus": "estimated_after_audio_duration_fit"
+    }
+  ]
+}

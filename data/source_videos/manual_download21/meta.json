@@ -1,0 +1,1322 @@
+{
+  "source_video_id": "manual_download21",
+  "filename": "download (21).mp4",
+  "title": null,
+  "description": null,
+  "cover_text": null,
+  "first_frame_text": null,
+  "platform": "uncertain",
+  "track": "uncertain",
+  "language": "zh",
+  "duration_sec": 205.13,
+  "created_at": "2026-04-29T00:00:00+0800",
+  "_frame_index": {
+    "success": true,
+    "source": "ffmpeg_fps_1",
+    "count": 205,
+    "frames": [
+      {
+        "index": 0,
+        "time_sec": 0.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0001.jpg",
+        "name": "frame_0001.jpg"
+      },
+      {
+        "index": 1,
+        "time_sec": 1.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0002.jpg",
+        "name": "frame_0002.jpg"
+      },
+      {
+        "index": 2,
+        "time_sec": 2.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0003.jpg",
+        "name": "frame_0003.jpg"
+      },
+      {
+        "index": 3,
+        "time_sec": 3.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0004.jpg",
+        "name": "frame_0004.jpg"
+      },
+      {
+        "index": 4,
+        "time_sec": 4.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0005.jpg",
+        "name": "frame_0005.jpg"
+      },
+      {
+        "index": 5,
+        "time_sec": 5.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0006.jpg",
+        "name": "frame_0006.jpg"
+      },
+      {
+        "index": 6,
+        "time_sec": 6.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0007.jpg",
+        "name": "frame_0007.jpg"
+      },
+      {
+        "index": 7,
+        "time_sec": 7.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0008.jpg",
+        "name": "frame_0008.jpg"
+      },
+      {
+        "index": 8,
+        "time_sec": 8.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0009.jpg",
+        "name": "frame_0009.jpg"
+      },
+      {
+        "index": 9,
+        "time_sec": 9.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0010.jpg",
+        "name": "frame_0010.jpg"
+      },
+      {
+        "index": 10,
+        "time_sec": 10.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0011.jpg",
+        "name": "frame_0011.jpg"
+      },
+      {
+        "index": 11,
+        "time_sec": 11.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0012.jpg",
+        "name": "frame_0012.jpg"
+      },
+      {
+        "index": 12,
+        "time_sec": 12.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0013.jpg",
+        "name": "frame_0013.jpg"
+      },
+      {
+        "index": 13,
+        "time_sec": 13.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0014.jpg",
+        "name": "frame_0014.jpg"
+      },
+      {
+        "index": 14,
+        "time_sec": 14.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0015.jpg",
+        "name": "frame_0015.jpg"
+      },
+      {
+        "index": 15,
+        "time_sec": 15.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0016.jpg",
+        "name": "frame_0016.jpg"
+      },
+      {
+        "index": 16,
+        "time_sec": 16.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0017.jpg",
+        "name": "frame_0017.jpg"
+      },
+      {
+        "index": 17,
+        "time_sec": 17.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0018.jpg",
+        "name": "frame_0018.jpg"
+      },
+      {
+        "index": 18,
+        "time_sec": 18.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0019.jpg",
+        "name": "frame_0019.jpg"
+      },
+      {
+        "index": 19,
+        "time_sec": 19.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0020.jpg",
+        "name": "frame_0020.jpg"
+      },
+      {
+        "index": 20,
+        "time_sec": 20.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0021.jpg",
+        "name": "frame_0021.jpg"
+      },
+      {
+        "index": 21,
+        "time_sec": 21.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0022.jpg",
+        "name": "frame_0022.jpg"
+      },
+      {
+        "index": 22,
+        "time_sec": 22.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0023.jpg",
+        "name": "frame_0023.jpg"
+      },
+      {
+        "index": 23,
+        "time_sec": 23.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0024.jpg",
+        "name": "frame_0024.jpg"
+      },
+      {
+        "index": 24,
+        "time_sec": 24.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0025.jpg",
+        "name": "frame_0025.jpg"
+      },
+      {
+        "index": 25,
+        "time_sec": 25.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0026.jpg",
+        "name": "frame_0026.jpg"
+      },
+      {
+        "index": 26,
+        "time_sec": 26.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0027.jpg",
+        "name": "frame_0027.jpg"
+      },
+      {
+        "index": 27,
+        "time_sec": 27.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0028.jpg",
+        "name": "frame_0028.jpg"
+      },
+      {
+        "index": 28,
+        "time_sec": 28.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0029.jpg",
+        "name": "frame_0029.jpg"
+      },
+      {
+        "index": 29,
+        "time_sec": 29.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0030.jpg",
+        "name": "frame_0030.jpg"
+      },
+      {
+        "index": 30,
+        "time_sec": 30.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0031.jpg",
+        "name": "frame_0031.jpg"
+      },
+      {
+        "index": 31,
+        "time_sec": 31.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0032.jpg",
+        "name": "frame_0032.jpg"
+      },
+      {
+        "index": 32,
+        "time_sec": 32.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0033.jpg",
+        "name": "frame_0033.jpg"
+      },
+      {
+        "index": 33,
+        "time_sec": 33.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0034.jpg",
+        "name": "frame_0034.jpg"
+      },
+      {
+        "index": 34,
+        "time_sec": 34.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0035.jpg",
+        "name": "frame_0035.jpg"
+      },
+      {
+        "index": 35,
+        "time_sec": 35.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0036.jpg",
+        "name": "frame_0036.jpg"
+      },
+      {
+        "index": 36,
+        "time_sec": 36.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0037.jpg",
+        "name": "frame_0037.jpg"
+      },
+      {
+        "index": 37,
+        "time_sec": 37.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0038.jpg",
+        "name": "frame_0038.jpg"
+      },
+      {
+        "index": 38,
+        "time_sec": 38.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0039.jpg",
+        "name": "frame_0039.jpg"
+      },
+      {
+        "index": 39,
+        "time_sec": 39.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0040.jpg",
+        "name": "frame_0040.jpg"
+      },
+      {
+        "index": 40,
+        "time_sec": 40.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0041.jpg",
+        "name": "frame_0041.jpg"
+      },
+      {
+        "index": 41,
+        "time_sec": 41.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0042.jpg",
+        "name": "frame_0042.jpg"
+      },
+      {
+        "index": 42,
+        "time_sec": 42.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0043.jpg",
+        "name": "frame_0043.jpg"
+      },
+      {
+        "index": 43,
+        "time_sec": 43.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0044.jpg",
+        "name": "frame_0044.jpg"
+      },
+      {
+        "index": 44,
+        "time_sec": 44.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0045.jpg",
+        "name": "frame_0045.jpg"
+      },
+      {
+        "index": 45,
+        "time_sec": 45.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0046.jpg",
+        "name": "frame_0046.jpg"
+      },
+      {
+        "index": 46,
+        "time_sec": 46.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0047.jpg",
+        "name": "frame_0047.jpg"
+      },
+      {
+        "index": 47,
+        "time_sec": 47.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0048.jpg",
+        "name": "frame_0048.jpg"
+      },
+      {
+        "index": 48,
+        "time_sec": 48.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0049.jpg",
+        "name": "frame_0049.jpg"
+      },
+      {
+        "index": 49,
+        "time_sec": 49.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0050.jpg",
+        "name": "frame_0050.jpg"
+      },
+      {
+        "index": 50,
+        "time_sec": 50.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0051.jpg",
+        "name": "frame_0051.jpg"
+      },
+      {
+        "index": 51,
+        "time_sec": 51.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0052.jpg",
+        "name": "frame_0052.jpg"
+      },
+      {
+        "index": 52,
+        "time_sec": 52.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0053.jpg",
+        "name": "frame_0053.jpg"
+      },
+      {
+        "index": 53,
+        "time_sec": 53.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0054.jpg",
+        "name": "frame_0054.jpg"
+      },
+      {
+        "index": 54,
+        "time_sec": 54.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0055.jpg",
+        "name": "frame_0055.jpg"
+      },
+      {
+        "index": 55,
+        "time_sec": 55.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0056.jpg",
+        "name": "frame_0056.jpg"
+      },
+      {
+        "index": 56,
+        "time_sec": 56.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0057.jpg",
+        "name": "frame_0057.jpg"
+      },
+      {
+        "index": 57,
+        "time_sec": 57.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0058.jpg",
+        "name": "frame_0058.jpg"
+      },
+      {
+        "index": 58,
+        "time_sec": 58.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0059.jpg",
+        "name": "frame_0059.jpg"
+      },
+      {
+        "index": 59,
+        "time_sec": 59.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0060.jpg",
+        "name": "frame_0060.jpg"
+      },
+      {
+        "index": 60,
+        "time_sec": 60.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0061.jpg",
+        "name": "frame_0061.jpg"
+      },
+      {
+        "index": 61,
+        "time_sec": 61.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0062.jpg",
+        "name": "frame_0062.jpg"
+      },
+      {
+        "index": 62,
+        "time_sec": 62.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0063.jpg",
+        "name": "frame_0063.jpg"
+      },
+      {
+        "index": 63,
+        "time_sec": 63.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0064.jpg",
+        "name": "frame_0064.jpg"
+      },
+      {
+        "index": 64,
+        "time_sec": 64.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0065.jpg",
+        "name": "frame_0065.jpg"
+      },
+      {
+        "index": 65,
+        "time_sec": 65.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0066.jpg",
+        "name": "frame_0066.jpg"
+      },
+      {
+        "index": 66,
+        "time_sec": 66.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0067.jpg",
+        "name": "frame_0067.jpg"
+      },
+      {
+        "index": 67,
+        "time_sec": 67.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0068.jpg",
+        "name": "frame_0068.jpg"
+      },
+      {
+        "index": 68,
+        "time_sec": 68.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0069.jpg",
+        "name": "frame_0069.jpg"
+      },
+      {
+        "index": 69,
+        "time_sec": 69.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0070.jpg",
+        "name": "frame_0070.jpg"
+      },
+      {
+        "index": 70,
+        "time_sec": 70.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0071.jpg",
+        "name": "frame_0071.jpg"
+      },
+      {
+        "index": 71,
+        "time_sec": 71.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0072.jpg",
+        "name": "frame_0072.jpg"
+      },
+      {
+        "index": 72,
+        "time_sec": 72.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0073.jpg",
+        "name": "frame_0073.jpg"
+      },
+      {
+        "index": 73,
+        "time_sec": 73.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0074.jpg",
+        "name": "frame_0074.jpg"
+      },
+      {
+        "index": 74,
+        "time_sec": 74.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0075.jpg",
+        "name": "frame_0075.jpg"
+      },
+      {
+        "index": 75,
+        "time_sec": 75.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0076.jpg",
+        "name": "frame_0076.jpg"
+      },
+      {
+        "index": 76,
+        "time_sec": 76.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0077.jpg",
+        "name": "frame_0077.jpg"
+      },
+      {
+        "index": 77,
+        "time_sec": 77.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0078.jpg",
+        "name": "frame_0078.jpg"
+      },
+      {
+        "index": 78,
+        "time_sec": 78.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0079.jpg",
+        "name": "frame_0079.jpg"
+      },
+      {
+        "index": 79,
+        "time_sec": 79.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0080.jpg",
+        "name": "frame_0080.jpg"
+      },
+      {
+        "index": 80,
+        "time_sec": 80.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0081.jpg",
+        "name": "frame_0081.jpg"
+      },
+      {
+        "index": 81,
+        "time_sec": 81.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0082.jpg",
+        "name": "frame_0082.jpg"
+      },
+      {
+        "index": 82,
+        "time_sec": 82.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0083.jpg",
+        "name": "frame_0083.jpg"
+      },
+      {
+        "index": 83,
+        "time_sec": 83.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0084.jpg",
+        "name": "frame_0084.jpg"
+      },
+      {
+        "index": 84,
+        "time_sec": 84.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0085.jpg",
+        "name": "frame_0085.jpg"
+      },
+      {
+        "index": 85,
+        "time_sec": 85.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0086.jpg",
+        "name": "frame_0086.jpg"
+      },
+      {
+        "index": 86,
+        "time_sec": 86.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0087.jpg",
+        "name": "frame_0087.jpg"
+      },
+      {
+        "index": 87,
+        "time_sec": 87.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0088.jpg",
+        "name": "frame_0088.jpg"
+      },
+      {
+        "index": 88,
+        "time_sec": 88.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0089.jpg",
+        "name": "frame_0089.jpg"
+      },
+      {
+        "index": 89,
+        "time_sec": 89.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0090.jpg",
+        "name": "frame_0090.jpg"
+      },
+      {
+        "index": 90,
+        "time_sec": 90.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0091.jpg",
+        "name": "frame_0091.jpg"
+      },
+      {
+        "index": 91,
+        "time_sec": 91.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0092.jpg",
+        "name": "frame_0092.jpg"
+      },
+      {
+        "index": 92,
+        "time_sec": 92.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0093.jpg",
+        "name": "frame_0093.jpg"
+      },
+      {
+        "index": 93,
+        "time_sec": 93.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0094.jpg",
+        "name": "frame_0094.jpg"
+      },
+      {
+        "index": 94,
+        "time_sec": 94.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0095.jpg",
+        "name": "frame_0095.jpg"
+      },
+      {
+        "index": 95,
+        "time_sec": 95.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0096.jpg",
+        "name": "frame_0096.jpg"
+      },
+      {
+        "index": 96,
+        "time_sec": 96.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0097.jpg",
+        "name": "frame_0097.jpg"
+      },
+      {
+        "index": 97,
+        "time_sec": 97.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0098.jpg",
+        "name": "frame_0098.jpg"
+      },
+      {
+        "index": 98,
+        "time_sec": 98.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0099.jpg",
+        "name": "frame_0099.jpg"
+      },
+      {
+        "index": 99,
+        "time_sec": 99.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0100.jpg",
+        "name": "frame_0100.jpg"
+      },
+      {
+        "index": 100,
+        "time_sec": 100.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0101.jpg",
+        "name": "frame_0101.jpg"
+      },
+      {
+        "index": 101,
+        "time_sec": 101.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0102.jpg",
+        "name": "frame_0102.jpg"
+      },
+      {
+        "index": 102,
+        "time_sec": 102.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0103.jpg",
+        "name": "frame_0103.jpg"
+      },
+      {
+        "index": 103,
+        "time_sec": 103.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0104.jpg",
+        "name": "frame_0104.jpg"
+      },
+      {
+        "index": 104,
+        "time_sec": 104.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0105.jpg",
+        "name": "frame_0105.jpg"
+      },
+      {
+        "index": 105,
+        "time_sec": 105.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0106.jpg",
+        "name": "frame_0106.jpg"
+      },
+      {
+        "index": 106,
+        "time_sec": 106.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0107.jpg",
+        "name": "frame_0107.jpg"
+      },
+      {
+        "index": 107,
+        "time_sec": 107.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0108.jpg",
+        "name": "frame_0108.jpg"
+      },
+      {
+        "index": 108,
+        "time_sec": 108.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0109.jpg",
+        "name": "frame_0109.jpg"
+      },
+      {
+        "index": 109,
+        "time_sec": 109.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0110.jpg",
+        "name": "frame_0110.jpg"
+      },
+      {
+        "index": 110,
+        "time_sec": 110.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0111.jpg",
+        "name": "frame_0111.jpg"
+      },
+      {
+        "index": 111,
+        "time_sec": 111.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0112.jpg",
+        "name": "frame_0112.jpg"
+      },
+      {
+        "index": 112,
+        "time_sec": 112.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0113.jpg",
+        "name": "frame_0113.jpg"
+      },
+      {
+        "index": 113,
+        "time_sec": 113.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0114.jpg",
+        "name": "frame_0114.jpg"
+      },
+      {
+        "index": 114,
+        "time_sec": 114.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0115.jpg",
+        "name": "frame_0115.jpg"
+      },
+      {
+        "index": 115,
+        "time_sec": 115.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0116.jpg",
+        "name": "frame_0116.jpg"
+      },
+      {
+        "index": 116,
+        "time_sec": 116.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0117.jpg",
+        "name": "frame_0117.jpg"
+      },
+      {
+        "index": 117,
+        "time_sec": 117.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0118.jpg",
+        "name": "frame_0118.jpg"
+      },
+      {
+        "index": 118,
+        "time_sec": 118.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0119.jpg",
+        "name": "frame_0119.jpg"
+      },
+      {
+        "index": 119,
+        "time_sec": 119.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0120.jpg",
+        "name": "frame_0120.jpg"
+      },
+      {
+        "index": 120,
+        "time_sec": 120.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0121.jpg",
+        "name": "frame_0121.jpg"
+      },
+      {
+        "index": 121,
+        "time_sec": 121.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0122.jpg",
+        "name": "frame_0122.jpg"
+      },
+      {
+        "index": 122,
+        "time_sec": 122.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0123.jpg",
+        "name": "frame_0123.jpg"
+      },
+      {
+        "index": 123,
+        "time_sec": 123.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0124.jpg",
+        "name": "frame_0124.jpg"
+      },
+      {
+        "index": 124,
+        "time_sec": 124.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0125.jpg",
+        "name": "frame_0125.jpg"
+      },
+      {
+        "index": 125,
+        "time_sec": 125.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0126.jpg",
+        "name": "frame_0126.jpg"
+      },
+      {
+        "index": 126,
+        "time_sec": 126.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0127.jpg",
+        "name": "frame_0127.jpg"
+      },
+      {
+        "index": 127,
+        "time_sec": 127.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0128.jpg",
+        "name": "frame_0128.jpg"
+      },
+      {
+        "index": 128,
+        "time_sec": 128.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0129.jpg",
+        "name": "frame_0129.jpg"
+      },
+      {
+        "index": 129,
+        "time_sec": 129.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0130.jpg",
+        "name": "frame_0130.jpg"
+      },
+      {
+        "index": 130,
+        "time_sec": 130.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0131.jpg",
+        "name": "frame_0131.jpg"
+      },
+      {
+        "index": 131,
+        "time_sec": 131.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0132.jpg",
+        "name": "frame_0132.jpg"
+      },
+      {
+        "index": 132,
+        "time_sec": 132.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0133.jpg",
+        "name": "frame_0133.jpg"
+      },
+      {
+        "index": 133,
+        "time_sec": 133.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0134.jpg",
+        "name": "frame_0134.jpg"
+      },
+      {
+        "index": 134,
+        "time_sec": 134.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0135.jpg",
+        "name": "frame_0135.jpg"
+      },
+      {
+        "index": 135,
+        "time_sec": 135.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0136.jpg",
+        "name": "frame_0136.jpg"
+      },
+      {
+        "index": 136,
+        "time_sec": 136.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0137.jpg",
+        "name": "frame_0137.jpg"
+      },
+      {
+        "index": 137,
+        "time_sec": 137.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0138.jpg",
+        "name": "frame_0138.jpg"
+      },
+      {
+        "index": 138,
+        "time_sec": 138.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0139.jpg",
+        "name": "frame_0139.jpg"
+      },
+      {
+        "index": 139,
+        "time_sec": 139.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0140.jpg",
+        "name": "frame_0140.jpg"
+      },
+      {
+        "index": 140,
+        "time_sec": 140.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0141.jpg",
+        "name": "frame_0141.jpg"
+      },
+      {
+        "index": 141,
+        "time_sec": 141.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0142.jpg",
+        "name": "frame_0142.jpg"
+      },
+      {
+        "index": 142,
+        "time_sec": 142.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0143.jpg",
+        "name": "frame_0143.jpg"
+      },
+      {
+        "index": 143,
+        "time_sec": 143.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0144.jpg",
+        "name": "frame_0144.jpg"
+      },
+      {
+        "index": 144,
+        "time_sec": 144.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0145.jpg",
+        "name": "frame_0145.jpg"
+      },
+      {
+        "index": 145,
+        "time_sec": 145.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0146.jpg",
+        "name": "frame_0146.jpg"
+      },
+      {
+        "index": 146,
+        "time_sec": 146.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0147.jpg",
+        "name": "frame_0147.jpg"
+      },
+      {
+        "index": 147,
+        "time_sec": 147.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0148.jpg",
+        "name": "frame_0148.jpg"
+      },
+      {
+        "index": 148,
+        "time_sec": 148.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0149.jpg",
+        "name": "frame_0149.jpg"
+      },
+      {
+        "index": 149,
+        "time_sec": 149.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0150.jpg",
+        "name": "frame_0150.jpg"
+      },
+      {
+        "index": 150,
+        "time_sec": 150.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0151.jpg",
+        "name": "frame_0151.jpg"
+      },
+      {
+        "index": 151,
+        "time_sec": 151.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0152.jpg",
+        "name": "frame_0152.jpg"
+      },
+      {
+        "index": 152,
+        "time_sec": 152.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0153.jpg",
+        "name": "frame_0153.jpg"
+      },
+      {
+        "index": 153,
+        "time_sec": 153.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0154.jpg",
+        "name": "frame_0154.jpg"
+      },
+      {
+        "index": 154,
+        "time_sec": 154.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0155.jpg",
+        "name": "frame_0155.jpg"
+      },
+      {
+        "index": 155,
+        "time_sec": 155.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0156.jpg",
+        "name": "frame_0156.jpg"
+      },
+      {
+        "index": 156,
+        "time_sec": 156.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0157.jpg",
+        "name": "frame_0157.jpg"
+      },
+      {
+        "index": 157,
+        "time_sec": 157.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0158.jpg",
+        "name": "frame_0158.jpg"
+      },
+      {
+        "index": 158,
+        "time_sec": 158.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0159.jpg",
+        "name": "frame_0159.jpg"
+      },
+      {
+        "index": 159,
+        "time_sec": 159.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0160.jpg",
+        "name": "frame_0160.jpg"
+      },
+      {
+        "index": 160,
+        "time_sec": 160.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0161.jpg",
+        "name": "frame_0161.jpg"
+      },
+      {
+        "index": 161,
+        "time_sec": 161.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0162.jpg",
+        "name": "frame_0162.jpg"
+      },
+      {
+        "index": 162,
+        "time_sec": 162.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0163.jpg",
+        "name": "frame_0163.jpg"
+      },
+      {
+        "index": 163,
+        "time_sec": 163.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0164.jpg",
+        "name": "frame_0164.jpg"
+      },
+      {
+        "index": 164,
+        "time_sec": 164.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0165.jpg",
+        "name": "frame_0165.jpg"
+      },
+      {
+        "index": 165,
+        "time_sec": 165.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0166.jpg",
+        "name": "frame_0166.jpg"
+      },
+      {
+        "index": 166,
+        "time_sec": 166.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0167.jpg",
+        "name": "frame_0167.jpg"
+      },
+      {
+        "index": 167,
+        "time_sec": 167.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0168.jpg",
+        "name": "frame_0168.jpg"
+      },
+      {
+        "index": 168,
+        "time_sec": 168.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0169.jpg",
+        "name": "frame_0169.jpg"
+      },
+      {
+        "index": 169,
+        "time_sec": 169.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0170.jpg",
+        "name": "frame_0170.jpg"
+      },
+      {
+        "index": 170,
+        "time_sec": 170.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0171.jpg",
+        "name": "frame_0171.jpg"
+      },
+      {
+        "index": 171,
+        "time_sec": 171.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0172.jpg",
+        "name": "frame_0172.jpg"
+      },
+      {
+        "index": 172,
+        "time_sec": 172.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0173.jpg",
+        "name": "frame_0173.jpg"
+      },
+      {
+        "index": 173,
+        "time_sec": 173.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0174.jpg",
+        "name": "frame_0174.jpg"
+      },
+      {
+        "index": 174,
+        "time_sec": 174.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0175.jpg",
+        "name": "frame_0175.jpg"
+      },
+      {
+        "index": 175,
+        "time_sec": 175.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0176.jpg",
+        "name": "frame_0176.jpg"
+      },
+      {
+        "index": 176,
+        "time_sec": 176.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0177.jpg",
+        "name": "frame_0177.jpg"
+      },
+      {
+        "index": 177,
+        "time_sec": 177.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0178.jpg",
+        "name": "frame_0178.jpg"
+      },
+      {
+        "index": 178,
+        "time_sec": 178.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0179.jpg",
+        "name": "frame_0179.jpg"
+      },
+      {
+        "index": 179,
+        "time_sec": 179.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0180.jpg",
+        "name": "frame_0180.jpg"
+      },
+      {
+        "index": 180,
+        "time_sec": 180.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0181.jpg",
+        "name": "frame_0181.jpg"
+      },
+      {
+        "index": 181,
+        "time_sec": 181.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0182.jpg",
+        "name": "frame_0182.jpg"
+      },
+      {
+        "index": 182,
+        "time_sec": 182.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0183.jpg",
+        "name": "frame_0183.jpg"
+      },
+      {
+        "index": 183,
+        "time_sec": 183.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0184.jpg",
+        "name": "frame_0184.jpg"
+      },
+      {
+        "index": 184,
+        "time_sec": 184.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0185.jpg",
+        "name": "frame_0185.jpg"
+      },
+      {
+        "index": 185,
+        "time_sec": 185.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0186.jpg",
+        "name": "frame_0186.jpg"
+      },
+      {
+        "index": 186,
+        "time_sec": 186.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0187.jpg",
+        "name": "frame_0187.jpg"
+      },
+      {
+        "index": 187,
+        "time_sec": 187.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0188.jpg",
+        "name": "frame_0188.jpg"
+      },
+      {
+        "index": 188,
+        "time_sec": 188.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0189.jpg",
+        "name": "frame_0189.jpg"
+      },
+      {
+        "index": 189,
+        "time_sec": 189.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0190.jpg",
+        "name": "frame_0190.jpg"
+      },
+      {
+        "index": 190,
+        "time_sec": 190.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0191.jpg",
+        "name": "frame_0191.jpg"
+      },
+      {
+        "index": 191,
+        "time_sec": 191.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0192.jpg",
+        "name": "frame_0192.jpg"
+      },
+      {
+        "index": 192,
+        "time_sec": 192.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0193.jpg",
+        "name": "frame_0193.jpg"
+      },
+      {
+        "index": 193,
+        "time_sec": 193.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0194.jpg",
+        "name": "frame_0194.jpg"
+      },
+      {
+        "index": 194,
+        "time_sec": 194.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0195.jpg",
+        "name": "frame_0195.jpg"
+      },
+      {
+        "index": 195,
+        "time_sec": 195.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0196.jpg",
+        "name": "frame_0196.jpg"
+      },
+      {
+        "index": 196,
+        "time_sec": 196.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0197.jpg",
+        "name": "frame_0197.jpg"
+      },
+      {
+        "index": 197,
+        "time_sec": 197.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0198.jpg",
+        "name": "frame_0198.jpg"
+      },
+      {
+        "index": 198,
+        "time_sec": 198.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0199.jpg",
+        "name": "frame_0199.jpg"
+      },
+      {
+        "index": 199,
+        "time_sec": 199.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0200.jpg",
+        "name": "frame_0200.jpg"
+      },
+      {
+        "index": 200,
+        "time_sec": 200.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0201.jpg",
+        "name": "frame_0201.jpg"
+      },
+      {
+        "index": 201,
+        "time_sec": 201.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0202.jpg",
+        "name": "frame_0202.jpg"
+      },
+      {
+        "index": 202,
+        "time_sec": 202.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0203.jpg",
+        "name": "frame_0203.jpg"
+      },
+      {
+        "index": 203,
+        "time_sec": 203.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0204.jpg",
+        "name": "frame_0204.jpg"
+      },
+      {
+        "index": 204,
+        "time_sec": 204.0,
+        "path": "data\\preprocess\\manual_download21\\frames\\frame_0205.jpg",
+        "name": "frame_0205.jpg"
+      }
+    ]
+  },
+  "_frame_summaries": [
+    {
+      "time_sec": 0.0,
+      "name": "frame_0001.jpg",
+      "summary": "紫色光效的桌面/实验场景，电弧与激光线束从中间交汇，纸张上有公式被强光照亮，左右是人物手持/工具的动作，整体像科普或科幻故障演示。",
+      "visible_text": [
+        "科学探索家日照",
+        "这或许是能烧坏所有人CPU的逻辑难题"
+      ],
+      "layout_guess": "全屏居中为强光爆点与纸张/公式区域；左右两侧分别是手部与工具/器件（左：手持物或电路相关器件，右：类似握持式工具/导线）；顶部左侧叠加短横幅/水印文字；底部居中字幕条。",
+      "visual_type_guess": "科普/科幻风故障演示的关键帧（强电弧/激光描边、纸上公式、字幕总结问题）",
+      "source": "api",
+      "model": "gpt-5.4-nano"
+    },
+    {
+      "time_sec": 51.0,
+      "name": "frame_0052.jpg",
+      "summary": "科幻风格的圆形装置/轨道中出现爆炸火焰与蓝色能量环，画面强调“启动/打开奖盒子”的冲击效果。",
+      "visible_text": [
+        "科学探索吧吧",
+        "并不存在事先决定要打开哪个盒子"
+      ],
+      "layout_guess": "中心对称构图：背景为环形机械/赛道结构，中央放置爆炸火焰目标；蓝色能量管/光带环绕并形成引导线；底部居中字幕覆盖画面下半部。",
+      "visual_type_guess": "科普/科幻动画类关键帧（能量流+爆炸效果+字幕解说）",
+      "source": "api",
+      "model": "gpt-5.4-nano"
+    },
+    {
+      "time_sec": 102.0,
+      "name": "frame_0103.jpg",
+      "summary": "俯视截图风格的“数字网格/彩票表”画面，上面叠加大量绿色连线与框，中心以大号紫黑描边百分比数字突出关键结论，底部有一句中文说明。",
+      "visible_text": [
+        "31%"
+      ],
+      "layout_guess": "中心大字(3 1 ％)覆盖画面中部；背景为居中的网格/表格；绿色线条从左上向右侧与下方穿插；底部居中一行中文小字说明。",
+      "visual_type_guess": "数据分析/彩票结果可视化叠加（关键结论数字+连线统计图）",
+      "source": "api",
+      "model": "gpt-5.4-nano"
+    },
+    {
+      "time_sec": 153.0,
+      "name": "frame_0154.jpg",
+      "summary": "数据可视化图表关键帧：左侧坐标轴标注概率与最长回路长度，右侧为从约50到100的递减柱状/条形面积，并突出显示大数字“69”；底部有中文结论性字幕。",
+      "visible_text": [
+        "Probability",
+        "2%",
+        "1%",
+        "Longest Loop",
+        "69",
+        "只要计算出循环长度大于50的概率"
+      ],
+      "layout_guess": "横向图表占上半部分（坐标轴+蓝色条形区域），右下区域叠加中心数字“69”；下方居中放置一行粗体中文字幕。",
+      "visual_type_guess": "统计/数学题解数据图（柱状/直方图样式+坐标轴）/信息图",
+      "source": "api",
+      "model": "gpt-5.4-nano"
+    },
+    {
+      "time_sec": 204.0,
+      "name": "frame_0205.jpg",
+      "summary": "特写人物眼部的低景深镜头，上方有平台水印，画面中部偏下叠加了一句疑问式字幕，营造“检查/吐槽”科技类内容的对话感。",
+      "visible_text": [
+        "科学探索实验",
+        "CPU是不是已经烧掉了呢"
+      ],
+      "layout_guess": "全屏横幅构图；左上角品牌/平台水印；底部居中字幕（白色字+黑色描边/阴影）。",
+      "visual_type_guess": "人物特写（眼睛微表情）+ 叠加字幕的信息化/吐槽类短视频关键帧",
+      "source": "api",
+      "model": "gpt-5.4-nano"
+    }
+  ],
+  "status": "analysis_ready",
+  "updated_at": "2026-04-29T01:30:55+0800"
+}

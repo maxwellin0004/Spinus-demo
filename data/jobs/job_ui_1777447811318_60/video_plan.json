@@ -1,0 +1,267 @@
+{
+  "version": "stage1-real-chain-v1",
+  "generatedAt": "2026-04-29T07:31:12.528Z",
+  "meta": {
+    "jobId": "job_ui_1777447811318_60",
+    "accountId": "trading_xhs",
+    "templateId": "new_signals",
+    "requestedCompositionId": "NewSignalsComposition",
+    "renderCompositionId": "codex-job-preview",
+    "durationSec": 60,
+    "aspectRatio": "9:16",
+    "prompt": "????60?????????,??????,????,??????",
+    "planSource": "local-fallback"
+  },
+  "headline": "????60?????????,??????,??…",
+  "toneSummary": "强Hook / 口语化 / 节奏快",
+  "scriptSections": [
+    {
+      "label": "Hook",
+      "text": "先给结论：????60?????????,??????,????,??????里最容易出错的，不是你没看懂，而是你太早动作。"
+    },
+    {
+      "label": "Body",
+      "text": "先拆核心判断，再给执行顺序，避免把信息铺得太散。"
+    },
+    {
+      "label": "Close",
+      "text": "结尾按 行动建议型 收束：给观众一个能立刻执行的下一步。"
+    }
+  ],
+  "voiceoverUnits": [
+    {
+      "voiceId": "v01",
+      "visualSectionId": "news_context",
+      "text": "????60?????????,??????,??…。",
+      "emphasisWords": [
+        "????60?????????,??????,??…",
+        "new_signals",
+        "60"
+      ]
+    },
+    {
+      "voiceId": "v02",
+      "visualSectionId": "case_shock",
+      "text": "先给结论：????60?????????,??????,????,??????里最容易出错的，不是你没看懂，而是你太早动作。",
+      "emphasisWords": [
+        "????60?????????,??????,??…",
+        "new_signals",
+        "60"
+      ]
+    },
+    {
+      "voiceId": "v03",
+      "visualSectionId": "indicator_mechanism",
+      "text": "先把 ????60?????????,??????,????,?????? 拆成一个核心判断。先拆核心判断，再给执行顺序，避免把信息铺得太散。",
+      "emphasisWords": [
+        "????60?????????,??????,??…",
+        "new_signals",
+        "60"
+      ]
+    },
+    {
+      "voiceId": "v04",
+      "visualSectionId": "chart_case_1",
+      "text": "第一步，先看结构位置，不要在最热的时候直接追进去。",
+      "emphasisWords": [
+        "第一步",
+        "结构位置"
+      ]
+    },
+    {
+      "voiceId": "v05",
+      "visualSectionId": "chart_case_2",
+      "text": "第二步，再看量能、动能或者内部证据有没有同步跟上。",
+      "emphasisWords": [
+        "第二步",
+        "量能",
+        "动能"
+      ]
+    },
+    {
+      "voiceId": "v06",
+      "visualSectionId": "chart_case_3",
+      "text": "第三步，只在确认动作出现以后，再决定要不要执行。",
+      "emphasisWords": [
+        "第三步",
+        "确认动作"
+      ]
+    },
+    {
+      "voiceId": "v07",
+      "visualSectionId": "checklist",
+      "text": "不要把预警当成动作，把判断顺序做对，节奏就会稳很多。",
+      "emphasisWords": [
+        "预警",
+        "判断顺序"
+      ]
+    },
+    {
+      "voiceId": "v08",
+      "visualSectionId": "risk_close",
+      "text": "结尾按 行动建议型 收束：给观众一个能立刻执行的下一步。",
+      "emphasisWords": [
+        "????60?????????,??????,??…",
+        "new_signals",
+        "60"
+      ]
+    }
+  ],
+  "timeline": {
+    "news": 240,
+    "hook": 240,
+    "mechanism": 300,
+    "case1": 210,
+    "case2": 210,
+    "case3": 210,
+    "checklist": 330,
+    "close": 510
+  },
+  "data": {
+    "newsContext": {
+      "kicker": "交易教育-小红书 / 小红书",
+      "title": "????60?????????,??????,??…",
+      "quote": "冷静交易老师 的表达风格是 强Hook / 口语化 / 节奏快，所以这一版先用清楚的结构把风险点讲透。",
+      "sourceLabel": "交易信号教学 / 60s / 9:16",
+      "bullets": [
+        "先明确 ????60?????????,??????,????,?????? 的核心风险点",
+        "把预警、确认、执行拆成三步",
+        "只保留观众最需要记住的一条顺序"
+      ],
+      "tags": [
+        "new_signals",
+        "xiaohongshu",
+        "codex-job"
+      ],
+      "mediaCards": [
+        {
+          "imageSrc": "/images/shared/hook_paul_tudor_jones.jpg",
+          "label": "Context",
+          "caption": "先把 ????60?????????,??????,????,?????? 放进一个清楚的上下文里。"
+        },
+        {
+          "imageSrc": "/images/shared/hook_occupy_wall_street.jpg",
+          "label": "Sentiment",
+          "caption": "情绪最热的时候，最容易忽略结构已经开始走弱。"
+        },
+        {
+          "imageSrc": "/images/shared/hook_financial_crisis_store.jpg",
+          "label": "Consequence",
+          "caption": "错误通常不是没看见，而是动作做在确认之前。"
+        }
+      ],
+      "variant": "dark"
+    },
+    "hook": {
+      "kicker": "小红书 / Hook",
+      "headline": "????60?????????,??????,??…",
+      "subheadline": "先给结论：????60?????????,??????,????,??????里最容易出错的，不是你没看懂，而是你太早动作。",
+      "stat": "60s",
+      "statLabel": "交易信号教学 / 强Hook / 口语化 / 节奏快",
+      "dateLabel": "Output -> data/jobs/job_ui_1777447811318_60",
+      "insetImageSrc": "/images/shared/macd_ref_chart_1.jpg",
+      "sourceLabel": "冷静交易老师 / 小红书",
+      "boardLines": [
+        "RISK",
+        "FIRST",
+        "THEN",
+        "ACTION"
+      ],
+      "variant": "dark"
+    },
+    "mechanism": {
+      "tag": "Core Mechanism",
+      "title": "把 ????60?????????,??????,????,?????? 还原成一个能执行的判断顺序",
+      "formula": "先看结构 -> 再看内部证据 -> 最后等确认",
+      "description": "先拆核心判断，再给执行顺序，避免把信息铺得太散。",
+      "cards": [
+        {
+          "title": "结构",
+          "body": "先确认位置和趋势方向，避免离开结构空谈指标。"
+        },
+        {
+          "title": "证据",
+          "body": "再看量能、动能或节奏有没有同步支持当前方向。"
+        },
+        {
+          "title": "确认",
+          "body": "只有确认动作出现，再决定要不要执行。"
+        },
+        {
+          "title": "节奏",
+          "body": "把预警和动作分开，减少被情绪带着追单。"
+        }
+      ],
+      "imageSrc": "/images/shared/macd_ref_chart_2.jpg",
+      "variant": "dark"
+    },
+    "cases": [
+      {
+        "badge": "Case 01",
+        "title": "先看位置，不要先下动作",
+        "takeaway": "面对 ????60?????????,??????,????,??????，先把结构位置看清楚，再决定后面是否值得继续跟。",
+        "bullets": [
+          "有没有明显结构位",
+          "当前位置是不是已经太热",
+          "先判断再执行"
+        ],
+        "imageSrc": "/images/shared/macd_ref_chart_1.jpg",
+        "variant": "dark"
+      },
+      {
+        "badge": "Case 02",
+        "title": "再看内部证据是否同步",
+        "takeaway": "表面还在往前，内部证据却已经放缓，这种不同步才最有提醒价值。",
+        "bullets": [
+          "量能有没有继续放大",
+          "动能有没有同步跟上",
+          "不要只看价格表面"
+        ],
+        "imageSrc": "/images/shared/macd_ref_chart_2.jpg",
+        "variant": "dark"
+      },
+      {
+        "badge": "Case 03",
+        "title": "最后只等确认动作",
+        "takeaway": "把预警当提醒，把确认当动作，顺序对了，误判自然会少很多。",
+        "bullets": [
+          "回踩是否守住关键位",
+          "确认以后再执行",
+          "不给情绪抢节奏"
+        ],
+        "imageSrc": "/images/shared/macd_ref_chart_3.jpg",
+        "variant": "dark"
+      }
+    ],
+    "checklist": {
+      "title": "一条更稳的 ????60?????????,??????,????,?????? 判断顺序",
+      "subtitle": "当前账号风格：冷静交易老师；当前模板：交易信号教学。",
+      "steps": [
+        {
+          "title": "先看结构位置",
+          "body": "没有结构前提，任何指标和情绪判断都会失去依托。"
+        },
+        {
+          "title": "再看内部证据",
+          "body": "量能、动能、节奏不同步时，优先把它当成风险提醒。"
+        },
+        {
+          "title": "最后等确认动作",
+          "body": "只在确认出现以后执行，不把预警直接当动作按钮。"
+        }
+      ],
+      "variant": "dark"
+    },
+    "close": {
+      "title": "真正有价值的，不是更早动作，而是更早发现 ????60?????????,??????,????,?????? 已经没那么健康",
+      "body": "结尾按 行动建议型 收束：给观众一个能立刻执行的下一步。",
+      "tags": [
+        "结构先行",
+        "证据确认",
+        "动作靠后",
+        "小红书"
+      ],
+      "variant": "dark"
+    }
+  }
+}

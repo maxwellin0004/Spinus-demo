@@ -1,0 +1,42 @@
+[
+  {
+    "section": "hook",
+    "source_lines": "开会姿势其实会暴露你的工作状态。",
+    "voiceover_lines": "开会姿势其实会暴露你的工作状态。",
+    "subtitle_chunks": ["开会姿势其实会暴露你的工作状态"],
+    "emphasis_words": ["开会姿势", "工作状态"],
+    "pauses_emphasis": "句末停 0.3 秒",
+    "sfx_notes": "可选轻 tick",
+    "notes": "estimated"
+  },
+  {
+    "section": "setup",
+    "source_lines": "同一张会议桌上，每个人的防御方式都不一样。",
+    "voiceover_lines": "同一张会议桌上，每个人的防御方式都不一样。",
+    "subtitle_chunks": ["同一张会议桌上，每个人的防御方式都不一样"],
+    "emphasis_words": ["防御方式"],
+    "pauses_emphasis": "句末停 0.25 秒",
+    "sfx_notes": "无",
+    "notes": "estimated"
+  },
+  {
+    "section": "types",
+    "source_lines": "逐个姿势解释",
+    "voiceover_lines": "按 voiceover_script 的 v03-v07 执行",
+    "subtitle_chunks": ["前倾记录的人，通常在努力确认重点", "抱臂观察的人，不一定反对，只是还没信任结论", "托腮的人看起来安静，其实正在重新组织逻辑", "频繁看屏的人，往往不是懒散，而是已经开始分心", "主动举手的人，需要被看见，也愿意推进讨论"],
+    "emphasis_words": ["前倾记录", "抱臂观察", "托腮", "看屏", "主动举手"],
+    "pauses_emphasis": "每类解释句末停 0.25 秒",
+    "sfx_notes": "高亮出现可选轻 tick",
+    "notes": "estimated"
+  },
+  {
+    "section": "cta",
+    "source_lines": "你是哪一种？把结果打在评论区。",
+    "voiceover_lines": "你是哪一种？把结果打在评论区。",
+    "subtitle_chunks": ["你是哪一种？把结果打在评论区"],
+    "emphasis_words": ["哪一种", "评论区"],
+    "pauses_emphasis": "结尾停留",
+    "sfx_notes": "无",
+    "notes": "estimated"
+  }
+]

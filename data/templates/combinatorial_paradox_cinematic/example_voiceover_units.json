@@ -1,0 +1,91 @@
+{
+  "voiceover_units": [
+    {
+      "voice_id": "v01",
+      "section": "hook",
+      "text": "只要二十三个人，同一天生日撞上的概率，就已经超过一半。",
+      "target_duration_sec": 4.6,
+      "intended_pause_after_sec": 0.25,
+      "emphasis_words": ["二十三个人", "超过一半"],
+      "visual_section_id": "scene_01",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "v02",
+      "section": "hook",
+      "text": "这不是直觉错一点，而是你的计数方式从一开始就错了。",
+      "target_duration_sec": 4.8,
+      "intended_pause_after_sec": 0.25,
+      "emphasis_words": ["计数方式"],
+      "visual_section_id": "scene_01",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "v03",
+      "section": "setup",
+      "text": "大多数人会盯着三百六十五天，却忽略了二十三个人之间会产生二百五十三组配对。",
+      "target_duration_sec": 6.4,
+      "intended_pause_after_sec": 0.2,
+      "emphasis_words": ["三百六十五天", "二百五十三组配对"],
+      "visual_section_id": "scene_02",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "v04",
+      "section": "mechanism",
+      "text": "每多一个人，不是多一个可能，而是同时和前面所有人都新增一次比较。",
+      "target_duration_sec": 6.0,
+      "intended_pause_after_sec": 0.2,
+      "emphasis_words": ["所有人", "新增一次比较"],
+      "visual_section_id": "scene_03",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "v05",
+      "section": "mechanism",
+      "text": "所以概率上升得不是线性，而是组合数在把空间快速压扁。",
+      "target_duration_sec": 5.2,
+      "intended_pause_after_sec": 0.2,
+      "emphasis_words": ["不是线性", "组合数"],
+      "visual_section_id": "scene_04",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "v06",
+      "section": "evidence",
+      "text": "当人数来到二十三，至少一对同生日的概率大约是百分之五十点七。",
+      "target_duration_sec": 5.7,
+      "intended_pause_after_sec": 0.25,
+      "emphasis_words": ["二十三", "百分之五十点七"],
+      "visual_section_id": "scene_04",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "v07",
+      "section": "takeaway",
+      "text": "这类悖论真正提醒你的，是别再用单点直觉去看成组关系。",
+      "target_duration_sec": 5.4,
+      "intended_pause_after_sec": 0.2,
+      "emphasis_words": ["单点直觉", "成组关系"],
+      "visual_section_id": "scene_05",
+      "timing_status": "estimated"
+    },
+    {
+      "voice_id": "v08",
+      "section": "close",
+      "text": "很多看上去不可能的事，换一个计数框架，立刻就变得合理。",
+      "target_duration_sec": 5.0,
+      "intended_pause_after_sec": 0.3,
+      "emphasis_words": ["计数框架"],
+      "visual_section_id": "scene_06",
+      "timing_status": "estimated"
+    }
+  ],
+  "audio_alignment": {
+    "tts_provider": "pending",
+    "voiceover_audio_path": "",
+    "subtitle_timeline_path": "data/templates/combinatorial_paradox_cinematic/subtitle_timeline.generated.horizontal.json",
+    "alignment_status": "pending_audio_generation",
+    "notes": "This file is structurally complete but still estimated. Generate final audio first, then rewrite subtitle_timeline.generated.horizontal.json."
+  }
+}

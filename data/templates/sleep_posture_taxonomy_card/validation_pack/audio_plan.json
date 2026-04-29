@@ -1,0 +1,5 @@
+[
+  { "time_range": "0.00-5.00", "section": "hook", "voice_strategy": "中文女声或中性声，中速清晰", "bgm_strategy": "可选极低音量轻节奏", "sfx_strategy": "标题出现轻 tick，可省略", "silence_pauses": "句末 0.3 秒", "mix_relation": "口播优先，BGM -18dB 以下", "notes": "预览可静音" },
+  { "time_range": "5.00-37.00", "section": "body", "voice_strategy": "稳定解释型口播", "bgm_strategy": "持续低音量或无 BGM", "sfx_strategy": "每次蓝圈高亮可选轻 tick", "silence_pauses": "每句 0.25 秒", "mix_relation": "高亮 SFX 不盖过口播", "notes": "低声音密度" },
+  { "time_range": "37.00-42.00", "section": "cta", "voice_strategy": "语气上扬，鼓励评论", "bgm_strategy": "可轻微收尾", "sfx_strategy": "无", "silence_pauses": "结尾留 0.5 秒", "mix_relation": "口播清晰", "notes": "评论 CTA 停留" }
+]

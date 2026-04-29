@@ -1,0 +1,150 @@
+{
+  "title": "为什么只要 23 个人，撞生日的概率就已经超过一半",
+  "orientation": "horizontal",
+  "fps": 30,
+  "durationSec": 46,
+  "styleVariant": "amber_lab_noir",
+  "chapters": [
+    { "id": "ch1", "timeRange": "00:00-00:11", "label": "反直觉开场", "claim": "问题不在记不住 365 天，而在低估了人和人之间的配对数。" },
+    { "id": "ch2", "timeRange": "00:11-00:25", "label": "配对爆炸", "claim": "23 个人会产生 253 组比较，比较数增长远比直觉快。" },
+    { "id": "ch3", "timeRange": "00:25-00:41", "label": "机制揭示", "claim": "每新增一个人，都会同时和之前所有人比较一次。" },
+    { "id": "ch4", "timeRange": "00:41-00:58", "label": "概率压缩", "claim": "随着配对数累积，空白概率会被快速压扁，冲突概率跃升。" },
+    { "id": "ch5", "timeRange": "00:58-01:12", "label": "意义落点", "claim": "很多悖论都不是结果奇怪，而是直觉选错了计数单位。" }
+  ],
+  "scenes": [
+    {
+      "sceneId": "scene_01",
+      "sceneType": "ParadoxColdOpenScene",
+      "startSec": 0,
+      "durationSec": 10,
+      "section": "hook",
+      "visual": {
+        "primaryConcept": "黑暗实验台上出现 23 人徽章与巨大 50.7% 数字的第一次对撞",
+        "layout": "中央数字 + 左右散射人像徽章 + 底部硬字幕",
+        "motion": "hard_flash_then_slow_push",
+        "assetMode": "generated",
+        "overlayText": "23 人",
+        "generatedAssetPath": "assets/images/panel-1-cold-open.png",
+        "assetPromptId": "p01_hook_lab",
+        "assetPrompt": "Cinematic science-lab explainer frame, horizontal 16:9, parchment-toned tabletop mixed with black lacquer metal, 23 simplified human identity badges scattered in controlled formation, one oversized amber percentage number emerging from darkness, practical spotlight, ember dust, tactile paper texture, optical bloom, serious educational tone, no UI dashboard, no comic panels, no cute mascots, premium film still realism blended with infographic clarity.",
+        "negativePrompt": "purple cyber HUD, neon dashboard, cartoon style, game UI, stock office photo, glossy 3D mascot, meme typography, low-detail background"
+      },
+      "caption": { "zh": "只要 23 个人，撞生日的概率就已经超过一半。" }
+    },
+    {
+      "sceneId": "scene_02",
+      "sceneType": "RuleTheaterScene",
+      "startSec": 11,
+      "durationSec": 7.2,
+      "section": "setup",
+      "visual": {
+        "primaryConcept": "23 个角色形成半圆坐席，配对连线从稀少迅速变密",
+        "layout": "舞台式半圆阵列 + 中央配对计数器 + 边缘笔记纹理",
+        "motion": "progressive_pair_growth",
+        "assetMode": "generated",
+        "overlayText": "253 组配对",
+        "generatedAssetPath": "assets/images/panel-2-wrong-path.png",
+        "assetPromptId": "p02_pair_theater",
+        "assetPrompt": "Mathematical theater composition, 23 human markers arranged on a warm paper amphitheater, hand-drawn pair lines multiplying across the stage, amber-orange and soot-black palette, subtle teal annotation marks, cinematic spotlight and dusty atmosphere, visualized combinatorics, educational but dramatic, tactile ink edges, realistic paper fibers.",
+        "negativePrompt": "white corporate slide, flat childish icons, futuristic trading chart, app dashboard, purple-only palette, social-media meme layout"
+      },
+      "caption": { "zh": "真正变多的不是日期，而是人和人之间的比较次数。" }
+    },
+    {
+      "sceneId": "scene_03",
+      "sceneType": "MechanismGridScene",
+      "startSec": 25,
+      "durationSec": 6.2,
+      "section": "mechanism",
+      "visual": {
+        "primaryConcept": "新增第 23 个角色时，连到前 22 个角色的路径被逐条点亮",
+        "layout": "中央单一角色前景 + 后方矩阵人群 + 分层关系线",
+        "motion": "stepwise_connection_reveal",
+        "assetMode": "generated",
+        "overlayText": "新增一个人 = 新增 22 次比较",
+        "generatedAssetPath": "assets/images/panel-3-mechanism.png",
+        "assetPromptId": "p03_mechanism_grid",
+        "assetPrompt": "Mechanism reveal still for a probability explainer, one highlighted figure in foreground while twenty-two connection paths radiate backward into a gridded crowd, parchment paper and charred edge texture, amber line illumination, restrained teal helper marks, optical depth, dramatic but precise, no interface chrome.",
+        "negativePrompt": "comic book halftone, trading terminal, social app screenshot, kawaii characters, glossy futuristic helmet"
+      },
+      "caption": { "zh": "每多一个人，不是多一个结果，而是多一整排比较关系。" }
+    },
+    {
+      "sceneId": "scene_04",
+      "sceneType": "ProbabilityBoardScene",
+      "startSec": 41,
+      "durationSec": 11.8,
+      "section": "evidence",
+      "visual": {
+        "primaryConcept": "空白概率曲线被压低，冲突概率柱形被抬高，50.7% 作为结论浮出",
+        "layout": "左侧曲线板 + 右侧结论数字 + 中部概率压缩动画",
+        "motion": "curve_compression_then_counter_hold",
+        "assetMode": "generated",
+        "overlayText": "50.7%",
+        "generatedAssetPath": "assets/images/panel-4-probability.png",
+        "assetPromptId": "p04_probability_board",
+        "assetPrompt": "Probability-board cinematic infographic, left side hosts an inked probability curve collapsing downward, right side reveals a large 50.7 percent numeral in amber, center contains compressed paper strips and comparison marks, refined academic visual language, warm parchment with black graphite, premium documentary tone, no software dashboard.",
+        "negativePrompt": "flat powerpoint style, comic speech bubbles, bright candy palette, purple HUD, low-contrast blurry shapes"
+      },
+      "caption": { "zh": "当配对数把空间压缩到这里，反直觉就变成了可计算的结果。" }
+    },
+    {
+      "sceneId": "scene_05",
+      "sceneType": "ReflectiveCloseScene",
+      "startSec": 58,
+      "durationSec": 10.8,
+      "section": "close",
+      "visual": {
+        "primaryConcept": "纸面上“直觉”与“成组关系”两列对照，最后合并成一句总规则",
+        "layout": "左右对照卡 + 中央收束短句 + 底部硬字幕",
+        "motion": "split_compare_then_merge",
+        "assetMode": "programmatic_or_generated",
+        "overlayText": "别用单点直觉看组合世界",
+        "assetPromptId": "p05_reflective_close",
+        "assetPrompt": "Reflective mathematical close, two opposing columns labeled intuition versus grouped relationships on aged paper, handwritten corrections and refined cinematic shadows, final central aphorism emerging in amber, serious educational visual essay, tactile paper texture, subtle human presence but no stock-photo framing.",
+        "negativePrompt": "motivational poster, business infographic template, cute cartoons, mobile UI, oversaturated neon"
+      },
+      "caption": { "zh": "很多看似不可能的事，往往只是你换错了计数框架。" }
+    }
+  ],
+  "subtitleCues": [
+    { "startFrame": 0, "endFrame": 149, "text": "只要二十三个人，\n同一天生日撞上的概率就已经超过一半。", "emphasisWords": ["二十三个人", "超过一半"] },
+    { "startFrame": 151, "endFrame": 298, "text": "这不是直觉错一点，\n而是你的计数方式从一开始就错了。", "emphasisWords": ["计数方式"] },
+    { "startFrame": 300, "endFrame": 511, "text": "大多数人会盯着三百六十五天，\n却忽略了二十三个人之间会产生二百五十三组配对。", "emphasisWords": ["三百六十五天", "二百五十三组配对"] },
+    { "startFrame": 515, "endFrame": 698, "text": "每多一个人，\n不是多一个可能，而是同时和前面所有人都新增一次比较。", "emphasisWords": ["所有人", "新增一次比较"] },
+    { "startFrame": 701, "endFrame": 862, "text": "所以概率上升得不是线性，\n而是组合数在把空间快速压扁。", "emphasisWords": ["不是线性", "组合数"] },
+    { "startFrame": 865, "endFrame": 1049, "text": "当人数来到二十三，\n至少一对同生日的概率大约是百分之五十点七。", "emphasisWords": ["二十三", "百分之五十点七"] },
+    { "startFrame": 1054, "endFrame": 1222, "text": "这类悖论真正提醒你的，\n是别再用单点直觉去看成组关系。", "emphasisWords": ["单点直觉", "成组关系"] },
+    { "startFrame": 1226, "endFrame": 1354, "text": "很多看上去不可能的事，\n换一个计数框架，立刻就变得合理。", "emphasisWords": ["计数框架"] }
+  ],
+  "audio": {
+    "voiceRequired": true,
+    "voiceoverSrc": "assets/audio/birthday-paradox-elevenlabs.mp3",
+    "bgmSrc": null,
+    "status": "audio_preview_rendered_with_elevenlabs_voiceover"
+  },
+  "voiceover_units": [
+    { "voice_id": "v01", "section": "hook", "visual_section_id": "scene_01", "timing_status": "aligned" },
+    { "voice_id": "v02", "section": "hook", "visual_section_id": "scene_01", "timing_status": "aligned" },
+    { "voice_id": "v03", "section": "setup", "visual_section_id": "scene_02", "timing_status": "aligned" },
+    { "voice_id": "v04", "section": "mechanism", "visual_section_id": "scene_03", "timing_status": "aligned" },
+    { "voice_id": "v05", "section": "mechanism", "visual_section_id": "scene_04", "timing_status": "aligned" },
+    { "voice_id": "v06", "section": "evidence", "visual_section_id": "scene_04", "timing_status": "aligned" },
+    { "voice_id": "v07", "section": "takeaway", "visual_section_id": "scene_05", "timing_status": "aligned" },
+    { "voice_id": "v08", "section": "close", "visual_section_id": "scene_05", "timing_status": "aligned" }
+  ],
+  "subtitle_timeline": {
+    "path": "data/templates/combinatorial_paradox_cinematic/subtitle_timeline.generated.horizontal.json",
+    "status": "aligned_after_audio_generation"
+  },
+  "promptKit": {
+    "global_style_prompt": "Horizontal cinematic math explainer, tactile parchment surface, charcoal linework, amber focal highlights, restrained teal helper accents, practical spotlighting, dust and scorch-edge texture, serious educational tone, visually dense but readable, no dashboard UI, no comic panels, no flat corporate slide style.",
+    "scene_prompts": [
+      { "sceneId": "scene_01", "promptId": "p01_hook_lab" },
+      { "sceneId": "scene_02", "promptId": "p02_pair_theater" },
+      { "sceneId": "scene_03", "promptId": "p03_mechanism_grid" },
+      { "sceneId": "scene_04", "promptId": "p04_probability_board" },
+      { "sceneId": "scene_05", "promptId": "p05_reflective_close" }
+    ]
+  }
+}

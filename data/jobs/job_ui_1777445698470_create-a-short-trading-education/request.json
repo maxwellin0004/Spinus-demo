@@ -1,0 +1,13 @@
+{
+  "id": "job_ui_1777445698470_create-a-short-trading-education",
+  "prompt": "Create a short trading education video plan about false breakouts.",
+  "accountId": "trading_xhs",
+  "templateId": "new_signals",
+  "compositionId": "codex-job-preview",
+  "durationSec": 60,
+  "aspectRatio": "9:16",
+  "activePresetIds": [],
+  "openInstruction": "",
+  "instructionScope": "run",
+  "updatedAt": "2026-04-29T06:55:57.134Z"
+}

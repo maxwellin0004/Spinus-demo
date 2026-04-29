@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SleepPostureTaxonomyCardData",
+  "type": "object",
+  "required": ["meta", "header", "items", "timeline"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["templateId", "topic", "orientation", "durationSec", "styleVariant"],
+      "properties": {
+        "templateId": { "type": "string" },
+        "topic": { "type": "string" },
+        "orientation": { "enum": ["horizontal"] },
+        "durationSec": { "type": "number" },
+        "styleVariant": { "type": "string" },
+        "sourceConfidence": { "type": "string" }
+      }
+    },
+    "header": {
+      "type": "object",
+      "required": ["channelLabel", "eyebrow", "question", "sourceNote"],
+      "properties": {
+        "channelLabel": { "type": "string" },
+        "eyebrow": { "type": "string" },
+        "question": { "type": "string" },
+        "sourceNote": { "type": "string" }
+      }
+    },
+    "items": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["id", "letter", "label", "pose", "shortTrait"],
+        "properties": {
+          "id": { "type": "string" },
+          "letter": { "type": "string" },
+          "label": { "type": "string" },
+          "pose": { "type": "string" },
+          "imageSrc": {
+            "type": "string",
+            "description": "Optional public/ relative image path. If present, Remotion renders this PNG instead of the fallback vector figure."
+          },
+          "shortTrait": { "type": "string" },
+          "highlightAtSec": { "type": "number" }
+        }
+      }
+    },
+    "timeline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "startSec", "endSec", "sceneType", "caption"],
+        "properties": {
+          "id": { "type": "string" },
+          "startSec": { "type": "number" },
+          "endSec": { "type": "number" },
+          "sceneType": { "type": "string" },
+          "caption": { "type": "string" },
+          "activeItemIds": { "type": "array", "items": { "type": "string" } },
+          "motion": { "type": "string" },
+          "voiceId": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "template_id": "sleep_posture_taxonomy_card",
+  "template_name": "White Taxonomy Character Card",
+  "version": "1.0.0",
+  "status": "packaged_preview_ready",
+  "source_reference": {
+    "path": "D:\\document\\google\\download (20).mp4",
+    "duration_sec": 13.19,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "has_audio": true
+  },
+  "template_type": "horizontal_whiteboard_taxonomy_psychology_card",
+  "orientation": "horizontal",
+  "aspect_ratio": "16:9",
+  "new_scene_system_required": true,
+  "page_masters": [
+    "WhiteBoardTaxonomyMaster",
+    "CenteredQuestionMaster",
+    "IconRowComparisonMaster",
+    "BottomNarrationBandMaster"
+  ],
+  "scene_types": [
+    "TaxonomyOpenerScene",
+    "PostureStripScene",
+    "CaptionRevealScene",
+    "ResultPromptScene"
+  ],
+  "style_grammar": {
+    "background": "pure_white",
+    "question": "large_center_blue_title",
+    "items": "six_anime_character_png_cards",
+    "caption": "large_black_bottom_narration_band",
+    "motion": "low_frequency_caption_reveal_with_single_item_highlight"
+  },
+  "allowed_reuse": [
+    "Remotion primitives",
+    "font system",
+    "image loading",
+    "AudioTrackLayer",
+    "basic timing helpers",
+    "VIDEO_PROFILES"
+  ],
+  "forbidden_reuse": [
+    "existing template page masters",
+    "existing scene skeletons",
+    "existing visual styles",
+    "existing shot grammar"
+  ],
+  "validation_topic": "你是哪种刷手机姿势？",
+  "render_entry": {
+    "composition_id": "sleep-posture-taxonomy-validation-preview",
+    "composition_module": "video-app/src/compositions/SleepPostureTaxonomyComposition.tsx",
+    "scene_module": "video-app/src/scenes/sleepPostureTaxonomy/SleepPostureTaxonomyScenes.tsx",
+    "data_module": "video-app/src/data/sleepPostureTaxonomyData.ts",
+    "audio_module": "video-app/src/data/sleepPostureTaxonomyAudio.ts"
+  },
+  "asset_roots": {
+    "character_images": "video-app/public/images/sleep-posture-taxonomy/",
+    "audio": "video-app/public/audio/sleep-posture-taxonomy/",
+    "voiceover_script": "data/audio_scripts/sleep-posture-taxonomy-voiceover.txt",
+    "preview_output": "data/jobs/sleep-posture-taxonomy-validation-preview.mp4"
+  }
+}

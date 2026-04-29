@@ -1,0 +1,60 @@
+{
+  "template_id": "combinatorial_paradox_cinematic",
+  "purpose": "Generate new per-topic scene images for combinatorial paradox explainers. Bundled validation panels are fallback only.",
+  "global_prompt_rules": {
+    "aspect_ratio": "16:9",
+    "resolution": "1920x1080",
+    "language": "Prompt in English; all title, subtitle, and numeric overlays stay in Remotion, not inside the image.",
+    "must_have": [
+      "cinematic math explainer still",
+      "editorial realism with tactile materials",
+      "room for lower-third subtitles",
+      "high-end educational tone",
+      "clear visual hierarchy"
+    ],
+    "must_avoid": [
+      "no embedded text or captions",
+      "no dashboard UI or chart software screenshots",
+      "no cartoon, anime, comic, or cute mascot style",
+      "no neon cyberpunk HUD",
+      "no brand logos or copyrighted interfaces"
+    ]
+  },
+  "prompt_templates": [
+    {
+      "prompt_id": "cpc_cold_open_evidence",
+      "scene_type": "ParadoxColdOpenScene",
+      "asset_role": "hook_environment",
+      "prompt_template": "Cinematic intellectual evidence frame for a math explainer about {{topic}}. Present the question '{{question_hook}}' through {{visual_metaphor}}. Dark studio table, parchment and black metal materials, practical spotlight, floating dust, restrained amber highlights, subtle teal helper accents, realistic paper grain, full-bleed 16:9 composition, center-weighted structure, calm lower third for subtitles, no embedded text. {{style_modifier}}",
+      "negative_prompt": "{{negative_base}}, readable text, subtitles, stock office photo, app UI, comic style, childish props"
+    },
+    {
+      "prompt_id": "cpc_wrong_path_tableau",
+      "scene_type": "RuleTheaterScene",
+      "asset_role": "wrong_path_tableau",
+      "prompt_template": "Premium mathematical tableau for {{topic}}. Show the tempting but incomplete intuition behind '{{section_claim}}' using {{relationship_object}} arranged as {{visual_metaphor}}. Several wrong or partial paths should be visible but elegant, with muted red warning accents only where needed. Cinematic top-down or stage-like composition, tactile paper surface, charcoal linework, editorial realism, no text baked into the image. {{style_modifier}}",
+      "negative_prompt": "{{negative_base}}, flat infographic, bright warning graphics, game over screen, powerpoint slide, cartoon diagram"
+    },
+    {
+      "prompt_id": "cpc_hidden_mechanism_reveal",
+      "scene_type": "MechanismGridScene",
+      "asset_role": "mechanism_reveal",
+      "prompt_template": "Sophisticated mechanism-reveal still for {{topic}}. Reveal that the real driver is {{comparison_unit}} rather than single-point intuition. Use {{relationship_object}} and {{visual_metaphor}} so one highlighted element connects outward into a hidden structure. Warm parchment texture, charcoal and graphite linework, amber line illumination, subtle depth, high clarity, premium documentary math aesthetic, subtitle-safe lower third, no embedded text. {{style_modifier}}",
+      "negative_prompt": "{{negative_base}}, chaotic spaghetti lines, trading terminal, meme layout, glossy sci-fi interface, toy-like characters"
+    },
+    {
+      "prompt_id": "cpc_probability_compression_board",
+      "scene_type": "ProbabilityBoardScene",
+      "asset_role": "probability_board",
+      "prompt_template": "Cinematic probability-board still for {{topic}}. Visualize '{{section_claim}}' through {{visual_metaphor}} with one dominant outcome marker representing {{key_number}}. The frame should feel like a hard-won numeric conclusion after a hidden structure is exposed. Refined academic composition, compressed curves or relationship traces, warm parchment, graphite blacks, amber focal highlight, high contrast but restrained, no image text. {{style_modifier}}",
+      "negative_prompt": "{{negative_base}}, poster typography, dashboard widgets, flat chart pack, low-detail blur, purple HUD"
+    },
+    {
+      "prompt_id": "cpc_reflective_close_resolution",
+      "scene_type": "ReflectiveCloseScene",
+      "asset_role": "reflective_resolution",
+      "prompt_template": "Reflective closing still for a philosophical math explainer about {{topic}}. Contrast intuition with deeper structure and express the takeaway '{{closing_takeaway}}' using {{visual_metaphor}}. Mature editorial tone, two-column or mirrored composition, aged paper and shadow texture, cinematic restraint, subtle human traces but no posed stock-photo look, safe center area for the final line and safe lower third for subtitles. {{style_modifier}}",
+      "negative_prompt": "{{negative_base}}, motivational poster, business slide, emoji metaphor, cartoon figures, bright candy colors"
+    }
+  ]
+}

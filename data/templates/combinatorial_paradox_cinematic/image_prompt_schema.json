@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CombinatorialParadoxCinematicImagePrompt",
+  "type": "object",
+  "required": [
+    "prompt_id",
+    "scene_type",
+    "asset_role",
+    "topic_slot",
+    "prompt_template",
+    "negative_prompt",
+    "output"
+  ],
+  "properties": {
+    "prompt_id": { "type": "string" },
+    "scene_type": { "type": "string" },
+    "asset_role": {
+      "enum": [
+        "hook_environment",
+        "wrong_path_tableau",
+        "mechanism_reveal",
+        "probability_board",
+        "reflective_resolution"
+      ]
+    },
+    "topic_slot": {
+      "type": "object",
+      "required": [
+        "topic",
+        "question_hook",
+        "section_claim",
+        "visual_metaphor",
+        "relationship_object",
+        "comparison_unit",
+        "closing_takeaway"
+      ],
+      "properties": {
+        "topic": { "type": "string" },
+        "question_hook": { "type": "string" },
+        "section_claim": { "type": "string" },
+        "visual_metaphor": { "type": "string" },
+        "relationship_object": { "type": "string" },
+        "comparison_unit": { "type": "string" },
+        "key_number": { "type": "string" },
+        "closing_takeaway": { "type": "string" }
+      }
+    },
+    "style_variant": { "type": "string" },
+    "prompt_template": { "type": "string" },
+    "negative_prompt": { "type": "string" },
+    "output": {
+      "type": "object",
+      "required": ["width", "height", "format", "save_path"],
+      "properties": {
+        "width": { "type": "integer" },
+        "height": { "type": "integer" },
+        "format": { "enum": ["png", "jpg", "webp"] },
+        "save_path": { "type": "string" }
+      }
+    },
+    "remotion_mapping": {
+      "type": "object",
+      "properties": {
+        "scene_id": { "type": "string" },
+        "visual.asset": { "type": "string" },
+        "visual.assetMode": { "const": "generated" },
+        "visual.fallbackAsset": { "type": "string" }
+      }
+    }
+  }
+}

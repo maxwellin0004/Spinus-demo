@@ -1,0 +1,35 @@
+{
+  "rule": "先生成最终口播音频，再回填字幕时间轴。当前模板允许 rough preview 使用估算时间，但不允许最终成片直接沿用。",
+  "steps": [
+    {
+      "id": "generate_voiceover_units",
+      "description": "先固定 voiceover_units。每个单元必须保留 voice_id、visual_section_id、target_duration_sec。"
+    },
+    {
+      "id": "generate_final_voiceover_audio",
+      "description": "使用 ElevenLabs 或其他 TTS/真人录音生成最终音频，不得先手写最终字幕帧。"
+    },
+    {
+      "id": "measure_real_audio",
+      "description": "读取真实音频总时长与片段时长。"
+    },
+    {
+      "id": "recover_alignment",
+      "description": "优先使用 with_timestamps、forced alignment 或转写对齐恢复句级时间。"
+    },
+    {
+      "id": "rebuild_subtitle_timeline",
+      "description": "写入 subtitle_timeline.generated.horizontal.json，并保证每条 cue 都能映射回 voice_id 和 visual_section_id。"
+    },
+    {
+      "id": "update_render_source",
+      "description": "让 video-app 的最终渲染读取重建后的 subtitle timeline，而不是脚本估算时间。"
+    }
+  ],
+  "fallback": "如果无法得到强制对齐结果，则至少要读取真实音频时长，并以句级单位做 estimated_after_audio_duration_fit，再标记 alignment_status。",
+  "hard_rules": [
+    "voiceover 文案一旦改动，就必须重新生成 subtitle_timeline.generated.horizontal.json。",
+    "TTS 声线、语速、模型一旦改动，就必须重新生成 subtitle_timeline.generated.horizontal.json。",
+    "rough preview 可以无口播，但最终成片如有口播，禁止直接使用手估字幕帧。"
+  ]
+}

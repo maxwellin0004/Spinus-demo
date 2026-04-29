@@ -1,0 +1,26 @@
+{
+  "template_id": "combinatorial_paradox_cinematic",
+  "negative_base": "low quality, blurry, watermark, visible logo, malformed anatomy, duplicate objects, oversaturated colors, fantasy art, vector illustration, flat infographic, rendered UI, text artifacts",
+  "style_variants": {
+    "amber_lab_noir": {
+      "prompt_modifier": "Warm amber practical light, dark charcoal shadows, tactile parchment grain, quiet laboratory tension, premium editorial realism, restrained teal helper accents, no neon.",
+      "color_notes": "Amber, charcoal, parchment, muted teal.",
+      "best_for": ["probability paradox", "number puzzles", "thought experiments", "logic reveals"]
+    },
+    "graphite_editorial": {
+      "prompt_modifier": "Graphite-heavy editorial look, ivory paper highlights, controlled contrast, museum-catalog seriousness, cleaner geometry, very restrained warm glow.",
+      "color_notes": "Ivory, graphite, soot black, faint amber.",
+      "best_for": ["clean proofs", "abstraction-heavy explainers", "minimalist math narratives"]
+    },
+    "velvet_stage_math": {
+      "prompt_modifier": "Stage-like composition with velvet-dark background, focused spotlights, stronger theatrical contrast, richer shadows, elegant tension without spectacle.",
+      "color_notes": "Black velvet, amber spotlight, burgundy undertone, graphite marks.",
+      "best_for": ["hook scenes", "wrong-path reveals", "dramatic conclusion scenes"]
+    }
+  },
+  "switching_rule": {
+    "field": "styleVariant or asset_generation_plan.assets[].style_variant",
+    "behavior": "Apply the matching prompt_modifier before image generation. Render-time tint can still be layered in Remotion but the image should already carry the chosen style.",
+    "fallback": "Use amber_lab_noir unless a specific scene needs a more minimal graphite_editorial or more theatrical velvet_stage_math treatment."
+  }
+}

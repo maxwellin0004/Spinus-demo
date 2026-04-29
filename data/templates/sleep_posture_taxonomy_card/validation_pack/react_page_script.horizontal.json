@@ -1,0 +1,6 @@
+[
+  { "scene_id": "scene_01", "component_name": "TaxonomyOpenerScene", "input_fields": ["header", "items", "caption"], "layout_structure": "WhiteBoardTaxonomyMaster + CenteredQuestionMaster + IconRowComparisonMaster + BottomNarrationBandMaster", "animation_presets": ["fade_in", "slow_push"], "asset_slots": ["programmatic_figures"], "responsive_rules": "固定 1920x1080 横屏，安全区 56px" },
+  { "scene_id": "scene_02", "component_name": "PostureStripScene", "input_fields": ["header", "items", "caption"], "layout_structure": "同一 taxonomy board，无页面切换", "animation_presets": ["caption_fade"], "asset_slots": ["programmatic_figures"], "responsive_rules": "插画行最大宽度 1500px" },
+  { "scene_id": "scene_03_07", "component_name": "CaptionRevealScene", "input_fields": ["header", "items", "caption", "activeItemIds"], "layout_structure": "taxonomy board + 当前项蓝圈", "animation_presets": ["caption_fade", "highlight_ring"], "asset_slots": ["programmatic_figures"], "responsive_rules": "高亮圈不改变元素尺寸" },
+  { "scene_id": "scene_08", "component_name": "ResultPromptScene", "input_fields": ["header", "items", "caption"], "layout_structure": "taxonomy board + CTA bottom band", "animation_presets": ["caption_hold"], "asset_slots": ["programmatic_figures"], "responsive_rules": "CTA 最多两行" }
+]

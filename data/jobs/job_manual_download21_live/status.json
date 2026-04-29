@@ -1,0 +1,84 @@
+{
+  "job_id": "job_manual_download21_live",
+  "source_video_id": "manual_download21",
+  "status": "awaiting_review",
+  "progress": 100,
+  "message": "Analysis draft is ready for review",
+  "updated_at": "2026-04-29T01:30:55+0800",
+  "engine": {
+    "api": {
+      "provider": "bltcy",
+      "api_key": "sk-M***qecs",
+      "chat_completions_url": "https://api.bltcy.ai/v1/chat/completions",
+      "audio_transcriptions_url": "https://api.bltcy.ai/v1/audio/transcriptions",
+      "timeout_seconds": 180,
+      "mock_analysis": false
+    },
+    "routing": {
+      "video_understanding": {
+        "name": "video_understanding",
+        "model": "gemini-3.1-flash-lite-preview-thinking-minimal",
+        "temperature": 0.1,
+        "max_tokens": 4000,
+        "stream": false,
+        "notes": "用于视频内容理解、逐段节奏分析、视觉时间轴理解。"
+      },
+      "copy_analysis": {
+        "name": "copy_analysis",
+        "model": "gpt-5.4-nano",
+        "temperature": 0.2,
+        "max_tokens": 2200,
+        "stream": false,
+        "notes": "用于标题、简介、Hook、脚本风格分析。"
+      },
+      "structure_analysis": {
+        "name": "structure_analysis",
+        "model": "gpt-5.4-nano",
+        "temperature": 0.1,
+        "max_tokens": 2600,
+        "stream": false,
+        "notes": "用于叙事结构拆分与段落归纳。"
+      },
+      "subtitle_audio_analysis": {
+        "name": "subtitle_audio_analysis",
+        "model": "gpt-5.4-nano",
+        "temperature": 0.15,
+        "max_tokens": 1800,
+        "stream": false,
+        "notes": "用于字幕节奏、配音风格、音频同步分析。"
+      },
+      "summary_generation": {
+        "name": "summary_generation",
+        "model": "gpt-5.4-nano",
+        "temperature": 0.2,
+        "max_tokens": 1600,
+        "stream": false,
+        "notes": "用于 summary 归纳、模板规则压缩。"
+      },
+      "image_analysis": {
+        "name": "image_analysis",
+        "model": "gpt-5.4-nano",
+        "temperature": 0.1,
+        "max_tokens": 1800,
+        "stream": false,
+        "notes": "用于关键帧、截图、封面和图片内容理解。"
+      },
+      "transcription": {
+        "name": "transcription",
+        "model": "gpt-4o-mini-transcribe",
+        "temperature": 0.0,
+        "max_tokens": 0,
+        "stream": false,
+        "notes": "用于音频转录。"
+      },
+      "template_generation": {
+        "name": "template_generation",
+        "model": "gpt-5.4-nano",
+        "temperature": 0.2,
+        "max_tokens": 3000,
+        "stream": false,
+        "notes": "预留给第三阶段 template draft 生成。"
+      }
+    }
+  }
+}

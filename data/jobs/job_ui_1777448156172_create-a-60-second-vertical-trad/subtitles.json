@@ -1,0 +1,111 @@
+[
+  {
+    "voiceId": "v01",
+    "visualSectionId": "news_context",
+    "start_sec": 0.0,
+    "end_sec": 2.0,
+    "startFrame": 0,
+    "endFrame": 60,
+    "text": "Create a 60-s\necond vertic…。",
+    "emphasisWords": [
+      "Create a 60-second vertic…",
+      "new_signals",
+      "Create"
+    ]
+  },
+  {
+    "voiceId": "v02",
+    "visualSectionId": "case_shock",
+    "start_sec": 2.04,
+    "end_sec": 10.795,
+    "startFrame": 61,
+    "endFrame": 324,
+    "text": "先给结论：Create a 60-second vertical trading educa…里最容易出错的，\n不是你没看懂，而是你太早动作。",
+    "emphasisWords": [
+      "Create a 60-second vertic…",
+      "new_signals",
+      "Create"
+    ]
+  },
+  {
+    "voiceId": "v03",
+    "visualSectionId": "indicator_mechanism",
+    "start_sec": 10.955,
+    "end_sec": 22.476,
+    "startFrame": 329,
+    "endFrame": 674,
+    "text": "先把 Create a 60-second vertical trading educa… 拆成一个核心判断。\n先拆核心判断，再给执行顺序，避免把信息铺得太散。",
+    "emphasisWords": [
+      "Create a 60-second vertic…",
+      "new_signals",
+      "Create"
+    ]
+  },
+  {
+    "voiceId": "v04",
+    "visualSectionId": "chart_case_1",
+    "start_sec": 22.583,
+    "end_sec": 27.358,
+    "startFrame": 677,
+    "endFrame": 821,
+    "text": "第一步，先看结构位置，\n不要在最热的时候直接追进去。",
+    "emphasisWords": [
+      "第一步",
+      "结构位置"
+    ]
+  },
+  {
+    "voiceId": "v05",
+    "visualSectionId": "chart_case_2",
+    "start_sec": 27.465,
+    "end_sec": 32.719,
+    "startFrame": 824,
+    "endFrame": 982,
+    "text": "第二步，\n再看量能、动能或者内部证据有没有同步跟上。",
+    "emphasisWords": [
+      "第二步",
+      "量能",
+      "动能"
+    ]
+  },
+  {
+    "voiceId": "v06",
+    "visualSectionId": "chart_case_3",
+    "start_sec": 32.879,
+    "end_sec": 37.759,
+    "startFrame": 986,
+    "endFrame": 1133,
+    "text": "第三步，只在确认动作出现以后，\n再决定要不要执行。",
+    "emphasisWords": [
+      "第三步",
+      "确认动作"
+    ]
+  },
+  {
+    "voiceId": "v07",
+    "visualSectionId": "checklist",
+    "start_sec": 37.839,
+    "end_sec": 43.359,
+    "startFrame": 1135,
+    "endFrame": 1301,
+    "text": "不要把预警当成动作，\n把判断顺序做对，节奏就会稳很多。",
+    "emphasisWords": [
+      "预警",
+      "判断顺序"
+    ]
+  },
+  {
+    "voiceId": "v08",
+    "visualSectionId": "risk_close",
+    "start_sec": 43.519,
+    "end_sec": 48.719,
+    "startFrame": 1306,
+    "endFrame": 1462,
+    "text": "结尾按 行动建议型 收束：给\n观众一个能立刻执行的下一步。",
+    "emphasisWords": [
+      "Create a 60-second vertic…",
+      "new_signals",
+      "Create"
+    ]
+  }
+]

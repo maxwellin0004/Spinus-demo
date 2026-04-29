@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CombinatorialParadoxCinematicData",
+  "type": "object",
+  "required": [
+    "title",
+    "orientation",
+    "fps",
+    "durationSec",
+    "styleVariant",
+    "chapters",
+    "scenes",
+    "subtitleCues",
+    "audio",
+    "promptKit"
+  ],
+  "properties": {
+    "title": { "type": "string" },
+    "orientation": { "enum": ["horizontal"] },
+    "fps": { "type": "number" },
+    "durationSec": { "type": "number" },
+    "styleVariant": { "type": "string" },
+    "chapters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "timeRange", "label", "claim"],
+        "properties": {
+          "id": { "type": "string" },
+          "timeRange": { "type": "string" },
+          "label": { "type": "string" },
+          "claim": { "type": "string" }
+        }
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "sceneId",
+          "sceneType",
+          "startSec",
+          "durationSec",
+          "section",
+          "visual",
+          "caption"
+        ],
+        "properties": {
+          "sceneId": { "type": "string" },
+          "sceneType": { "type": "string" },
+          "startSec": { "type": "number" },
+          "durationSec": { "type": "number" },
+          "section": { "type": "string" },
+          "visual": {
+            "type": "object",
+            "required": ["primaryConcept", "motion", "layout", "assetMode"],
+            "properties": {
+              "primaryConcept": { "type": "string" },
+              "layout": { "type": "string" },
+              "motion": { "type": "string" },
+              "assetMode": { "type": "string" },
+              "overlayText": { "type": ["string", "null"] },
+              "assetPromptId": { "type": "string" },
+              "assetPrompt": { "type": "string" },
+              "negativePrompt": { "type": "string" }
+            }
+          },
+          "caption": {
+            "type": "object",
+            "required": ["zh"],
+            "properties": {
+              "zh": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "subtitleCues": { "type": "array" },
+    "audio": {
+      "type": "object",
+      "required": ["voiceRequired", "status"],
+      "properties": {
+        "voiceRequired": { "type": "boolean" },
+        "status": { "type": "string" }
+      }
+    },
+    "voiceover_units": {
+      "$ref": "template_data_audio_schema.json#/properties/voiceover_units"
+    },
+    "subtitle_timeline": {
+      "type": "object"
+    },
+    "promptKit": {
+      "type": "object",
+      "required": ["global_style_prompt", "scene_prompts"],
+      "properties": {
+        "global_style_prompt": { "type": "string" },
+        "scene_prompts": { "type": "array" }
+      }
+    }
+  }
+}

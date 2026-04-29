@@ -1,0 +1,117 @@
+{
+  "input_summary": {
+    "topic": "为什么只要 23 个人，撞生日的概率就已经超过一半",
+    "duration_sec": 72,
+    "language": "zh-CN",
+    "target_platforms": ["YouTube", "Bilibili", "Xiaohongshu horizontal repost"],
+    "video_goal": "验证组合悖论电影化讲解模板是否能在新主题下复用",
+    "style_direction": "amber lab noir / cinematic paradox explainer",
+    "tone": "direct, rigorous, cinematic",
+    "audience": "对数学、概率、反直觉知识内容有兴趣的普通观众",
+    "subtitle_required": true,
+    "voice_required": true
+  },
+  "content_script": [
+    { "section": "hook", "objective": "用反直觉结论立刻抓人", "core_message": "23 个人就足够把撞生日概率推到一半以上", "spoken_draft": "只要二十三个人，同一天生日撞上的概率，就已经超过一半。" },
+    { "section": "setup", "objective": "拆掉错误直觉", "core_message": "人们看的是 365 天，不是配对数", "spoken_draft": "你以为难点在三百六十五天太大，真正被忽略的是二十三个人之间会长出二百五十三组比较。" },
+    { "section": "mechanism", "objective": "解释增长机制", "core_message": "新增一个人会和前面所有人形成比较", "spoken_draft": "每多一个人，不是多一个机会，而是把前面所有人都再比较一次。" },
+    { "section": "evidence", "objective": "给出概率落点", "core_message": "组合增长压缩空白概率", "spoken_draft": "所以冲突概率上升得不是线性，而是组合数在把空白空间快速压扁，到了二十三人，结果大约就是百分之五十点七。" },
+    { "section": "close", "objective": "抽象成可迁移认知", "core_message": "直觉经常选错计数单位", "spoken_draft": "很多看似不可能的事，并不是结果离谱，而是你一开始就选错了计数框架。" }
+  ],
+  "storyboard_script": [
+    { "section": "hook", "visual_goal": "让“23 人”和“50.7%”形成第一击", "visual_content": "黑暗实验台、编号徽章、巨大概率数字、局部火花与光痕", "asset_needs": "程序化数字牌 + 背景纸纹；可选 AI 生成实验台 still", "motion_transition": "强闪切入后慢推", "notes": "避免像现有 HUD 或 trading 模板" },
+    { "section": "setup", "visual_goal": "把配对数可视化", "visual_content": "23 人半圆阵列、成倍增长的连线、计数器跳到 253", "asset_needs": "程序化徽章与连线即可", "motion_transition": "关系线分批出现", "notes": "强调“天数不是主角”" },
+    { "section": "mechanism", "visual_goal": "让新增一个人带来的比较数量被看见", "visual_content": "高亮第 23 个人，向后方 22 个节点逐条连接", "asset_needs": "程序化节点与箭线", "motion_transition": "阶梯式揭示", "notes": "这是模板里最核心的机制 scene" },
+    { "section": "evidence", "visual_goal": "把抽象概率压缩成明确结论", "visual_content": "曲线压缩、空白区域缩窄、50.7% 结论浮出", "asset_needs": "程序化曲线和柱图", "motion_transition": "曲线收缩后数字定格", "notes": "数字必须够大且有电影感" },
+    { "section": "close", "visual_goal": "把方法论收束成一句可复用规则", "visual_content": "直觉 vs 成组关系对照卡合并成中心结论", "asset_needs": "程序化卡片、纸纹、光斑", "motion_transition": "对照后合并", "notes": "收尾要像思维工具，不是鸡汤" }
+  ],
+  "asset_script": [
+    { "asset_id": "a01", "target_section": "all", "asset_type": "paper_texture", "asset_description": "做旧纸纹、炭黑污渍、烧边阴影", "source_guidance": "优先程序化生成；最终版可补一张 4K 纸纹底图", "required": true, "fallback_plan": "纯色底 + 噪点纹理", "notes": "全模板基础层" },
+    { "asset_id": "a02", "target_section": "hook", "asset_type": "hero_background", "asset_description": "实验台 / 灯下桌面 / 编号徽章 still", "source_guidance": "可按 p01_hook_lab 走 AI 图", "required": false, "fallback_plan": "程序化桌面 + 光斑", "notes": "预览版不阻塞" },
+    { "asset_id": "a03", "target_section": "setup,mechanism", "asset_type": "programmatic_grid", "asset_description": "编号人物徽章、连线、计数器", "source_guidance": "完全程序化", "required": true, "fallback_plan": "无", "notes": "这是新模板核心资产" },
+    { "asset_id": "a04", "target_section": "evidence", "asset_type": "chart_layer", "asset_description": "概率曲线、柱图、关键数字", "source_guidance": "完全程序化", "required": true, "fallback_plan": "静态图表截图", "notes": "推荐程序化便于换题" },
+    { "asset_id": "a05", "target_section": "close", "asset_type": "contrast_cards", "asset_description": "直觉 / 成组关系 对照卡", "source_guidance": "程序化", "required": true, "fallback_plan": "静态文字卡", "notes": "承担方法论收束" }
+  ],
+  "subtitle_voice_script": [
+    { "section": "hook", "source_lines": "只要 23 个人，撞生日的概率就已经超过一半。", "voiceover_lines": "只要二十三个人，同一天生日撞上的概率，就已经超过一半。", "subtitle_chunks": ["只要 23 个人，", "撞生日的概率就已经超过一半。"], "emphasis_words": ["23 个人", "超过一半"], "pauses_emphasis": "结论前无停顿，结论后短停顿", "sfx_notes": "首个 hit + whoosh", "notes": "必须先给结论" },
+    { "section": "setup", "source_lines": "你盯着 365 天，却漏掉了 253 组配对。", "voiceover_lines": "大多数人会盯着三百六十五天，却忽略了二十三个人之间会产生二百五十三组配对。", "subtitle_chunks": ["你盯着 365 天，", "却漏掉了 253 组配对。"], "emphasis_words": ["365 天", "253 组配对"], "pauses_emphasis": "对比词前后各一短停顿", "sfx_notes": "连线增长伴随轻 click", "notes": "字幕比口播略压缩" },
+    { "section": "mechanism", "source_lines": "每多一个人，就会和前面所有人新增一次比较。", "voiceover_lines": "每多一个人，不是多一个可能，而是同时和前面所有人都新增一次比较。", "subtitle_chunks": ["每多一个人，", "就会和前面所有人新增一次比较。"], "emphasis_words": ["所有人", "新增一次比较"], "pauses_emphasis": "第二行前有明显承接停顿", "sfx_notes": "节点点亮可配短促 ticking", "notes": "这一段必须对齐线条出现" },
+    { "section": "evidence", "source_lines": "概率上升不是线性，是组合数在把空间快速压扁。", "voiceover_lines": "所以概率上升得不是线性，而是组合数在把空间快速压扁。", "subtitle_chunks": ["概率上升不是线性，", "是组合数在把空间快速压扁。"], "emphasis_words": ["不是线性", "组合数"], "pauses_emphasis": "转折词需要压音和高亮", "sfx_notes": "曲线收缩配低频 sweep", "notes": "结论前必须先建立机制" },
+    { "section": "close", "source_lines": "很多看似不可能的事，只是你换错了计数框架。", "voiceover_lines": "很多看上去不可能的事，换一个计数框架，立刻就变得合理。", "subtitle_chunks": ["很多看似不可能的事，", "只是你换错了计数框架。"], "emphasis_words": ["计数框架"], "pauses_emphasis": "句中停顿一次，尾句拉长 0.2-0.3 秒", "sfx_notes": "收尾只留柔和尾音", "notes": "不要做成喊口号" }
+  ],
+  "voiceover_script": [
+    { "time_range": "00:00-00:05", "voice_id": "v01", "section": "hook", "voiceover_text": "只要二十三个人，同一天生日撞上的概率，就已经超过一半。", "target_duration_sec": 4.6, "intended_pause_after_sec": 0.25, "visual_section_id": "scene_01", "tone": "sharp", "pace": "fast", "pauses": "结尾短停", "emphasis_words": ["二十三个人", "超过一半"], "timing_status": "estimated", "notes": "开门见山" },
+    { "time_range": "00:05-00:10", "voice_id": "v02", "section": "hook", "voiceover_text": "这不是直觉错一点，而是你的计数方式从一开始就错了。", "target_duration_sec": 4.8, "intended_pause_after_sec": 0.25, "visual_section_id": "scene_01", "tone": "corrective", "pace": "fast", "pauses": "而是前留短停", "emphasis_words": ["计数方式"], "timing_status": "estimated", "notes": "完成第一段反转" },
+    { "time_range": "00:11-00:18", "voice_id": "v03", "section": "setup", "voiceover_text": "大多数人会盯着三百六十五天，却忽略了二十三个人之间会产生二百五十三组配对。", "target_duration_sec": 6.4, "intended_pause_after_sec": 0.2, "visual_section_id": "scene_02", "tone": "analytic", "pace": "medium_fast", "pauses": "对比词前后短停", "emphasis_words": ["三百六十五天", "二百五十三组配对"], "timing_status": "estimated", "notes": "对比必须清晰" },
+    { "time_range": "00:19-00:25", "voice_id": "v04", "section": "mechanism", "voiceover_text": "每多一个人，不是多一个可能，而是同时和前面所有人都新增一次比较。", "target_duration_sec": 6.0, "intended_pause_after_sec": 0.2, "visual_section_id": "scene_03", "tone": "mechanistic", "pace": "medium", "pauses": "第二句前停顿", "emphasis_words": ["所有人", "新增一次比较"], "timing_status": "estimated", "notes": "线条逐次点亮" },
+    { "time_range": "00:28-00:33", "voice_id": "v05", "section": "evidence", "voiceover_text": "所以概率上升得不是线性，而是组合数在把空间快速压扁。", "target_duration_sec": 5.2, "intended_pause_after_sec": 0.2, "visual_section_id": "scene_04", "tone": "precise", "pace": "medium", "pauses": "转折停顿", "emphasis_words": ["不是线性", "组合数"], "timing_status": "estimated", "notes": "承上启下" },
+    { "time_range": "00:34-00:39", "voice_id": "v06", "section": "evidence", "voiceover_text": "当人数来到二十三，至少一对同生日的概率大约是百分之五十点七。", "target_duration_sec": 5.7, "intended_pause_after_sec": 0.25, "visual_section_id": "scene_04", "tone": "confirming", "pace": "medium", "pauses": "数字前轻停", "emphasis_words": ["二十三", "百分之五十点七"], "timing_status": "estimated", "notes": "结论着陆" },
+    { "time_range": "00:44-00:49", "voice_id": "v07", "section": "takeaway", "voiceover_text": "这类悖论真正提醒你的，是别再用单点直觉去看成组关系。", "target_duration_sec": 5.4, "intended_pause_after_sec": 0.2, "visual_section_id": "scene_05", "tone": "reflective", "pace": "medium", "pauses": "提醒你的后短停", "emphasis_words": ["单点直觉", "成组关系"], "timing_status": "estimated", "notes": "抽象上升" },
+    { "time_range": "00:57-01:02", "voice_id": "v08", "section": "close", "voiceover_text": "很多看上去不可能的事，换一个计数框架，立刻就变得合理。", "target_duration_sec": 5.0, "intended_pause_after_sec": 0.3, "visual_section_id": "scene_06", "tone": "settled", "pace": "medium", "pauses": "中间停顿一次", "emphasis_words": ["计数框架"], "timing_status": "estimated", "notes": "收束" }
+  ],
+  "audio_plan": [
+    { "time_range": "00:00-00:10", "section": "hook", "voice_strategy": "高密度、压缩停顿", "bgm_strategy": "低频鼓点 + 微弱持续音床", "sfx_strategy": "起始 hit、短 whoosh、数字出现 click", "silence_pauses": "只在 00:05 附近留极短停顿", "mix_relation": "voiceover 最高，BGM 压低", "notes": "不要太吵，重点是结论砸下来" },
+    { "time_range": "00:11-00:25", "section": "setup_mechanism", "voice_strategy": "中速解释、强调对比词", "bgm_strategy": "维持节奏但减少高频", "sfx_strategy": "连线出现的细 click / tick", "silence_pauses": "对比词前后给 0.15-0.2 秒呼吸", "mix_relation": "voiceover 清楚覆盖图像节奏", "notes": "适配连线递增" },
+    { "time_range": "00:25-00:39", "section": "evidence", "voice_strategy": "数字结论前略减速", "bgm_strategy": "推进到中段小高峰", "sfx_strategy": "曲线压缩 sweep、数字落定 sub hit", "silence_pauses": "50.7% 前短停", "mix_relation": "数字揭示时压低 BGM", "notes": "结论必须清楚" },
+    { "time_range": "00:39-01:12", "section": "close", "voice_strategy": "收束、稍慢、像总结而不是煽动", "bgm_strategy": "留温和持续音，尾段收掉鼓点", "sfx_strategy": "只留轻尾音", "silence_pauses": "最后一句后留 0.3 秒空白", "mix_relation": "voiceover 依旧主导", "notes": "尾段让观众消化规则" }
+  ],
+  "sfx_bgm_map": {
+    "bgm": [
+      { "id": "bgm_main", "time_range": "00:00-01:12", "style": "dark percussive educational pulse", "status": "missing_but_replaceable" }
+    ],
+    "sfx": [
+      { "id": "sfx_hit_open", "time_range": "00:00", "purpose": "开场结论砸下", "status": "missing_but_replaceable" },
+      { "id": "sfx_pair_ticks", "time_range": "00:11-00:25", "purpose": "配对连线递增反馈", "status": "programmatically_generatable" },
+      { "id": "sfx_curve_sweep", "time_range": "00:25-00:39", "purpose": "概率压缩转场", "status": "missing_but_replaceable" }
+    ],
+    "ducking_rules": [
+      { "when": "voiceover_active", "bgm_volume": 0.28 },
+      { "when": "numerical_reveal", "bgm_volume": 0.18 },
+      { "when": "scene_transition_hit", "bgm_volume": 0.22 }
+    ]
+  },
+  "visual_script.horizontal": [
+    { "visual_id": "vh01", "target_section": "hook", "visual_goal": "让结论像危险警报一样先砸下来", "layout_structure": "中央巨大数字，四周散射徽章，底部硬字幕", "visual_hierarchy": "50.7% > 23 人徽章 > 光痕 > 字幕", "primary_elements": ["实验台纹理", "编号徽章", "局部火花", "百分比数字"], "style_palette": "amber_lab_noir", "notes": "第一屏绝不做成熟悉的模板页" },
+    { "visual_id": "vh02", "target_section": "setup", "visual_goal": "看见配对数比日期更关键", "layout_structure": "半圆人群 + 中央计数器 + 边缘注释", "visual_hierarchy": "配对线 > 253 > 人群阵列 > 字幕", "primary_elements": ["23 节点", "连线", "计数器", "纸纹"], "style_palette": "amber_lab_noir", "notes": "信息密但要能扫读" },
+    { "visual_id": "vh03", "target_section": "mechanism", "visual_goal": "展示新增一个人的链式后果", "layout_structure": "前景单人 + 后景矩阵 + 多层连线", "visual_hierarchy": "高亮节点 > 新增连线 > 群体矩阵 > 注释", "primary_elements": ["高亮角色", "22 条关系线", "矩阵人群"], "style_palette": "amber_lab_noir", "notes": "这就是模板可复用规则" },
+    { "visual_id": "vh04", "target_section": "evidence", "visual_goal": "把抽象概率压缩成视觉冲击", "layout_structure": "左曲线右数字中间压缩过程", "visual_hierarchy": "50.7% > 曲线变化 > 条带收缩 > 字幕", "primary_elements": ["曲线", "数字", "压缩条带"], "style_palette": "amber_lab_noir", "notes": "大数值需要电影感" },
+    { "visual_id": "vh05", "target_section": "close", "visual_goal": "让观众记住方法论而不是只记住结果", "layout_structure": "左右对照卡 -> 中央收束短句", "visual_hierarchy": "中心收束句 > 对照卡标题 > 字幕", "primary_elements": ["直觉卡", "成组关系卡", "中心结论"], "style_palette": "amber_lab_noir", "notes": "最后一屏要像思维工具卡" }
+  ],
+  "react_page_script.horizontal": [
+    { "scene_id": "scene_01", "component_name": "ParadoxColdOpenScene", "input_fields": ["headlineValue", "badgeCount", "accentPhrase"], "layout_structure": "中央聚焦冷开场", "animation_presets": ["flash-in", "slow-push", "floating-sparks"], "asset_slots": ["paperTexture", "optionalHeroStill"], "responsive_rules": "固定横屏，不做竖屏裁切逻辑" },
+    { "scene_id": "scene_02", "component_name": "RuleTheaterScene", "input_fields": ["nodeCount", "pairCounterTarget"], "layout_structure": "半圆关系剧场", "animation_presets": ["progressive-lines", "counter-rise"], "asset_slots": ["paperTexture"], "responsive_rules": "中央计数器始终不被字幕遮挡" },
+    { "scene_id": "scene_03", "component_name": "MechanismGridScene", "input_fields": ["focusIndex", "connectionTarget"], "layout_structure": "前景焦点 + 后景矩阵", "animation_presets": ["stepwise-reveal", "line-glow"], "asset_slots": ["paperTexture"], "responsive_rules": "后景矩阵保持边界留白" },
+    { "scene_id": "scene_04", "component_name": "ProbabilityBoardScene", "input_fields": ["probabilityValue", "curveCompression"], "layout_structure": "左曲线右结论", "animation_presets": ["curve-sweep", "number-lock"], "asset_slots": ["paperTexture"], "responsive_rules": "右侧大数字不能被字幕覆盖" },
+    { "scene_id": "scene_05", "component_name": "ReflectiveCloseScene", "input_fields": ["leftLabel", "rightLabel", "closingRule"], "layout_structure": "对照卡收束", "animation_presets": ["split-compare", "merge-hold"], "asset_slots": ["paperTexture"], "responsive_rules": "中心结论保持在安全区内" }
+  ],
+  "timeline_script.horizontal": [
+    { "time_range": "00:00-00:02", "scene": "scene_01", "layer_target": "hero_number", "action": "50.7% 强闪后放大定格", "sync_target": "v01 起句", "notes": "第一拍必须狠" },
+    { "time_range": "00:02-00:10", "scene": "scene_01", "layer_target": "badges + subtitle", "action": "23 个徽章轻漂浮，字幕两次刷新", "sync_target": "v01-v02", "notes": "保持压迫感" },
+    { "time_range": "00:11-00:18", "scene": "scene_02", "layer_target": "pair_lines", "action": "连线按组次增长", "sync_target": "v03 前半句", "notes": "从少到密" },
+    { "time_range": "00:18-00:25", "scene": "scene_02", "layer_target": "counter", "action": "计数器跳到 253 并保持", "sync_target": "v03 后半句", "notes": "与强调词同步" },
+    { "time_range": "00:25-00:33", "scene": "scene_03", "layer_target": "focus_node", "action": "第 23 个节点升亮", "sync_target": "v04 起句", "notes": "焦点必须清楚" },
+    { "time_range": "00:33-00:41", "scene": "scene_03", "layer_target": "connection_lines", "action": "22 条线逐次点亮", "sync_target": "v04 结论", "notes": "配合短促 click" },
+    { "time_range": "00:41-00:50", "scene": "scene_04", "layer_target": "curve_band", "action": "空白概率曲线下压", "sync_target": "v05", "notes": "视觉上体现压缩" },
+    { "time_range": "00:50-00:58", "scene": "scene_04", "layer_target": "hero_number", "action": "50.7% 锁定并发光", "sync_target": "v06", "notes": "数字清楚不抖动" },
+    { "time_range": "00:58-01:06", "scene": "scene_05", "layer_target": "contrast_cards", "action": "左右卡片并排显现", "sync_target": "v07", "notes": "给观众理解时间" },
+    { "time_range": "01:06-01:12", "scene": "scene_05", "layer_target": "closing_rule", "action": "中心规则合并出现并定格", "sync_target": "v08", "notes": "最后留停顿" }
+  ],
+  "formal_script.horizontal": [
+    { "time_range": "00:00-00:11", "section": "hook", "visual_description": "实验台、编号徽章和巨大数字构成第一击", "audio_description": "高密度结论式口播，轻 hit 与 whoosh", "notes": "建立模板气质" },
+    { "time_range": "00:11-00:25", "section": "setup", "visual_description": "23 个角色形成关系剧场，配对数快速上升", "audio_description": "解释性口播，中速，连线点击声", "notes": "把配对数看见" },
+    { "time_range": "00:25-00:41", "section": "mechanism", "visual_description": "新增角色带出一整排比较关系", "audio_description": "机制解释、强调对比词", "notes": "模板最关键的复用场景" },
+    { "time_range": "00:41-00:58", "section": "evidence", "visual_description": "概率曲线压缩，50.7% 结论锁定", "audio_description": "数字结论前略减速", "notes": "结果落地" },
+    { "time_range": "00:58-01:12", "section": "close", "visual_description": "对照卡收束为一条思维规则", "audio_description": "总结性口播，音乐收束", "notes": "留方法，不留空喊" }
+  ],
+  "voiceover_units": {
+    "path": "data/templates/combinatorial_paradox_cinematic/example_voiceover_units.json"
+  },
+  "subtitle_timeline_plan": {
+    "status": "pending_final_audio_alignment",
+    "rule": "先生成 TTS 音频，再重建 subtitle_timeline.generated.horizontal.json"
+  },
+  "audio_alignment_plan": {
+    "provider_order": ["ElevenLabs with timestamps", "other forced alignment", "duration-fit fallback"],
+    "output_timeline": "data/templates/combinatorial_paradox_cinematic/subtitle_timeline.generated.horizontal.json"
+  }
+}

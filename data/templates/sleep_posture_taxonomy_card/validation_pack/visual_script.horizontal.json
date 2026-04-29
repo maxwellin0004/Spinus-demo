@@ -1,0 +1,6 @@
+[
+  { "visual_id": "scene_01", "target_section": "hook", "visual_goal": "白底分类卡建题", "layout_structure": "顶部左右小标签，中上蓝色问题，中部 6 个小人横向排列，底部字幕", "visual_hierarchy": "问题标题 > 分类插画 > 底部字幕 > 顶部标签", "primary_elements": ["蓝色问题", "6 个黑白小人", "底部大字幕"], "style_palette": "白底、黑线、蓝色强调", "notes": "16:9 原生布局" },
+  { "visual_id": "scene_02", "target_section": "setup", "visual_goal": "用字幕解释分类逻辑", "layout_structure": "主体保持，字幕替换", "visual_hierarchy": "字幕短暂成为主焦点", "primary_elements": ["分类行", "底部字幕"], "style_palette": "同上", "notes": "不切页" },
+  { "visual_id": "scene_03_07", "target_section": "types", "visual_goal": "逐个高亮姿势", "layout_structure": "蓝色细圈围绕当前小人，底部对应解释", "visual_hierarchy": "当前小人 + 字幕", "primary_elements": ["当前高亮", "解释字幕"], "style_palette": "白底黑线蓝圈", "notes": "高亮不是旧模板动效" },
+  { "visual_id": "scene_08", "target_section": "cta", "visual_goal": "评论区互动", "layout_structure": "全分类回常态，底部 CTA 加粗", "visual_hierarchy": "CTA 字幕 > 标题", "primary_elements": ["CTA", "分类行"], "style_palette": "同上", "notes": "末尾停留" }
+]

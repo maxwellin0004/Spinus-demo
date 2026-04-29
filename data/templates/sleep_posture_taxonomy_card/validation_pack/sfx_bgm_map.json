@@ -1,0 +1,17 @@
+{
+  "bgm": {
+    "enabled": false,
+    "src": null,
+    "volume": 0.08,
+    "loop": true,
+    "notes": "本地无指定 BGM，粗预览默认静音。"
+  },
+  "sfx": [
+    { "id": "caption_tick", "enabled": false, "trigger": "caption_enter", "src": null, "volume": 0.18 },
+    { "id": "highlight_tick", "enabled": false, "trigger": "item_highlight", "src": null, "volume": 0.16 }
+  ],
+  "ducking_rules": [
+    { "target": "bgm", "when": "voiceover_active", "gain": 0.35 },
+    { "target": "sfx", "when": "voiceover_active", "gain": 0.75 }
+  ]
+}
