@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tanglin Rd / 小黄雀联盟
 
-## Getting Started
+AI Creator Campaign Platform connecting three roles:
 
-First, run the development server:
+- `Admin`: manages brands, creators, campaigns, submissions, proofs, settlement, compliance, reports.
+- `Brand`: creates campaigns, uploads assets, reviews creator content, views campaign reports.
+- `Creator`: completes profile, applies to tasks, uses AI Content Studio, submits content/proof, receives wallet earnings.
+
+## Architecture
+
+- `src/app`: Next.js App Router routes for public, auth, admin, brand, creator, and API/CSV endpoints.
+- `src/lib`: Prisma client, JWT auth, RBAC actions, audit logging, compliance checks, AI provider, storage helpers.
+- `src/components`: shared shell, cards, forms, tables, report chart, notification inbox.
+- `prisma/schema.prisma`: PostgreSQL schema with Prisma 7 config in `prisma.config.ts`.
+- `prisma/seed.ts`: test data for the full Brand → Admin → Creator → Proof → Wallet → Report loop.
+
+## Core Data Model
+
+Main tables:
+
+`User`, `BrandProfile`, `CreatorProfile`, `SocialAccount`, `Campaign`, `CampaignAsset`, `CampaignTask`, `TaskApplication`, `ContentDraft`, `Submission`, `SubmissionReview`, `Proof`, `MetricsSnapshot`, `Wallet`, `WalletTransaction`, `WithdrawalRequest`, `Invoice`, `Notification`, `AuditLog`, `ComplianceRule`, `RiskFlag`, `Dispute`.
+
+Important status enums:
+
+`CampaignStatus`: `DRAFT`, `PENDING_REVIEW`, `REJECTED`, `ACTIVE`, `PAUSED`, `COMPLETED`, `ARCHIVED`.
+
+`SubmissionStatus`: `DRAFT_CREATED`, `SUBMITTED`, `REVISION_REQUESTED`, `APPROVED`, `REJECTED`, `PUBLISHED`, `PROOF_SUBMITTED`, `VERIFIED`, `SETTLED`.
+
+`WalletTxType`: `EARNING`, `WITHDRAWAL`, `ADJUSTMENT`, `FREEZE`, `UNFREEZE`.
+
+## Local Setup
+
+PostgreSQL is expected at `DATABASE_URL`.
 
 ```bash
+npm install
+createdb tanglin_rd
+npx prisma migrate dev
+npm run prisma:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Test accounts:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `admin@test.com / password123`
+- `brand@test.com / password123`
+- `creator@test.com / password123`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Verification
 
-## Learn More
+```bash
+npx prisma validate
+npx prisma migrate dev
+npm run prisma:seed
+npm run lint
+npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The AI provider uses `OPENAI_API_KEY` when present and falls back to deterministic mock generation when missing.
