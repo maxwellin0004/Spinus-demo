@@ -11,5 +11,9 @@
   "MODEL_SUBTITLE_AUDIO_ANALYSIS": "gpt-5.4-nano",
   "MODEL_SUMMARY_GENERATION": "gpt-5.4-nano",
   "MODEL_TEMPLATE_GENERATION": "gpt-5.4-nano",
-  "MODEL_TRANSCRIPTION": "gpt-4o-mini-transcribe"
+  "MODEL_TRANSCRIPTION": "gpt-4o-mini-transcribe",
+  "OPENAI_IMAGE_API_KEY": "sk-M4XMOUWPIqzyVoGDMvCMeIY1RP6n9h8n0a4xI2nhVoiIqecs",
+  "OPENAI_IMAGES_GENERATIONS_URL": "https://api.bltcy.ai/v1/chat/completions",
+  "USE_AI_IMAGE_ASSETS": true,
+  "IMAGE_ASSET_MODEL": "gpt-image-2-all"
 }

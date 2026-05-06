@@ -1,0 +1,509 @@
+{
+  "source_video_id": "download14_test",
+  "status": "draft",
+  "engine": {
+    "provider": "bltcy",
+    "mock_analysis": false,
+    "models": {
+      "analyze_title": "gpt-5.4-nano",
+      "analyze_description": "gpt-5.4-nano",
+      "analyze_hook": "gpt-5.4-nano",
+      "analyze_structure": "gpt-5.4-nano",
+      "analyze_script_style": "gpt-5.4-nano",
+      "analyze_visual_rhythm": "gemini-3.1-flash-lite-preview-thinking-minimal",
+      "analyze_visual_style": "gemini-3.1-flash-lite-preview-thinking-minimal",
+      "analyze_subtitle_audio": "gpt-5.4-nano",
+      "build_summary": "gpt-5.4-nano",
+      "transcribe_audio": "gpt-4o-mini-transcribe"
+    }
+  },
+  "meta": {
+    "title": "download (14) reference video",
+    "description": "User-provided reference video for viral replication workflow test",
+    "cover_text": "",
+    "first_frame_text": "",
+    "platform": "local",
+    "track": "reference replication test",
+    "duration_sec": 52.38,
+    "language": "zh"
+  },
+  "transcript": {
+    "full_text": "这是我听过最遗憾又最美的话,来自月亮与六便士。我当然知道那不是我的月亮,但有一刻,月光确实真切地照在了我的身上。可生活不是电影,我也少点运气。我不过偷偷碰了你一下,却不料你如蒲公英般散开。此后,风吹过的地方都是你的模样。他们说,年少时不要遇见太惊艳的人,否则这一生都会很孤独,因为念念不忘却没有回响。人生苦短,除去年幼懵懂与年老力衰,真正属于我们的时光不过三十余载。而青春更如朝露,转瞬即逝。 我们既然走进了彼此的青春,就不该让故事潦草收场,即便注定分离,也要好好说声再见。也许有些人的出现,就是为了教会你如何告别。那晚的月光虽不属于我,却照亮过我前行的路,这就够了。",
+    "segments": [],
+    "generated": false,
+    "source": "api",
+    "raw_response": {
+      "text": "这是我听过最遗憾又最美的话,来自月亮与六便士。我当然知道那不是我的月亮,但有一刻,月光确实真切地照在了我的身上。可生活不是电影,我也少点运气。我不过偷偷碰了你一下,却不料你如蒲公英般散开。此后,风吹过的地方都是你的模样。他们说,年少时不要遇见太惊艳的人,否则这一生都会很孤独,因为念念不忘却没有回响。人生苦短,除去年幼懵懂与年老力衰,真正属于我们的时光不过三十余载。而青春更如朝露,转瞬即逝。 我们既然走进了彼此的青春,就不该让故事潦草收场,即便注定分离,也要好好说声再见。也许有些人的出现,就是为了教会你如何告别。那晚的月光虽不属于我,却照亮过我前行的路,这就够了。",
+      "usage": {
+        "type": "tokens",
+        "total_tokens": 771,
+        "input_tokens": 524,
+        "input_token_details": {
+          "text_tokens": 0,
+          "audio_tokens": 524
+        },
+        "output_tokens": 247
+      }
+    }
+  },
+  "title_analysis": {
+    "raw_title": "download (14) reference video",
+    "cover_text": "",
+    "first_frame_text": "",
+    "title_type": "下载指令/素材获取类（reference素材）+ 数量标注",
+    "formula": "动词/动作(下载) + (数量/括号数字) + 目标内容关键词(reference video)",
+    "conclusion_first": false,
+    "contains": {
+      "risk": false,
+      "benefit": false,
+      "conflict": false,
+      "number": true,
+      "contrast": false,
+      "promise": false
+    },
+    "relationship_between_surfaces": {
+      "title_vs_cover": "封面文字为空，无法判断二者是否复用/承接/补充。",
+      "title_vs_first_frame": "首屏大字为空，无法判断二者是否复用/承接/补充。"
+    },
+    "keyword_slots": [
+      {
+        "slot": "action",
+        "keyword": "download"
+      },
+      {
+        "slot": "count",
+        "keyword": "14"
+      },
+      {
+        "slot": "content_type",
+        "keyword": "reference video"
+      }
+    ],
+    "variable_candidates": [
+      {
+        "name": "count_n",
+        "evidence": "标题中(14)",
+        "example_format": "(N)"
+      },
+      {
+        "name": "content_keyword",
+        "evidence": "标题中reference video",
+        "example_format": "reference video / reference videos / tutorial video（仅作占位示例）"
+      }
+    ],
+    "confidence": 0.72
+  },
+  "description_analysis": {
+    "raw_description": "User-provided reference video for viral replication workflow test",
+    "description_type": "说明/用途型（提供参考内容用于测试）",
+    "description_formula": "素材来源/属性（User-provided reference video） + 目的/用途（for viral replication workflow test）",
+    "opening_role": "内容提供者/素材说明者（指出这是用户提供的参考视频）",
+    "has_call_to_action": false,
+    "call_to_action_type": null,
+    "tone": "中性、技术/实验导向、偏说明",
+    "title_relation": "简介与标题一致，标题强调“download (14) reference video”，简介进一步说明该参考视频用于“viral replication workflow test”；属于用途补充与一致描述。",
+    "keyword_clusters": [
+      {
+        "cluster": "reference_content",
+        "keywords": [
+          "reference video",
+          "User-provided"
+        ]
+      },
+      {
+        "cluster": "replication_testing",
+        "keywords": [
+          "viral replication",
+          "workflow test"
+        ]
+      }
+    ],
+    "hashtag_strategy": {
+      "count": 3,
+      "hashtags": [
+        "reference",
+        "replication",
+        "workflow-test"
+      ],
+      "language_mix": "全英文",
+      "mix_type": "主题精准型（围绕测试/复制工作流的窄类标签）",
+      "broad_tags": [
+        "reference",
+        "replication"
+      ],
+      "niche_tags": [
+        "workflow-test"
+      ],
+      "brand_or_account_tags": []
+    },
+    "variable_candidates": [
+      "reference_video_identifier（如标题中的 (14) 序号/批次号）",
+      "reference_video_source_type（如 User-provided，可替换为其他来源表述）",
+      "replication_context（如 viral，可替换为其他复制场景词）",
+      "test_type（如 workflow test，可替换为其他测试类型）",
+      "hashtag_reference（如 reference，可替换/增减）",
+      "hashtag_replication（如 replication，可替换/增减）",
+      "hashtag_test（如 workflow-test，可替换/增减）"
+    ],
+    "confidence": 0.74
+  },
+  "hook_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "structure_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "script_style_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "rhythm_engine": {
+    "mode": "api",
+    "model": "gemini-3.1-flash-lite-preview-thinking-minimal"
+  },
+  "visual_engine": {
+    "mode": "api",
+    "model": "gemini-3.1-flash-lite-preview-thinking-minimal"
+  },
+  "subtitle_audio_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "hook_analysis": {
+    "time_range_sec": [
+      0,
+      5
+    ],
+    "hook_text": "这是我听过最遗憾又最美的话……月光确实真切地照在了我的身上……但有一刻……此后，风吹过的地方都是你的模样。",
+    "hook_type": "情绪化叙事开场（名句引入+画面化意象）",
+    "core_mechanism": "用“最遗憾又最美的话”（强情绪评价/记忆钩子）直接切入，并以月光/蒲公英/风的意象做画面化隐喻，先给出命题式情感体验（爱与告别、遗憾与美），再在后续展开具体故事，从而在前几秒建立共情与悬念感。",
+    "conclusion_first": false,
+    "devices": {
+      "risk": false,
+      "conflict": false,
+      "promise": false,
+      "question": false,
+      "surprise": false,
+      "contrarian": false
+    },
+    "visual_support": "从节奏摘要看，0.0s 有强烈的 opening-frame（硬切换）用于抓注意力，2.0s 再进行软切换进入说明/铺垫；但未提供封面/首屏大字与具体画面内容，因此只能判断存在“硬开场+进入解释”的结构支持。",
+    "surface_dependency": "文本意象高度依赖听感与情绪表达（如“月光真切”“蒲公英般散开”“风吹过的地方都是你的模样”）；若无字幕/画外音强调，这种隐喻的抓取效率可能下降。",
+    "template_rule_candidates": [
+      "开头 0-1 秒用“高强度情绪评价短句/名句”直击（如“这是我听过最遗憾又最美的话”），先把情绪拉满",
+      "用 1-3 个强意象（月光/风/散开等）在前 3-5 秒完成画面化隐喻，形成沉浸感",
+      "开头用硬切换（opening-frame）建立注意力峰值，随后用软切换（supporting-layout-shift）从钩子进入叙事铺垫",
+      "前 5 秒优先交付“情感体验/氛围命题”，不急于下结论，让观众跟随叙事继续听"
+    ],
+    "confidence": 0.59
+  },
+  "structure_analysis": [
+    {
+      "id": "S1",
+      "start_sec": 0,
+      "end_sec": 12,
+      "label": "引用开场+情感引入",
+      "purpose": "用名句点题，建立惋惜与美感的情绪基调，并引出“不是我的月亮但照亮我”的核心意象。",
+      "summary": "开篇以《月亮与六便士》式的话语作为情绪入口，强调遗憾与真实的照拂感。",
+      "transition_to_next": "从“月光照在身上”的短暂真实，转入生活并非电影的必然落差。",
+      "information_density": "中",
+      "confidence": 0.54
+    },
+    {
+      "id": "S2",
+      "start_sec": 12,
+      "end_sec": 24,
+      "label": "因果转折+失去具象化",
+      "purpose": "解释遗憾来源，把转瞬相遇/轻触造成不可逆后果具体化。",
+      "summary": "强调不是命运的圆满，自己只“偷偷碰了你一下”，对方却如蒲公英散开。",
+      "transition_to_next": "从失去的不可挽回，推出“此后风吹处都是你的模样”的持久印记。",
+      "information_density": "中",
+      "confidence": 0.55
+    },
+    {
+      "id": "S3",
+      "start_sec": 24,
+      "end_sec": 38,
+      "label": "哲理升华+人生规律总结",
+      "purpose": "将个人情感上升到普遍经验与人生规律，强化共鸣与文学性。",
+      "summary": "加入“年少莫遇太惊艳”的警示，并概括青春短暂、真正属于自己的时光有限。",
+      "transition_to_next": "从人生规律与短暂青春，转向“既然走进彼此青春就要好好收场”的价值立场。",
+      "information_density": "高",
+      "confidence": 0.56
+    },
+    {
+      "id": "S4",
+      "start_sec": 38,
+      "end_sec": 52.38,
+      "label": "告别宣言+意象回收（收束）",
+      "purpose": "完成情绪落点：即便注定分离，也要体面告别，并用月光意象回收到行动意义。",
+      "summary": "强调故事不应潦草收场：即便分离也要好好说再见；月光虽不属于我，却照亮我前行的路。",
+      "transition_to_next": "无（结尾收束）。",
+      "information_density": "中",
+      "confidence": 0.57
+    }
+  ],
+  "global_structure_pattern": "情绪叙事型（Quote Hook → Cause/Turn Loss → Universal Philosophy → Farewell Closure & Image Recap）",
+  "script_analysis": {
+    "tone": "抒情、遗憾但温柔的哲思口吻；带轻微自嘲与宿命感，情绪由“遗憾”推进到“告别的安慰与领悟”。",
+    "sentence_style": "大量比喻与象征（月亮/月光/蒲公英/风/朝露/回响），使用分号/短顿式并列与转折（“可…”“但有一刻…”“此后…”“他们说…”“而…”“即便…也要…”）；句式常见“先抛判断/感叹→再解释/映射→再上升到普遍道理”。",
+    "sentence_length_pattern": "以中短句为主，穿插少量较长复句；整体节奏呈“短钩子句（感叹/判断）—中句展开因果—较长总结句上升哲理—收束句回到告别与画面”。",
+    "conclusion_first": false,
+    "dominant_modes": [
+      "Quote/权威引用式开场（“来自…/最遗憾又最美的话”）",
+      "情绪叙事（遗憾、月光照身、蒲公英散开）",
+      "因果转折（“可…不是…；但…；此后…”）",
+      "普遍哲理/人生总结（青春短暂、念念不忘无回响）",
+      "告别式收束（“好好说声再见/教会如何告别/照亮前行的路”）",
+      "意象收尾（月光不属于我却照亮前路）"
+    ],
+    "density_pattern": "意象密度高、修辞密集；同一段内反复出现抽象化名词（遗憾/孤独/回响/时光/青春/朝露）与自然/天体意象（月亮/月光/风/蒲公英/朝露），信息密度呈“先集中钩子→中段持续铺陈→后段集中上升哲理→末段再次意象收束”。",
+    "paragraph_organization": "单段或弱分段结构，但内部存在清晰的“段落功能块”：1）情绪与引用钩子；2）具体遭遇与因果转折（你如蒲公英散开→风吹处都是模样）；3）社会认知/普遍规律（他们说…/人生苦短…）；4）价值主张与告别态度（走进彼此青春→不潦草收场→好好说再见）；5）哲思收束与意象回扣（月光不属于我却照亮前行）。",
+    "rule_candidates": [
+      "开场先抛强情绪判断/感叹，再给出来源引用或权威文本锚点（Quote Hook）。",
+      "用“可…但…此后…”等转折链条承接情绪与因果（Cause/Turn Loss）。",
+      "中段将个体经历迅速抽象为普遍规律：加入“他们说/人生/青春/真正属于我们”等概念上升（Universal Philosophy）。",
+      "以“即便…也要…”构造价值立场与行动指令，完成告别伦理（Farewell）。",
+      "结尾回扣核心意象并完成闭环：用同一意象（月光/照亮）从“不属于我”转到“照亮前行”，形成回环收束（Closure & Image Recap）。",
+      "句子节奏以中短句为骨架，穿插长复句做总结；避免纯叙述，保证每句都带修辞或判断倾向。",
+      "修辞优先级高：比喻/象征/自然意象在关键节点密集出现（蒲公英、风、朝露、月光）。"
+    ],
+    "confidence": 0.74
+  },
+  "rhythm_analysis": {
+    "scene_changes": [
+      {
+        "time_sec": 0,
+        "approximate": false,
+        "change_strength": "hard_change",
+        "change_type": "cut",
+        "from_visual": "null",
+        "to_visual": "quote_text_overlay",
+        "purpose": "hook_initiation",
+        "linked_to_audio_emphasis": true
+      },
+      {
+        "time_sec": 12,
+        "approximate": false,
+        "change_strength": "soft_change",
+        "change_type": "dissolve",
+        "from_visual": "quote_text",
+        "to_visual": "metaphorical_imagery",
+        "purpose": "transition_to_cause",
+        "linked_to_audio_emphasis": true
+      },
+      {
+        "time_sec": 24,
+        "approximate": false,
+        "change_strength": "soft_change",
+        "change_type": "cut",
+        "from_visual": "metaphorical_imagery",
+        "to_visual": "philosophical_text_overlay",
+        "purpose": "transition_to_philosophy",
+        "linked_to_audio_emphasis": true
+      },
+      {
+        "time_sec": 38,
+        "approximate": false,
+        "change_strength": "hard_change",
+        "change_type": "cut",
+        "from_visual": "philosophical_text",
+        "to_visual": "farewell_recap_montage",
+        "purpose": "transition_to_closure",
+        "linked_to_audio_emphasis": true
+      }
+    ],
+    "section_rhythm": {
+      "hook": {
+        "avg_change_interval_sec": 4.0,
+        "rhythm_level": "slow_contemplative"
+      },
+      "body": {
+        "avg_change_interval_sec": 3.5,
+        "rhythm_level": "moderate_narrative"
+      },
+      "outro": {
+        "avg_change_interval_sec": 4.6,
+        "rhythm_level": "slow_lingering"
+      }
+    },
+    "peak_moments": [
+      12.0,
+      24.0,
+      38.0
+    ],
+    "rhythm_rule_candidates": [
+      "Structural_Sync: Scene changes strictly align with thematic shifts in the voiceover.",
+      "Visual_Pacing: Slower cut intervals (3-5s) are used to prioritize text readability and emotional absorption.",
+      "Emotional_Arc: The rhythm accelerates slightly during the 'Cause' phase (12-24s) to mirror the realization of loss."
+    ],
+    "confidence": 0.9
+  },
+  "visual_analysis": [
+    {
+      "section_id": "S1",
+      "visual_type": "Character Close-up / Cinematic Mood",
+      "layout": "Full-screen background; Centered dual-language subtitles at bottom-third with drop shadow/stroke.",
+      "asset_types": [
+        "Sci-fi character close-up",
+        "Energy light effects",
+        "Dual-language text overlay"
+      ],
+      "style_markers": [
+        "High contrast",
+        "Backlit",
+        "Cyber/Tech aesthetic",
+        "Cinematic typography"
+      ],
+      "fixed_elements": [
+        "Dual-language subtitle positioning",
+        "Text stroke/shadow effect"
+      ],
+      "variable_elements": [
+        "Character/Mecha model",
+        "Light beam color/intensity",
+        "Subtitle content"
+      ],
+      "recreation_difficulty": "medium",
+      "confidence": 0.95
+    },
+    {
+      "section_id": "S2",
+      "visual_type": "POV / Travel Poster Style",
+      "layout": "Top-centered large title; Foreground object (hand/steering wheel) occlusion; Bottom-centered dual-language subtitles; Bottom watermark.",
+      "asset_types": [
+        "Outdoor landscape",
+        "POV foreground element",
+        "Text overlay"
+      ],
+      "style_markers": [
+        "Travel vlog aesthetic",
+        "Depth of field",
+        "Poster-like composition"
+      ],
+      "fixed_elements": [
+        "Top title placement",
+        "Bottom watermark",
+        "Bottom-centered subtitle layout"
+      ],
+      "variable_elements": [
+        "Background scenery",
+        "Foreground object",
+        "Title text"
+      ],
+      "recreation_difficulty": "easy",
+      "confidence": 0.9
+    },
+    {
+      "section_id": "S3",
+      "visual_type": "Emotional Quote / HUD Overlay",
+      "layout": "Top-centered white title + red subtitle; Mid-bottom centered character long shot; Bottom dual-language subtitles; Bottom watermark.",
+      "asset_types": [
+        "Long shot landscape",
+        "Multi-layer text HUD",
+        "Watermark"
+      ],
+      "style_markers": [
+        "Melancholic",
+        "Literary/Book-review style",
+        "Minimalist composition"
+      ],
+      "fixed_elements": [
+        "Top title/subtitle hierarchy",
+        "Bottom dual-language subtitle block",
+        "Watermark"
+      ],
+      "variable_elements": [
+        "Background scenery",
+        "Character pose",
+        "Text content"
+      ],
+      "recreation_difficulty": "easy",
+      "confidence": 0.95
+    },
+    {
+      "section_id": "S4",
+      "visual_type": "Silhouette / Documentary Style",
+      "layout": "Top horizontal title bar; Mid-bottom two-line subtitles; Bottom-left/centered watermark.",
+      "asset_types": [
+        "Silhouette shot",
+        "Window frame composition",
+        "Text overlay"
+      ],
+      "style_markers": [
+        "Documentary feel",
+        "High-key/Low-key contrast",
+        "Clean typography"
+      ],
+      "fixed_elements": [
+        "Top title bar design",
+        "Bottom watermark",
+        "Subtitle alignment"
+      ],
+      "variable_elements": [
+        "Silhouette subject",
+        "Background lighting",
+        "Text content"
+      ],
+      "recreation_difficulty": "medium",
+      "confidence": 0.9
+    }
+  ],
+  "subtitle_analysis": {
+    "position": "下三分之一偏中下居中（硬字幕常用于保证可读性与视频画面不遮挡关键主体）；在“Quote Hook / 哲理金句”段落可能上移到中下居中以突出重点，但整体以中下居中为主。",
+    "line_count_pattern": "以2行为主，单句偏长时自动分行成2-3行；整体呈现“短停顿=换行/分句、长句=保持2行包裹”的字幕组织方式。",
+    "line_length_pattern": "行长以“中文信息密度均衡”为原则：每行控制在约10-16字左右（遇到关键长修饰短语会在顿点处断行），避免整行过满；换到新句时使用相对一致的行宽模板（从而形成可预测的硬字幕版式节奏）。",
+    "highlight_strategy": "关键词高亮采用轻量化硬字幕规则：常见做法为（1）引号/出处句（“月亮与六便士”）与（2）情绪转折词（如“却”“不料”“此后”“否则”“除非/真正”“也许”“告别”“照亮”）加粗或颜色更亮；其余文字保持统一白/浅色描边。高亮不用于全句，更多用于“转折与哲理核心词”。",
+    "timing_pattern": "与转场强同步：0s“硬进入”、12s与24s在主题切换处加字幕更新/换屏、38s“收束/回顾”处换为更短、更具总结性的字幕块。句内采用分句停顿驱动的逐行刷新（而非持续逐字）；每次刷新对应配音的短停或语义顿点。",
+    "confidence": 0.63
+  },
+  "audio_analysis": {
+    "voice_style": "情绪叙事型旁白/配音：偏电影感的温柔、克制与抒情；语调在“遗憾与美”“月光照在身上”“散开/孤独”“告别/告别教会”处明显加情绪张力；整体为非戏剧化爆发，更强调低沉回环与叹息感。",
+    "pace_wpm_estimate": 0,
+    "pause_pattern": "停顿按“结构分段+语义转折”分层：\n- Hook开头（0-12s）停顿较多且更细碎，句尾有轻微降调；\n- Cause/Turn Loss（12-24s）停顿略减少、语速略快或重音更密（强调“散开→风吹过处皆是你的模样”“孤独因为念念不忘无回响”）；\n- Universal Philosophy（24-38s）停顿以‘列举/总括句尾’为主（如“除去年幼懵懂与年老力衰”“属于我们的时光不过…”）；\n- Farewell/Closure（38s后）停顿延长，句尾拖长或更明显的呼气收束（便于观众吸收“好好说声再见”“这就够了”。）。",
+    "bgm_style": "轻抒情/氛围感器乐为主（钢琴或弦乐铺底，可能带细微环境音/低频氛围）；BGM在12s、24s、38s附近可能做和声变化或音量轻微上扬以承接情绪峰值。",
+    "hook_sfx_likely": [
+      "轻微‘翻页/合成音’式的进入音（对应0s硬切到引句）",
+      "月光/夜色氛围的软音色点缀（如whoosh/微回响），在“月亮与六便士”出处强调处",
+      "分句断点的极短降噪/静音点（用于字幕换屏同步）"
+    ],
+    "sync_pattern": "字幕-语音-画面三者以“主题段落切换”强同步为主：scene change（0s/12s/24s/38s）基本对应配音语义段落边界；字幕更新多发生在语音停顿与重音词出现前后（确保读者在情绪转折词落点时看到高亮字幕或换屏）。",
+    "confidence": 0.6
+  },
+  "review": {
+    "mode": "full",
+    "reviewed": false,
+    "notes": ""
+  },
+  "summary": {
+    "top_template_rules": [
+      "Lead with a corrective warning in the first 3 seconds",
+      "Keep the first visual change hard and high contrast",
+      "Use claim-first script organization before explanation",
+      "Tie description hashtags to both broad and niche discovery terms",
+      "Keep hard subtitle rhythm faster in the hook than in the body"
+    ],
+    "key_packaging_features": [
+      "Primary title pattern centers on 下载指令/素材获取类（reference素材）+ 数量标注",
+      "Description acts as a short thesis plus discovery hashtags",
+      "Hard subtitles support the spoken hook with compressed pacing"
+    ],
+    "best_variable_candidates": [
+      "topic",
+      "risk_phrase",
+      "background_asset",
+      "hashtags"
+    ],
+    "best_fixed_rules": [
+      "warning-first hook",
+      "high-contrast headline opening",
+      "claim-first structure"
+    ]
+  },
+  "summary_engine": {
+    "mode": "mock_fallback",
+    "model": "gpt-5.4-nano",
+    "reason": "Expecting ',' delimiter: line 121 column 8 (char 4211)"
+  }
+}

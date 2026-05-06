@@ -62,22 +62,24 @@ export const TradingRiskCloseScene: React.FC<TradingRiskCloseSceneProps> = ({
           {title}
         </div>
         <div style={{ fontSize: 29, lineHeight: 1.46, color: palette.textSecondary, marginBottom: 38, ...clampLines(3) }}>{body}</div>
-        <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
-          {tags.map((tag) => (
-            <div
-              key={tag}
-              style={{
-                padding: "12px 18px",
-                borderRadius: 999,
-                border: `1px solid ${palette.borderStrong}`,
-                background: palette.panel,
-                fontSize: 21,
-              }}
-            >
-              {tag}
-            </div>
-          ))}
-        </div>
+        {tags.length ? (
+          <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
+            {tags.map((tag) => (
+              <div
+                key={tag}
+                style={{
+                  padding: "12px 18px",
+                  borderRadius: 999,
+                  border: `1px solid ${palette.borderStrong}`,
+                  background: palette.panel,
+                  fontSize: 21,
+                }}
+              >
+                {tag}
+              </div>
+            ))}
+          </div>
+        ) : null}
       </div>
     </AbsoluteFill>
   );

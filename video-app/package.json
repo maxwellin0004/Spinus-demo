@@ -36,6 +36,8 @@
     "dev": "remotion studio",
     "build": "remotion bundle",
     "render:future-income": "remotion render src/index.ts future-income-tracks-preview renders/future-income-tracks-preview.mp4",
+    "qa:screen": "node scripts/screen-leak-qa.mjs",
+    "qa:screen:batch": "node scripts/screen-leak-qa-batch.mjs",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc"
   },

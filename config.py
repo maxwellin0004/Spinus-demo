@@ -159,6 +159,7 @@ class ModelRouting:
             "analyze_structure": self.structure_analysis,
             "analyze_visual_rhythm": self.video_understanding,
             "analyze_visual_style": self.video_understanding,
+            "table_first_analysis": self.video_understanding,
             "analyze_subtitle_audio": self.subtitle_audio_analysis,
             "build_summary": self.summary_generation,
             "build_template_draft": self.template_generation,

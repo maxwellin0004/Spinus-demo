@@ -14272,7 +14272,7 @@ function getZodSchemaFromPrimitive(value, z) {
 
 async function getZodIfPossible() {
   try {
-    const { z } = await Promise.all(/* import() */[__webpack_require__.e(296), __webpack_require__.e(997)]).then(__webpack_require__.bind(__webpack_require__, 997));
+    const { z } = await __webpack_require__.e(/* import() */ 997).then(__webpack_require__.bind(__webpack_require__, 997));
     return z;
   } catch {
     return null;
@@ -14288,7 +14288,7 @@ var getZodV3IfPossible = async () => {
 };
 var getZTypesIfPossible = async () => {
   try {
-    const mod = await Promise.all(/* import() */[__webpack_require__.e(296), __webpack_require__.e(761)]).then(__webpack_require__.bind(__webpack_require__, 761));
+    const mod = await __webpack_require__.e(/* import() */ 761).then(__webpack_require__.bind(__webpack_require__, 761));
     return mod;
   } catch {
     return null;

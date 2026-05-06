@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "replication_plan.schema.json",
+  "title": "Replication Plan",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "artifact",
+    "source",
+    "target",
+    "qualityTarget",
+    "replicationStrategy",
+    "sceneMapping",
+    "subtitleRule",
+    "audioRule",
+    "assetRule",
+    "layoutControls",
+    "validationChecks",
+    "reviewStatus"
+  ],
+  "properties": {
+    "schemaVersion": {"type": "string"},
+    "artifact": {
+      "type": "object",
+      "required": ["type", "status", "createdAt", "updatedAt", "generator"],
+      "properties": {
+        "type": {"const": "replication_plan"},
+        "status": {"enum": ["draft", "partial", "ready", "stale", "failed"]},
+        "createdAt": {"type": "string"},
+        "updatedAt": {"type": "string"},
+        "generator": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "source": {
+      "type": "object",
+      "required": ["viralBreakdownPath", "moduleMatchReportPath"],
+      "properties": {
+        "viralBreakdownPath": {"type": "string"},
+        "moduleMatchReportPath": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "target": {
+      "type": "object",
+      "required": ["accountId", "templateId", "styleVariant", "aspectRatio", "durationSec", "language"],
+      "properties": {
+        "accountId": {"type": "string"},
+        "templateId": {"type": "string"},
+        "styleVariant": {"type": "string"},
+        "aspectRatio": {"type": "string"},
+        "durationSec": {"type": "number"},
+        "language": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "qualityTarget": {
+      "type": "object",
+      "required": ["retentionGoal", "visualSimilarityLevel", "originalityLevel"],
+      "properties": {
+        "retentionGoal": {"type": "string"},
+        "visualSimilarityLevel": {
+          "enum": ["structure_only", "structure_and_rhythm", "structure_rhythm_style"]
+        },
+        "originalityLevel": {"enum": ["medium", "high", "strict"]}
+      },
+      "additionalProperties": true
+    },
+    "replicationStrategy": {
+      "type": "object",
+      "required": ["strength", "replicate", "doNotReplicate"],
+      "properties": {
+        "strength": {"enum": ["low", "medium", "high"]},
+        "replicate": {"type": "array", "items": {"type": "string"}},
+        "doNotReplicate": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": true
+    },
+    "sceneMapping": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "sourceSegmentId",
+          "targetRole",
+          "moduleId",
+          "durationSec",
+          "sourcePattern",
+          "adaptationInstruction",
+          "avoidInstruction",
+          "layoutIntent",
+          "contentInstruction"
+        ],
+        "properties": {
+          "sourceSegmentId": {"type": "string"},
+          "targetRole": {"type": "string"},
+          "moduleId": {"type": "string"},
+          "durationSec": {"type": "number"},
+          "sourcePattern": {"type": "string"},
+          "adaptationInstruction": {"type": "string"},
+          "avoidInstruction": {"type": "string"},
+          "layoutIntent": {"type": "string"},
+          "contentInstruction": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "subtitleRule": {"type": "object"},
+    "audioRule": {"type": "object"},
+    "assetRule": {
+      "type": "object",
+      "required": ["provider", "providerOrder", "fallbackProvider", "allowLocalApi", "avoidCopyOriginalFrames"],
+      "properties": {
+        "provider": {"enum": ["local_asset", "local_api", "openai_image", "svg_fallback", "auto"]},
+        "providerOrder": {
+          "type": "array",
+          "items": {"enum": ["local_asset", "local_api", "openai_image", "svg_fallback"]}
+        },
+        "fallbackProvider": {"enum": ["local_asset", "local_api", "openai_image", "svg_fallback"]},
+        "allowLocalApi": {"type": "boolean"},
+        "avoidCopyOriginalFrames": {"const": true}
+      },
+      "additionalProperties": true
+    },
+    "layoutControls": {"type": "object"},
+    "validationChecks": {"type": "array", "items": {"type": "string"}},
+    "reviewStatus": {
+      "type": "object",
+      "required": ["status", "requiresHumanReview"],
+      "properties": {
+        "status": {"enum": ["draft", "needs_review", "approved", "rejected"]},
+        "requiresHumanReview": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

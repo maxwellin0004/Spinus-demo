@@ -4,10 +4,22 @@ import { AgentHorizontalComposition } from "./compositions/AgentHorizontalCompos
 import { ComicEmotionalScrollComposition } from "./compositions/ComicEmotionalScrollComposition";
 import { ComicHabitSpiralComposition } from "./compositions/ComicHabitSpiralComposition";
 import {
+  calculateCodexJobMetadata,
   CodexJobComposition,
   defaultCodexJobProps,
   getCodexJobDurationFromProps,
 } from "./compositions/CodexJobComposition";
+import {
+  calculateReplicatedVideoMetadata,
+  defaultReplicatedVideoProps,
+  getReplicatedVideoDurationFromProps,
+  ReplicatedVideoComposition,
+} from "./compositions/ReplicatedVideoComposition";
+import {
+  calculateCinematicQuoteMetadata,
+  CinematicQuoteReplicationComposition,
+  getCinematicQuoteDurationFromProps,
+} from "./compositions/CinematicQuoteReplicationComposition";
 import { MacdIndicatorComposition } from "./compositions/MacdIndicatorComposition";
 import { MinimalPsychExplainerComposition } from "./compositions/MinimalPsychExplainerComposition";
 import { NewSignalsComposition } from "./compositions/NewSignalsComposition";
@@ -76,6 +88,8 @@ const COMIC_HABIT_SPIRAL_DURATION_IN_FRAMES = 60 * VIDEO_PROFILES.youtubeHorizon
 const COMIC_EMOTIONAL_SCROLL_DURATION_IN_FRAMES = 60 * VIDEO_PROFILES.youtubeHorizontal.fps;
 const MINIMAL_PSYCH_EXPLAINER_DURATION_IN_FRAMES = 38 * VIDEO_PROFILES.youtubeHorizontal.fps;
 const CODEX_JOB_DURATION_IN_FRAMES = getCodexJobDurationFromProps(defaultCodexJobProps);
+const REPLICATED_VIDEO_DURATION_IN_FRAMES = getReplicatedVideoDurationFromProps(defaultReplicatedVideoProps);
+const CINEMATIC_QUOTE_DURATION_IN_FRAMES = getCinematicQuoteDurationFromProps(defaultReplicatedVideoProps);
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -120,6 +134,27 @@ export const RemotionRoot: React.FC = () => {
         width={VIDEO_PROFILES.tiktokVertical.width}
         height={VIDEO_PROFILES.tiktokVertical.height}
         defaultProps={defaultCodexJobProps}
+        calculateMetadata={calculateCodexJobMetadata}
+      />
+      <Composition
+        id="replicated-video-preview"
+        component={ReplicatedVideoComposition}
+        durationInFrames={REPLICATED_VIDEO_DURATION_IN_FRAMES}
+        fps={VIDEO_PROFILES.tiktokVertical.fps}
+        width={VIDEO_PROFILES.tiktokVertical.width}
+        height={VIDEO_PROFILES.tiktokVertical.height}
+        defaultProps={defaultReplicatedVideoProps}
+        calculateMetadata={calculateReplicatedVideoMetadata}
+      />
+      <Composition
+        id="cinematic-quote-replication"
+        component={CinematicQuoteReplicationComposition}
+        durationInFrames={CINEMATIC_QUOTE_DURATION_IN_FRAMES}
+        fps={VIDEO_PROFILES.tiktokVertical.fps}
+        width={1080}
+        height={1440}
+        defaultProps={defaultReplicatedVideoProps}
+        calculateMetadata={calculateCinematicQuoteMetadata}
       />
       <Composition
         id="mcp-horizontal-preview"

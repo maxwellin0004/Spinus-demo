@@ -31,7 +31,7 @@
 - `data/`：工作流数据目录，包含输入视频、预处理产物、分析结果、模板协议、任务目录和音频脚本文本。
 - `assets/`：仓库共享静态资源目录，当前主要包含 `fonts/` 和 `images/`。
 - `video-app/`：Remotion + React + TypeScript 视频模板工程，负责预览、构建和渲染视频。
-- `web-video-console/`：静态 Web 控制台原型，用于工作流界面设计和 mock，不是正式后端。
+- `web-video-console/`：本地 Web 视频生产控制台，用于单条任务、批量队列、账号/模板配置、Codex session、产物审阅、Screen QA 和素材工作台。
 - `monitor/`：社媒数据监控和 Web 看板相关代码。
 - `project-skills/`：仓库附带的 Codex skills，用于视频分析、脚本生成、TTS、Remotion 渲染等专项流程。
 - `docs/`：项目补充文档目录。
@@ -60,6 +60,18 @@ python ./scripts/analyze_video.py <job_id> <source_id> <mode> <data_root>
 python ./scripts/analyze_video.py job_demo manual_download4 auto data
 ```
 
+Table-first Stage 2 mode:
+
+```powershell
+python ./scripts/run_table_first_analysis.py <job_id> <source_id> draft_then_review data
+```
+
+This mode writes `data/jobs/<job_id>/analysis_tables.json` and
+`data/jobs/<job_id>/analysis_tables.md` first, then compiles those reviewable
+tables into the existing `data/analyses/<source_id>.analysis.json` and
+`data/analyses/<source_id>.summary.json` contracts. Downstream replication
+stages should still consume `analysis.json`, not the Markdown table.
+
 ### 2. 语音与字幕时间轴
 
 典型路径：
@@ -83,6 +95,39 @@ python ./scripts/analyze_video.py job_demo manual_download4 auto data
 2. 安装 npm 依赖。
 3. 运行 Remotion 预览或构建。
 4. 选择对应 composition 输出视频。
+
+### 4. Web 控制台与素材工作台
+
+`web-video-console/` 现在是本地生产控制台入口，不再只是静态 mock。启动方式：
+
+```powershell
+node web-video-console/server.js
+```
+
+然后打开：
+
+```text
+http://127.0.0.1:3008
+```
+
+当前控制台支持：
+
+- 单条视频任务：账号、模板、执行模式、Codex session、计划、配音、渲染和产物审阅。
+- 批量生产：项目、活动、选题池、多账号组合、队列运行、失败重试、暂停/取消和聚合下载。
+- 历史任务：按状态和关键词筛选，恢复任务，删除 `data/jobs/<job_id>` 下的历史任务目录。
+- Screen QA：渲染前后检查提示词泄漏和画面异常，失败时阻止导出。
+- 素材工作台：在“素材”页为模板槽位绑定本地素材，也可以按槽位或整条任务生成全新素材。
+
+素材工作台会生成：
+
+```text
+data/jobs/<job_id>/assets/asset_plan.json
+data/jobs/<job_id>/assets/manifest.json
+data/jobs/<job_id>/assets/<slot>.jpg
+video-app/public/generated-jobs/<job_id>/assets/<slot>.jpg
+```
+
+渲染时会把素材 manifest 注入 `video_plan.json` 和 Remotion props。必需素材缺失时会阻止渲染。AI 生成素材会跳过本地素材库，写入 `data/jobs/<job_id>/assets/prompts/<slot>.txt` 作为提示词审计记录，并生成新的任务素材文件；网络获取素材入口仍然预留。
 
 ## 新电脑安装
 

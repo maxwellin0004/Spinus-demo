@@ -1,0 +1,987 @@
+{
+  "schemaVersion": "1.0",
+  "artifact": {
+    "type": "module_registry",
+    "status": "draft",
+    "createdAt": "2026-05-05T00:00:00+08:00",
+    "updatedAt": "2026-05-05T10:56:51.301Z",
+    "generator": "workflow-viral-replication"
+  },
+  "modules": [
+    {
+      "moduleId": "minimal_psych.big_statement_hook",
+      "templateId": "minimal_psych_explainer",
+      "displayName": "Minimal psych big statement hook",
+      "sceneRole": "hook",
+      "supportedAspectRatios": [
+        "16:9",
+        "9:16"
+      ],
+      "contentDomains": [
+        "psychology",
+        "self_growth",
+        "behavior",
+        "education"
+      ],
+      "layoutTags": [
+        "large_text_center",
+        "minimal_background",
+        "top_title_body_text"
+      ],
+      "retentionTags": [
+        "reverse_claim",
+        "pain_point",
+        "self_identification"
+      ],
+      "styleTags": [
+        "clean_white",
+        "warm_paper",
+        "soft_blue",
+        "gray_academic"
+      ],
+      "inputFields": [
+        "headline",
+        "subheadline",
+        "keywords",
+        "subtitleCues"
+      ],
+      "assetSlots": [],
+      "riskLevel": "low",
+      "notes": "Text-first hook for calm psychology and behavior explainers."
+    },
+    {
+      "moduleId": "minimal_psych.mechanism_statement",
+      "templateId": "minimal_psych_explainer",
+      "displayName": "Minimal psych mechanism statement",
+      "sceneRole": "mechanism",
+      "supportedAspectRatios": [
+        "16:9",
+        "9:16"
+      ],
+      "contentDomains": [
+        "psychology",
+        "self_growth",
+        "behavior",
+        "education"
+      ],
+      "layoutTags": [
+        "top_title_body_text",
+        "method_cards",
+        "progressive_reveal"
+      ],
+      "retentionTags": [
+        "step_by_step",
+        "payoff",
+        "self_identification"
+      ],
+      "styleTags": [
+        "clean_white",
+        "warm_paper",
+        "soft_blue",
+        "gray_academic"
+      ],
+      "inputFields": [
+        "header",
+        "claim",
+        "supportingMetaphor",
+        "subtitleCues"
+      ],
+      "assetSlots": [],
+      "riskLevel": "low",
+      "notes": "Explains a behavior mechanism through restrained text and symbolic layout."
+    },
+    {
+      "moduleId": "minimal_psych.method_cards",
+      "templateId": "minimal_psych_explainer",
+      "displayName": "Minimal psych method cards",
+      "sceneRole": "method",
+      "supportedAspectRatios": [
+        "16:9",
+        "9:16"
+      ],
+      "contentDomains": [
+        "psychology",
+        "self_growth",
+        "behavior",
+        "education"
+      ],
+      "layoutTags": [
+        "checklist",
+        "method_cards",
+        "progressive_reveal"
+      ],
+      "retentionTags": [
+        "step_by_step",
+        "payoff"
+      ],
+      "styleTags": [
+        "clean_white",
+        "warm_paper",
+        "soft_blue",
+        "gray_academic"
+      ],
+      "inputFields": [
+        "methodTitle",
+        "steps",
+        "closingLine",
+        "subtitleCues"
+      ],
+      "assetSlots": [],
+      "riskLevel": "low",
+      "notes": "Turns insight into three small actions."
+    },
+    {
+      "moduleId": "new_signals.news_context",
+      "templateId": "new_signals",
+      "displayName": "Trading news context",
+      "sceneRole": "setup",
+      "supportedAspectRatios": [
+        "16:9",
+        "9:16"
+      ],
+      "contentDomains": [
+        "trading",
+        "finance",
+        "education"
+      ],
+      "layoutTags": [
+        "document_panel",
+        "evidence_wall",
+        "background_image_overlay"
+      ],
+      "retentionTags": [
+        "risk_warning",
+        "curiosity_gap",
+        "evidence_drop"
+      ],
+      "styleTags": [
+        "dark_warning_orange",
+        "dark_warning_red",
+        "chart_blue_orange"
+      ],
+      "inputFields": [
+        "newsPack",
+        "headline",
+        "quote",
+        "tags",
+        "subtitleCues"
+      ],
+      "assetSlots": [
+        "media_montage"
+      ],
+      "riskLevel": "medium",
+      "notes": "Sets real-world market context before the trading lesson."
+    },
+    {
+      "moduleId": "new_signals.case_shock",
+      "templateId": "new_signals",
+      "displayName": "Trading case shock",
+      "sceneRole": "hook",
+      "supportedAspectRatios": [
+        "16:9",
+        "9:16"
+      ],
+      "contentDomains": [
+        "trading",
+        "finance"
+      ],
+      "layoutTags": [
+        "number_dashboard",
+        "chart_board",
+        "case_card"
+      ],
+      "retentionTags": [
+        "risk_warning",
+        "big_number",
+        "mistake_analysis"
+      ],
+      "styleTags": [
+        "dark_warning_orange",
+        "dark_warning_red",
+        "chart_blue_orange"
+      ],
+      "inputFields": [
+        "headline",
+        "stat",
+        "chartImage",
+        "takeaway",
+        "subtitleCues"
+      ],
+      "assetSlots": [
+        "chart_inset"
+      ],
+      "riskLevel": "medium",
+      "notes": "Consequence-first trading hook with stat or chart evidence."
+    },
+    {
+      "moduleId": "new_signals.chart_case",
+      "templateId": "new_signals",
+      "displayName": "Trading chart case",
+      "sceneRole": "case",
+      "supportedAspectRatios": [
+        "16:9",
+        "9:16"
+      ],
+      "contentDomains": [
+        "trading",
+        "finance",
+        "education"
+      ],
+      "layoutTags": [
+        "chart_board",
+        "case_card",
+        "evidence_wall"
+      ],
+      "retentionTags": [
+        "evidence_drop",
+        "mistake_analysis",
+        "risk_warning"
+      ],
+      "styleTags": [
+        "dark_warning_orange",
+        "dark_warning_red",
+        "chart_blue_orange"
+      ],
+      "inputFields": [
+        "caseTitle",
+        "chartImage",
+        "bullets",
+        "takeaway",
+        "subtitleCues"
+      ],
+      "assetSlots": [
+        "chart_image"
+      ],
+      "riskLevel": "medium",
+      "notes": "Reusable chart case proof scene."
+    },
+    {
+      "moduleId": "new_signals.checklist",
+      "templateId": "new_signals",
+      "displayName": "Trading checklist",
+      "sceneRole": "checklist",
+      "supportedAspectRatios": [
+        "16:9",
+        "9:16"
+      ],
+      "contentDomains": [
+        "trading",
+        "finance",
+        "education"
+      ],
+      "layoutTags": [
+        "checklist",
+        "method_cards"
+      ],
+      "retentionTags": [
+        "step_by_step",
+        "payoff",
+        "risk_warning"
+      ],
+      "styleTags": [
+        "dark_warning_orange",
+        "dark_warning_red",
+        "chart_blue_orange"
+      ],
+      "inputFields": [
+        "checklistTitle",
+        "steps",
+        "warning",
+        "subtitleCues"
+      ],
+      "assetSlots": [],
+      "riskLevel": "low",
+      "notes": "Converts trading risk insight into a decision process."
+    },
+    {
+      "moduleId": "comic_habit_spiral.split_hook",
+      "templateId": "comic_habit_spiral",
+      "displayName": "Comic split hook",
+      "sceneRole": "hook",
+      "supportedAspectRatios": [
+        "16:9"
+      ],
+      "contentDomains": [
+        "psychology",
+        "self_growth",
+        "behavior"
+      ],
+      "layoutTags": [
+        "split_screen",
+        "comic_panel",
+        "large_text_center"
+      ],
+      "retentionTags": [
+        "conflict",
+        "before_after",
+        "self_identification"
+      ],
+      "styleTags": [
+        "comic_night_purple",
+        "comic_soft_day_blue"
+      ],
+      "inputFields": [
+        "leftState",
+        "rightState",
+        "hookLine",
+        "subtitleCues"
+      ],
+      "assetSlots": [
+        "character_panel"
+      ],
+      "riskLevel": "medium",
+      "notes": "Comic contrast opening for habit and emotion-loop videos."
+    },
+    {
+      "moduleId": "comic_habit_spiral.story_panel",
+      "templateId": "comic_habit_spiral",
+      "displayName": "Comic story panel",
+      "sceneRole": "case",
+      "supportedAspectRatios": [
+        "16:9"
+      ],
+      "contentDomains": [
+        "psychology",
+        "self_growth",
+        "behavior"
+      ],
+      "layoutTags": [
+        "comic_panel",
+        "full_bleed_image",
+        "background_image_overlay"
+      ],
+      "retentionTags": [
+        "self_identification",
+        "conflict",
+        "open_loop"
+      ],
+      "styleTags": [
+        "comic_night_purple",
+        "comic_soft_day_blue"
+      ],
+      "inputFields": [
+        "sceneImage",
+        "caption",
+        "innerState",
+        "subtitleCues"
+      ],
+      "assetSlots": [
+        "comic_scene_image"
+      ],
+      "riskLevel": "high",
+      "notes": "Narrative comic scene for emotional or habit examples."
+    },
+    {
+      "moduleId": "comic_habit_spiral.mechanism_breakdown",
+      "templateId": "comic_habit_spiral",
+      "displayName": "Comic mechanism breakdown",
+      "sceneRole": "mechanism",
+      "supportedAspectRatios": [
+        "16:9"
+      ],
+      "contentDomains": [
+        "psychology",
+        "self_growth",
+        "behavior"
+      ],
+      "layoutTags": [
+        "comic_panel",
+        "progressive_reveal",
+        "comparison_table"
+      ],
+      "retentionTags": [
+        "step_by_step",
+        "payoff",
+        "self_identification"
+      ],
+      "styleTags": [
+        "comic_night_purple",
+        "comic_soft_day_blue"
+      ],
+      "inputFields": [
+        "mechanismTitle",
+        "stages",
+        "relationLines",
+        "subtitleCues"
+      ],
+      "assetSlots": [
+        "character_icon"
+      ],
+      "riskLevel": "medium",
+      "notes": "Explains the loop behind a repeated behavior."
+    },
+    {
+      "moduleId": "comic_habit_spiral.action_triptych",
+      "templateId": "comic_habit_spiral",
+      "displayName": "Comic action triptych",
+      "sceneRole": "method",
+      "supportedAspectRatios": [
+        "16:9"
+      ],
+      "contentDomains": [
+        "psychology",
+        "self_growth",
+        "behavior"
+      ],
+      "layoutTags": [
+        "comic_panel",
+        "method_cards",
+        "checklist"
+      ],
+      "retentionTags": [
+        "step_by_step",
+        "payoff"
+      ],
+      "styleTags": [
+        "comic_night_purple",
+        "comic_soft_day_blue"
+      ],
+      "inputFields": [
+        "actions",
+        "closingPrompt",
+        "subtitleCues"
+      ],
+      "assetSlots": [
+        "triptych_panels"
+      ],
+      "riskLevel": "medium",
+      "notes": "Three-card action sequence for habit change."
+    },
+    {
+      "moduleId": "tech_archive.archive_hook",
+      "templateId": "tech_archive_explainer",
+      "displayName": "Tech archive hook",
+      "sceneRole": "hook",
+      "supportedAspectRatios": [
+        "16:9"
+      ],
+      "contentDomains": [
+        "technology",
+        "ai",
+        "education",
+        "business"
+      ],
+      "layoutTags": [
+        "timeline",
+        "document_panel",
+        "evidence_wall"
+      ],
+      "retentionTags": [
+        "curiosity_gap",
+        "before_after",
+        "evidence_drop"
+      ],
+      "styleTags": [
+        "dark_archive_green",
+        "warm_retro_orange",
+        "blue_lab_document"
+      ],
+      "inputFields": [
+        "oldState",
+        "newState",
+        "hookQuestion",
+        "subtitleCues"
+      ],
+      "assetSlots": [
+        "archive_image"
+      ],
+      "riskLevel": "medium",
+      "notes": "Evidence-led history or product evolution opening."
+    },
+    {
+      "moduleId": "tech_archive.era_evidence",
+      "templateId": "tech_archive_explainer",
+      "displayName": "Tech archive era evidence",
+      "sceneRole": "evidence",
+      "supportedAspectRatios": [
+        "16:9"
+      ],
+      "contentDomains": [
+        "technology",
+        "ai",
+        "education",
+        "business"
+      ],
+      "layoutTags": [
+        "timeline",
+        "document_panel",
+        "evidence_wall"
+      ],
+      "retentionTags": [
+        "evidence_drop",
+        "step_by_step",
+        "payoff"
+      ],
+      "styleTags": [
+        "dark_archive_green",
+        "warm_retro_orange",
+        "blue_lab_document"
+      ],
+      "inputFields": [
+        "year",
+        "evidenceCards",
+        "claim",
+        "subtitleCues"
+      ],
+      "assetSlots": [
+        "document_image",
+        "product_image"
+      ],
+      "riskLevel": "medium",
+      "notes": "Era chapter with year typography and evidence cards."
+    },
+    {
+      "moduleId": "ai_concept.hud_big_title_hook",
+      "templateId": "ai_concept_analyse",
+      "displayName": "AI HUD big title hook",
+      "sceneRole": "hook",
+      "supportedAspectRatios": [
+        "16:9"
+      ],
+      "contentDomains": [
+        "ai",
+        "technology",
+        "education"
+      ],
+      "layoutTags": [
+        "large_text_center",
+        "ui_like_panel",
+        "evidence_wall"
+      ],
+      "retentionTags": [
+        "curiosity_gap",
+        "big_number",
+        "result_first"
+      ],
+      "styleTags": [
+        "dark_warning_orange",
+        "dark_warning_red",
+        "chart_blue_orange"
+      ],
+      "inputFields": [
+        "hookFrames",
+        "ghostWord",
+        "mainTitle",
+        "subtitleCues"
+      ],
+      "assetSlots": [],
+      "riskLevel": "low",
+      "notes": "High-contrast title relay for AI concept openings."
+    },
+    {
+      "moduleId": "ai_concept.document_definition",
+      "templateId": "ai_concept_analyse",
+      "displayName": "AI document definition",
+      "sceneRole": "mechanism",
+      "supportedAspectRatios": [
+        "16:9"
+      ],
+      "contentDomains": [
+        "ai",
+        "technology",
+        "education"
+      ],
+      "layoutTags": [
+        "document_panel",
+        "comparison_table",
+        "ui_like_panel"
+      ],
+      "retentionTags": [
+        "step_by_step",
+        "payoff",
+        "curiosity_gap"
+      ],
+      "styleTags": [
+        "dark_warning_orange",
+        "dark_warning_red",
+        "chart_blue_orange"
+      ],
+      "inputFields": [
+        "filename",
+        "headline",
+        "ruleCards",
+        "subtitleCues"
+      ],
+      "assetSlots": [],
+      "riskLevel": "low",
+      "notes": "Turns an abstract AI concept into a document-like object."
+    },
+    {
+      "moduleId": "ai_concept.flow_chain",
+      "templateId": "ai_concept_analyse",
+      "displayName": "AI flow chain",
+      "sceneRole": "method",
+      "supportedAspectRatios": [
+        "16:9"
+      ],
+      "contentDomains": [
+        "ai",
+        "technology",
+        "education"
+      ],
+      "layoutTags": [
+        "timeline",
+        "method_cards",
+        "ui_like_panel"
+      ],
+      "retentionTags": [
+        "step_by_step",
+        "payoff"
+      ],
+      "styleTags": [
+        "dark_warning_orange",
+        "dark_warning_red",
+        "chart_blue_orange"
+      ],
+      "inputFields": [
+        "flowTitle",
+        "steps",
+        "footer",
+        "subtitleCues"
+      ],
+      "assetSlots": [],
+      "riskLevel": "low",
+      "notes": "Explains a reusable workflow chain."
+    },
+    {
+      "moduleId": "combinatorial_paradox.big_number_cold_open",
+      "templateId": "combinatorial_paradox_cinematic",
+      "displayName": "Combinatorial paradox big number cold open",
+      "sceneRole": "hook",
+      "supportedAspectRatios": [
+        "16:9"
+      ],
+      "contentDomains": [
+        "math",
+        "education"
+      ],
+      "layoutTags": [
+        "number_dashboard",
+        "large_text_center",
+        "cinematic_still"
+      ],
+      "retentionTags": [
+        "big_number",
+        "curiosity_gap",
+        "reverse_claim"
+      ],
+      "styleTags": [
+        "cinematic_amber_noir",
+        "cool_probability_room"
+      ],
+      "inputFields": [
+        "bigNumber",
+        "claim",
+        "badges",
+        "subtitleCues"
+      ],
+      "assetSlots": [
+        "scene_background"
+      ],
+      "riskLevel": "medium",
+      "notes": "Cinematic number-first opening for paradox and probability videos."
+    },
+    {
+      "moduleId": "combinatorial_paradox.rule_theater",
+      "templateId": "combinatorial_paradox_cinematic",
+      "displayName": "Combinatorial paradox rule theater",
+      "sceneRole": "mechanism",
+      "supportedAspectRatios": [
+        "16:9"
+      ],
+      "contentDomains": [
+        "math",
+        "education"
+      ],
+      "layoutTags": [
+        "number_dashboard",
+        "progressive_reveal",
+        "comparison_table"
+      ],
+      "retentionTags": [
+        "step_by_step",
+        "payoff",
+        "evidence_drop"
+      ],
+      "styleTags": [
+        "cinematic_amber_noir",
+        "cool_probability_room"
+      ],
+      "inputFields": [
+        "rule",
+        "nodes",
+        "counter",
+        "subtitleCues"
+      ],
+      "assetSlots": [
+        "paper_texture"
+      ],
+      "riskLevel": "medium",
+      "notes": "Shows a mathematical rule through progressive visual mechanics."
+    },
+    {
+      "moduleId": "corporate_retreat.shock_title",
+      "templateId": "corporate_retreat_dossier",
+      "displayName": "Corporate retreat shock title",
+      "sceneRole": "hook",
+      "supportedAspectRatios": [
+        "16:9"
+      ],
+      "contentDomains": [
+        "business",
+        "finance",
+        "social_commentary"
+      ],
+      "layoutTags": [
+        "full_bleed_image",
+        "large_text_center",
+        "document_panel"
+      ],
+      "retentionTags": [
+        "risk_warning",
+        "big_number",
+        "conflict"
+      ],
+      "styleTags": [
+        "cold_newsroom"
+      ],
+      "inputFields": [
+        "headline",
+        "subheadline",
+        "stat",
+        "subtitleCues"
+      ],
+      "assetSlots": [
+        "city_or_company_image"
+      ],
+      "riskLevel": "medium",
+      "notes": "Dark dossier-style business consequence hook."
+    },
+    {
+      "moduleId": "corporate_retreat.evidence_montage",
+      "templateId": "corporate_retreat_dossier",
+      "displayName": "Corporate retreat evidence montage",
+      "sceneRole": "evidence",
+      "supportedAspectRatios": [
+        "16:9"
+      ],
+      "contentDomains": [
+        "business",
+        "finance",
+        "social_commentary"
+      ],
+      "layoutTags": [
+        "evidence_wall",
+        "full_bleed_image",
+        "document_panel"
+      ],
+      "retentionTags": [
+        "evidence_drop",
+        "conflict",
+        "risk_warning"
+      ],
+      "styleTags": [
+        "cold_newsroom"
+      ],
+      "inputFields": [
+        "evidenceItems",
+        "narrativeClaim",
+        "subtitleCues"
+      ],
+      "assetSlots": [
+        "evidence_images"
+      ],
+      "riskLevel": "high",
+      "notes": "Industrial or company evidence montage with documentary tone."
+    },
+    {
+      "moduleId": "cinematic_quote.opening_glow",
+      "templateId": "cinematic_quote_full_bleed",
+      "displayName": "Cinematic quote opening glow",
+      "sceneRole": "hook",
+      "supportedAspectRatios": [
+        "3:4",
+        "9:16"
+      ],
+      "contentDomains": [
+        "education",
+        "self_growth",
+        "literature",
+        "emotion",
+        "ai",
+        "technology"
+      ],
+      "layoutTags": [
+        "full_bleed_image",
+        "large_top_title",
+        "bilingual_subtitle",
+        "creator_handle_bottom",
+        "cinematic_still"
+      ],
+      "retentionTags": [
+        "curiosity_gap",
+        "emotional_pull",
+        "reverse_claim"
+      ],
+      "styleTags": [
+        "cinematic_soft_green_amber",
+        "film_glow",
+        "emotional_quote"
+      ],
+      "inputFields": [
+        "headline",
+        "sourceLabel",
+        "subtitlePrimary",
+        "subtitleSecondary",
+        "creatorHandle",
+        "backgroundImage"
+      ],
+      "assetSlots": [
+        "scene_background"
+      ],
+      "riskLevel": "medium",
+      "notes": "Full-bleed cinematic quote layout with top title/source, bilingual lower subtitles, creator handle, and slow push motion."
+    },
+    {
+      "moduleId": "cinematic_quote.emotional_scene",
+      "templateId": "cinematic_quote_full_bleed",
+      "displayName": "Cinematic quote emotional scene",
+      "sceneRole": "problem",
+      "supportedAspectRatios": [
+        "3:4",
+        "9:16"
+      ],
+      "contentDomains": [
+        "education",
+        "self_growth",
+        "literature",
+        "emotion",
+        "ai",
+        "technology"
+      ],
+      "layoutTags": [
+        "full_bleed_image",
+        "large_top_title",
+        "bilingual_subtitle",
+        "creator_handle_bottom",
+        "cinematic_still"
+      ],
+      "retentionTags": [
+        "open_loop",
+        "emotional_pull"
+      ],
+      "styleTags": [
+        "cinematic_soft_green_amber",
+        "film_glow",
+        "emotional_quote"
+      ],
+      "inputFields": [
+        "headline",
+        "sourceLabel",
+        "subtitlePrimary",
+        "subtitleSecondary",
+        "creatorHandle",
+        "backgroundImage"
+      ],
+      "assetSlots": [
+        "scene_background"
+      ],
+      "riskLevel": "medium",
+      "notes": "Full-bleed cinematic quote layout with top title/source, bilingual lower subtitles, creator handle, and slow push motion."
+    },
+    {
+      "moduleId": "cinematic_quote.wide_meditation",
+      "templateId": "cinematic_quote_full_bleed",
+      "displayName": "Cinematic quote wide meditation",
+      "sceneRole": "mechanism",
+      "supportedAspectRatios": [
+        "3:4",
+        "9:16"
+      ],
+      "contentDomains": [
+        "education",
+        "self_growth",
+        "literature",
+        "emotion",
+        "ai",
+        "technology"
+      ],
+      "layoutTags": [
+        "full_bleed_image",
+        "large_top_title",
+        "bilingual_subtitle",
+        "creator_handle_bottom",
+        "cinematic_still"
+      ],
+      "retentionTags": [
+        "open_loop",
+        "emotional_pull"
+      ],
+      "styleTags": [
+        "cinematic_soft_green_amber",
+        "film_glow",
+        "emotional_quote"
+      ],
+      "inputFields": [
+        "headline",
+        "sourceLabel",
+        "subtitlePrimary",
+        "subtitleSecondary",
+        "creatorHandle",
+        "backgroundImage"
+      ],
+      "assetSlots": [
+        "scene_background"
+      ],
+      "riskLevel": "medium",
+      "notes": "Full-bleed cinematic quote layout with top title/source, bilingual lower subtitles, creator handle, and slow push motion."
+    },
+    {
+      "moduleId": "cinematic_quote.final_afterglow",
+      "templateId": "cinematic_quote_full_bleed",
+      "displayName": "Cinematic quote final afterglow",
+      "sceneRole": "close",
+      "supportedAspectRatios": [
+        "3:4",
+        "9:16"
+      ],
+      "contentDomains": [
+        "education",
+        "self_growth",
+        "literature",
+        "emotion",
+        "ai",
+        "technology"
+      ],
+      "layoutTags": [
+        "full_bleed_image",
+        "large_top_title",
+        "bilingual_subtitle",
+        "creator_handle_bottom",
+        "cinematic_still"
+      ],
+      "retentionTags": [
+        "payoff",
+        "emotional_release"
+      ],
+      "styleTags": [
+        "cinematic_soft_green_amber",
+        "film_glow",
+        "emotional_quote"
+      ],
+      "inputFields": [
+        "headline",
+        "sourceLabel",
+        "subtitlePrimary",
+        "subtitleSecondary",
+        "creatorHandle",
+        "backgroundImage"
+      ],
+      "assetSlots": [
+        "scene_background"
+      ],
+      "riskLevel": "medium",
+      "notes": "Full-bleed cinematic quote layout with top title/source, bilingual lower subtitles, creator handle, and slow push motion."
+    }
+  ]
+}

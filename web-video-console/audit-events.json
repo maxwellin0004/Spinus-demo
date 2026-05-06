@@ -1,5 +1,39 @@
 [
   {
+    "id": "audit_1777608825874_93344b",
+    "action": "batch.created",
+    "entityType": "batch",
+    "entityId": "batch_1777608825860_1777608811534-a-2-topics",
+    "metadata": {
+      "topic": "前端逻辑测试 1777608811534 A 等 2 个选题",
+      "campaignId": "workspace-default",
+      "activityId": "activity-default",
+      "topicId": "",
+      "topicCount": 2,
+      "accountCount": 2,
+      "jobCount": 4
+    },
+    "createdAt": "2026-05-01T04:13:45.874Z",
+    "actor": "local"
+  },
+  {
+    "id": "audit_1777568299283_fbfd63",
+    "action": "batch.created",
+    "entityType": "batch",
+    "entityId": "batch_1777568299270_5-2-topics",
+    "metadata": {
+      "topic": "阶段5多选题验证：假突破识别 等 2 个选题",
+      "campaignId": "workspace-default",
+      "activityId": "activity-default",
+      "topicId": "",
+      "topicCount": 2,
+      "accountCount": 2,
+      "jobCount": 4
+    },
+    "createdAt": "2026-04-30T16:58:19.283Z",
+    "actor": "local"
+  },
+  {
     "id": "audit_1777485148092_19a778",
     "action": "batch.canceled",
     "entityType": "batch",

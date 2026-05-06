@@ -28,4 +28,8 @@ export type AudioLayerConfig = {
   sfx?: AudioClip[];
   duckingRules?: DuckingRule[];
   subtitles?: SubtitleCue[];
+  subtitleStyle?: {
+    fontSize?: number;
+    color?: string;
+  };
 };

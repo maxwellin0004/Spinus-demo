@@ -1,0 +1,6 @@
+interface:
+  display_name: "Viral Video Replication"
+  short_description: "Map viral video structure to this repo's templates."
+  default_prompt: "Use $workflow-viral-replication to turn a reference viral video analysis into viral_breakdown.json, module matches, and a replication plan."
+policy:
+  allow_implicit_invocation: true

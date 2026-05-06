@@ -1,6 +1,7 @@
 import { AbsoluteFill, Img, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { THEME } from "../../theme/tokens";
 import { getTradingScenePalette, type TradingSceneVariant } from "./tradingSceneTheme";
+import { TradingImageFrame } from "./TradingImageFrame";
 
 type TradingCaseShockSceneProps = {
   kicker: string;
@@ -41,6 +42,7 @@ export const TradingCaseShockScene: React.FC<TradingCaseShockSceneProps> = ({
   const intro = spring({ fps, frame, config: { damping: 16, stiffness: 120 } });
   const statIntro = spring({ fps, frame: frame - 10, config: { damping: 18, stiffness: 140 } });
   const palette = getTradingScenePalette(variant);
+  const hasMetricPanel = Boolean(insetImageSrc || stat || statLabel || dateLabel || sourceLabel);
 
   return (
     <AbsoluteFill
@@ -72,7 +74,7 @@ export const TradingCaseShockScene: React.FC<TradingCaseShockSceneProps> = ({
           }}
         />
       ) : null}
-      {!imageSrc && boardLines ? (
+      {!imageSrc && boardLines?.length ? (
         <div
           style={{
             position: "absolute",
@@ -125,23 +127,24 @@ export const TradingCaseShockScene: React.FC<TradingCaseShockSceneProps> = ({
           borderRadius: 28,
         }}
       />
-      <div
-        style={{
-          position: "absolute",
-          top: 72,
-          left: 72,
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          letterSpacing: 0,
-          textTransform: "uppercase",
-          fontSize: 20,
-          color: palette.textMuted,
-        }}
-      >
-        <div style={{ width: 44, height: 2, background: palette.accentStrong }} />
-        <span>{kicker}</span>
-      </div>
+      {kicker ? (
+        <div
+          style={{
+            position: "absolute",
+            top: 72,
+            left: 72,
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            letterSpacing: 0,
+            fontSize: 20,
+            color: palette.textMuted,
+          }}
+        >
+          <div style={{ width: 44, height: 2, background: palette.accentStrong }} />
+          <span>{kicker}</span>
+        </div>
+      ) : null}
       <div
         style={{
           position: "absolute",
@@ -177,64 +180,68 @@ export const TradingCaseShockScene: React.FC<TradingCaseShockSceneProps> = ({
           {subheadline}
         </div>
       </div>
-      <div
-        style={{
-          position: "absolute",
-          left: 72,
-          bottom: 112,
-          width: 640,
-          padding: "24px 26px 26px",
-          borderRadius: 24,
-          background: palette.panelSolid,
-          border: `1px solid ${variant === "light" ? "rgba(47,125,246,0.28)" : "rgba(255,108,74,0.35)"}`,
-          backdropFilter: "blur(10px)",
-          transform: `translateY(${interpolate(statIntro, [0, 1], [30, 0])}px)`,
-          opacity: statIntro,
-          boxShadow: palette.shadow,
-        }}
-      >
-        {insetImageSrc ? (
-          <div
-            style={{
-              height: 150,
-              borderRadius: 16,
-              overflow: "hidden",
-              marginBottom: 18,
-              border: `1px solid ${palette.border}`,
-              position: "relative",
-            }}
-          >
-            <Img src={insetImageSrc} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            <div style={{ position: "absolute", inset: 0, background: palette.imageOverlay }} />
-          </div>
-        ) : null}
+      {hasMetricPanel ? (
         <div
           style={{
-            fontFamily: THEME.fonts.numbers,
-            fontSize: 66,
-            lineHeight: 1,
-            color: palette.accentStrong,
-            marginBottom: 12,
+            position: "absolute",
+            left: 72,
+            bottom: 112,
+            width: 640,
+            padding: "24px 26px 26px",
+            borderRadius: 24,
+            background: palette.panelSolid,
+            border: `1px solid ${variant === "light" ? "rgba(47,125,246,0.28)" : "rgba(255,108,74,0.35)"}`,
+            backdropFilter: "blur(10px)",
+            transform: `translateY(${interpolate(statIntro, [0, 1], [30, 0])}px)`,
+            opacity: statIntro,
+            boxShadow: palette.shadow,
           }}
         >
-          {stat}
+          {insetImageSrc ? (
+            <div
+              style={{
+                height: 150,
+                borderRadius: 16,
+                overflow: "hidden",
+                marginBottom: 18,
+                border: `1px solid ${palette.border}`,
+                position: "relative",
+              }}
+            >
+              <TradingImageFrame src={insetImageSrc} />
+              <div style={{ position: "absolute", inset: 0, background: palette.imageOverlay }} />
+            </div>
+          ) : null}
+          {stat ? (
+            <div
+              style={{
+                fontFamily: THEME.fonts.numbers,
+                fontSize: 66,
+                lineHeight: 1,
+                color: palette.accentStrong,
+                marginBottom: 12,
+              }}
+            >
+              {stat}
+            </div>
+          ) : null}
+          {statLabel ? <div style={{ fontSize: 28, lineHeight: 1.32, marginBottom: 14, ...clampLines(2) }}>{statLabel}</div> : null}
+          {dateLabel ? <div style={{ fontSize: 21, color: palette.textMuted, ...clampLines(1) }}>{dateLabel}</div> : null}
+          {sourceLabel ? (
+            <div
+              style={{
+                marginTop: 14,
+                fontSize: 18,
+                letterSpacing: 0,
+                color: palette.textMuted,
+                ...clampLines(1),
+              }}
+            >
+              {sourceLabel}
+            </div>
+          ) : null}
         </div>
-        <div style={{ fontSize: 28, lineHeight: 1.32, marginBottom: 14, ...clampLines(2) }}>{statLabel}</div>
-        <div style={{ fontSize: 21, color: palette.textMuted, ...clampLines(1) }}>{dateLabel}</div>
-        {sourceLabel ? (
-          <div
-            style={{
-              marginTop: 14,
-              fontSize: 18,
-              letterSpacing: 0,
-              color: palette.textMuted,
-              ...clampLines(1),
-            }}
-          >
-            {sourceLabel}
-          </div>
-        ) : null}
-      </div>
+      ) : null}
     </AbsoluteFill>
   );
 };

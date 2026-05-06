@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "viral_breakdown.schema.json",
+  "title": "Viral Breakdown",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "artifact",
+    "meta",
+    "packaging",
+    "hook",
+    "narrativeStructure",
+    "segments",
+    "rhythmRule",
+    "visualLayouts",
+    "subtitleRule",
+    "audioRule",
+    "style",
+    "fixedRules",
+    "variableCandidates",
+    "sourceEvidence",
+    "copyrightBoundary"
+  ],
+  "properties": {
+    "schemaVersion": {"type": "string"},
+    "artifact": {
+      "type": "object",
+      "required": ["type", "status", "createdAt", "updatedAt", "generator"],
+      "properties": {
+        "type": {"const": "viral_breakdown"},
+        "status": {"enum": ["draft", "partial", "ready", "stale", "failed"]},
+        "createdAt": {"type": "string"},
+        "updatedAt": {"type": "string"},
+        "generator": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "meta": {
+      "type": "object",
+      "required": ["sourceVideoId", "durationSec", "aspectRatio", "contentDomain", "language"],
+      "properties": {
+        "sourceVideoId": {"type": "string"},
+        "durationSec": {"type": "number", "minimum": 0},
+        "aspectRatio": {"type": "string"},
+        "platformGuess": {"type": ["string", "null"]},
+        "contentDomain": {"type": "string"},
+        "language": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "packaging": {"type": "object"},
+    "hook": {
+      "type": "object",
+      "required": ["type", "startSec", "endSec", "whyItRetains", "confidence"],
+      "properties": {
+        "type": {"type": "string"},
+        "startSec": {"type": "number", "minimum": 0},
+        "endSec": {"type": "number", "minimum": 0},
+        "firstFramePromise": {"type": ["string", "null"]},
+        "curiosityGap": {"type": ["string", "null"]},
+        "viewerIdentityTrigger": {"type": ["string", "null"]},
+        "riskOrReward": {"type": ["string", "null"]},
+        "visualSupport": {"type": ["string", "null"]},
+        "audioSupport": {"type": ["string", "null"]},
+        "whyItRetains": {"type": "string"},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "additionalProperties": true
+    },
+    "narrativeStructure": {
+      "type": "object",
+      "required": ["pattern", "turningPointsSec"],
+      "properties": {
+        "pattern": {"type": "array", "items": {"type": "string"}},
+        "turningPointsSec": {"type": "array", "items": {"type": "number"}},
+        "summary": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "segments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "role",
+          "startSec",
+          "durationSec",
+          "layoutTags",
+          "retentionTags",
+          "visualTags",
+          "subtitleDensity",
+          "audioEnergy",
+          "visualIntent",
+          "reusableRule",
+          "replicationPriority",
+          "mustPreserve",
+          "canChange",
+          "sourceEvidenceIds",
+          "confidence"
+        ],
+        "properties": {
+          "id": {"type": "string"},
+          "role": {"type": "string"},
+          "startSec": {"type": "number", "minimum": 0},
+          "durationSec": {"type": "number", "minimum": 0},
+          "layoutTags": {"type": "array", "items": {"type": "string"}},
+          "retentionTags": {"type": "array", "items": {"type": "string"}},
+          "visualTags": {"type": "array", "items": {"type": "string"}},
+          "subtitleDensity": {"enum": ["low", "medium", "medium_high", "high"]},
+          "audioEnergy": {"enum": ["low", "medium", "medium_high", "high", "unknown"]},
+          "transitionIn": {"type": ["string", "null"]},
+          "transitionOut": {"type": ["string", "null"]},
+          "visualIntent": {"type": "string"},
+          "reusableRule": {"type": "string"},
+          "replicationPriority": {"enum": ["low", "medium", "high"]},
+          "mustPreserve": {"type": "array", "items": {"type": "string"}},
+          "canChange": {"type": "array", "items": {"type": "string"}},
+          "sourceEvidenceIds": {"type": "array", "items": {"type": "string"}},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+        },
+        "additionalProperties": true
+      }
+    },
+    "rhythmRule": {"type": "object"},
+    "visualLayouts": {"type": "array", "items": {"type": "object"}},
+    "subtitleRule": {"type": "object"},
+    "audioRule": {"type": "object"},
+    "style": {"type": "object"},
+    "fixedRules": {"type": "array", "items": {"type": "string"}},
+    "variableCandidates": {"type": "array", "items": {"type": "string"}},
+    "sourceEvidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "sourceType", "supports"],
+        "properties": {
+          "id": {"type": "string"},
+          "sourceType": {"type": "string"},
+          "timeRangeSec": {"type": "array", "items": {"type": "number"}},
+          "supports": {"type": "array", "items": {"type": "string"}},
+          "note": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "copyrightBoundary": {
+      "type": "object",
+      "required": [
+        "referenceOnlyForStructure",
+        "doNotCopyExactWords",
+        "doNotCopyOriginalFrames",
+        "doNotCopyVoice",
+        "doNotCopyMusic"
+      ],
+      "properties": {
+        "referenceOnlyForStructure": {"const": true},
+        "doNotCopyExactWords": {"const": true},
+        "doNotCopyOriginalFrames": {"const": true},
+        "doNotCopyVoice": {"const": true},
+        "doNotCopyMusic": {"const": true}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

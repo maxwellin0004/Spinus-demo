@@ -5,6 +5,8 @@ import { THEME } from "../../theme/tokens";
 
 type SubtitleTrackProps = {
   cues: SubtitleCue[];
+  fontSize?: number;
+  color?: string;
 };
 
 const renderHighlightedText = (text: string, emphasisWords: string[] = []) => {
@@ -34,7 +36,17 @@ const renderHighlightedText = (text: string, emphasisWords: string[] = []) => {
   );
 };
 
-export const SubtitleTrack: React.FC<SubtitleTrackProps> = ({ cues }) => {
+const clampSubtitleFontSize = (value: number, fallback: number) => {
+  if (!Number.isFinite(value)) return fallback;
+  return Math.min(52, Math.max(20, Math.round(value)));
+};
+
+const normalizeSubtitleColor = (value?: string) => {
+  const color = String(value || "").trim();
+  return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(color) ? color : "#ffffff";
+};
+
+export const SubtitleTrack: React.FC<SubtitleTrackProps> = ({ cues, fontSize: fontSizeOverride, color }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
   const cue = cues.find((item) => frame >= item.startFrame && frame <= item.endFrame);
@@ -52,9 +64,10 @@ export const SubtitleTrack: React.FC<SubtitleTrackProps> = ({ cues }) => {
 
   const isVertical = height > width;
   const subtitleWidth = isVertical ? Math.min(width * 0.88, 860) : Math.min(width * 0.82, 1280);
-  const fontSize = isVertical ? 28 : 34;
-  const bottom = isVertical ? 84 : 24;
+  const fontSize = clampSubtitleFontSize(Number(fontSizeOverride), isVertical ? 28 : 34);
+  const bottom = isVertical ? 300 : 24;
   const padding = isVertical ? "6px 12px" : "6px 16px";
+  const subtitleColor = normalizeSubtitleColor(color);
 
   return (
     <AbsoluteFill style={{ pointerEvents: "none" }}>
@@ -76,7 +89,7 @@ export const SubtitleTrack: React.FC<SubtitleTrackProps> = ({ cues }) => {
           fontSize,
           lineHeight: 1.28,
           fontWeight: 800,
-          color: "#ffffff",
+          color: subtitleColor,
           WebkitTextStroke: "1.5px rgba(0,0,0,0.68)",
           paintOrder: "stroke fill",
           textShadow: "0 2px 5px rgba(0,0,0,0.46), 0 0 2px rgba(0,0,0,0.62)",

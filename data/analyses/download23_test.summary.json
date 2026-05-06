@@ -1,0 +1,120 @@
+{
+  "summary": {
+    "top_template_rules": [
+      {
+        "rule": "标题采用“download + 资源/参考描述 + 括号序号”指令/资源下载型结构；序号用于版本/批次/变体区分以增强可检索与变体暗示。",
+        "pattern_hint": "download ({{index}}) {{resource_descriptor}}",
+        "evidence_signals": [
+          "title_type: 指令/资源下载型（download + 资源描述 + 括号数字）",
+          "contains.number: true",
+          "risk/benefit/promise都为false（偏元信息而非营销承诺）"
+        ]
+      },
+      {
+        "rule": "简介用英文/中性技术语气承接标题：先点明“参考素材/用户提供/来源”，再写用途为“可视化复刻/测试”，最后补充效果强化点（如更强layout与motion effects）。",
+        "pattern_hint": "{{source_claim}} with {{purpose_clause}}; {{strength_point_1}} and {{strength_point_2}}",
+        "evidence_signals": [
+          "description_type: 参考素材说明/测试用途说明（偏功能性、元信息型）",
+          "description_formula: 素材来源/交付对象 + 功能/用途 + 强化点",
+          "tone: 中性偏技术/测试导向",
+          "title_relation: 用于视觉复制测试；简介补充layout与motion effects更强"
+        ]
+      },
+      {
+        "rule": "叙事节奏采用“中等钩子节奏 + 稳定主体 + 快速收尾”：开头阶段平均镜头/变化间隔约5s，中段约8.5s，结尾约4.5s以形成收束与加速落点。",
+        "pattern_hint": {
+          "hook_change_interval_sec": 5.0,
+          "body_change_interval_sec": 8.5,
+          "outro_change_interval_sec": 4.5
+        },
+        "evidence_signals": [
+          "section_rhythm.hook: moderate",
+          "section_rhythm.body: steady",
+          "section_rhythm.outro: fast",
+          "peak_moments: [20, 118, 260]"
+        ]
+      },
+      {
+        "rule": "音频/字幕同步以“关键短语重读高对齐”为主：定义/年份/专名/转折观点与重读同步，并在语义边界处（逗号/转折词）安排轻停顿；段落切换处停顿更明显便于字幕换屏。",
+        "pattern_hint": {
+          "emphasis_sync_targets": [
+            "definition",
+            "year",
+            "key_term",
+            "turning_point"
+          ],
+          "pause_rules": [
+            "逗号/顿号后轻微停(0.2-0.4s)",
+            "转折词处停顿明显(0.5-0.9s)",
+            "长句末尾停顿较长(~1.0s或段落切换)"
+          ]
+        },
+        "evidence_signals": [
+          "音频: 重读反问与否定句、转折词停顿",
+          "sync_pattern: 字幕与人声强对齐；字幕刷新对应镜头切换事件"
+        ]
+      },
+      {
+        "rule": "包装信息以“参考/复刻/测试”框架替代强利益承诺：内容侧重点放在可复现的视觉要素（layout、motion effects），不强调风险/冲突/收益保证/强CTA。",
+        "pattern_hint": "{{reference_or_source}} + visual replication/testing + {{layout_strength}} + {{motion_strength}} (no explicit promise/CTA)",
+        "evidence_signals": [
+          "title.contains: risk/benefit/conflict/promise/contrast均false",
+          "has_call_to_action: false",
+          "简介簇意图：参考/复刻用途、效果强化点、测试场景"
+        ]
+      }
+    ],
+    "key_packaging_features": [
+      "标题与简介高度同向：都围绕“reference video/下载的参考素材/用于视觉复刻测试”，强调用途而非营销结果。",
+      "强调点为“视觉工程属性”：layout强度与motion effects强度作为可替换卖点变量（偏技术展示/评测口径）。",
+      "语音叙事风格偏“定义+转折+收束”：通过停顿与重读把关键概念与观点点出来（适合字幕高亮与同步换屏）。"
+    ],
+    "best_variable_candidates": [
+      {
+        "field": "index",
+        "type": "string|number",
+        "from_text_example": "(23)",
+        "usage": "标题中的括号序号，用于版本/批次/变体号"
+      },
+      {
+        "field": "resource_descriptor",
+        "type": "string",
+        "from_text_example": "reference video",
+        "usage": "标题中被download指向的资源类型/对象"
+      },
+      {
+        "field": "source_claim",
+        "type": "string",
+        "from_text_example": "User-provided reference video",
+        "usage": "简介首句资源来源/交付对象声明"
+      },
+      {
+        "field": "testing_purpose",
+        "type": "string",
+        "from_text_example": "visual replication testing",
+        "usage": "简介中的用途/场景（复刻/测试/对比等）"
+      },
+      {
+        "field": "layout_strength_descriptor",
+        "type": "string",
+        "from_text_example": "stronger layout",
+        "usage": "简介效果强化点1（layout强度描述）"
+      },
+      {
+        "field": "motion_effects_descriptor",
+        "type": "string",
+        "from_text_example": "motion effects",
+        "usage": "简介效果强化点2（motion/动态效果描述）"
+      }
+    ],
+    "best_fixed_rules": [
+      "固定不做强CTA：默认保持“元信息/测试说明”语气，has_call_to_action保持false，避免直接号召式包装。",
+      "固定标题骨架：download + （括号数字序号）+ 资源/参考描述；数字必须出现以支持变体可检索。",
+      "固定简介语气与结构：中性偏技术/功能性用途说明；结构依次为“来源/素材属性 + 用途场景（testing/replication）+ 视觉强化点（layout/motion）”。"
+    ]
+  },
+  "_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  }
+}

@@ -1,0 +1,760 @@
+{
+  "source_video_id": "download23_test",
+  "status": "draft",
+  "engine": {
+    "provider": "bltcy",
+    "mock_analysis": false,
+    "models": {
+      "analyze_title": "gpt-5.4-nano",
+      "analyze_description": "gpt-5.4-nano",
+      "analyze_hook": "gpt-5.4-nano",
+      "analyze_structure": "gpt-5.4-nano",
+      "analyze_script_style": "gpt-5.4-nano",
+      "analyze_visual_rhythm": "gemini-3.1-flash-lite-preview-thinking-minimal",
+      "analyze_visual_style": "gemini-3.1-flash-lite-preview-thinking-minimal",
+      "analyze_subtitle_audio": "gpt-5.4-nano",
+      "build_summary": "gpt-5.4-nano",
+      "transcribe_audio": "gpt-4o-mini-transcribe"
+    }
+  },
+  "meta": {
+    "title": "download (23) reference video",
+    "description": "User-provided reference video with stronger layout and motion effects for visual replication testing",
+    "cover_text": "",
+    "first_frame_text": "",
+    "platform": "local",
+    "track": "reference replication visual effects test",
+    "duration_sec": 269.0,
+    "language": "zh"
+  },
+  "transcript": {
+    "full_text": "前段时间听了个词叫做FOMO 全称是Fear of missing out 意思是错失恐惧症 总怕自己错过了什么大红利被时代抛下 这个词一下就击中我 一点都不夸张地说 我现在连做梦都全是AI的内容 hello大家好 我是专注于动画科普AI的RK 今天这期视频我想和大家好好聊聊AI焦虑这件事 希望能够起到一点帮助 2025年春节DeepSeek给你生生版AI拉到了全民热潮的高度 这个时候AI才算是真正走进了千家万户 变成大家触手可及的东西 不过那个时候AI的主流形态还是网页版的聊天机器人 但情况在2025年年中 中间的中哈发生了翻转 随着Cursor Cloudcode这一种agent的工具和自家旗舰大模型的更新 AI的知名度迎来了新一轮的爆发 这些agent把所谓的webcoding 也就是自然语言编程的门槛彻底打掉 随便一个普通人只要会打字就能一生生搓出属于自己的产品 当时圈子里最火的一句话就是人人都是产品经理 紧接着又到了2025年年底 谷歌的Gemini3横空出世 又一次把圈子给点炸了 模型能力这波跨越式的提升 搭上什么拿到巴拿拿 NoteBook AIIM 还有大方的Google AI Studio 只能说这一波他给的实在太多了 而我也是这个时候入的坑 到了今年年初 一个叫OpenCloud AKA大龙虾的开源项目再次点燃全球 这玩意甚至离谱到让Macmini一度卖断货 以前的AI是你拨太强它动一下 但大龙虾是一个能全天候待命的本地牛马 配合上强大的开源模型 确实闪现空间极大 这还没完 同样在年初的CES上 巨身智能的成果展示 更是让人觉得脊背发凉 据说已经有机器人准备进流水线找螺丝了 别说各位了 我写稿写到这儿都感觉焦虑的不行 不由自主的想要打开Cloudcode跑跑代码 跑什么不重要 看着它跑跑 我心里就会舒服很多 但这些真的是真相吗 或者说这些是全部的真相吗 当然不是 但凡你实操一下就能发现 DeepSeek确实够聪明 但它根本做不到一句话生成完美结果 我甚至认为它的成绩充其量只到60分 那Agent确实能够自动编程 但是一旦涉及复杂逻辑 它从专心写程序转到专心写Bug 就是一眨眼的事 至于Gemina和OpenCloud其实也差不多 它们现在确实人人都能用 但离人人都觉得好用还有不断的距离 而且不知道大家观察过没有 目前人类所有的工具是所有工具 没有一个是完美的 每一个都有不同的学习门槛和使用门槛 甚至同一个工具在不同的人手里 能够发挥的作用也是天差地别 也许有的小伙伴会说 AI的终极形态不是工具 而是真正的智能 但谁知道它离产生智能还要多久呢 又有谁能拍着胸脯保证 现在的发展路径一定就能产生智能呢 那在产生真正的智能之前 说它是工具也没有什么问题吧 所以我还是那个观点 现阶段的AI是能力放大器 我厉害 AI就厉害 我啥也不会 AI也帮不上忙 比如我写作能力还行 AI写的稿子我一眼就能看出它哪哪不好 而我没有编程背景 一个稍微有点复杂的小项目 已经卡了我快三个礼拜了 关键是我连卡哪儿都不知道 现在跟Agent对个话 我自己先要推理半天 得想明白怎么样才能把我的疑惑和需求准确的告诉它 不对呀 本来我还只是担忧跟不上时代 你现在是在阴阳怪气我不行是吧 倒也真不是这个意思 我觉得Fomo本身其实是一个正向的情绪 因为担心错失 本来应该产生的是格外珍惜 但现实跟想象中的有点不太一样 有的人Fomo不是担心被时代淘汰 而是觉得自己错过了发达的机会 有的人Fomo是迭代速度太快 感觉这个还没学会就出了下一个 还有的人在Fomo 是觉得别人都在卷 自己的生存空间在持续被挤压 这种情况下滋生的只会是过度内耗 原因很简单 我们从最容易获得信息的自媒体来看 那些真正靠着AI或者AI内容取得成果的人 点开主页只有一个爆款视频的不算哈 我说的是能够持续输出优质内容和创造优质产品的人 哪个不是靠着数年积累 厚积薄发的 所以我始终认为破局的钥匙永远掌握在大家自己手里 看你是选择从现在开始踏实积累 不断去寻找突破点 还是在犹豫和焦虑中间空耗时间 让自己和他人的差距越来越远 那最后呢 有一个情况我真的很想吐槽一下 我最近在AI相关视频的评论区里总能发现一类人 他们一直在劝别人不用学AI 不用追潮流 因为AI最终会替代所有人 怎么说呢 如果他真是这么想的 也能够在命运裁决他的时候 为自己当初的选择负责 我敬他是条汉子 但是在混沌期鼓吹这种论调影响他人 我觉得他肯定是怀揣了龌龊的心思 因为技术变革不是一夜之间完成的 而且古往今来对人才的要求一直是具备自主学习 解决问题的能力 而这些能力是必须靠不断的实践 总结 再实践获得的 那些躺平党凭什么认为只要有了完美的工具 他的人生就能起飞呢 我不理解 这种人请大家一定要无视掉 不能轻易受其影响 OK 那以上就是本期视频的全部内容了 我是战略动画科普AI的RK 无金无险又到6点 下了个班",
+    "segments": [],
+    "generated": false,
+    "source": "api",
+    "raw_response": {
+      "text": "前段时间听了个词叫做FOMO 全称是Fear of missing out 意思是错失恐惧症 总怕自己错过了什么大红利被时代抛下 这个词一下就击中我 一点都不夸张地说 我现在连做梦都全是AI的内容 hello大家好 我是专注于动画科普AI的RK 今天这期视频我想和大家好好聊聊AI焦虑这件事 希望能够起到一点帮助 2025年春节DeepSeek给你生生版AI拉到了全民热潮的高度 这个时候AI才算是真正走进了千家万户 变成大家触手可及的东西 不过那个时候AI的主流形态还是网页版的聊天机器人 但情况在2025年年中 中间的中哈发生了翻转 随着Cursor Cloudcode这一种agent的工具和自家旗舰大模型的更新 AI的知名度迎来了新一轮的爆发 这些agent把所谓的webcoding 也就是自然语言编程的门槛彻底打掉 随便一个普通人只要会打字就能一生生搓出属于自己的产品 当时圈子里最火的一句话就是人人都是产品经理 紧接着又到了2025年年底 谷歌的Gemini3横空出世 又一次把圈子给点炸了 模型能力这波跨越式的提升 搭上什么拿到巴拿拿 NoteBook AIIM 还有大方的Google AI Studio 只能说这一波他给的实在太多了 而我也是这个时候入的坑 到了今年年初 一个叫OpenCloud AKA大龙虾的开源项目再次点燃全球 这玩意甚至离谱到让Macmini一度卖断货 以前的AI是你拨太强它动一下 但大龙虾是一个能全天候待命的本地牛马 配合上强大的开源模型 确实闪现空间极大 这还没完 同样在年初的CES上 巨身智能的成果展示 更是让人觉得脊背发凉 据说已经有机器人准备进流水线找螺丝了 别说各位了 我写稿写到这儿都感觉焦虑的不行 不由自主的想要打开Cloudcode跑跑代码 跑什么不重要 看着它跑跑 我心里就会舒服很多 但这些真的是真相吗 或者说这些是全部的真相吗 当然不是 但凡你实操一下就能发现 DeepSeek确实够聪明 但它根本做不到一句话生成完美结果 我甚至认为它的成绩充其量只到60分 那Agent确实能够自动编程 但是一旦涉及复杂逻辑 它从专心写程序转到专心写Bug 就是一眨眼的事 至于Gemina和OpenCloud其实也差不多 它们现在确实人人都能用 但离人人都觉得好用还有不断的距离 而且不知道大家观察过没有 目前人类所有的工具是所有工具 没有一个是完美的 每一个都有不同的学习门槛和使用门槛 甚至同一个工具在不同的人手里 能够发挥的作用也是天差地别 也许有的小伙伴会说 AI的终极形态不是工具 而是真正的智能 但谁知道它离产生智能还要多久呢 又有谁能拍着胸脯保证 现在的发展路径一定就能产生智能呢 那在产生真正的智能之前 说它是工具也没有什么问题吧 所以我还是那个观点 现阶段的AI是能力放大器 我厉害 AI就厉害 我啥也不会 AI也帮不上忙 比如我写作能力还行 AI写的稿子我一眼就能看出它哪哪不好 而我没有编程背景 一个稍微有点复杂的小项目 已经卡了我快三个礼拜了 关键是我连卡哪儿都不知道 现在跟Agent对个话 我自己先要推理半天 得想明白怎么样才能把我的疑惑和需求准确的告诉它 不对呀 本来我还只是担忧跟不上时代 你现在是在阴阳怪气我不行是吧 倒也真不是这个意思 我觉得Fomo本身其实是一个正向的情绪 因为担心错失 本来应该产生的是格外珍惜 但现实跟想象中的有点不太一样 有的人Fomo不是担心被时代淘汰 而是觉得自己错过了发达的机会 有的人Fomo是迭代速度太快 感觉这个还没学会就出了下一个 还有的人在Fomo 是觉得别人都在卷 自己的生存空间在持续被挤压 这种情况下滋生的只会是过度内耗 原因很简单 我们从最容易获得信息的自媒体来看 那些真正靠着AI或者AI内容取得成果的人 点开主页只有一个爆款视频的不算哈 我说的是能够持续输出优质内容和创造优质产品的人 哪个不是靠着数年积累 厚积薄发的 所以我始终认为破局的钥匙永远掌握在大家自己手里 看你是选择从现在开始踏实积累 不断去寻找突破点 还是在犹豫和焦虑中间空耗时间 让自己和他人的差距越来越远 那最后呢 有一个情况我真的很想吐槽一下 我最近在AI相关视频的评论区里总能发现一类人 他们一直在劝别人不用学AI 不用追潮流 因为AI最终会替代所有人 怎么说呢 如果他真是这么想的 也能够在命运裁决他的时候 为自己当初的选择负责 我敬他是条汉子 但是在混沌期鼓吹这种论调影响他人 我觉得他肯定是怀揣了龌龊的心思 因为技术变革不是一夜之间完成的 而且古往今来对人才的要求一直是具备自主学习 解决问题的能力 而这些能力是必须靠不断的实践 总结 再实践获得的 那些躺平党凭什么认为只要有了完美的工具 他的人生就能起飞呢 我不理解 这种人请大家一定要无视掉 不能轻易受其影响 OK 那以上就是本期视频的全部内容了 我是战略动画科普AI的RK 无金无险又到6点 下了个班",
+      "usage": {
+        "type": "tokens",
+        "total_tokens": 4160,
+        "input_tokens": 2696,
+        "input_token_details": {
+          "text_tokens": 0,
+          "audio_tokens": 2696
+        },
+        "output_tokens": 1464
+      }
+    }
+  },
+  "title_analysis": {
+    "raw_title": "download (23) reference video",
+    "cover_text": "",
+    "first_frame_text": "",
+    "title_type": "指令/资源下载型（download + 资源描述 + 括号数字）",
+    "formula": "",
+    "conclusion_first": false,
+    "contains": {
+      "risk": false,
+      "benefit": false,
+      "conflict": false,
+      "number": true,
+      "contrast": false,
+      "promise": false
+    },
+    "relationship_between_surfaces": {
+      "title_vs_cover": "封面文字为空，无法判断标题与封面的一致性或差异。",
+      "title_vs_first_frame": "首屏大字为空，无法判断标题与首屏的一致性或差异。"
+    },
+    "keyword_slots": [
+      ""
+    ],
+    "variable_candidates": [
+      ""
+    ],
+    "confidence": 0.74
+  },
+  "description_analysis": {
+    "raw_description": "User-provided reference video with stronger layout and motion effects for visual replication testing",
+    "description_type": "参考素材说明/测试用途说明（偏功能性、元信息型）",
+    "description_formula": "素材来源/交付对象（User-provided reference video） + 功能/用途（for visual replication testing） + 强化点（stronger layout and motion effects）",
+    "opening_role": "直接说明视频内容属性（引用参考视频+更强布局/运动效果）",
+    "has_call_to_action": false,
+    "call_to_action_type": null,
+    "tone": "中性偏技术/测试导向",
+    "title_relation": "简介内容与标题均指向“reference video/下载的参考视频”用于视觉复制测试；简介补充了更具体的卖点（layout与motion effects更强）",
+    "keyword_clusters": [
+      {
+        "keywords": [
+          "reference video",
+          "visual replication"
+        ],
+        "cluster_intent": "参考/复刻用途"
+      },
+      {
+        "keywords": [
+          "layout",
+          "motion effects",
+          "stronger"
+        ],
+        "cluster_intent": "效果强化点"
+      },
+      {
+        "keywords": [
+          "testing",
+          "replication testing"
+        ],
+        "cluster_intent": "测试场景"
+      },
+      {
+        "keywords": [
+          "User-provided"
+        ],
+        "cluster_intent": "素材来源属性"
+      }
+    ],
+    "hashtag_strategy": {
+      "count": 0,
+      "hashtags": [],
+      "language_mix": "无（简介为英文，标签为空）",
+      "mix_type": "N/A",
+      "broad_tags": [],
+      "niche_tags": [],
+      "brand_or_account_tags": []
+    },
+    "variable_candidates": [
+      {
+        "field": "reference_video_source",
+        "example_from_text": "User-provided reference video",
+        "type": "string"
+      },
+      {
+        "field": "layout_strength_descriptor",
+        "example_from_text": "stronger layout",
+        "type": "string"
+      },
+      {
+        "field": "motion_effects_descriptor",
+        "example_from_text": "motion effects",
+        "type": "string"
+      },
+      {
+        "field": "testing_purpose",
+        "example_from_text": "visual replication testing",
+        "type": "string"
+      },
+      {
+        "field": "title_index_or_variant",
+        "example_from_text": "download (23) reference video",
+        "type": "string"
+      }
+    ],
+    "confidence": 0.66
+  },
+  "hook_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "structure_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "script_style_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "rhythm_engine": {
+    "mode": "api",
+    "model": "gemini-3.1-flash-lite-preview-thinking-minimal"
+  },
+  "visual_engine": {
+    "mode": "mock_fallback",
+    "model": "gemini-3.1-flash-lite-preview-thinking-minimal",
+    "reason": "HTTP 429 calling https://api.bltcy.ai/v1/chat/completions: {\"error\":{\"message\":\"当前分组上游负载已饱和，请稍后再试\",\"type\":\"new_api_error\",\"param\":\"\",\"code\":429}}"
+  },
+  "subtitle_audio_engine": {
+    "mode": "api",
+    "model": "gpt-5.4-nano"
+  },
+  "hook_analysis": {
+    "time_range_sec": [
+      0,
+      5
+    ],
+    "hook_text": "",
+    "hook_type": "情绪共鸣型（FOMO自我代入）+ 主题指向（AI焦虑）",
+    "core_mechanism": "",
+    "conclusion_first": false,
+    "devices": {
+      "risk": false,
+      "conflict": false,
+      "promise": false,
+      "question": false,
+      "surprise": false,
+      "contrarian": false
+    },
+    "visual_support": "",
+    "surface_dependency": "对“FOMO=错失恐惧症”的语言解释与“我连做梦都AI”这类夸张代入依赖较高；若观众不认同该情绪或理解不到“FOMO”，注意力承接可能变弱。",
+    "template_rule_candidates": [
+      ""
+    ],
+    "confidence": 0.86
+  },
+  "structure_analysis": [
+    {
+      "id": "section_01",
+      "start_sec": 0.0,
+      "end_sec": 10.0,
+      "label": "",
+      "purpose": "",
+      "summary": "",
+      "transition_to_next": "",
+      "information_density": "medium",
+      "confidence": 0.72
+    },
+    {
+      "id": "section_02",
+      "start_sec": 10.0,
+      "end_sec": 20.0,
+      "label": "",
+      "purpose": "",
+      "summary": "",
+      "transition_to_next": "",
+      "information_density": "medium",
+      "confidence": 0.72
+    },
+    {
+      "id": "section_03",
+      "start_sec": 20.0,
+      "end_sec": 30.0,
+      "label": "",
+      "purpose": "",
+      "summary": "",
+      "transition_to_next": "",
+      "information_density": "medium",
+      "confidence": 0.72
+    },
+    {
+      "id": "section_04",
+      "start_sec": 30.0,
+      "end_sec": 40.0,
+      "label": "",
+      "purpose": "",
+      "summary": "",
+      "transition_to_next": "",
+      "information_density": "medium",
+      "confidence": 0.72
+    },
+    {
+      "id": "section_05",
+      "start_sec": 40.0,
+      "end_sec": 50.0,
+      "label": "",
+      "purpose": "",
+      "summary": "",
+      "transition_to_next": "",
+      "information_density": "medium",
+      "confidence": 0.72
+    }
+  ],
+  "global_structure_pattern": "table-first: section_01 -> section_02 -> section_03 -> section_04 -> section_05",
+  "script_analysis": {
+    "tone": "",
+    "sentence_style": "",
+    "sentence_length_pattern": "呈“短句钉子句+中长句铺陈”的波动结构：开场多用短句/强调句制造冲击（如“我现在连做梦都…”“当然不是”）；随后长句链式讲时间线与因果（年初/年中/年末…连续并列）；中段穿插短句反转与结论词（“倒也真不是这个意思”“原因很简单”）后继续长句扩展；后段通过多分支并列列举形成密集感（FOMO三类：错过机会/迭代太快/别人都在卷）",
+    "conclusion_first": false,
+    "dominant_modes": [
+      "情绪共鸣开场（FOMO/自我焦虑）",
+      "时间线技术铺垫（DeepSeek/Cursor/Agent/Gemini/OpenCloud/CES）",
+      "反证与降温（承认能力但指出不完美/有差距）",
+      "核心框架输出（AI=能力放大器）",
+      "焦虑类型拆解与解法（过度内耗→积累破局）",
+      "价值立场收束与行动号召（反对替代论/反躺平/无视评论区）"
+    ],
+    "density_pattern": "",
+    "paragraph_organization": "多段小段落承载不同功能：1）概念定义+个人强代入（FOMO→自述梦里AI）→2）价值承诺（聊AI焦虑）+时间线概述（2025春/年中/年末/年初/今年）→3）“我也焦虑”过渡引出质疑（真相吗）→4）批判与降温（工具非完美、仍有差距/学习门槛/不同人差异）→5）框架落地（AI=能力放大器+个人对照：会写作 vs 不会编程卡住）→6）情绪矫正与分类（FOMO非单一：三类）→7）解法与价值判断（破局在积累/别空耗）→8）反对替代论群体+收尾口播（无视、别被影响/结束语）。整体是“先点燃—再拆解—再立框架—再给行动价值”的叙事阶梯。",
+    "rule_candidates": [
+      ""
+    ],
+    "confidence": 0.72
+  },
+  "rhythm_analysis": {
+    "scene_changes": [
+      {
+        "time_sec": 0.0,
+        "approximate": true,
+        "change_strength": "soft_change",
+        "change_type": "",
+        "from_visual": "",
+        "to_visual": "",
+        "purpose": "",
+        "linked_to_audio_emphasis": false
+      },
+      {
+        "time_sec": 0.0,
+        "approximate": true,
+        "change_strength": "soft_change",
+        "change_type": "",
+        "from_visual": "",
+        "to_visual": "",
+        "purpose": "",
+        "linked_to_audio_emphasis": false
+      }
+    ],
+    "section_rhythm": {
+      "hook": {
+        "avg_change_interval_sec": 5.0,
+        "rhythm_level": "moderate"
+      },
+      "body": {
+        "avg_change_interval_sec": 8.5,
+        "rhythm_level": "steady"
+      },
+      "outro": {
+        "avg_change_interval_sec": 4.5,
+        "rhythm_level": "fast"
+      }
+    },
+    "peak_moments": [
+      20,
+      118,
+      260
+    ],
+    "rhythm_rule_candidates": [
+      "",
+      "",
+      ""
+    ],
+    "confidence": 0.72
+  },
+  "visual_analysis": [
+    {
+      "section_id": "section_01",
+      "visual_type": "",
+      "layout": "",
+      "layout_archetype": "",
+      "asset_types": [
+        ""
+      ],
+      "style_markers": [
+        ""
+      ],
+      "fixed_elements": [
+        ""
+      ],
+      "variable_elements": [
+        ""
+      ],
+      "preserve_rules": [
+        ""
+      ],
+      "innovation_rules": [
+        ""
+      ],
+      "recreation_difficulty": "medium",
+      "confidence": 0.74
+    },
+    {
+      "section_id": "section_02",
+      "visual_type": "",
+      "layout": "",
+      "layout_archetype": "",
+      "asset_types": [
+        ""
+      ],
+      "style_markers": [
+        ""
+      ],
+      "fixed_elements": [
+        ""
+      ],
+      "variable_elements": [
+        ""
+      ],
+      "preserve_rules": [
+        ""
+      ],
+      "innovation_rules": [
+        ""
+      ],
+      "recreation_difficulty": "medium",
+      "confidence": 0.74
+    },
+    {
+      "section_id": "section_03",
+      "visual_type": "",
+      "layout": "",
+      "layout_archetype": "",
+      "asset_types": [
+        ""
+      ],
+      "style_markers": [
+        ""
+      ],
+      "fixed_elements": [
+        ""
+      ],
+      "variable_elements": [
+        ""
+      ],
+      "preserve_rules": [
+        ""
+      ],
+      "innovation_rules": [
+        ""
+      ],
+      "recreation_difficulty": "medium",
+      "confidence": 0.74
+    }
+  ],
+  "subtitle_analysis": {
+    "position": "",
+    "line_count_pattern": "",
+    "line_length_pattern": "",
+    "highlight_strategy": "",
+    "timing_pattern": "",
+    "confidence": 0.72
+  },
+  "audio_analysis": {
+    "voice_style": "知识科普型配音/口播：情绪表达明显（开头共鸣偏激动与带入），中段理性叙述更连贯信息密度高（年份与产品列举），后段批判与降温转为更坚定的语气（重读反问与否定句），结尾收束偏鼓动/号召",
+    "pace_wpm_estimate": 185,
+    "pause_pattern": "停顿主要落在语义边界：逗号/顿号后轻微停（0.2-0.4s），段落转折点（“不过/但/当然不是/我甚至认为/关键是/倒也真不是/这种情况下/所以/不能轻易”等）停顿更明显（0.5-0.9s）。长句末尾停顿较长（1.0s左右或视段落切换）以便字幕换屏",
+    "bgm_style": "轻快的科技感/解说型BGM：主旋律简洁、节奏稳定；在时间线叙述处BGM可能更“铺底”以维持信息跟读；在批判与收束段落BGM音量或密度降低（更突出人声）并在结尾有轻微上扬或收尾落点",
+    "hook_sfx_likely": [
+      "开头“FOMO”关键词击中音效（短促whoosh/点击/心跳式低频点一下）",
+      "‘Fear of missing out’定义切换时的强调音（短叮/弹点）",
+      "‘AI焦虑’或‘能力放大器’落点的提示音（轻鼓点/合成器强调）"
+    ],
+    "sync_pattern": "字幕与人声强对齐：关键短语（专名、年份、定义、转折观点）与重读同时出现/高亮；一般句子在对应停顿点换行/换屏；镜头切换（尤其硬切到不同模式如批判/框架/结尾）往往对应一个字幕刷新事件",
+    "confidence": 0.52
+  },
+  "review": {
+    "mode": "draft_then_review",
+    "reviewed": false,
+    "notes": "Generated by table-first analysis workflow."
+  },
+  "reproduction_visual_analysis": {
+    "shot_visuals": [
+      {
+        "shot_id": "shot_001",
+        "time_range": "",
+        "section_id": "",
+        "visual_purpose": "",
+        "screen_description": "",
+        "main_focus": "",
+        "on_screen_text": "",
+        "reproduction_priority": "medium",
+        "confidence": 0.74
+      },
+      {
+        "shot_id": "shot_002",
+        "time_range": "",
+        "section_id": "",
+        "visual_purpose": "",
+        "screen_description": "",
+        "main_focus": "",
+        "on_screen_text": "",
+        "reproduction_priority": "medium",
+        "confidence": 0.74
+      },
+      {
+        "shot_id": "shot_003",
+        "time_range": "",
+        "section_id": "",
+        "visual_purpose": "",
+        "screen_description": "",
+        "main_focus": "",
+        "on_screen_text": "",
+        "reproduction_priority": "medium",
+        "confidence": 0.74
+      },
+      {
+        "shot_id": "shot_004",
+        "time_range": "",
+        "section_id": "",
+        "visual_purpose": "",
+        "screen_description": "",
+        "main_focus": "",
+        "on_screen_text": "",
+        "reproduction_priority": "medium",
+        "confidence": 0.74
+      }
+    ],
+    "layer_layout": [
+      {
+        "shot_id": "shot_001",
+        "background_layer": "",
+        "primary_subject_layer": "",
+        "secondary_asset_layer": "",
+        "text_layer": "",
+        "subtitle_layer": "",
+        "decoration_layer": "",
+        "z_order": "",
+        "safe_area_notes": ""
+      },
+      {
+        "shot_id": "shot_002",
+        "background_layer": "",
+        "primary_subject_layer": "",
+        "secondary_asset_layer": "",
+        "text_layer": "",
+        "subtitle_layer": "",
+        "decoration_layer": "",
+        "z_order": "",
+        "safe_area_notes": ""
+      },
+      {
+        "shot_id": "shot_003",
+        "background_layer": "",
+        "primary_subject_layer": "",
+        "secondary_asset_layer": "",
+        "text_layer": "",
+        "subtitle_layer": "",
+        "decoration_layer": "",
+        "z_order": "",
+        "safe_area_notes": ""
+      },
+      {
+        "shot_id": "shot_004",
+        "background_layer": "",
+        "primary_subject_layer": "",
+        "secondary_asset_layer": "",
+        "text_layer": "",
+        "subtitle_layer": "",
+        "decoration_layer": "",
+        "z_order": "",
+        "safe_area_notes": ""
+      },
+      {
+        "shot_id": "shot_005",
+        "background_layer": "",
+        "primary_subject_layer": "",
+        "secondary_asset_layer": "",
+        "text_layer": "",
+        "subtitle_layer": "",
+        "decoration_layer": "",
+        "z_order": "",
+        "safe_area_notes": ""
+      },
+      {
+        "shot_id": "shot_006",
+        "background_layer": "",
+        "primary_subject_layer": "",
+        "secondary_asset_layer": "",
+        "text_layer": "",
+        "subtitle_layer": "",
+        "decoration_layer": "",
+        "z_order": "",
+        "safe_area_notes": ""
+      }
+    ],
+    "secondary_assets": [
+      {
+        "shot_id": "shot_001",
+        "asset_type": "HUD框",
+        "asset_count": "",
+        "position_size": "",
+        "attention_role": "",
+        "animation": "",
+        "replacement_rule": ""
+      },
+      {
+        "shot_id": "shot_002",
+        "asset_type": "像素方块",
+        "asset_count": "",
+        "position_size": "",
+        "attention_role": "",
+        "animation": "",
+        "replacement_rule": ""
+      },
+      {
+        "shot_id": "shot_003",
+        "asset_type": "图标",
+        "asset_count": "",
+        "position_size": "",
+        "attention_role": "",
+        "animation": "",
+        "replacement_rule": ""
+      }
+    ],
+    "asset_prompts": [
+      {
+        "asset_id": "asset_001",
+        "shot_id": "",
+        "asset_type": "",
+        "positive_prompt": "",
+        "style_constraints": "",
+        "negative_prompt": "",
+        "size_or_alpha_requirement": "",
+        "variable_slots": ""
+      },
+      {
+        "asset_id": "asset_002",
+        "shot_id": "",
+        "asset_type": "",
+        "positive_prompt": "",
+        "style_constraints": "",
+        "negative_prompt": "",
+        "size_or_alpha_requirement": "",
+        "variable_slots": ""
+      }
+    ],
+    "remotion_mapping": [
+      {
+        "shot_id": "shot_001",
+        "composition_or_scene": "",
+        "component_suggestion": "",
+        "input_data_fields": "",
+        "animation_implementation": "",
+        "asset_path_or_generation_need": "",
+        "risk_notes": ""
+      },
+      {
+        "shot_id": "shot_002",
+        "composition_or_scene": "",
+        "component_suggestion": "",
+        "input_data_fields": "",
+        "animation_implementation": "",
+        "asset_path_or_generation_need": "",
+        "risk_notes": ""
+      },
+      {
+        "shot_id": "shot_003",
+        "composition_or_scene": "",
+        "component_suggestion": "",
+        "input_data_fields": "",
+        "animation_implementation": "",
+        "asset_path_or_generation_need": "",
+        "risk_notes": ""
+      }
+    ],
+    "similarity_boundary": [
+      {
+        "保留": "黑底网格风格",
+        "可变": "具体文字内容"
+      },
+      {
+        "保留": "HUD布局",
+        "可变": "配色方案"
+      }
+    ]
+  },
+  "summary": {
+    "top_template_rules": [
+      {
+        "rule": "标题采用“download + 资源/参考描述 + 括号序号”指令/资源下载型结构；序号用于版本/批次/变体区分以增强可检索与变体暗示。",
+        "pattern_hint": "download ({{index}}) {{resource_descriptor}}",
+        "evidence_signals": [
+          "title_type: 指令/资源下载型（download + 资源描述 + 括号数字）",
+          "contains.number: true",
+          "risk/benefit/promise都为false（偏元信息而非营销承诺）"
+        ]
+      },
+      {
+        "rule": "简介用英文/中性技术语气承接标题：先点明“参考素材/用户提供/来源”，再写用途为“可视化复刻/测试”，最后补充效果强化点（如更强layout与motion effects）。",
+        "pattern_hint": "{{source_claim}} with {{purpose_clause}}; {{strength_point_1}} and {{strength_point_2}}",
+        "evidence_signals": [
+          "description_type: 参考素材说明/测试用途说明（偏功能性、元信息型）",
+          "description_formula: 素材来源/交付对象 + 功能/用途 + 强化点",
+          "tone: 中性偏技术/测试导向",
+          "title_relation: 用于视觉复制测试；简介补充layout与motion effects更强"
+        ]
+      },
+      {
+        "rule": "叙事节奏采用“中等钩子节奏 + 稳定主体 + 快速收尾”：开头阶段平均镜头/变化间隔约5s，中段约8.5s，结尾约4.5s以形成收束与加速落点。",
+        "pattern_hint": {
+          "hook_change_interval_sec": 5.0,
+          "body_change_interval_sec": 8.5,
+          "outro_change_interval_sec": 4.5
+        },
+        "evidence_signals": [
+          "section_rhythm.hook: moderate",
+          "section_rhythm.body: steady",
+          "section_rhythm.outro: fast",
+          "peak_moments: [20, 118, 260]"
+        ]
+      },
+      {
+        "rule": "音频/字幕同步以“关键短语重读高对齐”为主：定义/年份/专名/转折观点与重读同步，并在语义边界处（逗号/转折词）安排轻停顿；段落切换处停顿更明显便于字幕换屏。",
+        "pattern_hint": {
+          "emphasis_sync_targets": [
+            "definition",
+            "year",
+            "key_term",
+            "turning_point"
+          ],
+          "pause_rules": [
+            "逗号/顿号后轻微停(0.2-0.4s)",
+            "转折词处停顿明显(0.5-0.9s)",
+            "长句末尾停顿较长(~1.0s或段落切换)"
+          ]
+        },
+        "evidence_signals": [
+          "音频: 重读反问与否定句、转折词停顿",
+          "sync_pattern: 字幕与人声强对齐；字幕刷新对应镜头切换事件"
+        ]
+      },
+      {
+        "rule": "包装信息以“参考/复刻/测试”框架替代强利益承诺：内容侧重点放在可复现的视觉要素（layout、motion effects），不强调风险/冲突/收益保证/强CTA。",
+        "pattern_hint": "{{reference_or_source}} + visual replication/testing + {{layout_strength}} + {{motion_strength}} (no explicit promise/CTA)",
+        "evidence_signals": [
+          "title.contains: risk/benefit/conflict/promise/contrast均false",
+          "has_call_to_action: false",
+          "简介簇意图：参考/复刻用途、效果强化点、测试场景"
+        ]
+      }
+    ],
+    "key_packaging_features": [
+      "标题与简介高度同向：都围绕“reference video/下载的参考素材/用于视觉复刻测试”，强调用途而非营销结果。",
+      "强调点为“视觉工程属性”：layout强度与motion effects强度作为可替换卖点变量（偏技术展示/评测口径）。",
+      "语音叙事风格偏“定义+转折+收束”：通过停顿与重读把关键概念与观点点出来（适合字幕高亮与同步换屏）。"
+    ],
+    "best_variable_candidates": [
+      {
+        "field": "index",
+        "type": "string|number",
+        "from_text_example": "(23)",
+        "usage": "标题中的括号序号，用于版本/批次/变体号"
+      },
+      {
+        "field": "resource_descriptor",
+        "type": "string",
+        "from_text_example": "reference video",
+        "usage": "标题中被download指向的资源类型/对象"
+      },
+      {
+        "field": "source_claim",
+        "type": "string",
+        "from_text_example": "User-provided reference video",
+        "usage": "简介首句资源来源/交付对象声明"
+      },
+      {
+        "field": "testing_purpose",
+        "type": "string",
+        "from_text_example": "visual replication testing",
+        "usage": "简介中的用途/场景（复刻/测试/对比等）"
+      },
+      {
+        "field": "layout_strength_descriptor",
+        "type": "string",
+        "from_text_example": "stronger layout",
+        "usage": "简介效果强化点1（layout强度描述）"
+      },
+      {
+        "field": "motion_effects_descriptor",
+        "type": "string",
+        "from_text_example": "motion effects",
+        "usage": "简介效果强化点2（motion/动态效果描述）"
+      }
+    ],
+    "best_fixed_rules": [
+      "固定不做强CTA：默认保持“元信息/测试说明”语气，has_call_to_action保持false，避免直接号召式包装。",
+      "固定标题骨架：download + （括号数字序号）+ 资源/参考描述；数字必须出现以支持变体可检索。",
+      "固定简介语气与结构：中性偏技术/功能性用途说明；结构依次为“来源/素材属性 + 用途场景（testing/replication）+ 视觉强化点（layout/motion）”。"
+    ]
+  },
+  "table_first_source": {
+    "tables_artifact": "analysis_tables.json",
+    "compiled_at": "2026-05-06T01:28:07+0800",
+    "source": "api"
+  }
+}

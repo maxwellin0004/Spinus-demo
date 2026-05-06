@@ -1,0 +1,30 @@
+{
+  "template_id": "cinematic_quote_full_bleed",
+  "default_variant": "cinematic_soft_green_amber",
+  "variants": [
+    {
+      "variant_id": "cinematic_soft_green_amber",
+      "label": "Cinematic Soft Green Amber",
+      "description": "Muted green shadows, warm amber glow, filmic grain, and emotional full-screen imagery.",
+      "tokens": {
+        "background_base": "#10150f",
+        "background_soft": "#26321f",
+        "accent": "#b23a32",
+        "text_primary": "#ffffff",
+        "text_muted": "rgba(255, 255, 255, 0.82)",
+        "frame": "rgba(0, 0, 0, 0.38)"
+      },
+      "usage_notes": [
+        "Use for emotional quote, book-note, and cinematic narration references.",
+        "Generated images must not contain text because Remotion overlays title and subtitles."
+      ]
+    }
+  ],
+  "editable_runtime_fields": [
+    "style_variant",
+    "accent",
+    "background_base",
+    "text_primary",
+    "text_muted"
+  ]
+}

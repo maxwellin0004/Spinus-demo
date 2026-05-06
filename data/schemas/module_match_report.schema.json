@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "module_match_report.schema.json",
+  "title": "Module Match Report",
+  "type": "object",
+  "required": ["schemaVersion", "artifact", "jobId", "matches"],
+  "properties": {
+    "schemaVersion": {"type": "string"},
+    "artifact": {
+      "type": "object",
+      "required": ["type", "status", "createdAt", "updatedAt", "generator"],
+      "properties": {
+        "type": {"const": "module_match_report"},
+        "status": {"enum": ["draft", "partial", "ready", "stale", "failed"]},
+        "createdAt": {"type": "string"},
+        "updatedAt": {"type": "string"},
+        "generator": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "jobId": {"type": "string"},
+    "matches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "sourceSegmentId",
+          "selectedModuleId",
+          "matchStatus",
+          "fallbackRecommendation",
+          "candidates",
+          "requiresReview"
+        ],
+        "properties": {
+          "sourceSegmentId": {"type": "string"},
+          "selectedModuleId": {"type": ["string", "null"]},
+          "matchStatus": {"enum": ["matched", "weak_match", "no_match"]},
+          "fallbackRecommendation": {
+            "type": ["string", "null"],
+            "enum": [
+              "use_template_level_match",
+              "require_new_module",
+              "manual_review",
+              "fallback_to_generic_scene",
+              null
+            ]
+          },
+          "candidates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["moduleId", "score", "scoreBreakdown", "reason"],
+              "properties": {
+                "moduleId": {"type": "string"},
+                "score": {"type": "number", "minimum": 0, "maximum": 1},
+                "scoreBreakdown": {
+                  "type": "object",
+                  "required": [
+                    "sceneRole",
+                    "contentDomain",
+                    "layoutTags",
+                    "retentionTags",
+                    "styleTags",
+                    "aspectRatio"
+                  ],
+                  "properties": {
+                    "sceneRole": {"type": "number"},
+                    "contentDomain": {"type": "number"},
+                    "layoutTags": {"type": "number"},
+                    "retentionTags": {"type": "number"},
+                    "styleTags": {"type": "number"},
+                    "aspectRatio": {"type": "number"}
+                  },
+                  "additionalProperties": false
+                },
+                "reason": {"type": "string"}
+              },
+              "additionalProperties": true
+            }
+          },
+          "requiresReview": {"type": "boolean"}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,4 +1,5 @@
 const http = require("node:http");
+const https = require("node:https");
 const os = require("node:os");
 const fs = require("node:fs");
 const path = require("node:path");
@@ -9,10 +10,13 @@ const PORT = Number(process.env.PORT || 3008);
 const HOST = process.env.HOST || "127.0.0.1";
 const WEB_ROOT = __dirname;
 const WORKSPACE_ROOT = path.resolve(__dirname, "..");
-const USER_HOME = process.env.USERPROFILE || process.env.HOME || "";
+const LOCAL_CONFIG_FILE = path.join(WORKSPACE_ROOT, "config.local.json");
+const USER_HOME = process.env.USERPROFILE || process.env.HOME || os.homedir() || "";
 const CODEX_HOME = path.join(USER_HOME, ".codex");
 const TEMPLATE_ROOT = path.join(WORKSPACE_ROOT, "data", "templates");
 const JOB_ROOT = path.join(WORKSPACE_ROOT, "data", "jobs");
+const SOURCE_VIDEO_ROOT = path.join(WORKSPACE_ROOT, "data", "source_videos");
+const ANALYSIS_ROOT = path.join(WORKSPACE_ROOT, "data", "analyses");
 const VIDEO_APP_ROOT = path.join(WORKSPACE_ROOT, "video-app");
 const VIDEO_PUBLIC_ROOT = path.join(VIDEO_APP_ROOT, "public");
 const GENERATED_PUBLIC_ROOT = path.join(VIDEO_PUBLIC_ROOT, "generated-jobs");
@@ -45,8 +49,13 @@ const SESSION_CACHE_TTL_MS = Number(process.env.SESSION_CACHE_TTL_MS || 30000);
 const SESSION_PATH_CACHE_TTL_MS = Number(process.env.SESSION_PATH_CACHE_TTL_MS || 300000);
 const SESSION_PAGE_SIZE = Number(process.env.SESSION_PAGE_SIZE || 20);
 const CODEX_PROCESS_TIMEOUT_MS = Number(process.env.CODEX_PROCESS_TIMEOUT_MS || 90000);
-const CODEX_MODEL = process.env.CODEX_MODEL || "gpt-5.4";
+const DEFAULT_CODEX_MODEL = process.env.CODEX_MODEL || "gpt-5.4";
+const DEFAULT_IMAGE_ASSET_MODEL = process.env.IMAGE_ASSET_MODEL || "gpt-image-2";
+const CODEX_CONFIG_FILE = path.join(WEB_ROOT, "codex-console-config.json");
 const CODEX_BYPASS_SANDBOX = process.env.CODEX_BYPASS_SANDBOX !== "0";
+const SCREEN_QA_ENABLED = process.env.SCREEN_QA_ENABLED !== "0";
+const SCREEN_QA_FRAMES = process.env.SCREEN_QA_FRAMES || "";
+const SCREEN_QA_OCR_COMMAND = process.env.SCREEN_QA_OCR_COMMAND || "tesseract";
 const SESSION_BOOTSTRAP_MARKER = "__CODEX_VIDEO_CONSOLE_BOOTSTRAP__";
 const SESSION_BOOTSTRAP_READY = "__CODEX_VIDEO_CONSOLE_READY__";
 const SESSION_BOOTSTRAP_PROMPT = `${SESSION_BOOTSTRAP_MARKER}\nReply with exactly ${SESSION_BOOTSTRAP_READY}.`;
@@ -62,6 +71,17 @@ const REAL_PIPELINE_TIMELINE = {
   close: 510,
 };
 
+const TIMELINE_SECTION_ORDER = [
+  ["news_context", "news"],
+  ["case_shock", "hook"],
+  ["indicator_mechanism", "mechanism"],
+  ["chart_case_1", "case1"],
+  ["chart_case_2", "case2"],
+  ["chart_case_3", "case3"],
+  ["checklist", "checklist"],
+  ["risk_close", "close"],
+];
+
 const BATCH_ACTION_ESTIMATE_MS = {
   "generate-plan": CODEX_PROCESS_TIMEOUT_MS,
   tts: 300000,
@@ -70,6 +90,13 @@ const BATCH_ACTION_ESTIMATE_MS = {
 
 const activeJobProcesses = new Map();
 const jobTerminationRequests = new Map();
+const codexRuntimeCache = {
+  checkedAt: 0,
+  payload: null,
+};
+let codexConsoleConfig = {
+  model: DEFAULT_CODEX_MODEL,
+};
 
 const templateMeta = {
   ai_concept_analyse: "AI 概念分析 / 拆解",
@@ -86,6 +113,59 @@ const previewImages = [
   "/workspace/assets/images/macd_ref_chart_1.jpg",
   "/workspace/assets/images/scenario_video_breakdown.jpg",
   "/workspace/assets/images/hook_financial_crisis_newspaper.jpg",
+];
+
+const defaultAssetSlots = [
+  {
+    id: "hook_inset",
+    label: "Hook 主视觉",
+    type: "image",
+    targetPath: "data.hook.insetImageSrc",
+    required: true,
+    aspectRatio: "16:9",
+    preferredAssets: ["macd_ref_chart_1.jpg", "scenario_video_breakdown.jpg"],
+    prompt: "适合开头三秒的强视觉图，能快速交代主题和风险。",
+  },
+  {
+    id: "mechanism_image",
+    label: "机制解释图",
+    type: "image",
+    targetPath: "data.mechanism.imageSrc",
+    required: true,
+    aspectRatio: "16:9",
+    preferredAssets: ["macd_ref_chart_2.jpg", "scenario_ppt.jpg"],
+    prompt: "用于解释核心机制的图表或结构画面。",
+  },
+  {
+    id: "case_01_image",
+    label: "案例 01 图",
+    type: "image",
+    targetPath: "data.cases.0.imageSrc",
+    required: false,
+    aspectRatio: "1:1",
+    preferredAssets: ["hook_paul_tudor_jones.jpg", "macd_ref_chart_1.jpg"],
+    prompt: "第一个案例或场景的辅助画面。",
+  },
+  {
+    id: "case_02_image",
+    label: "案例 02 图",
+    type: "image",
+    targetPath: "data.cases.1.imageSrc",
+    required: false,
+    aspectRatio: "1:1",
+    preferredAssets: ["hook_occupy_wall_street.jpg", "macd_ref_chart_2.jpg"],
+    prompt: "第二个案例或情绪转折的辅助画面。",
+  },
+  {
+    id: "case_03_image",
+    label: "案例 03 图",
+    type: "image",
+    targetPath: "data.cases.2.imageSrc",
+    required: false,
+    aspectRatio: "1:1",
+    preferredAssets: ["hook_financial_crisis_store.jpg", "macd_ref_chart_3.jpg"],
+    prompt: "第三个案例或结论确认的辅助画面。",
+  },
 ];
 
 const templateCatalog = {
@@ -153,6 +233,27 @@ const templateCatalog = {
     tags: ["技术", "档案", "资料"],
   },
 };
+
+function getTemplateAssetSlots(templateId) {
+  const template = getTemplateCatalogEntry(templateId);
+  const overrides = ensureArray(template?.assetSlots);
+  const byId = new Map(defaultAssetSlots.map((slot) => [slot.id, {...slot}]));
+  overrides.forEach((slot) => {
+    if (!slot?.id) return;
+    byId.set(slot.id, {...(byId.get(slot.id) || {}), ...slot});
+  });
+  return [...byId.values()].map((slot, index) => ({
+    id: String(slot.id || `asset_${index + 1}`),
+    label: String(slot.label || slot.id || `素材 ${index + 1}`),
+    type: String(slot.type || "image"),
+    targetPath: String(slot.targetPath || ""),
+    required: slot.required !== false,
+    aspectRatio: String(slot.aspectRatio || "9:16"),
+    allowedSources: ensureArray(slot.allowedSources).length ? ensureArray(slot.allowedSources) : ["local", "ai", "web"],
+    preferredAssets: ensureArray(slot.preferredAssets),
+    prompt: String(slot.prompt || "为当前视频生成或选择一个匹配画面风格的素材。"),
+  }));
+}
 
 const instructionPresets = [
   {
@@ -370,14 +471,53 @@ function sanitizeId(value, prefix = "item") {
   return base || `${prefix}-${Date.now()}`;
 }
 
+function normalizeCopyRewriteVariant(value) {
+  return sanitizeId(value || "sharp_contrarian", "sharp_contrarian").replaceAll("-", "_");
+}
+
 function safeWriteJson(filePath, data) {
   fs.mkdirSync(path.dirname(filePath), {recursive: true});
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf8");
 }
 
+function normalizeCodexModel(model) {
+  const text = String(model || "").trim();
+  return text || DEFAULT_CODEX_MODEL;
+}
+
+function loadCodexConsoleConfig() {
+  const raw = safeReadJson(CODEX_CONFIG_FILE);
+  const model = normalizeCodexModel(raw?.model);
+  const next = {model};
+  if (!raw || typeof raw !== "object" || raw.model !== model) {
+    safeWriteJson(CODEX_CONFIG_FILE, next);
+  }
+  return next;
+}
+
+function saveCodexConsoleConfig(nextConfig = {}) {
+  codexConsoleConfig = {
+    model: normalizeCodexModel(nextConfig.model),
+  };
+  safeWriteJson(CODEX_CONFIG_FILE, codexConsoleConfig);
+  return {...codexConsoleConfig};
+}
+
+function getCurrentCodexModel() {
+  return normalizeCodexModel(codexConsoleConfig?.model);
+}
+
+codexConsoleConfig = loadCodexConsoleConfig();
+
+function safeWriteText(filePath, text) {
+  fs.mkdirSync(path.dirname(filePath), {recursive: true});
+  fs.writeFileSync(filePath, String(text || ""), "utf8");
+}
+
 function publicEntitySnapshot(job) {
   return {
     id: job.id,
+    type: job.type || "video_generation",
     source: job.source,
     title: job.title,
     prompt: job.prompt,
@@ -389,14 +529,23 @@ function publicEntitySnapshot(job) {
     topicTitle: job.topicTitle || "",
     durationSec: Number(job.durationSec || 60),
     aspectRatio: job.aspectRatio || "9:16",
+    subtitleFontSize: normalizeSubtitleFontSize(job.subtitleFontSize, 28),
+    subtitleColor: normalizeSubtitleColor(job.subtitleColor, "#ffffff"),
     templateLocked: Boolean(job.templateLocked),
     activePresetIds: ensureArray(job.activePresetIds),
     openInstruction: job.openInstruction || "",
     instructionScope: job.instructionScope || "run",
+    useAiImageAssets: Boolean(job.useAiImageAssets),
+    imageAssetModel: normalizeImageAssetModel(job.imageAssetModel) || getImageApiConfig().model,
+    replication: job.replication || null,
     outputDir: job.outputDir,
     codexSessionId: job.codexSessionId || null,
     planSource: job.planSource || "",
     planFallbackReason: job.planFallbackReason || "",
+    stageIndex: Number(job.stageIndex || 0),
+    pipelineRunning: Boolean(job.pipelineRunning),
+    lastPipelineAction: job.lastPipelineAction || "",
+    failedAction: job.failedAction || "",
     archived: Boolean(job.archived),
     archivedAt: job.archivedAt || "",
     campaignId: job.campaignId || "",
@@ -438,6 +587,7 @@ function ensureJobArtifactShape(job) {
 
   const workspaceDir = getJobWorkspaceDir(job);
   const publicDir = getJobPublicDir(job);
+  const copyVariant = normalizeCopyRewriteVariant(job.replication?.copyVariant || job.replication?.rewriteVariant);
   fs.mkdirSync(workspaceDir, {recursive: true});
   fs.mkdirSync(publicDir, {recursive: true});
 
@@ -452,9 +602,34 @@ function ensureJobArtifactShape(job) {
   job.artifacts.subtitlesPath = path.join(workspaceDir, "subtitles.json");
   job.artifacts.alignmentPath = path.join(workspaceDir, "alignment.json");
   job.artifacts.renderPropsPath = path.join(workspaceDir, "render-props.json");
+  job.artifacts.viralBreakdownPath = path.join(workspaceDir, "viral_breakdown.json");
+  job.artifacts.moduleMatchReportPath = path.join(workspaceDir, "module_match_report.json");
+  job.artifacts.replicationPlanPath = path.join(workspaceDir, "replication_plan.json");
+  job.artifacts.replicationStatusPath = path.join(workspaceDir, "replication_status.json");
+  job.artifacts.compileReportPath = path.join(workspaceDir, "compile_report.json");
+  job.artifacts.replicationAssetPlanPath = path.join(workspaceDir, "asset_plan.json");
+  job.artifacts.copyRewriteContextPath = path.join(workspaceDir, "copy_rewrite_context.json");
+  job.artifacts.copyRewritePath = path.join(workspaceDir, `copy_rewrite.${copyVariant}.json`);
+  job.artifacts.rewrittenPlanPath = path.join(workspaceDir, `video_plan.rewritten.${copyVariant}.json`);
+  job.artifacts.assetPromptPlanPath = path.join(workspaceDir, `asset_prompt_plan.${copyVariant}.json`);
+  job.artifacts.deliveryAssetManifestPath = path.join(workspaceDir, `asset_manifest.${copyVariant}.json`);
+  job.artifacts.assetRenderPropsPath = path.join(workspaceDir, `render-props.assets.${copyVariant}.json`);
+  job.artifacts.voiceoverPackagePath = path.join(workspaceDir, `voiceover_package.${copyVariant}.json`);
+  job.artifacts.voiceoverAlignmentPath = path.join(workspaceDir, `voiceover_alignment.${copyVariant}.json`);
+  job.artifacts.voiceoverSubtitlesPath = path.join(workspaceDir, `voiceover_subtitles.${copyVariant}.json`);
+  job.artifacts.voiceoverRenderPropsPath = path.join(workspaceDir, `render-props.voiceover.${copyVariant}.json`);
+  job.artifacts.finalRenderPropsPath = path.join(workspaceDir, `render-props.final.${copyVariant}.json`);
+  job.artifacts.renderPackagePath = path.join(workspaceDir, `render_package.${copyVariant}.json`);
   job.artifacts.outputVideoPath = path.join(workspaceDir, "output.mp4");
   job.artifacts.posterPath = path.join(workspaceDir, "poster.jpg");
   job.artifacts.coverMetaPath = path.join(workspaceDir, "cover.json");
+  job.artifacts.assetsDir = path.join(workspaceDir, "assets");
+  job.artifacts.assetPlanPath = path.join(job.artifacts.assetsDir, "asset_plan.json");
+  job.artifacts.assetManifestPath = path.join(job.artifacts.assetsDir, "manifest.json");
+  job.artifacts.assetPromptDir = path.join(job.artifacts.assetsDir, "prompts");
+  job.artifacts.screenQaDir = path.join(workspaceDir, "screen-qa");
+  job.artifacts.screenQaReportPath = path.join(job.artifacts.screenQaDir, "report.json");
+  job.artifacts.publicAssetsDir = path.join(publicDir, "assets");
   job.artifacts.publicVoiceoverPath = path.join(publicDir, "voiceover.mp3");
   job.artifacts.publicVoiceoverUrl = `/workspace/${relativeWorkspacePath(path.join(publicDir, "voiceover.mp3"))}`;
   return job.artifacts;
@@ -477,10 +652,35 @@ function buildArtifactManifest(job) {
     ["subtitles", "字幕", artifacts.subtitlesPath],
     ["alignment", "对齐时间轴", artifacts.alignmentPath],
     ["renderProps", "渲染参数", artifacts.renderPropsPath],
+    ["assetPlan", "素材需求", artifacts.assetPlanPath],
+    ["assetManifest", "素材清单", artifacts.assetManifestPath],
     ["poster", "封面帧", artifacts.posterPath],
+    ["screenQa", "Screen QA", artifacts.screenQaReportPath],
     ["audio", "配音音频", artifacts.publicVoiceoverPath],
     ["video", "渲染视频", artifacts.outputVideoPath],
   ];
+  items.splice(
+    8,
+    0,
+    ["viralBreakdown", "爆款拆解", artifacts.viralBreakdownPath],
+    ["moduleMatchReport", "模块匹配", artifacts.moduleMatchReportPath],
+    ["replicationPlan", "复刻计划", artifacts.replicationPlanPath],
+    ["replicationStatus", "复刻状态", artifacts.replicationStatusPath],
+    ["compileReport", "编译报告", artifacts.compileReportPath],
+    ["replicationAssetPlan", "复刻素材计划", artifacts.replicationAssetPlanPath],
+    ["copyRewriteContext", "文案重写上下文", artifacts.copyRewriteContextPath],
+    ["copyRewrite", "文案重写", artifacts.copyRewritePath],
+    ["rewrittenPlan", "改写视频计划", artifacts.rewrittenPlanPath],
+    ["assetPromptPlan", "素材提示词计划", artifacts.assetPromptPlanPath],
+    ["deliveryAssetManifest", "交付素材清单", artifacts.deliveryAssetManifestPath],
+    ["assetRenderProps", "素材渲染参数", artifacts.assetRenderPropsPath],
+    ["voiceoverPackage", "配音包", artifacts.voiceoverPackagePath],
+    ["voiceoverAlignment", "配音对齐", artifacts.voiceoverAlignmentPath],
+    ["voiceoverSubtitles", "配音字幕", artifacts.voiceoverSubtitlesPath],
+    ["voiceoverRenderProps", "配音渲染参数", artifacts.voiceoverRenderPropsPath],
+    ["finalRenderProps", "最终渲染参数", artifacts.finalRenderPropsPath],
+    ["renderPackage", "最终渲染包", artifacts.renderPackagePath],
+  );
 
   return items.reduce(
     (output, [key, label, filePath]) => {
@@ -511,6 +711,828 @@ function buildArtifactManifest(job) {
   );
 }
 
+function getJobScreenQaStatus(job) {
+  const artifacts = ensureJobArtifactShape(job);
+  if (!fs.existsSync(artifacts.screenQaReportPath)) return "missing";
+  const report = safeReadJson(artifacts.screenQaReportPath);
+  return String(report?.status || "unknown");
+}
+
+function buildBatchArtifactStatus(job) {
+  const manifest = buildArtifactManifest(job);
+  return {
+    plan: Boolean(manifest.plan?.exists),
+    audio: Boolean(manifest.audio?.exists),
+    subtitles: Boolean(manifest.subtitles?.exists),
+    poster: Boolean(manifest.poster?.exists),
+    video: Boolean(manifest.video?.exists),
+    screenQa: Boolean(manifest.screenQa?.exists),
+  };
+}
+
+function readJobAssetPlan(job) {
+  const artifacts = ensureJobArtifactShape(job);
+  return safeReadJson(artifacts.assetPlanPath) || null;
+}
+
+function readJobAssetManifest(job) {
+  const artifacts = ensureJobArtifactShape(job);
+  const manifest = safeReadJson(artifacts.assetManifestPath);
+  return manifest && typeof manifest === "object"
+    ? {
+        version: manifest.version || "asset-manifest-v1",
+        updatedAt: manifest.updatedAt || "",
+        items: ensureArray(manifest.items),
+      }
+    : {
+        version: "asset-manifest-v1",
+        updatedAt: "",
+        items: [],
+      };
+}
+
+function writeJobAssetManifest(job, manifest) {
+  const artifacts = ensureJobArtifactShape(job);
+  const next = {
+    version: "asset-manifest-v1",
+    updatedAt: nowIso(),
+    items: ensureArray(manifest?.items),
+  };
+  fs.mkdirSync(artifacts.assetsDir, {recursive: true});
+  safeWriteJson(artifacts.assetManifestPath, next);
+  return next;
+}
+
+function buildAssetPlan(job, plan = null) {
+  const topic = getSafeTopicLabel(job, plan?.meta?.topic || job.topicTitle || inferJobTopic(job));
+  const account = getAccount(job.accountId);
+  const template = getTemplateCatalogEntry(job.templateId);
+  const slots = getTemplateAssetSlots(job.templateId).map((slot) => ({
+    ...slot,
+    sceneId: slot.targetPath || slot.id,
+    style: [template?.title, account?.persona, account?.toneTags?.join(" / "), job.aspectRatio].filter(Boolean).join(" / "),
+    prompt: `${slot.prompt} 主题：${topic}。账号风格：${account?.persona || "默认"}。`,
+  }));
+  return {
+    version: "asset-plan-v1",
+    generatedAt: nowIso(),
+    jobId: job.id,
+    templateId: job.templateId,
+    topic,
+    mode: "local-first",
+    enforceBeforeRender: true,
+    slots,
+  };
+}
+
+function getLocalAssetCandidates() {
+  return listAssets().map((asset) => ({
+    ...asset,
+    absolutePath: path.resolve(WORKSPACE_ROOT, asset.path || ""),
+  }));
+}
+
+function pickLocalAssetForSlot(slot) {
+  const candidates = getLocalAssetCandidates().filter((asset) => fs.existsSync(asset.absolutePath));
+  if (!candidates.length) return null;
+  const preferred = ensureArray(slot.preferredAssets)
+    .map((name) => candidates.find((asset) => asset.name === name))
+    .find(Boolean);
+  if (preferred) return preferred;
+  if (/chart|图表|机制|交易/i.test(`${slot.label} ${slot.prompt}`)) {
+    return candidates.find((asset) => asset.kind === "图表素材") || candidates[0];
+  }
+  if (/hook|主视觉/i.test(`${slot.label} ${slot.prompt}`)) {
+    return candidates.find((asset) => asset.kind === "Hook 素材") || candidates[0];
+  }
+  return candidates[0];
+}
+
+function normalizeAssetFileName(slotId, sourcePath) {
+  const ext = path.extname(sourcePath || "") || ".jpg";
+  return `${safeArchiveName(slotId, "asset")}${ext}`;
+}
+
+function normalizeGeneratedAssetFileName(slotId, ext = ".svg") {
+  const stamp = nowIso().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
+  return `${safeArchiveName(slotId, "asset")}-ai-${stamp}${ext}`;
+}
+
+function normalizeImageAssetModel(model = "") {
+  return String(model || "").trim();
+}
+
+function normalizeSubtitleFontSize(value, fallback = 28) {
+  const number = Number(value || fallback);
+  if (!Number.isFinite(number)) return fallback;
+  return Math.min(52, Math.max(20, Math.round(number)));
+}
+
+function normalizeSubtitleColor(value, fallback = "#ffffff") {
+  const color = String(value || fallback).trim();
+  return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(color) ? color : fallback;
+}
+
+function getImageSizeForAsset(job, slot) {
+  const ratio = String(slot?.aspectRatio || job?.aspectRatio || "16:9").trim();
+  if (ratio === "9:16" || ratio === "3:4" || /portrait/i.test(ratio)) return "1024x1536";
+  if (ratio === "1:1" || /square/i.test(ratio)) return "1024x1024";
+  return "1536x1024";
+}
+
+function getImageExtFromFormat(format = "") {
+  const normalized = String(format || "").toLowerCase();
+  if (normalized === "jpeg" || normalized === "jpg") return ".jpg";
+  if (normalized === "webp") return ".webp";
+  return ".png";
+}
+
+function getImageApiConfig() {
+  const localConfig = safeReadJson(LOCAL_CONFIG_FILE) || {};
+  const apiKey =
+    process.env.OPENAI_IMAGE_API_KEY ||
+    process.env.OPENAI_API_KEY ||
+    localConfig.OPENAI_IMAGE_API_KEY ||
+    localConfig.OPENAI_API_KEY ||
+    "";
+  const generationsUrl =
+    process.env.OPENAI_IMAGES_GENERATIONS_URL ||
+    localConfig.OPENAI_IMAGES_GENERATIONS_URL ||
+    "https://api.openai.com/v1/images/generations";
+  const model = normalizeImageAssetModel(process.env.IMAGE_ASSET_MODEL || localConfig.IMAGE_ASSET_MODEL) || DEFAULT_IMAGE_ASSET_MODEL;
+  return {apiKey, generationsUrl, model};
+}
+
+function extractImageUrlFromContent(content) {
+  const text = typeof content === "string" ? content : JSON.stringify(content || "");
+  const markdownMatch = text.match(/!\[[^\]]*]\((https?:\/\/[^)\s]+)\)/i);
+  if (markdownMatch) return markdownMatch[1];
+  const urlMatch = text.match(/https?:\/\/[^\s"'<>）)]+/i);
+  return urlMatch ? urlMatch[0] : "";
+}
+
+function downloadRemoteImage(urlText) {
+  const endpoint = new URL(urlText);
+  const transport = endpoint.protocol === "http:" ? http : https;
+  return new Promise((resolve, reject) => {
+    const req = transport.request(
+      {
+        method: "GET",
+        protocol: endpoint.protocol,
+        hostname: endpoint.hostname,
+        port: endpoint.port || undefined,
+        path: `${endpoint.pathname}${endpoint.search}`,
+        timeout: Number(process.env.IMAGE_ASSET_DOWNLOAD_TIMEOUT_MS || 120000),
+      },
+      (res) => {
+        if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+          downloadRemoteImage(new URL(res.headers.location, endpoint).toString()).then(resolve).catch(reject);
+          return;
+        }
+        if (res.statusCode < 200 || res.statusCode >= 300) {
+          reject(new Error(`Image download failed with HTTP ${res.statusCode}`));
+          return;
+        }
+        const chunks = [];
+        res.on("data", (chunk) => chunks.push(chunk));
+        res.on("end", () => {
+          resolve({
+            buffer: Buffer.concat(chunks),
+            contentType: String(res.headers["content-type"] || ""),
+            url: endpoint.toString(),
+          });
+        });
+      },
+    );
+    req.on("timeout", () => req.destroy(new Error("Image download timed out")));
+    req.on("error", reject);
+    req.end();
+  });
+}
+
+function getImageExtFromContentType(contentType = "") {
+  const normalized = String(contentType || "").toLowerCase();
+  if (normalized.includes("jpeg") || normalized.includes("jpg")) return ".jpg";
+  if (normalized.includes("webp")) return ".webp";
+  if (normalized.includes("png")) return ".png";
+  return "";
+}
+
+function requestOpenAiImageAsset({prompt, model, size, quality = "medium"}) {
+  const imageApiConfig = getImageApiConfig();
+  const apiKey = imageApiConfig.apiKey;
+  if (!apiKey) {
+    return Promise.reject(new Error("OPENAI_API_KEY or OPENAI_IMAGE_API_KEY is required in config.local.json for image asset generation"));
+  }
+  const endpoint = new URL(imageApiConfig.generationsUrl);
+  if (/\/chat\/completions$/i.test(endpoint.pathname)) {
+    const payload = JSON.stringify({
+      model: normalizeImageAssetModel(model || imageApiConfig.model),
+      messages: [{role: "user", content: prompt}],
+    });
+
+    return new Promise((resolve, reject) => {
+      const req = https.request(
+        {
+          method: "POST",
+          protocol: endpoint.protocol,
+          hostname: endpoint.hostname,
+          port: endpoint.port || undefined,
+          path: `${endpoint.pathname}${endpoint.search}`,
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+            "Content-Length": Buffer.byteLength(payload),
+          },
+          timeout: Number(process.env.IMAGE_ASSET_TIMEOUT_MS || 180000),
+        },
+        (res) => {
+          let body = "";
+          res.setEncoding("utf8");
+          res.on("data", (chunk) => {
+            body += chunk;
+          });
+          res.on("end", async () => {
+            let parsed = null;
+            try {
+              parsed = JSON.parse(body || "{}");
+            } catch {}
+            if (res.statusCode < 200 || res.statusCode >= 300) {
+              reject(new Error(parsed?.error?.message || `Image chat generation failed with HTTP ${res.statusCode}`));
+              return;
+            }
+            const content = parsed?.choices?.[0]?.message?.content || "";
+            const imageUrl = extractImageUrlFromContent(content);
+            if (!imageUrl) {
+              reject(new Error("Image chat generation returned no image URL"));
+              return;
+            }
+            try {
+              const downloaded = await downloadRemoteImage(imageUrl);
+              resolve({
+                buffer: downloaded.buffer,
+                outputFormat: getImageExtFromContentType(downloaded.contentType).replace(".", "") || path.extname(new URL(imageUrl).pathname).replace(".", "") || "png",
+                revisedPrompt: imageUrl,
+              });
+            } catch (error) {
+              reject(error);
+            }
+          });
+        },
+      );
+      req.on("timeout", () => req.destroy(new Error("Image chat generation timed out")));
+      req.on("error", reject);
+      req.write(payload);
+      req.end();
+    });
+  }
+
+  const payload = JSON.stringify({
+    model: normalizeImageAssetModel(model || imageApiConfig.model),
+    prompt,
+    size,
+    quality,
+    n: 1,
+    output_format: "png",
+  });
+
+  return new Promise((resolve, reject) => {
+    const req = https.request(
+      {
+        method: "POST",
+        protocol: endpoint.protocol,
+        hostname: endpoint.hostname,
+        port: endpoint.port || undefined,
+        path: `${endpoint.pathname}${endpoint.search}`,
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(payload),
+        },
+        timeout: Number(process.env.IMAGE_ASSET_TIMEOUT_MS || 180000),
+      },
+      (res) => {
+        let body = "";
+        res.setEncoding("utf8");
+        res.on("data", (chunk) => {
+          body += chunk;
+        });
+        res.on("end", () => {
+          let parsed = null;
+          try {
+            parsed = JSON.parse(body || "{}");
+          } catch {}
+          if (res.statusCode < 200 || res.statusCode >= 300) {
+            reject(new Error(parsed?.error?.message || `OpenAI image generation failed with HTTP ${res.statusCode}`));
+            return;
+          }
+          const image = parsed?.data?.[0] || {};
+          if (!image.b64_json) {
+            reject(new Error("OpenAI image generation returned no base64 image data"));
+            return;
+          }
+          resolve({
+            buffer: Buffer.from(image.b64_json, "base64"),
+            outputFormat: image.output_format || parsed.output_format || "png",
+            revisedPrompt: image.revised_prompt || "",
+          });
+        });
+      },
+    );
+    req.on("timeout", () => req.destroy(new Error("OpenAI image generation timed out")));
+    req.on("error", reject);
+    req.write(payload);
+    req.end();
+  });
+}
+
+function escapeSvgText(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function wrapTextLines(value, maxLength = 18, maxLines = 4) {
+  const text = String(value || "").replace(/\s+/g, " ").trim();
+  if (!text) return [];
+  const lines = [];
+  let current = "";
+  for (const char of text) {
+    if ((current + char).length > maxLength) {
+      lines.push(current);
+      current = char;
+      if (lines.length >= maxLines) break;
+    } else {
+      current += char;
+    }
+  }
+  if (current && lines.length < maxLines) lines.push(current);
+  return lines;
+}
+
+function getSlotVisualIntent(slot) {
+  const text = `${slot.id || ""} ${slot.label || ""} ${slot.prompt || ""}`.toLowerCase();
+  if (/hook|主视觉|opening|开头/.test(text)) return "hook";
+  if (/mechanism|机制|解释|chart|图表/.test(text)) return "mechanism";
+  if (/case_?01|案例 01|第一/.test(text)) return "case1";
+  if (/case_?02|案例 02|第二|转折/.test(text)) return "case2";
+  if (/case_?03|案例 03|第三|结论/.test(text)) return "case3";
+  return "general";
+}
+
+function getAspectSize(aspectRatio = "16:9") {
+  const ratio = String(aspectRatio || "16:9");
+  if (ratio === "1:1") return {width: 1200, height: 1200};
+  if (ratio === "9:16") return {width: 1080, height: 1920};
+  return {width: 1600, height: 900};
+}
+
+function composeAssetGenerationPrompt(job, slot, plan = null) {
+  const account = getAccount(job.accountId);
+  const template = getTemplateCatalogEntry(job.templateId);
+  const topic = getSafeTopicLabel(job, plan?.meta?.topic || job.topicTitle || inferJobTopic(job));
+  const hookText =
+    plan?.data?.hook?.subheadline ||
+    ensureArray(plan?.scriptSections).find((section) => section.label === "Hook")?.text ||
+    job.prompt ||
+    "";
+  const scenePurposeByIntent = {
+    hook: "strong opening visual for the first three seconds; communicate tension and risk immediately",
+    mechanism: "teaching visual that explains structure, signals, or a decision framework",
+    case1: "first case visual that supports a concrete market example",
+    case2: "second case visual emphasizing reversal, hesitation, or risk confirmation",
+    case3: "third case visual emphasizing conclusion, validation, or disciplined execution",
+    general: "supporting video material that matches the current scene",
+  };
+  const intent = getSlotVisualIntent(slot);
+  const lines = [
+    "Use case: stylized-concept",
+    `Asset type: fresh video material for ${slot.id}`,
+    `Primary request: Create a brand-new image asset for this template slot. Do not reuse local assets.`,
+    `Topic: ${topic}`,
+    `Template: ${template?.title || job.templateId || "default video template"}`,
+    `Account style: ${[account?.persona, ensureArray(account?.toneTags).join(" / "), account?.ctaStyle].filter(Boolean).join(" / ") || "clear educational voice"}`,
+    `Platform and format: ${account?.platform || "short video"} / ${job.aspectRatio || "9:16"} / slot aspect ${slot.aspectRatio || "16:9"}`,
+    `Scene purpose: ${scenePurposeByIntent[intent]}`,
+    `Slot instruction: ${slot.prompt || "Generate a useful visual for this scene."}`,
+    `Relevant script context: ${hookText}`,
+    "Composition: center-safe, readable at mobile size, keep all important subjects inside the central 70% safe area, leave clean margin around every edge",
+    "Style/medium: polished editorial digital illustration with realistic financial UI/chart mood, suitable for Remotion video compositing",
+    "Lighting/mood: analytical, tense, modern, credible",
+    "Constraints: no logos, no watermark, no readable brand names, no profit promises, no investment advice text",
+    "Text policy: do not render any large title, caption, label, subtitle, Chinese characters, numbers, or UI text in the image; Remotion will add all copy later",
+    "Avoid: cash piles, luxury cars, meme style, fake app brand UI, cluttered tiny text, poster typography, banners with words",
+  ];
+  return lines.join("\n");
+}
+
+function buildGeneratedAssetSvg(job, slot, promptText) {
+  const intent = getSlotVisualIntent(slot);
+  const {width, height} = getAspectSize(slot.aspectRatio || job.aspectRatio || "16:9");
+  const topic = getSafeTopicLabel(job, inferJobTopic(job));
+  const titleLines = wrapTextLines(slot.label || slot.id, width > height ? 20 : 12, 3);
+  const topicLines = wrapTextLines(topic, width > height ? 24 : 14, 4);
+  const colors = {
+    hook: ["#071017", "#0c6b5a", "#f04f3f"],
+    mechanism: ["#08111f", "#2563eb", "#16a34a"],
+    case1: ["#10140f", "#7c9f35", "#eab308"],
+    case2: ["#160f14", "#be3a5c", "#f97316"],
+    case3: ["#0f1720", "#0f766e", "#60a5fa"],
+    general: ["#0b1320", "#475569", "#14b8a6"],
+  }[intent];
+  const chartY = Math.round(height * 0.62);
+  const chartLeft = Math.round(width * 0.08);
+  const chartRight = Math.round(width * 0.92);
+  const chartWidth = chartRight - chartLeft;
+  const points = Array.from({length: 9}, (_, index) => {
+    const x = chartLeft + Math.round((chartWidth / 8) * index);
+    const wave = Math.sin(index * 1.15 + slot.id.length) * 0.5 + Math.cos(index * 0.7) * 0.5;
+    const y = chartY - Math.round((height * 0.16) * wave) - (index > 5 ? Math.round(height * 0.05) : 0);
+    return `${x},${y}`;
+  }).join(" ");
+  const bars = Array.from({length: 12}, (_, index) => {
+    const barWidth = Math.max(12, Math.round(chartWidth / 26));
+    const gap = Math.round((chartWidth - barWidth * 12) / 11);
+    const x = chartLeft + index * (barWidth + gap);
+    const barHeight = Math.round(height * (0.05 + ((index * 37 + slot.id.length * 11) % 100) / 900));
+    const y = chartY + Math.round(height * 0.16) - barHeight;
+    const fill = index % 3 === 0 ? colors[2] : "rgba(255,255,255,0.42)";
+    return `<rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="${Math.max(3, Math.round(barWidth / 4))}" fill="${fill}" opacity="0.82"/>`;
+  }).join("");
+  const titleSvg = titleLines
+    .map((line, index) => `<text x="${Math.round(width * 0.08)}" y="${Math.round(height * 0.14) + index * Math.round(height * 0.055)}" class="title">${escapeSvgText(line)}</text>`)
+    .join("");
+  const topicSvg = topicLines
+    .map((line, index) => `<text x="${Math.round(width * 0.08)}" y="${Math.round(height * 0.34) + index * Math.round(height * 0.04)}" class="topic">${escapeSvgText(line)}</text>`)
+    .join("");
+  const promptHash = Buffer.from(promptText).toString("base64").slice(0, 10);
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="${colors[0]}"/>
+      <stop offset="58%" stop-color="${colors[1]}"/>
+      <stop offset="100%" stop-color="#05070b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="70%" cy="28%" r="55%">
+      <stop offset="0%" stop-color="${colors[2]}" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="${colors[2]}" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="${Math.round(height * 0.012)}" stdDeviation="${Math.round(width * 0.012)}" flood-color="#000" flood-opacity="0.32"/>
+    </filter>
+    <style>
+      .title{font-family:Arial, "Microsoft YaHei", sans-serif;font-size:${Math.round(width * 0.052)}px;font-weight:800;fill:#f8fafc;letter-spacing:0}
+      .topic{font-family:Arial, "Microsoft YaHei", sans-serif;font-size:${Math.round(width * 0.03)}px;font-weight:700;fill:rgba(248,250,252,.82);letter-spacing:0}
+      .meta{font-family:Arial, sans-serif;font-size:${Math.round(width * 0.018)}px;font-weight:700;fill:rgba(248,250,252,.58);letter-spacing:0}
+    </style>
+  </defs>
+  <rect width="${width}" height="${height}" fill="url(#bg)"/>
+  <rect width="${width}" height="${height}" fill="url(#glow)"/>
+  <g opacity="0.18">
+    ${Array.from({length: 8}, (_, index) => `<line x1="0" y1="${Math.round((height / 8) * index)}" x2="${width}" y2="${Math.round((height / 8) * index)}" stroke="#fff" stroke-width="1"/>`).join("")}
+    ${Array.from({length: 8}, (_, index) => `<line x1="${Math.round((width / 8) * index)}" y1="0" x2="${Math.round((width / 8) * index)}" y2="${height}" stroke="#fff" stroke-width="1"/>`).join("")}
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="${Math.round(width * 0.055)}" y="${Math.round(height * 0.08)}" width="${Math.round(width * 0.58)}" height="${Math.round(height * 0.32)}" rx="${Math.round(width * 0.02)}" fill="rgba(2,6,23,.48)" stroke="rgba(255,255,255,.16)"/>
+    ${titleSvg}
+    ${topicSvg}
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="${chartLeft}" y="${Math.round(height * 0.48)}" width="${chartWidth}" height="${Math.round(height * 0.34)}" rx="${Math.round(width * 0.018)}" fill="rgba(2,6,23,.52)" stroke="rgba(255,255,255,.18)"/>
+    ${bars}
+    <polyline points="${points}" fill="none" stroke="${colors[2]}" stroke-width="${Math.max(5, Math.round(width * 0.008))}" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${points.split(" ").at(-1).split(",")[0]}" cy="${points.split(" ").at(-1).split(",")[1]}" r="${Math.round(width * 0.012)}" fill="${colors[2]}"/>
+  </g>
+  <text x="${Math.round(width * 0.08)}" y="${Math.round(height * 0.9)}" class="meta">AI FRESH ASSET / ${escapeSvgText(slot.id)} / ${promptHash}</text>
+</svg>
+`;
+}
+
+async function generateFreshAssetForSlot(job, slotId, options = {}) {
+  const artifacts = ensureJobArtifactShape(job);
+  const plan = safeReadJson(artifacts.planPath);
+  const bundle = ensureJobAssetPlan(job, plan, {autoBindLocal: false});
+  const slot = findAssetSlot(bundle.assetPlan, slotId);
+  if (!slot) throw new Error("Asset slot not found");
+  const existing = bundle.assetManifest.items.find((item) => item.slotId === slotId);
+  if (existing?.locked && !options.force) {
+    throw new Error("Asset slot is locked");
+  }
+
+  const promptText = composeAssetGenerationPrompt(job, slot, plan);
+  const useOpenAiImage = options.provider === "openai" || (options.provider !== "svg" && job.useAiImageAssets);
+  let imageBuffer = null;
+  let outputFormat = "svg";
+  let revisedPrompt = "";
+  if (useOpenAiImage) {
+    try {
+      const generated = await requestOpenAiImageAsset({
+        prompt: promptText,
+        model: options.model || job.imageAssetModel || getImageApiConfig().model,
+        size: getImageSizeForAsset(job, slot),
+        quality: options.quality || "medium",
+      });
+      imageBuffer = generated.buffer;
+      outputFormat = generated.outputFormat || "png";
+      revisedPrompt = generated.revisedPrompt || "";
+    } catch (error) {
+      pushLog(job, `assets: gpt-image fallback for ${slot.label} (${error.message})`);
+      outputFormat = "svg";
+    }
+  }
+
+  const fileName = normalizeGeneratedAssetFileName(slot.id, getImageExtFromFormat(outputFormat));
+  const jobAssetPath = path.join(artifacts.assetsDir, fileName);
+  const publicAssetPath = path.join(artifacts.publicAssetsDir, fileName);
+  fs.mkdirSync(artifacts.assetsDir, {recursive: true});
+  fs.mkdirSync(artifacts.publicAssetsDir, {recursive: true});
+  safeWriteText(path.join(artifacts.assetPromptDir, `${safeArchiveName(slot.id, "asset")}.txt`), promptText);
+  if (imageBuffer) {
+    fs.writeFileSync(jobAssetPath, imageBuffer);
+    fs.writeFileSync(publicAssetPath, imageBuffer);
+  } else {
+    const svg = buildGeneratedAssetSvg(job, slot, promptText);
+    safeWriteText(jobAssetPath, svg);
+    safeWriteText(publicAssetPath, svg);
+  }
+
+  const item = {
+    slotId: slot.id,
+    label: slot.label,
+    type: slot.type || "image",
+    source: imageBuffer ? "gpt-image" : "ai",
+    model: imageBuffer ? normalizeImageAssetModel(options.model || job.imageAssetModel || getImageApiConfig().model) : "local-svg",
+    sourcePath: relativeWorkspacePath(jobAssetPath),
+    sourceName: fileName,
+    path: relativeWorkspacePath(jobAssetPath),
+    url: toWorkspaceUrl(jobAssetPath),
+    renderSrc: `/generated-jobs/${encodeURIComponent(job.id)}/assets/${encodeURIComponent(fileName)}`,
+    status: options.status || "suggested",
+    locked: Boolean(options.locked ?? existing?.locked),
+    prompt: promptText,
+    revisedPrompt,
+    promptPath: relativeWorkspacePath(path.join(artifacts.assetPromptDir, `${safeArchiveName(slot.id, "asset")}.txt`)),
+    targetPath: slot.targetPath || "",
+    usedInScenes: [slot.sceneId || slot.targetPath || slot.id].filter(Boolean),
+    updatedAt: nowIso(),
+  };
+  const items = bundle.assetManifest.items.filter((entry) => entry.slotId !== slotId);
+  items.push(item);
+  const assetManifest = writeJobAssetManifest(job, {items});
+  pushLog(job, imageBuffer ? `assets: generated ${slot.label} with ${item.model}` : `assets: generated fresh ${slot.label}`);
+  persistJobSnapshot(job, "Fresh asset generated");
+  broadcastSnapshot(job);
+  return {assetPlan: bundle.assetPlan, assetManifest};
+}
+
+async function generateFreshAssetsForJob(job, options = {}) {
+  const artifacts = ensureJobArtifactShape(job);
+  const plan = safeReadJson(artifacts.planPath);
+  const bundle = ensureJobAssetPlan(job, plan, {autoBindLocal: false});
+  let assetManifest = bundle.assetManifest;
+  for (const slot of ensureArray(bundle.assetPlan.slots)) {
+    const existing = assetManifest.items.find((item) => item.slotId === slot.id);
+    if (existing?.locked && !options.force) continue;
+    const result = await generateFreshAssetForSlot(job, slot.id, {
+      force: options.force,
+      status: options.status || "suggested",
+      locked: existing?.locked,
+      provider: options.provider,
+      model: options.model,
+      quality: options.quality,
+    });
+    assetManifest = result.assetManifest;
+  }
+  pushLog(job, "assets: fresh generation completed");
+  persistJobSnapshot(job, "Fresh assets generated");
+  broadcastSnapshot(job);
+  return {assetPlan: bundle.assetPlan, assetManifest};
+}
+
+function copyAssetIntoJob(job, slot, localAsset, options = {}) {
+  const artifacts = ensureJobArtifactShape(job);
+  const sourcePath = localAsset.absolutePath || path.resolve(WORKSPACE_ROOT, localAsset.path || "");
+  const assetRoot = path.resolve(ASSET_IMAGE_ROOT);
+  const resolved = path.resolve(sourcePath);
+  if (resolved !== assetRoot && !resolved.startsWith(assetRoot + path.sep)) {
+    throw new Error("Asset source must be inside assets/images");
+  }
+  if (!fs.existsSync(resolved)) {
+    throw new Error("Asset source file not found");
+  }
+
+  fs.mkdirSync(artifacts.assetsDir, {recursive: true});
+  fs.mkdirSync(artifacts.publicAssetsDir, {recursive: true});
+  const fileName = normalizeAssetFileName(slot.id, resolved);
+  const jobAssetPath = path.join(artifacts.assetsDir, fileName);
+  const publicAssetPath = path.join(artifacts.publicAssetsDir, fileName);
+  fs.copyFileSync(resolved, jobAssetPath);
+  fs.copyFileSync(resolved, publicAssetPath);
+
+  return {
+    slotId: slot.id,
+    label: slot.label,
+    type: slot.type || "image",
+    source: options.source || "local",
+    sourcePath: relativeWorkspacePath(resolved),
+    sourceName: path.basename(resolved),
+    path: relativeWorkspacePath(jobAssetPath),
+    url: toWorkspaceUrl(jobAssetPath),
+    renderSrc: `/generated-jobs/${encodeURIComponent(job.id)}/assets/${encodeURIComponent(fileName)}`,
+    status: options.status || "suggested",
+    locked: Boolean(options.locked),
+    prompt: slot.prompt || "",
+    targetPath: slot.targetPath || "",
+    usedInScenes: [slot.sceneId || slot.targetPath || slot.id].filter(Boolean),
+    updatedAt: nowIso(),
+  };
+}
+
+function ensureJobAssetPlan(job, plan = null, options = {}) {
+  const artifacts = ensureJobArtifactShape(job);
+  fs.mkdirSync(artifacts.assetsDir, {recursive: true});
+  fs.mkdirSync(artifacts.publicAssetsDir, {recursive: true});
+
+  const existingPlan = readJobAssetPlan(job);
+  const assetPlan = existingPlan?.slots?.length ? existingPlan : buildAssetPlan(job, plan);
+  safeWriteJson(artifacts.assetPlanPath, assetPlan);
+
+  const manifest = readJobAssetManifest(job);
+  const items = [...manifest.items];
+  if (options.autoBindLocal === false) {
+    return {assetPlan, assetManifest: manifest};
+  }
+  for (const slot of ensureArray(assetPlan.slots)) {
+    const current = items.find((item) => item.slotId === slot.id);
+    if (current?.locked || (current?.path && fs.existsSync(path.resolve(WORKSPACE_ROOT, current.path)))) {
+      continue;
+    }
+    const localAsset = pickLocalAssetForSlot(slot);
+    if (!localAsset) continue;
+    const nextItem = copyAssetIntoJob(job, slot, localAsset, {status: "suggested", locked: false});
+    const index = items.findIndex((item) => item.slotId === slot.id);
+    if (index === -1) items.push(nextItem);
+    else items[index] = {...items[index], ...nextItem, locked: Boolean(items[index].locked)};
+  }
+
+  const nextManifest = writeJobAssetManifest(job, {items});
+  return {assetPlan, assetManifest: nextManifest};
+}
+
+function findAssetSlot(assetPlan, slotId) {
+  return ensureArray(assetPlan?.slots).find((slot) => slot.id === slotId) || null;
+}
+
+function bindLocalAssetToJob(job, slotId, sourcePath, options = {}) {
+  const bundle = ensureJobAssetPlan(job);
+  const slot = findAssetSlot(bundle.assetPlan, slotId);
+  if (!slot) throw new Error("Asset slot not found");
+  const existing = bundle.assetManifest.items.find((item) => item.slotId === slotId);
+  if (existing?.locked && !options.force) {
+    throw new Error("Asset slot is locked");
+  }
+  const sourceRelative = String(sourcePath || "").replace(/^\/workspace\//, "");
+  const absolutePath = path.resolve(WORKSPACE_ROOT, sourceRelative);
+  const item = copyAssetIntoJob(
+    job,
+    slot,
+    {absolutePath, path: sourceRelative, name: path.basename(sourceRelative), kind: classifyAsset(path.basename(sourceRelative))},
+    {source: "local", status: options.status || "approved", locked: Boolean(options.locked ?? existing?.locked)},
+  );
+  const items = bundle.assetManifest.items.filter((entry) => entry.slotId !== slotId);
+  items.push(item);
+  const assetManifest = writeJobAssetManifest(job, {items});
+  pushLog(job, `assets: bound ${slot.label} -> ${item.sourceName}`);
+  persistJobSnapshot(job, "Asset bound");
+  broadcastSnapshot(job);
+  return {assetPlan: bundle.assetPlan, assetManifest};
+}
+
+function updateJobAssetSlot(job, slotId, patch = {}) {
+  const bundle = ensureJobAssetPlan(job);
+  const slot = findAssetSlot(bundle.assetPlan, slotId);
+  if (!slot) throw new Error("Asset slot not found");
+  const items = bundle.assetManifest.items.map((item) =>
+    item.slotId === slotId
+      ? {
+          ...item,
+          status: patch.status || item.status || "suggested",
+          locked: Object.prototype.hasOwnProperty.call(patch, "locked") ? Boolean(patch.locked) : Boolean(item.locked),
+          updatedAt: nowIso(),
+        }
+      : item,
+  );
+  const assetManifest = writeJobAssetManifest(job, {items});
+  pushLog(job, `assets: updated ${slot.label}`);
+  persistJobSnapshot(job, "Asset slot updated");
+  broadcastSnapshot(job);
+  return {assetPlan: bundle.assetPlan, assetManifest};
+}
+
+function resetUnlockedJobAssets(job) {
+  const manifest = readJobAssetManifest(job);
+  const lockedItems = ensureArray(manifest.items).filter((item) => item.locked);
+  const assetManifest = writeJobAssetManifest(job, {items: lockedItems});
+  pushLog(job, "assets: reset unlocked assets before image model generation");
+  return assetManifest;
+}
+
+function setObjectPath(target, pathLabel, value) {
+  const parts = String(pathLabel || "").split(".").filter(Boolean);
+  if (!parts.length) return;
+  let node = target;
+  for (let index = 0; index < parts.length - 1; index += 1) {
+    const key = /^\d+$/.test(parts[index]) ? Number(parts[index]) : parts[index];
+    if (node[key] === undefined || node[key] === null) {
+      node[key] = /^\d+$/.test(parts[index + 1]) ? [] : {};
+    }
+    node = node[key];
+  }
+  const leaf = parts[parts.length - 1];
+  node[/^\d+$/.test(leaf) ? Number(leaf) : leaf] = value;
+}
+
+function applyAssetManifestToPlan(job, plan, assetManifest = readJobAssetManifest(job)) {
+  const nextPlan = JSON.parse(JSON.stringify(plan || {}));
+  ensureArray(assetManifest.items).forEach((item) => {
+    if (!item?.targetPath || !item.renderSrc) return;
+    setObjectPath(nextPlan, item.targetPath, item.renderSrc);
+  });
+  nextPlan.assets = {
+    manifestVersion: assetManifest.version || "asset-manifest-v1",
+    updatedAt: assetManifest.updatedAt || "",
+    items: ensureArray(assetManifest.items).map((item) => ({
+      slotId: item.slotId,
+      label: item.label,
+      source: item.source,
+      status: item.status,
+      locked: Boolean(item.locked),
+      renderSrc: item.renderSrc,
+      targetPath: item.targetPath,
+    })),
+  };
+  return nextPlan;
+}
+
+function validateJobAssetsForRender(job) {
+  const bundle = ensureJobAssetPlan(job, safeReadJson(ensureJobArtifactShape(job).planPath));
+  const manifestBySlot = new Map(ensureArray(bundle.assetManifest.items).map((item) => [item.slotId, item]));
+  const missing = ensureArray(bundle.assetPlan.slots).filter((slot) => {
+    if (!slot.required) return false;
+    const item = manifestBySlot.get(slot.id);
+    return !item?.path || !fs.existsSync(path.resolve(WORKSPACE_ROOT, item.path));
+  });
+  if (missing.length) {
+    throw new Error(`Required assets are missing: ${missing.map((slot) => slot.label).join(", ")}`);
+  }
+  return bundle;
+}
+
+function buildAssetStatus(job) {
+  const assetPlan = readJobAssetPlan(job);
+  const assetManifest = readJobAssetManifest(job);
+  const slots = ensureArray(assetPlan?.slots);
+  const items = ensureArray(assetManifest.items);
+  const bound = items.filter((item) => item.path && fs.existsSync(path.resolve(WORKSPACE_ROOT, item.path))).length;
+  const required = slots.filter((slot) => slot.required).length;
+  const missingRequired = slots.filter((slot) => {
+    if (!slot.required) return false;
+    const item = items.find((entry) => entry.slotId === slot.id);
+    return !item?.path || !fs.existsSync(path.resolve(WORKSPACE_ROOT, item.path));
+  }).length;
+  return {
+    slotCount: slots.length,
+    boundCount: bound,
+    requiredCount: required,
+    missingRequiredCount: missingRequired,
+    lockedCount: items.filter((item) => item.locked).length,
+  };
+}
+
+function buildJobAssetPayload(job) {
+  const bundle = ensureJobAssetPlan(job, safeReadJson(ensureJobArtifactShape(job).planPath));
+  return {
+    assetPlan: bundle.assetPlan,
+    assetManifest: bundle.assetManifest,
+    assetStatus: buildAssetStatus(job),
+    localAssets: listAssets(),
+  };
+}
+
+function extractJobErrorMessage(job) {
+  const logs = ensureArray(job.logs).slice().reverse();
+  const line =
+    logs.find((item) => /pipeline error:/i.test(String(item || ""))) ||
+    logs.find((item) => /(error|failed|失败)/i.test(String(item || ""))) ||
+    "";
+  const text = String(line || job.preview?.subtitle || "").replace(/^.*pipeline error:\s*/i, "").trim();
+  if (!text || text === "undefined") return "";
+  return text.slice(0, 360);
+}
+
 function persistJobSnapshot(job, message = "") {
   const artifacts = ensureJobArtifactShape(job);
   safeWriteJson(path.join(artifacts.workspaceDir, "console-job.json"), publicEntitySnapshot(job));
@@ -529,6 +1551,12 @@ function persistJobSnapshot(job, message = "") {
       plan: fs.existsSync(artifacts.planPath) ? relativeWorkspacePath(artifacts.planPath) : null,
       subtitles: fs.existsSync(artifacts.subtitlesPath) ? relativeWorkspacePath(artifacts.subtitlesPath) : null,
       audio: fs.existsSync(artifacts.publicVoiceoverPath) ? relativeWorkspacePath(artifacts.publicVoiceoverPath) : null,
+      asset_plan: fs.existsSync(artifacts.assetPlanPath) ? relativeWorkspacePath(artifacts.assetPlanPath) : null,
+      asset_manifest: fs.existsSync(artifacts.assetManifestPath) ? relativeWorkspacePath(artifacts.assetManifestPath) : null,
+      viral_breakdown: fs.existsSync(artifacts.viralBreakdownPath) ? relativeWorkspacePath(artifacts.viralBreakdownPath) : null,
+      module_match_report: fs.existsSync(artifacts.moduleMatchReportPath) ? relativeWorkspacePath(artifacts.moduleMatchReportPath) : null,
+      replication_plan: fs.existsSync(artifacts.replicationPlanPath) ? relativeWorkspacePath(artifacts.replicationPlanPath) : null,
+      compile_report: fs.existsSync(artifacts.compileReportPath) ? relativeWorkspacePath(artifacts.compileReportPath) : null,
       poster: fs.existsSync(artifacts.posterPath) ? relativeWorkspacePath(artifacts.posterPath) : null,
       video: fs.existsSync(artifacts.outputVideoPath) ? relativeWorkspacePath(artifacts.outputVideoPath) : null,
     },
@@ -957,6 +1985,7 @@ function normalizeJobConfig(input = {}, prompt = "") {
     "new_signals";
   const template = getTemplateCatalogEntry(templateId) || getTemplateCatalogEntry("new_signals") || null;
   const presetIds = new Set(getInstructionPresets().map((preset) => preset.id));
+  const localConfig = safeReadJson(LOCAL_CONFIG_FILE) || {};
   return {
     accountId: account?.id || "",
     templateId,
@@ -967,6 +1996,10 @@ function normalizeJobConfig(input = {}, prompt = "") {
     instructionScope: input.instructionScope === "session" ? "session" : "run",
     durationSec: Number(input.durationSec || account?.defaultDurationSec || template?.defaultDurationSec || 60),
     aspectRatio: input.aspectRatio || account?.aspectRatio || template?.aspectRatio || "9:16",
+    subtitleFontSize: normalizeSubtitleFontSize(input.subtitleFontSize || localConfig.SUBTITLE_FONT_SIZE, 28),
+    subtitleColor: normalizeSubtitleColor(input.subtitleColor || localConfig.SUBTITLE_COLOR, "#ffffff"),
+    useAiImageAssets: Boolean(input.useAiImageAssets || localConfig.USE_AI_IMAGE_ASSETS),
+    imageAssetModel: normalizeImageAssetModel(input.imageAssetModel || localConfig.IMAGE_ASSET_MODEL),
   };
 }
 
@@ -1028,6 +2061,8 @@ function applyJobConfig(job, input = {}) {
       instructionScope: job.instructionScope,
       durationSec: job.durationSec,
       aspectRatio: job.aspectRatio,
+      subtitleFontSize: job.subtitleFontSize,
+      subtitleColor: job.subtitleColor,
       ...input,
     },
     job.prompt,
@@ -1045,6 +2080,10 @@ function applyJobConfig(job, input = {}) {
   job.instructionScope = config.instructionScope;
   job.durationSec = config.durationSec;
   job.aspectRatio = config.aspectRatio;
+  job.subtitleFontSize = normalizeSubtitleFontSize(config.subtitleFontSize, 28);
+  job.subtitleColor = normalizeSubtitleColor(config.subtitleColor, "#ffffff");
+  job.useAiImageAssets = Boolean(config.useAiImageAssets);
+  job.imageAssetModel = normalizeImageAssetModel(config.imageAssetModel);
   job.scriptSections = buildScriptSections(job.prompt, config);
 
   if (job.preview) {
@@ -1107,7 +2146,57 @@ function defaultPreview(title = "等待输入视频需求") {
   };
 }
 
+function makeViralReplicationSteps(stageIndex = 0) {
+  const definitions = [
+    {
+      title: "准备参考分析",
+      detail: "读取已有 analysis.json / summary.json，并写入当前复刻任务目录。",
+    },
+    {
+      title: "生成 viral_breakdown.json",
+      detail: "把参考视频拆解为 Hook、分段、节奏、字幕、音频和可复刻结构。",
+    },
+    {
+      title: "匹配本地模板模块",
+      detail: "用 data/module_registry.json 规则打分，生成 module_match_report.json。",
+    },
+    {
+      title: "生成 replication_plan.json",
+      detail: "确定目标模板、风格、复刻强度、版权边界和 sceneMapping。",
+    },
+    {
+      title: "编译预览渲染参数",
+      detail: "输出 video_plan.json、asset_plan.json、render-props.json 和 compile_report.json。",
+    },
+    {
+      title: "文案变体重写",
+      detail: "生成并应用 copy_rewrite.<variant>.json，输出改写后的视频计划和口播单元。",
+    },
+    {
+      title: "生成画面素材",
+      detail: "按素材 Provider 顺序生成图片，优先使用 config.local.json 中的 local_api。",
+    },
+    {
+      title: "生成配音与字幕",
+      detail: "输出 voiceover_package、音频/字幕对齐和配音版 render props。",
+    },
+    {
+      title: "渲染最终 MP4",
+      detail: "合并素材和配音参数，调用 Remotion 输出成片和 render_package。",
+    },
+  ];
+
+  return definitions.map((step, index) => {
+    let status = "waiting";
+    if (stageIndex > 0 && index < stageIndex) status = "done";
+    if (stageIndex > 0 && index === stageIndex) status = "running";
+    return {...step, status};
+  });
+}
+
 function createRuntimeJob(prompt, configInput = {}) {
+  const jobType = configInput.type === "viral_replication" ? "viral_replication" : "video_generation";
+  const replicationInput = configInput.replication && typeof configInput.replication === "object" ? configInput.replication : {};
   const initialConfig = normalizeJobConfig(
     {
       ...configInput,
@@ -1120,6 +2209,7 @@ function createRuntimeJob(prompt, configInput = {}) {
   const title = /假突破/.test(prompt) ? "假突破交易教育短视频" : topicTitle || String(prompt || "").slice(0, 22) || "新建视频任务";
   const job = {
     id,
+    type: jobType,
     source: "runtime",
     title,
     prompt,
@@ -1129,20 +2219,44 @@ function createRuntimeJob(prompt, configInput = {}) {
     renderCompositionId: "",
     aspectRatio: initialConfig.aspectRatio,
     durationSec: initialConfig.durationSec,
+    subtitleFontSize: normalizeSubtitleFontSize(initialConfig.subtitleFontSize, 28),
+    subtitleColor: normalizeSubtitleColor(initialConfig.subtitleColor, "#ffffff"),
     accountId: initialConfig.accountId,
     templateLocked: initialConfig.templateLocked,
     activePresetIds: initialConfig.activePresetIds,
     openInstruction: initialConfig.openInstruction,
     instructionScope: initialConfig.instructionScope,
+    useAiImageAssets: Boolean(initialConfig.useAiImageAssets),
+    imageAssetModel: normalizeImageAssetModel(initialConfig.imageAssetModel) || getImageApiConfig().model,
+    replication:
+      jobType === "viral_replication"
+        ? {
+            sourceId: String(replicationInput.sourceId || configInput.sourceId || "").trim(),
+            analysisPath: String(replicationInput.analysisPath || configInput.analysisPath || "").trim(),
+            summaryPath: String(replicationInput.summaryPath || configInput.summaryPath || "").trim(),
+            targetTopic: String(replicationInput.targetTopic || configInput.targetTopic || prompt || "").trim(),
+            strength: ["low", "medium", "high"].includes(replicationInput.strength) ? replicationInput.strength : "medium",
+            templateId: String(replicationInput.templateId || initialConfig.templateId || "auto").trim() || "auto",
+            styleVariant: String(replicationInput.styleVariant || "auto").trim() || "auto",
+            copyVariant: normalizeCopyRewriteVariant(replicationInput.copyVariant || replicationInput.rewriteVariant || "sharp_contrarian"),
+            deliveryMode: String(replicationInput.deliveryMode || "draft").trim() || "draft",
+            providerOrder: ensureArray(replicationInput.providerOrder).length
+              ? ensureArray(replicationInput.providerOrder)
+              : ["local_asset", "local_api", "openai_image", "svg_fallback"],
+          }
+        : null,
     outputDir: `data/jobs/${id}`,
     status: "planning",
     updatedAt: nowIso(),
     stageIndex: 1,
+    pipelineRunning: false,
+    lastPipelineAction: "",
+    failedAction: "",
     codexSessionId: null,
     messages: [],
     pendingAssistantText: "",
     codexRunning: false,
-    steps: makeVideoSteps(1),
+    steps: jobType === "viral_replication" ? makeViralReplicationSteps(0) : makeVideoSteps(1),
     logs: [
       `[${nowIso()}] system: workspace ${WORKSPACE_ROOT}`,
       `[${nowIso()}] codex: new thread created`,
@@ -1169,6 +2283,19 @@ function createRuntimeJob(prompt, configInput = {}) {
     archivedAt: "",
   };
   applyJobConfig(job, initialConfig);
+  if (jobType === "viral_replication") {
+    job.status = "draft";
+    job.stageIndex = 0;
+    job.renderCompositionId = "replicated-video-preview";
+    job.steps = makeViralReplicationSteps(0);
+    job.preview.statusText = "Replication Draft";
+    job.preview.episodeLabel = "Viral Replication";
+    job.preview.summary = "已创建爆款复刻任务，等待运行复刻 pipeline。";
+    job.preview.subtitle = job.replication?.analysisPath
+      ? `参考分析：${job.replication.analysisPath}`
+      : "请先填写 analysis.json 路径。";
+    job.preview.progress = 12;
+  }
   ensureJobArtifactShape(job);
   runtimeJobs.set(job.id, job);
   return job;
@@ -1297,6 +2424,41 @@ function resolveSessionFilePath(sessionId) {
     }
   }
   return null;
+}
+
+function ensureSessionCatalogEntry(sessionId) {
+  const normalizedSessionId = String(sessionId || "").trim();
+  if (!normalizedSessionId) return null;
+
+  const existing = sessionCatalog.get(normalizedSessionId);
+  if (existing) return existing;
+
+  const resolved = resolveSessionFilePath(normalizedSessionId);
+  if (!resolved?.filePath) return null;
+
+  const cached = sessionCatalogCache.get(normalizedSessionId) || {};
+  const meta = extractSessionMeta(resolved.filePath) || {};
+  let fileUpdatedAt = "";
+  try {
+    fileUpdatedAt = fs.statSync(resolved.filePath).mtime.toISOString();
+  } catch {}
+
+  const updatedAt = cached.updatedAt || meta.timestamp || fileUpdatedAt || nowIso();
+  const session = {
+    id: normalizedSessionId,
+    threadName: cached.threadName || `Session ${normalizedSessionId.slice(0, 8)}`,
+    updatedAt,
+    cwd: cached.cwd || meta.cwd || "",
+    archived: typeof resolved.archived === "boolean" ? resolved.archived : Boolean(cached.archived),
+    filePath: resolved.filePath,
+    previewText: String(cached.updatedAt || "") === String(updatedAt) ? cached.previewText || "" : "",
+    metaVersion: meta.cwd ? updatedAt : cached.metaVersion || "",
+    previewVersion: String(cached.updatedAt || "") === String(updatedAt) ? cached.previewVersion || "" : "",
+  };
+
+  sessionCatalog.set(session.id, session);
+  cacheSessionEntry(session);
+  return session;
 }
 
 function hydrateSessionEntry(session, options = {}) {
@@ -1444,7 +2606,7 @@ function listSessions(options = {}) {
 }
 
 function getSessionDetail(sessionId) {
-  const session = sessionCatalog.get(sessionId);
+  const session = sessionCatalog.get(sessionId) || ensureSessionCatalogEntry(sessionId);
   if (!session) return null;
   hydrateSessionEntry(session, {includePreview: true});
   persistSessionCatalogCache();
@@ -1588,7 +2750,7 @@ function loadPersistedJobs() {
         status: statusJson.status || consoleJobJson.status || "unknown",
         updatedAt: statusJson.updated_at || consoleJobJson.updatedAt || nowIso(),
         createdAt: consoleJobJson.createdAt || "",
-        stageIndex: 999,
+        stageIndex: Number(consoleJobJson.stageIndex || statusJson.stage_index || 0),
         codexSessionId: consoleJobJson.codexSessionId || null,
         planSource: planBriefJson.source || statusJson.plan_source || consoleJobJson.planSource || "",
         planFallbackReason: planBriefJson.error || statusJson.plan_fallback_reason || consoleJobJson.planFallbackReason || "",
@@ -1688,6 +2850,7 @@ function listTemplates() {
         summary: meta?.summary || "",
         description: meta?.description || meta?.summary || "",
         tags: meta?.tags || [],
+        assetSlots: getTemplateAssetSlots(entry.name),
         version: meta?.version || "v1",
         publishStatus: meta?.publishStatus || "published",
         owner: meta?.owner || "workspace",
@@ -1714,6 +2877,7 @@ function listAssets() {
     .map((entry) => ({
       name: entry.name,
       kind: classifyAsset(entry.name),
+      path: `assets/images/${entry.name}`,
       url: `/workspace/assets/images/${encodeURIComponent(entry.name)}`,
     }));
 }
@@ -1728,8 +2892,10 @@ function listCompositions() {
 }
 
 function summaryFromJob(job) {
+  const manifest = buildArtifactManifest(job);
   return {
     id: job.id,
+    type: job.type || "video_generation",
     source: job.source,
     title: job.title,
     status: job.status,
@@ -1744,10 +2910,17 @@ function summaryFromJob(job) {
     activePresetIds: ensureArray(job.activePresetIds),
     openInstruction: job.openInstruction || "",
     instructionScope: job.instructionScope || "run",
+    useAiImageAssets: Boolean(job.useAiImageAssets),
+    imageAssetModel: normalizeImageAssetModel(job.imageAssetModel) || getImageApiConfig().model,
+    replication: job.replication || null,
     outputDir: job.outputDir,
     codexSessionId: job.codexSessionId || null,
     planSource: job.planSource || "",
     planFallbackReason: job.planFallbackReason || "",
+    stageIndex: Number(job.stageIndex || 0),
+    pipelineRunning: Boolean(job.pipelineRunning),
+    lastPipelineAction: job.lastPipelineAction || "",
+    failedAction: job.failedAction || "",
     archived: Boolean(job.archived),
     archivedAt: job.archivedAt || "",
     campaignId: job.campaignId || "",
@@ -1755,10 +2928,16 @@ function summaryFromJob(job) {
     topicId: job.topicId || "",
     batchId: job.batchId || "",
     batchIndex: Number(job.batchIndex || 0),
+    hasVideo: Boolean(manifest.video?.exists),
+    screenQaStatus: getJobScreenQaStatus(job),
+    artifactManifest: manifest,
+    assetStatus: buildAssetStatus(job),
   };
 }
 
 function detailFromJob(job) {
+  const assetPlan = readJobAssetPlan(job);
+  const assetManifest = readJobAssetManifest(job);
   return {
     ...summaryFromJob(job),
     prompt: job.prompt,
@@ -1772,6 +2951,9 @@ function detailFromJob(job) {
     scriptSections: ensureArray(job.scriptSections),
     artifacts: job.artifacts || {},
     artifactManifest: buildArtifactManifest(job),
+    assetPlan,
+    assetManifest,
+    assetStatus: buildAssetStatus(job),
     planSource: job.planSource || "",
     planFallbackReason: job.planFallbackReason || "",
     archived: Boolean(job.archived),
@@ -1920,23 +3102,43 @@ function enrichBatchRunState(runState = null) {
   };
 }
 
-function batchJobSummary(job, runState = null) {
+function getBatchJobCurrentStep(job, runState = null) {
   const steps = ensureArray(job.steps);
-  const currentStep =
-    steps.find((step) => step.status === "running" || step.status === "failed") ||
-    steps.find((step) => step.status === "waiting") ||
-    steps[steps.length - 1] ||
-    null;
+  const isActive = runState?.currentJobId === job.id || Boolean(job.pipelineRunning);
+  if (isActive || job.status === "failed") {
+    return (
+      steps.find((step) => step.status === "running" || step.status === "failed") ||
+      steps.find((step) => step.status === "waiting") ||
+      steps[steps.length - 1] ||
+      null
+    );
+  }
+  if (!isJobPlanReady(job)) return {title: "等待生成计划", status: "waiting"};
+  if (!isJobTtsReady(job)) return {title: "等待批量配音", status: "waiting"};
+  if (!isJobRenderReady(job)) return {title: "等待批量渲染", status: "waiting"};
+  return {title: "视频已生成", status: "done"};
+}
+
+function batchJobSummary(job, runState = null) {
+  const currentStep = getBatchJobCurrentStep(job, runState);
   return {
     id: job.id,
     title: job.title || job.id,
     status: job.status || "unknown",
     accountId: job.accountId || "",
+    accountName: getAccount(job.accountId)?.name || job.accountId || "",
     templateId: job.templateId || "",
+    campaignId: job.campaignId || "",
+    activityId: job.activityId || "",
+    topicId: job.topicId || "",
+    topicTitle: job.topicTitle || "",
     updatedAt: job.updatedAt || "",
     planReady: isJobPlanReady(job),
     ttsReady: isJobTtsReady(job),
     renderReady: isJobRenderReady(job),
+    hasVideo: isJobRenderReady(job),
+    screenQaStatus: getJobScreenQaStatus(job),
+    artifactStatus: buildBatchArtifactStatus(job),
     currentStepTitle: currentStep?.title || "",
     currentStepStatus: currentStep?.status || "",
     outputDir: job.outputDir || "",
@@ -1947,6 +3149,8 @@ function batchJobSummary(job, runState = null) {
     currentEstimateMs: runState?.currentJobId === job.id ? Number(runState.currentJobEstimateMs || 0) : 0,
     retryArtifactAt: job.batchRetryArtifactAt || "",
     retryAction: job.batchRetryAction || "",
+    retryCount: Number(job.batchRetryCount || 0),
+    errorMessage: job.status === "failed" ? extractJobErrorMessage(job) || runState?.lastError || "" : "",
   };
 }
 
@@ -1977,6 +3181,11 @@ function summarizeBatch(batch) {
     planReady,
     ttsReady,
     renderReady,
+    topicCount: Number(batch.topicCount || ensureArray(batch.topics).length || (batch.topic ? 1 : 0)),
+    accountCount: Number(batch.accountCount || ensureArray(batch.accountIds).length || 0),
+    autoRetry: batch.autoRetry !== false,
+    maxAutoRetries: Number(batch.maxAutoRetries ?? 1),
+    autoRetryCount: Object.values(batch.autoRetryCounts || {}).reduce((sum, value) => sum + Number(value || 0), 0),
     jobIds: ensureArray(batch.jobIds),
     jobs: jobs.map((job) => batchJobSummary(job, runState)),
     failedJobs: jobs.filter((job) => job.status === "failed").map((job) => batchJobSummary(job, runState)),
@@ -2033,9 +3242,38 @@ function buildBatchPrompt(topic, account, campaign, input = {}) {
     .trim();
 }
 
+function normalizeBatchTopics(input = {}) {
+  const rawItems = Array.isArray(input.topics) && input.topics.length ? input.topics : ensureStringList(input.topic || input.topicText || "");
+  const seen = new Set();
+  return rawItems
+    .map((item) => {
+      if (item && typeof item === "object") {
+        const title = String(item.title || item.topic || item.name || "").trim();
+        return {
+          title,
+          topicId: String(item.topicId || item.id || "").trim(),
+          brief: String(item.brief || item.topicBrief || "").trim(),
+        };
+      }
+      return {
+        title: String(item || "").trim(),
+        topicId: "",
+        brief: "",
+      };
+    })
+    .filter((item) => item.title)
+    .filter((item) => {
+      const key = `${item.topicId || ""}:${item.title.toLowerCase()}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
 function createBatch(input = {}) {
-  const topic = String(input.topic || "").trim();
-  if (!topic) throw new Error("Batch topic is required");
+  const batchTopics = normalizeBatchTopics(input);
+  if (!batchTopics.length) throw new Error("Batch topic is required");
+  const topic = batchTopics[0].title;
   const campaigns = listCampaigns();
   const campaign = campaigns.find((item) => item.id === input.campaignId) || campaigns.find((item) => !item.archived) || campaigns[0] || null;
   const activities = listActivities();
@@ -2044,7 +3282,11 @@ function createBatch(input = {}) {
     activities.find((item) => !item.archived && (!campaign || item.projectId === campaign.id)) ||
     activities[0] ||
     null;
-  const sourceTopic = input.topicId ? listTopicPool().find((item) => item.id === input.topicId) : null;
+  const topicPool = listTopicPool();
+  const singleSourceTopic = input.topicId ? topicPool.find((item) => item.id === input.topicId) : null;
+  const primarySourceTopic = batchTopics[0]?.topicId
+    ? topicPool.find((item) => item.id === batchTopics[0].topicId)
+    : singleSourceTopic;
   const activeAccounts = listAccounts().filter((account) => !account.archived);
   const requestedAccountIds = ensureStringList(input.accountIds);
   const accounts = requestedAccountIds.length
@@ -2052,16 +3294,20 @@ function createBatch(input = {}) {
     : activeAccounts.slice(0, Math.min(activeAccounts.length, 3));
   if (!accounts.length) throw new Error("Batch requires at least one active account");
 
-  const batchId = `batch_${Date.now()}_${sanitizeId(topic, "topic").slice(0, 28)}`;
+  const batchSlug = batchTopics.length > 1 ? `${topic}-${batchTopics.length}-topics` : topic;
+  const batchId = `batch_${Date.now()}_${sanitizeId(batchSlug, "topic").slice(0, 28)}`;
   const createdAt = nowIso();
   const templateId = String(input.templateId || "").trim();
-  const jobs = accounts.map((account, index) => {
+  const jobs = batchTopics.flatMap((topicItem, topicIndex) =>
+    accounts.map((account, accountIndex) => {
+    const sourceTopic = topicItem.topicId ? topicPool.find((item) => item.id === topicItem.topicId) : topicIndex === 0 ? singleSourceTopic : null;
+    const topicTitle = sourceTopic?.title || topicItem.title;
     const accountTemplateId = templateId || account.defaultTemplateId || "new_signals";
     const template = getTemplateCatalogEntry(accountTemplateId) || getTemplateCatalogEntry("new_signals");
-    const prompt = buildBatchPrompt(topic, account, campaign, {
+    const prompt = buildBatchPrompt(topicTitle, account, campaign, {
       ...input,
       activity,
-      topicBrief: sourceTopic?.brief || input.topicBrief || "",
+      topicBrief: sourceTopic?.brief || topicItem.brief || input.topicBrief || "",
     });
     const job = createRuntimeJob(prompt, {
       accountId: account.id,
@@ -2069,56 +3315,78 @@ function createBatch(input = {}) {
       compositionId: template?.compositionId || account.defaultCompositionId || "",
       durationSec: Number(input.durationSec || account.defaultDurationSec || template?.defaultDurationSec || 60),
       aspectRatio: input.aspectRatio || account.aspectRatio || template?.aspectRatio || "9:16",
+      subtitleFontSize: normalizeSubtitleFontSize(input.subtitleFontSize, 28),
+      subtitleColor: normalizeSubtitleColor(input.subtitleColor, "#ffffff"),
       templateLocked: input.templateLocked !== false,
       activePresetIds: ensureArray(input.activePresetIds),
       openInstruction: String(input.openInstruction || "").trim(),
       instructionScope: "run",
+      useAiImageAssets: Boolean(input.useAiImageAssets),
+      imageAssetModel: normalizeImageAssetModel(input.imageAssetModel),
     });
-    job.title = `${topic} / ${account.name}`.slice(0, 96);
+    const batchIndex = topicIndex * accounts.length + accountIndex + 1;
+    job.title = `${topicTitle} / ${account.name}`.slice(0, 96);
     job.campaignId = campaign?.id || "";
     job.batchId = batchId;
-    job.batchIndex = index + 1;
+    job.batchIndex = batchIndex;
+    job.batchTopicIndex = topicIndex + 1;
+    job.batchAccountIndex = accountIndex + 1;
     job.createdAt = createdAt;
     job.updatedAt = createdAt;
     job.preview.episodeLabel = `${campaign?.name || "批量任务"} / ${account.name}`;
     job.preview.headline = job.title;
-    job.preview.summary = `批量任务 ${index + 1}/${accounts.length}，请先生成计划后再进入配音和渲染。`;
+    job.preview.summary = `批量任务 ${batchIndex}/${batchTopics.length * accounts.length}，选题 ${topicIndex + 1}/${batchTopics.length}，账号 ${accountIndex + 1}/${accounts.length}。`;
     job.preview.subtitle = "同题多账号任务已创建。";
     job.activityId = activity?.id || "";
-    job.topicId = sourceTopic?.id || String(input.topicId || "");
-    job.topicTitle = sourceTopic?.title || topic;
+    job.topicId = sourceTopic?.id || topicItem.topicId || (batchTopics.length === 1 ? String(input.topicId || "") : "");
+    job.topicTitle = topicTitle;
     attachMessage(job, "user", "Batch", prompt);
     attachMessage(job, "assistant", "System", "批量任务已创建。请按需生成计划、配音和渲染。");
     persistJobSnapshot(job, "批量任务已创建");
     return job;
-  });
+  }));
 
   const batch = {
     id: batchId,
-    topic,
+    topic: batchTopics.length === 1 ? topic : `${topic} 等 ${batchTopics.length} 个选题`,
     campaignId: campaign?.id || "",
     campaignName: campaign?.name || "",
     activityId: activity?.id || "",
     activityName: activity?.name || "",
-    topicId: sourceTopic?.id || String(input.topicId || ""),
-    topicTitle: sourceTopic?.title || topic,
+    topicId: batchTopics.length === 1 ? primarySourceTopic?.id || String(input.topicId || "") : "",
+    topicTitle: batchTopics.length === 1 ? primarySourceTopic?.title || topic : `${batchTopics.length} 个选题`,
+    topics: batchTopics.map((item) => ({
+      title: item.title,
+      topicId: item.topicId || "",
+      brief: item.brief || "",
+    })),
+    topicCount: batchTopics.length,
     accountIds: accounts.map((account) => account.id),
+    accountCount: accounts.length,
     templateId: templateId || "",
     jobIds: jobs.map((job) => job.id),
+    autoRetry: input.autoRetry !== false,
+    maxAutoRetries: Math.max(0, Math.min(Number(input.maxAutoRetries ?? 1), 5)),
+    autoRetryCounts: {},
     status: "draft",
     createdAt,
     updatedAt: createdAt,
     archived: false,
   };
   saveBatches([batch, ...listBatches()]);
-  if (sourceTopic?.id) {
-    updateTopic(sourceTopic.id, {status: "batched", batchId: batch.id});
-  }
+  batchTopics.forEach((topicItem, index) => {
+    const sourceTopic = topicItem.topicId ? topicPool.find((item) => item.id === topicItem.topicId) : index === 0 ? singleSourceTopic : null;
+    if (sourceTopic?.id) {
+      updateTopic(sourceTopic.id, {status: "batched", batchId: batch.id});
+    }
+  });
   appendAuditEvent("batch.created", "batch", batch.id, {
-    topic,
+    topic: batch.topic,
     campaignId: batch.campaignId,
     activityId: batch.activityId,
     topicId: batch.topicId,
+    topicCount: batch.topicCount,
+    accountCount: batch.accountCount,
     jobCount: jobs.length,
   });
   return {
@@ -2157,8 +3425,8 @@ function resolveBatchJobs(batch, options = {}) {
     .filter((job) => {
       if (force || job.status === "failed") return true;
       if (action === "generate-plan") return !isJobPlanReady(job);
-      if (action === "tts") return !isJobTtsReady(job);
-      if (action === "render") return !isJobRenderReady(job);
+      if (action === "tts") return isJobPlanReady(job) && !isJobTtsReady(job);
+      if (action === "render") return isJobTtsReady(job) && !isJobRenderReady(job);
       return false;
     });
 }
@@ -2170,6 +3438,15 @@ function getBatchActionStatus(action, runState) {
   if (action === "tts") return "voiced";
   if (action === "render") return "completed";
   return "completed";
+}
+
+function getBatchStatusFromSummary(summary) {
+  const total = Number(summary.jobCount || 0);
+  if (Number(summary.failed || 0) > 0) return Number(summary.completed || 0) > 0 || Number(summary.planReady || 0) > 0 ? "partial" : "failed";
+  if (total > 0 && Number(summary.renderReady || 0) >= total) return "completed";
+  if (total > 0 && Number(summary.ttsReady || 0) >= total) return "voiced";
+  if (total > 0 && Number(summary.planReady || 0) >= total) return "planned";
+  return "draft";
 }
 
 function getTopicStatusFromBatchStatus(batchStatus) {
@@ -2232,6 +3509,12 @@ function collectBatchArtifacts(batch, jobs = allJobs().filter((job) => job.batch
         label: item.label,
         accountId: job.accountId || "",
         accountName: getAccount(job.accountId)?.name || job.accountId || "",
+        campaignId: job.campaignId || batch.campaignId || "",
+        campaignName: batch.campaignName || job.campaignId || "",
+        activityId: job.activityId || batch.activityId || "",
+        activityName: batch.activityName || job.activityId || "",
+        topicId: job.topicId || "",
+        topicTitle: job.topicTitle || batch.topic || "",
         path: item.path,
         url: item.url,
         fileName: `${prefix}-${safeArchiveName(job.title || job.id, "job")}-${key}${ext}`,
@@ -2364,6 +3647,12 @@ function buildBatchArtifactZip(batch, filterInput = {}) {
       jobTitle: item.jobTitle,
       accountId: item.accountId || "",
       accountName: item.accountName || "",
+      campaignId: item.campaignId || "",
+      campaignName: item.campaignName || "",
+      activityId: item.activityId || "",
+      activityName: item.activityName || "",
+      topicId: item.topicId || "",
+      topicTitle: item.topicTitle || "",
       retry: {
         isRetryArtifact: Boolean(item.retryArtifactAt),
         retryArtifactAt: item.retryArtifactAt || "",
@@ -2432,6 +3721,78 @@ function buildRetryQueue(params = new URLSearchParams()) {
     );
 }
 
+function getRetryActionForJob(job) {
+  const explicit = String(job.failedAction || job.batchRetryAction || job.lastPipelineAction || "").trim();
+  if (["generate-plan", "tts", "render"].includes(explicit)) return explicit;
+  if (!isJobPlanReady(job)) return "generate-plan";
+  if (!isJobTtsReady(job)) return "tts";
+  if (!isJobRenderReady(job)) return "render";
+  return "generate-plan";
+}
+
+function markBatchRetryAttempt(job, batchId, action, label = "Batch retry attempt started") {
+  job.batchRetryBatchId = batchId;
+  job.batchRetryAction = action;
+  job.batchRetryCount = Number(job.batchRetryCount || 0) + 1;
+  job.batchLastRetryStartedAt = nowIso();
+  persistJobSnapshot(job, label);
+}
+
+function incrementBatchAutoRetry(batchId, action) {
+  const latest = getBatchById(batchId);
+  if (!latest) return null;
+  const counts = {...(latest.autoRetryCounts || {})};
+  counts[action] = Number(counts[action] || 0) + 1;
+  return updateBatchRecord(batchId, {
+    autoRetryCounts: counts,
+    autoRetryLastAction: action,
+    autoRetryLastAt: nowIso(),
+  });
+}
+
+function shouldAutoRetryBatch(batch, action, runState, options = {}) {
+  if (options.failedOnly || options.autoRetry) return false;
+  if (batch.autoRetry === false) return false;
+  if (!ensureArray(runState.failedJobIds).length) return false;
+  const maxAutoRetries = Math.max(0, Number(batch.maxAutoRetries ?? 1));
+  const count = Number(batch.autoRetryCounts?.[action] || 0);
+  return count < maxAutoRetries;
+}
+
+async function runBatchJobAction(batchId, jobId, command) {
+  const batch = getBatchById(batchId);
+  if (!batch) throw new Error("Batch not found");
+  const job = findJob(jobId);
+  if (!job || job.batchId !== batch.id) throw new Error("Batch job not found");
+  if (job.pipelineRunning) throw new Error("Job is already running");
+
+  const normalized = String(command || "").trim();
+  if (normalized === "retry-current") {
+    const action = getRetryActionForJob(job);
+    markBatchRetryAttempt(job, batchId, action);
+    await advanceJob(job, action);
+    job.batchRetryArtifactAt = nowIso();
+    persistJobSnapshot(job, "Batch job retry completed");
+    const summary = summarizeBatch(batch);
+    const updated = updateBatchRecord(batchId, {status: getBatchStatusFromSummary(summary)});
+    return {batch: detailBatch(updated), job: detailFromJob(job)};
+  }
+
+  if (normalized === "restart") {
+    markBatchRetryAttempt(job, batchId, "restart");
+    for (const action of ["generate-plan", "tts", "render"]) {
+      await advanceJob(job, action);
+    }
+    job.batchRetryArtifactAt = nowIso();
+    persistJobSnapshot(job, "Batch job restarted from head");
+    const summary = summarizeBatch(batch);
+    const updated = updateBatchRecord(batchId, {status: getBatchStatusFromSummary(summary)});
+    return {batch: detailBatch(updated), job: detailFromJob(job)};
+  }
+
+  throw new Error(`Unsupported batch job action: ${command}`);
+}
+
 async function runBatchQueue(batchId, action, options = {}) {
   let batch = getBatchById(batchId);
   if (!batch) return;
@@ -2477,6 +3838,9 @@ async function runBatchQueue(batchId, action, options = {}) {
     runState.updatedAt = nowIso();
     updateBatchRecord(batchId, {status: "running", runState: {...runState}});
     try {
+      if (options.failedOnly) {
+        markBatchRetryAttempt(job, batchId, action);
+      }
       await advanceJob(job, action);
       const finishedAt = nowIso();
       runState.durationMsByJobId[job.id] = msSince(runState.currentJobStartedAt);
@@ -2539,6 +3903,29 @@ async function runBatchQueue(batchId, action, options = {}) {
     completed: runState.completedJobIds.length,
     failed: runState.failedJobIds.length,
   });
+
+  const latestBatch = getBatchById(batchId) || batch;
+  if (shouldAutoRetryBatch(latestBatch, action, runState, options)) {
+    incrementBatchAutoRetry(batchId, action);
+    setTimeout(() => {
+      try {
+        startBatchRun(batchId, action, {failedOnly: true, autoRetry: true});
+      } catch (error) {
+        try {
+          const current = getBatchById(batchId);
+          updateBatchRecord(batchId, {
+            status: "failed",
+            runState: {
+              ...(current?.runState || {}),
+              running: false,
+              finishedAt: nowIso(),
+              lastError: error.message || String(error),
+            },
+          });
+        } catch {}
+      }
+    }, 120);
+  }
 }
 
 function startBatchRun(batchId, action, options = {}) {
@@ -2550,7 +3937,8 @@ function startBatchRun(batchId, action, options = {}) {
   if (!jobs.length) throw new Error(options.failedOnly ? "No failed jobs to retry" : "No runnable jobs in this batch");
   appendAuditEvent(options.failedOnly ? "batch.retry.started" : "batch.run.started", "batch", batchId, {
     action,
-    label: localizeBatchAction(action),
+    label: options.autoRetry ? `${localizeBatchAction(action)}自动重试` : localizeBatchAction(action),
+    auto: Boolean(options.autoRetry),
     jobCount: jobs.length,
   });
   const queuedState = {
@@ -2652,7 +4040,66 @@ function controlBatchRun(batchId, command, input = {}) {
 }
 
 function findJob(jobId) {
-  return runtimeJobs.get(jobId) || persistedJobs.get(jobId) || null;
+  const id = String(jobId || "");
+  return (
+    runtimeJobs.get(id) ||
+    persistedJobs.get(id) ||
+    [...runtimeJobs.values(), ...persistedJobs.values()].find((job) => job?.id === id) ||
+    null
+  );
+}
+
+function removeJobFromMaps(jobId) {
+  for (const map of [runtimeJobs, persistedJobs]) {
+    if (map.delete(jobId)) continue;
+    for (const [key, job] of map.entries()) {
+      if (job?.id === jobId) {
+        map.delete(key);
+        break;
+      }
+    }
+  }
+}
+
+function resolveSafeJobDirectory(job) {
+  const root = path.resolve(JOB_ROOT);
+  const requestedOutputDir = String(job.outputDir || "").trim();
+  const target = requestedOutputDir
+    ? path.resolve(WORKSPACE_ROOT, requestedOutputDir)
+    : path.resolve(JOB_ROOT, String(job.id || ""));
+  const rootReal = fs.existsSync(root) ? fs.realpathSync(root) : root;
+  if (!fs.existsSync(target)) {
+    throw new Error("Job directory not found");
+  }
+  const targetReal = fs.realpathSync(target);
+  if (targetReal === rootReal) {
+    throw new Error("Refusing to delete jobs root");
+  }
+  const prefix = rootReal.endsWith(path.sep) ? rootReal : `${rootReal}${path.sep}`;
+  if (!targetReal.startsWith(prefix)) {
+    throw new Error("Refusing to delete outside data/jobs");
+  }
+  return targetReal;
+}
+
+function deleteJobAndArtifacts(jobId) {
+  const job = findJob(jobId);
+  if (!job) throw new Error("job not found");
+  if (job.pipelineRunning || job.codexRunning || activeJobProcesses.has(job.id)) {
+    throw new Error("Job is running and cannot be deleted");
+  }
+  const targetDir = resolveSafeJobDirectory(job);
+  fs.rmSync(targetDir, {recursive: true, force: true});
+  removeJobFromMaps(job.id);
+  appendAuditEvent("job.deleted", "job", job.id, {
+    title: job.title || "",
+    outputDir: relativeWorkspacePath(targetDir),
+  });
+  return {
+    deleted: true,
+    id: job.id,
+    outputDir: relativeWorkspacePath(targetDir),
+  };
 }
 
 function writeJson(res, code, data) {
@@ -2668,16 +4115,22 @@ function writeText(res, code, text, contentType = "text/plain; charset=utf-8") {
   res.end(text);
 }
 
-function parseBody(req) {
+function parseBody(req, options = {}) {
+  const limitBytes = Number(options.limitBytes || 1_000_000);
   return new Promise((resolve, reject) => {
-    let body = "";
+    const chunks = [];
+    let byteLength = 0;
     req.on("data", (chunk) => {
-      body += chunk;
-      if (body.length > 1_000_000) {
+      const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      chunks.push(buffer);
+      byteLength += buffer.length;
+      if (byteLength > limitBytes) {
         reject(new Error("Body too large"));
+        req.destroy();
       }
     });
     req.on("end", () => {
+      const body = Buffer.concat(chunks).toString("utf8");
       if (!body) {
         resolve({});
         return;
@@ -3003,6 +4456,13 @@ function resolveWorkspacePath(urlPath) {
   return resolved;
 }
 
+function resolveVideoPublicPath(urlPath) {
+  const relative = decodeURIComponent(urlPath.replace(/^\/+/, ""));
+  const resolved = path.resolve(VIDEO_PUBLIC_ROOT, relative);
+  if (!resolved.startsWith(VIDEO_PUBLIC_ROOT)) return null;
+  return resolved;
+}
+
 function broadcastSnapshot(job) {
   const clients = sseClients.get(job.id);
   if (!clients?.size) return;
@@ -3093,7 +4553,7 @@ function buildCodexPrompt(job, latestMessage) {
 }
 
 function buildCodexBaseArgs() {
-  const args = ["--json", "--model", CODEX_MODEL, "--skip-git-repo-check"];
+  const args = ["--json", "--model", getCurrentCodexModel(), "--skip-git-repo-check"];
   if (CODEX_BYPASS_SANDBOX) {
     args.unshift("--dangerously-bypass-approvals-and-sandbox");
   } else {
@@ -3109,6 +4569,26 @@ function buildCodexArgs(job, outputFile) {
   return ["exec", ...buildCodexBaseArgs(), "-C", WORKSPACE_ROOT, "-o", outputFile];
 }
 
+function resolveCodexCommand() {
+  const homeCandidates = [USER_HOME, process.env.USERPROFILE || "", process.env.HOME || "", os.homedir() || ""].filter(Boolean);
+  const appDataCandidates = [
+    process.env.APPDATA || "",
+    ...homeCandidates.map((home) => path.join(home, "AppData", "Roaming")),
+    path.join("C:", "Users", "81422", "AppData", "Roaming"),
+  ].filter(Boolean);
+  const exeCandidates = [
+    ...appDataCandidates.map((appData) => path.join(appData, "npm", "codex.cmd")),
+    ...appDataCandidates.map((appData) => path.join(appData, "npm", "codex")),
+    LOCAL_CODEX_EXE,
+    ...homeCandidates.map((home) => path.join(home, "AppData", "Local", "OpenAI", "Codex", "bin", "codex.exe")),
+    path.join("C:", "Users", "81422", "AppData", "Local", "OpenAI", "Codex", "bin", "codex.exe"),
+  ];
+  for (const candidate of exeCandidates) {
+    if (candidate && fs.existsSync(candidate)) return candidate;
+  }
+  return process.platform === "win32" ? (CODEX_COMMAND || "codex.exe") : (CODEX_COMMAND || "codex");
+}
+
 function extractCodexErrorMessage(payload) {
   if (!payload || typeof payload !== "object") return "";
   if (payload.type === "error" && payload.error?.message) return String(payload.error.message);
@@ -3122,60 +4602,194 @@ function formatCodexFailureMessage(prefix, detail = "") {
   return normalizedDetail ? `${prefix}: ${normalizedDetail}` : prefix;
 }
 
-function spawnCodexProcess(args, promptText = "") {
-  const argsFile = path.join(os.tmpdir(), `codex-video-console-args-${Date.now()}-${Math.random().toString(36).slice(2)}.json`);
-  const promptFile = promptText
-    ? path.join(os.tmpdir(), `codex-video-console-prompt-${Date.now()}-${Math.random().toString(36).slice(2)}.txt`)
-    : "";
-  fs.writeFileSync(argsFile, JSON.stringify(args), "utf8");
-  if (promptFile) {
-    fs.writeFileSync(promptFile, String(promptText || ""), "utf8");
+function createCodexDiagnostics(kind, job, promptText = "") {
+  return {
+    kind,
+    startedAt: Date.now(),
+    promptLength: String(promptText || "").length,
+    promptKind: job?.codexSessionId ? "resume" : "exec",
+    command: resolveCodexCommand(),
+    sessionId: job?.codexSessionId || "",
+    stdoutBytes: 0,
+    stderrBytes: 0,
+    stdoutLines: 0,
+    stderrLines: 0,
+    jsonEvents: 0,
+    textEvents: 0,
+    threadStarted: false,
+    turnStarted: false,
+    firstAgentMessage: false,
+    completionSignal: false,
+    lastEventType: "",
+    lastCodexError: "",
+    lastTextLine: "",
+    lastThreadId: "",
+    lastChunkAt: 0,
+    lastEventAt: 0,
+  };
+}
+
+function describeCodexTimeout(diagnostics, timeoutMs) {
+  const lines = [];
+  const phase = diagnostics.threadStarted
+    ? diagnostics.turnStarted
+      ? diagnostics.firstAgentMessage
+        ? "已收到首个回复，等待收尾"
+        : "已进入对话轮次，等待首个回复"
+      : "线程已启动，等待 turn.started"
+    : "尚未进入 thread.started";
+  lines.push(`阶段：${phase}`);
+  lines.push(`超时：${timeoutMs}ms`);
+  lines.push(`命令：${diagnostics.command || "unknown"}`);
+  lines.push(`输入长度：${diagnostics.promptLength || 0} 字符`);
+  lines.push(`事件：JSON ${diagnostics.jsonEvents || 0} 条 / 文本 ${diagnostics.textEvents || 0} 条`);
+  if (diagnostics.lastThreadId) lines.push(`线程：${diagnostics.lastThreadId}`);
+  if (diagnostics.lastCodexError) lines.push(`最后错误：${diagnostics.lastCodexError}`);
+  if (diagnostics.lastTextLine && diagnostics.lastTextLine !== diagnostics.lastCodexError) {
+    lines.push(`最后输出：${diagnostics.lastTextLine}`);
   }
-  const bridgeCommand = [
-    "-NoProfile",
-    "-NonInteractive",
-    "-ExecutionPolicy",
-    "Bypass",
-    "-Command",
-    [
-      "$ErrorActionPreference = 'Stop'",
-      "$OutputEncoding = [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)",
-      "$exe = $env:CODEX_BRIDGE_EXE",
-      "if ([System.IO.Path]::IsPathRooted($exe)) { $exe = [System.IO.Path]::GetFullPath($exe) }",
-      "$argv = Get-Content -LiteralPath $env:CODEX_BRIDGE_ARGS_FILE -Raw -Encoding UTF8 | ConvertFrom-Json",
-      "$promptFile = $env:CODEX_BRIDGE_PROMPT_FILE",
-      "if ($promptFile -and (Test-Path -LiteralPath $promptFile)) {",
-      "  Get-Content -LiteralPath $promptFile -Raw -Encoding UTF8 | & $exe @argv",
-      "} else {",
-      "  & $exe @argv",
-      "}",
-      "exit $LASTEXITCODE",
-    ].join("; "),
-  ];
-  const child = spawn(POWERSHELL_COMMAND, bridgeCommand, {
+  if (diagnostics.stdoutBytes || diagnostics.stderrBytes) {
+    lines.push(`输出量：stdout ${diagnostics.stdoutBytes}B / stderr ${diagnostics.stderrBytes}B`);
+  }
+  if (diagnostics.lastChunkAt) {
+    const silenceMs = Math.max(0, Date.now() - diagnostics.lastChunkAt);
+    lines.push(`静默：${silenceMs}ms`);
+  }
+  return lines.join("；");
+}
+
+function updateCodexDiagnosticsFromLine(diagnostics, line, source = "stdout") {
+  const text = String(line || "").trim();
+  if (!text) return;
+  diagnostics.textEvents += 1;
+  diagnostics.lastTextLine = text;
+  diagnostics.lastEventType = source;
+  diagnostics.lastEventAt = Date.now();
+  diagnostics.lastChunkAt = Date.now();
+  if (!diagnostics.lastCodexError && /(error|failed|denied|forbidden|unauthorized|timed out)/i.test(text)) {
+    diagnostics.lastCodexError = text;
+  }
+}
+
+function updateCodexDiagnosticsFromPayload(diagnostics, payload) {
+  diagnostics.jsonEvents += 1;
+  diagnostics.lastEventType = payload?.type || "json";
+  diagnostics.lastEventAt = Date.now();
+  diagnostics.lastChunkAt = Date.now();
+  if (payload?.thread_id) diagnostics.lastThreadId = String(payload.thread_id);
+  if (payload?.type === "thread.started") diagnostics.threadStarted = true;
+  if (payload?.type === "turn.started") diagnostics.turnStarted = true;
+  if (payload?.type === "turn.completed") diagnostics.completionSignal = true;
+  if (payload?.type === "item.completed" && payload.item?.type === "agent_message" && payload.item?.text) {
+    diagnostics.firstAgentMessage = true;
+  }
+  const errorMessage = extractCodexErrorMessage(payload);
+  if (errorMessage) diagnostics.lastCodexError = errorMessage;
+}
+
+function spawnCodexProcess(args, promptText = "") {
+  const command = resolveCodexCommand();
+  const needsShell = process.platform === "win32" && /\.(cmd|bat)$/i.test(command);
+  const child = spawn(command, args, {
     cwd: WORKSPACE_ROOT,
     env: {
       ...process.env,
       PYTHONUTF8: "1",
-      CODEX_BRIDGE_EXE: CODEX_COMMAND,
-      CODEX_BRIDGE_ARGS_FILE: argsFile,
-      CODEX_BRIDGE_PROMPT_FILE: promptFile,
+      PYTHONIOENCODING: "utf-8",
     },
-    shell: false,
-    stdio: ["ignore", "pipe", "pipe"],
+    shell: needsShell,
+    stdio: ["pipe", "pipe", "pipe"],
     windowsHide: true,
   });
-  const cleanupArgsFile = () => {
-    try {
-      if (fs.existsSync(argsFile)) fs.unlinkSync(argsFile);
-    } catch {}
-    try {
-      if (promptFile && fs.existsSync(promptFile)) fs.unlinkSync(promptFile);
-    } catch {}
-  };
-  child.on("close", cleanupArgsFile);
-  child.on("error", cleanupArgsFile);
+  child.stdin?.end(String(promptText || ""), "utf8");
   return child;
+}
+
+function checkCodexRuntime({force = false} = {}) {
+  const cached = codexRuntimeCache.payload;
+  if (!force && cached && Date.now() - codexRuntimeCache.checkedAt < 30000) {
+    return Promise.resolve(cached);
+  }
+
+  const command = resolveCodexCommand();
+  const exists = path.isAbsolute(command) ? fs.existsSync(command) : null;
+  const startedAt = Date.now();
+  const payloadBase = {
+    command,
+    exists,
+    checkedAt: nowIso(),
+  };
+
+  return new Promise((resolve) => {
+    let settled = false;
+    let stdoutText = "";
+    let stderrText = "";
+    let child = null;
+
+    const finish = (payload) => {
+      if (settled) return;
+      settled = true;
+      const nextPayload = {
+        ...payloadBase,
+        latencyMs: Date.now() - startedAt,
+        ...payload,
+      };
+      codexRuntimeCache.checkedAt = Date.now();
+      codexRuntimeCache.payload = nextPayload;
+      resolve(nextPayload);
+    };
+
+    try {
+      const needsShell = process.platform === "win32" && /\.(cmd|bat)$/i.test(command);
+      child = spawn(command, ["-V"], {
+        cwd: WORKSPACE_ROOT,
+        env: {
+          ...process.env,
+          PYTHONUTF8: "1",
+          PYTHONIOENCODING: "utf-8",
+        },
+        shell: needsShell,
+        stdio: ["ignore", "pipe", "pipe"],
+        windowsHide: true,
+      });
+    } catch (error) {
+      finish({ok: false, error: error.message, code: error.code || ""});
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      try {
+        child.kill();
+      } catch {}
+      finish({ok: false, error: "Codex CLI health check timed out", code: "TIMEOUT"});
+    }, 8000);
+
+    child.stdout.on("data", (chunk) => {
+      stdoutText += chunk.toString("utf8");
+    });
+    child.stderr.on("data", (chunk) => {
+      stderrText += chunk.toString("utf8");
+    });
+    child.on("error", (error) => {
+      clearTimeout(timeout);
+      finish({ok: false, error: error.message, code: error.code || ""});
+    });
+    child.on("close", (code, signal) => {
+      clearTimeout(timeout);
+      if (settled) return;
+      const version = `${stdoutText}\n${stderrText}`.trim();
+      if (code === 0) {
+        finish({ok: true, version, code: "OK"});
+        return;
+      }
+      finish({
+        ok: false,
+        version,
+        error: version || `Codex CLI exited with code ${code}${signal ? ` signal ${signal}` : ""}`,
+        code: code === null ? signal || "UNKNOWN" : String(code),
+      });
+    });
+  });
 }
 
 function cleanCodexLogLine(line) {
@@ -3341,6 +4955,31 @@ function cleanTopicCandidate(value) {
   return clipText(cleaned, 24);
 }
 
+function isWeakTopicCandidate(value) {
+  const topic = cleanTopicCandidate(value);
+  if (!topic) return true;
+  const lower = topic.toLowerCase();
+  const chineseChars = (topic.match(/[\u4e00-\u9fff]/g) || []).length;
+  const asciiOnly = /^[\x00-\x7f]+$/.test(topic);
+  const genericPlatformTopics = new Set([
+    "youtube",
+    "bilibili",
+    "douyin",
+    "tiktok",
+    "shorts",
+    "reels",
+    "instagram",
+    "xhs",
+    "xiaohongshu",
+    "video",
+    "videos",
+  ]);
+  if (genericPlatformTopics.has(lower)) return true;
+  if (asciiOnly && !/^[A-Z0-9]{2,6}$/.test(topic) && topic.length <= 8) return true;
+  if (chineseChars < 2 && topic.length <= 4 && !/^(MACD|K线|RSI)$/i.test(topic)) return true;
+  return false;
+}
+
 function inferPrimaryTopic(prompt) {
   const cleaned = normalizeInlineText(prompt);
   if (!cleaned) return "当前主题";
@@ -3390,6 +5029,17 @@ function inferJobTopic(job) {
   return inferPrimaryTopic(job?.topicTitle || job?.prompt || job?.title || "");
 }
 
+function getSafeTopicLabel(job, candidate, fallback = "当前主题") {
+  const topic = cleanTopicCandidate(candidate || "");
+  const fallbackTopic = cleanTopicCandidate(
+    fallback || getTemplateCatalogEntry(job?.templateId)?.title || job?.title || "当前主题",
+  );
+  if (!topic) return fallbackTopic || "当前主题";
+  if (isWeakTopicCandidate(topic)) return fallbackTopic || "当前主题";
+  if (hasPromptLeakText(job, topic)) return fallbackTopic || "当前主题";
+  return topic;
+}
+
 const promptLeakPatterns = [
   /生成(?:一个|一条|一段|这个)?\s*\d*\s*(?:秒|分钟)?\s*(?:竖屏|横屏)?[^。；;\n]{0,18}(?:视频|短视频)/,
   /(?:制作|做)(?:一个|一条|一段)?\s*\d*\s*(?:秒|分钟)?\s*(?:竖屏|横屏)?[^。；;\n]{0,18}(?:视频|短视频)/,
@@ -3404,6 +5054,9 @@ const promptLeakPatterns = [
   /表达风格/,
   /强\s*Hook|强Hook|口语化|节奏快|交易信号教学|冷静交易老师/,
   /小红书|抖音|B站|YouTube\s*Shorts/i,
+  /Context|Sentiment|Consequence|Core\s*Mechanism/i,
+  /\b(?:RISK|FIRST|THEN|ACTION)\b/i,
+  /\bCase\s*\d+\b/i,
   /new_signals|codex-job|xiaohongshu|Output\s*->|data\/jobs|renderCompositionId|templateId/i,
 ];
 
@@ -3443,11 +5096,12 @@ function pickAccentWords(text, fallback = []) {
 }
 
 function buildVoiceoverUnits(job, plan) {
-  const topic = cleanTopicCandidate(plan.topic || inferJobTopic(job));
+  const topic = getSafeTopicLabel(job, plan.topic || inferJobTopic(job));
+  const topicPhrase = topic && topic !== "当前主题" ? topic : "这件事";
   const hookLine = plan.scriptSections.find((section) => section.label === "Hook")?.text || "先说最关键的判断。";
   const bodyLine = plan.scriptSections.find((section) => section.label === "Body")?.text || "把注意力收束到最核心的一步。";
   const closeLine = plan.scriptSections.find((section) => section.label === "Close")?.text || "最后给出一个明确动作。";
-  const emphasisSeed = pickAccentWords(topic, [plan.headline]);
+  const emphasisSeed = pickAccentWords(plan.headline);
 
   return [
     {
@@ -3465,7 +5119,7 @@ function buildVoiceoverUnits(job, plan) {
     {
       voiceId: "v03",
       visualSectionId: "indicator_mechanism",
-      text: `先把${topic}拆成一个能执行的判断顺序。${bodyLine}`,
+      text: `先把${topicPhrase}拆成一个能执行的判断顺序。${bodyLine}`,
       emphasisWords: pickAccentWords(bodyLine, emphasisSeed),
     },
     {
@@ -3505,7 +5159,7 @@ function buildStructuredPlanPrompt(job) {
   const account = getAccount(job.accountId);
   const template = getTemplateCatalogEntry(job.templateId);
   const prompt = String(job.prompt || "").trim();
-  const topic = inferJobTopic(job);
+  const topic = getSafeTopicLabel(job, inferJobTopic(job));
   const presetSummary = ensureArray(job.activePresetIds)
     .map((presetId) => getInstructionPresets().find((preset) => preset.id === presetId))
     .filter(Boolean)
@@ -3550,6 +5204,7 @@ function buildStructuredPlanPrompt(job) {
     "",
     "Requirements:",
     `- Treat "${topic}" as the video topic. Do not copy the full User prompt into any output field.`,
+    "- If the topic is still too close to the user prompt, shorten it further and rewrite it as a neutral subject label.",
     "- Do not include instruction text such as platform, tone, duration, or production requirements in on-screen copy.",
     "- scriptSections must contain exactly Hook, Body, Close in that order.",
     "- newsBullets, caseTitles, caseTakeaways, checklistSteps must each contain exactly 3 items.",
@@ -3588,7 +5243,8 @@ function normalizeStructuredSections(inputSections, fallbackSections) {
 function sanitizeProductionPlan(job, planInput) {
   const fallback = buildPlanDraft(job);
   const plan = JSON.parse(JSON.stringify(planInput || fallback));
-  const topic = inferJobTopic(job);
+  const topic = getSafeTopicLabel(job, inferJobTopic(job));
+  const topicPhrase = topic && topic !== "当前主题" ? topic : "这件事";
   const headline = safeDisplayText(job, plan.headline, fallback.headline, 42);
   const toneSummary = safeDisplayText(job, plan.toneSummary, fallback.toneSummary, 80);
   const scriptSections = normalizeStructuredSections(plan.scriptSections, fallback.scriptSections).map((section, index) => {
@@ -3619,50 +5275,43 @@ function sanitizeProductionPlan(job, planInput) {
   plan.data.checklist = plan.data.checklist || fallback.data.checklist;
   plan.data.close = plan.data.close || fallback.data.close;
 
-  plan.data.newsContext.kicker = safeDisplayText(job, plan.data.newsContext.kicker, fallback.data.newsContext.kicker, 28);
+  plan.data.newsContext.kicker = "";
   plan.data.newsContext.title = headline;
   plan.data.newsContext.quote = safeDisplayText(
     job,
     plan.data.newsContext.quote,
-    `先看结构，再等确认，不要把${topic}当成马上行动的理由。`,
+    `先看结构，再等确认，不要把${topicPhrase}当成马上行动的理由。`,
     64,
   );
-  plan.data.newsContext.sourceLabel = safeDisplayText(job, plan.data.newsContext.sourceLabel, "交易教育 / 风险识别", 28);
+  plan.data.newsContext.sourceLabel = "";
   plan.data.newsContext.bullets = ensureArray(plan.data.newsContext.bullets).slice(0, 3).map((item, index) =>
-    safeDisplayText(job, item, fallback.data.newsContext.bullets[index] || `记住${topic}的判断顺序`, 36),
+    safeDisplayText(job, item, fallback.data.newsContext.bullets[index] || `记住${topicPhrase}的判断顺序`, 36),
   );
   while (plan.data.newsContext.bullets.length < 3) {
     const index = plan.data.newsContext.bullets.length;
-    plan.data.newsContext.bullets.push(fallback.data.newsContext.bullets[index] || `记住${topic}的判断顺序`);
+    plan.data.newsContext.bullets.push(fallback.data.newsContext.bullets[index] || `记住${topicPhrase}的判断顺序`);
   }
-  plan.data.newsContext.tags = ensureArray(plan.data.newsContext.tags).slice(0, 3).map((tag, index) =>
-    safeDisplayText(job, tag, ["先确认", "看结构", "控风险"][index] || "控风险", 12),
-  );
-  while (plan.data.newsContext.tags.length < 3) {
-    plan.data.newsContext.tags.push(["先确认", "看结构", "控风险"][plan.data.newsContext.tags.length] || "控风险");
-  }
-  plan.data.newsContext.mediaCards = ensureArray(plan.data.newsContext.mediaCards).slice(0, 3).map((card, index) => {
-    const fallbackCard = fallback.data.newsContext.mediaCards[index] || {};
-    return {
-      ...fallbackCard,
-      ...card,
-      caption: safeDisplayText(job, card?.caption, fallbackCard.caption || `先把${topic}放进清楚的上下文里。`, 54),
-    };
-  });
+  plan.data.newsContext.tags = [];
+  plan.data.newsContext.mediaCards = [];
 
   plan.data.hook.headline = headline;
-  plan.data.hook.kicker = safeDisplayText(job, plan.data.hook.kicker, fallback.data.hook.kicker, 18);
+  plan.data.hook.kicker = "";
   plan.data.hook.subheadline = sectionText("Hook", fallback.data.hook.subheadline);
+  plan.data.hook.stat = "";
   plan.data.hook.statLabel = safeDisplayText(job, plan.data.hook.statLabel, "先确认，再进场", 18);
   plan.data.hook.dateLabel = safeDisplayText(job, plan.data.hook.dateLabel, "别让一根K线决定动作", 22);
-  plan.data.hook.sourceLabel = safeDisplayText(job, plan.data.hook.sourceLabel, "新手交易判断", 18);
+  plan.data.hook.sourceLabel = "";
+  plan.data.hook.insetImageSrc = "";
+  plan.data.hook.boardLines = [];
 
   plan.data.mechanism.title = safeDisplayText(
     job,
     plan.data.mechanism.title,
-    `把${topic}还原成一个能执行的判断顺序`,
+    `把${topicPhrase}还原成一个能执行的判断顺序`,
     42,
   );
+  plan.data.mechanism.tag = "";
+  plan.data.mechanism.imageSrc = "";
   plan.data.mechanism.description = sectionText("Body", fallback.data.mechanism.description);
   plan.data.mechanism.cards = ensureArray(plan.data.mechanism.cards).slice(0, 4).map((card, index) => {
     const fallbackCard = fallback.data.mechanism.cards[index] || {};
@@ -3679,8 +5328,10 @@ function sanitizeProductionPlan(job, planInput) {
     return {
       ...fallbackCase,
       ...item,
+      badge: ["第一步", "第二步", "第三步"][index] || `第 ${index + 1} 步`,
       title: safeDisplayText(job, item?.title, fallbackCase.title || `第 ${index + 1} 步`, 28),
       takeaway: safeDisplayText(job, item?.takeaway, fallbackCase.takeaway || `围绕${topic}做判断。`, 54),
+      imageSrc: "",
       bullets: ensureArray(item?.bullets || fallbackCase.bullets).slice(0, 3).map((bullet, bulletIndex) =>
         safeDisplayText(job, bullet, fallbackCase.bullets?.[bulletIndex] || "先判断再执行", 24),
       ),
@@ -3701,9 +5352,7 @@ function sanitizeProductionPlan(job, planInput) {
 
   plan.data.close.title = safeDisplayText(job, plan.data.close.title, fallback.data.close.title, 54);
   plan.data.close.body = sectionText("Close", fallback.data.close.body);
-  plan.data.close.tags = ensureArray(plan.data.close.tags).slice(0, 4).map((tag, index) =>
-    safeDisplayText(job, tag, fallback.data.close.tags?.[index] || "先确认", 12),
-  );
+  plan.data.close.tags = [];
   plan.previewSubtitle = safeDisplayText(job, plan.previewSubtitle, fallback.previewSubtitle || sectionText("Close"), 60);
   plan.voiceoverUnits = buildVoiceoverUnits(job, {topic, headline, scriptSections});
   return plan;
@@ -3721,6 +5370,7 @@ function buildProductionPlan(job, planBrief = null) {
   const checklistSteps = ensureStringList(brief.checklistSteps).slice(0, 3);
   const subtitleLead = clipText(brief.subtitleLead || "", 60);
   const closeHeadline = clipText(brief.closeHeadline || "", 72);
+  const topic = getSafeTopicLabel(job, inferJobTopic(job));
 
   const plan = JSON.parse(JSON.stringify(fallback));
   plan.version = planBrief ? "stage2-codex-structured-v1" : fallback.version;
@@ -3786,7 +5436,7 @@ async function generateStructuredPlan(job) {
 function buildPlanDraft(job) {
   const account = getAccount(job.accountId);
   const template = getTemplateCatalogEntry(job.templateId);
-  const topic = inferJobTopic(job);
+  const topic = getSafeTopicLabel(job, inferJobTopic(job));
   const sourceText = `${job.prompt || ""} ${topic}`;
   const isFakeBreakout = /假突破|突破失败|false break/i.test(sourceText);
   const isTradingTopic = /交易|MACD|量能|背离|K线|支撑|压力|趋势/i.test(sourceText);
@@ -3945,6 +5595,45 @@ function buildPlanDraft(job) {
   };
 }
 
+function buildTimelineFromSubtitles(subtitles = [], fallbackTimeline = REAL_PIPELINE_TIMELINE) {
+  const cues = ensureArray(subtitles)
+    .map((cue) => ({
+      visualSectionId: String(cue?.visualSectionId || "").trim(),
+      startFrame: Number(cue?.startFrame),
+      endFrame: Number(cue?.endFrame),
+    }))
+    .filter((cue) => cue.visualSectionId && Number.isFinite(cue.startFrame) && Number.isFinite(cue.endFrame));
+
+  if (!cues.length) return {...fallbackTimeline};
+
+  const byKey = new Map();
+  for (const [visualSectionId, key] of TIMELINE_SECTION_ORDER) {
+    const sectionCues = cues.filter((cue) => cue.visualSectionId === visualSectionId);
+    if (!sectionCues.length) continue;
+    byKey.set(key, {
+      startFrame: Math.min(...sectionCues.map((cue) => cue.startFrame)),
+      endFrame: Math.max(...sectionCues.map((cue) => cue.endFrame)),
+    });
+  }
+
+  if (!TIMELINE_SECTION_ORDER.every(([, key]) => byKey.has(key))) {
+    return {...fallbackTimeline};
+  }
+
+  const ordered = TIMELINE_SECTION_ORDER.map(([, key]) => ({key, ...byKey.get(key)}));
+  const timeline = {};
+  const minSceneFrames = 36;
+  const closingHoldFrames = 60;
+
+  ordered.forEach((section, index) => {
+    const next = ordered[index + 1];
+    const rawDuration = next ? next.startFrame - section.startFrame : section.endFrame + closingHoldFrames - section.startFrame;
+    timeline[section.key] = Math.max(minSceneFrames, Math.round(rawDuration));
+  });
+
+  return timeline;
+}
+
 function buildRenderProps(job, plan, subtitles = []) {
   const artifacts = ensureJobArtifactShape(job);
   return {
@@ -3968,6 +5657,14 @@ function buildRenderProps(job, plan, subtitles = []) {
         enabled: false,
       },
       subtitles,
+      subtitleStyle: {
+        fontSize: normalizeSubtitleFontSize(job.subtitleFontSize, 28),
+        color: normalizeSubtitleColor(job.subtitleColor, "#ffffff"),
+      },
+    },
+    assets: {
+      plan: readJobAssetPlan(job),
+      manifest: readJobAssetManifest(job),
     },
   };
 }
@@ -3993,7 +5690,13 @@ function collectRenderContentLeaks(job, plan, subtitles = []) {
   visit(plan?.headline, "plan.headline");
   visit(plan?.toneSummary, "plan.toneSummary");
   visit(plan?.scriptSections, "plan.scriptSections");
-  visit(plan?.voiceoverUnits, "plan.voiceoverUnits");
+  visit(
+    ensureArray(plan?.voiceoverUnits).map((unit) => ({
+      text: unit?.text || "",
+      emphasisWords: unit?.emphasisWords || [],
+    })),
+    "plan.voiceoverUnits",
+  );
   visit(plan?.previewSubtitle, "plan.previewSubtitle");
   visit(plan?.data, "plan.data");
   visit(
@@ -4010,6 +5713,62 @@ function assertRenderContentSafe(job, plan, subtitles = []) {
   throw new Error(`Render content contains prompt leakage at ${first.path}: ${first.text}`);
 }
 
+async function runScreenLeakQa(job) {
+  if (!SCREEN_QA_ENABLED) {
+    pushLog(job, "screen-qa: skipped (disabled)");
+    return;
+  }
+
+  const artifacts = ensureJobArtifactShape(job);
+  if (!fs.existsSync(artifacts.renderPropsPath)) {
+    pushLog(job, "screen-qa: skipped (render props not found)");
+    return;
+  }
+
+  fs.mkdirSync(artifacts.screenQaDir, {recursive: true});
+  job.preview.statusText = "QA";
+  job.preview.subtitle = "正在抽取关键画面并检查提示词泄漏。";
+  job.preview.progress = Math.max(Number(job.preview.progress || 0), 86);
+  job.updatedAt = nowIso();
+  broadcastSnapshot(job);
+
+  const args = [
+    path.join(VIDEO_APP_ROOT, "scripts", "screen-leak-qa.mjs"),
+    "--composition",
+    job.renderCompositionId || "codex-job-preview",
+    "--props",
+    artifacts.renderPropsPath,
+    "--output-dir",
+    artifacts.screenQaDir,
+    "--report",
+    artifacts.screenQaReportPath,
+    "--prompt",
+    job.prompt || "",
+    "--ocr",
+    SCREEN_QA_OCR_COMMAND,
+    "--npx",
+    NPX_COMMAND,
+  ];
+  if (SCREEN_QA_FRAMES) {
+    args.push("--frames", SCREEN_QA_FRAMES);
+  }
+
+  await runLoggedProcess(job, "screen-qa", process.execPath, args, {
+    cwd: VIDEO_APP_ROOT,
+    timeoutMs: 300000,
+  });
+
+  const report = safeReadJson(artifacts.screenQaReportPath);
+  if (report?.status === "failed") {
+    const leak = report.ocrLeaks?.[0] || report.textLeaks?.[0] || {};
+    throw new Error(`Screen visual QA failed: ${leak.rule || "unknown"} ${leak.text || ""}`.trim());
+  }
+  if (report?.warnings?.length) {
+    pushLog(job, `screen-qa: ${report.warnings.join("; ")}`);
+  }
+  pushLog(job, `screen-qa: report written to ${relativeWorkspacePath(artifacts.screenQaReportPath)}`);
+}
+
 function updateJobFromPlan(job, plan) {
   job.title = plan.headline;
   job.renderCompositionId = plan.meta?.renderCompositionId || "codex-job-preview";
@@ -4018,6 +5777,20 @@ function updateJobFromPlan(job, plan) {
   job.preview.headline = plan.headline;
   job.preview.summary = `${job.renderCompositionId} / ${job.durationSec}s / ${job.aspectRatio}`;
   job.preview.imageUrl = "/workspace/video-app/public/images/shared/scenario_video_breakdown.jpg";
+}
+
+function refreshJobFromPlanArtifacts(job, reason = "Plan artifacts refreshed") {
+  const artifacts = ensureJobArtifactShape(job);
+  const plan = safeReadJson(artifacts.planPath);
+  if (!plan) return false;
+  const safePlan = sanitizeProductionPlan(job, plan);
+  const subtitles = safeReadJson(artifacts.subtitlesPath) || [];
+  updateJobFromPlan(job, safePlan);
+  writeRuntimeJobFiles(job, safePlan, subtitles);
+  job.updatedAt = nowIso();
+  pushLog(job, `script: ${reason}`);
+  persistJobSnapshot(job, reason);
+  return true;
 }
 
 function runLoggedProcess(job, label, command, args, options = {}) {
@@ -4107,6 +5880,238 @@ function runLoggedProcess(job, label, command, args, options = {}) {
   });
 }
 
+function resolveWorkspaceInputPath(value) {
+  const text = String(value || "").trim();
+  if (!text) return "";
+  const resolved = path.resolve(WORKSPACE_ROOT, text);
+  const workspaceRoot = path.resolve(WORKSPACE_ROOT);
+  if (resolved !== workspaceRoot && !resolved.startsWith(workspaceRoot + path.sep)) {
+    throw new Error("Reference analysis path must be inside the workspace.");
+  }
+  return resolved;
+}
+
+function saveReplicationReferenceUpload(body = {}) {
+  const fileName = String(body.fileName || "reference.mp4").trim();
+  if (!/\.mp4$/i.test(fileName)) {
+    throw new Error("Only MP4 reference videos are supported by the first upload flow.");
+  }
+  const rawBase64 = String(body.dataBase64 || "").replace(/^data:[^;]+;base64,/, "");
+  if (!rawBase64) {
+    throw new Error("Missing uploaded video data.");
+  }
+
+  const videoBuffer = Buffer.from(rawBase64, "base64");
+  if (!videoBuffer.length) {
+    throw new Error("Uploaded video is empty.");
+  }
+
+  const title = String(body.title || path.basename(fileName, path.extname(fileName))).trim();
+  const sourceId = `viral_${Date.now()}_${safeArchiveName(path.basename(fileName, path.extname(fileName)), "reference")}`;
+  const sourceDir = path.join(SOURCE_VIDEO_ROOT, sourceId);
+  const sourcePath = path.join(sourceDir, "source.mp4");
+  const metaPath = path.join(sourceDir, "meta.json");
+  const analysisPath = path.join(ANALYSIS_ROOT, `${sourceId}.analysis.json`);
+  const summaryPath = path.join(ANALYSIS_ROOT, `${sourceId}.summary.json`);
+  fs.mkdirSync(sourceDir, {recursive: true});
+  fs.writeFileSync(sourcePath, videoBuffer);
+  safeWriteJson(metaPath, {
+    id: sourceId,
+    filename: fileName,
+    title,
+    description: String(body.description || "").trim(),
+    platform: String(body.platform || "local").trim() || "local",
+    track: "viral_replication",
+    language: String(body.language || "zh-CN").trim() || "zh-CN",
+    mimeType: String(body.mimeType || "video/mp4").trim() || "video/mp4",
+    uploadedAt: nowIso(),
+    status: "uploaded",
+  });
+
+  return {
+    sourceId,
+    title,
+    sourceVideoPath: relativeWorkspacePath(sourcePath),
+    metaPath: relativeWorkspacePath(metaPath),
+    analysisPath: relativeWorkspacePath(analysisPath),
+    summaryPath: relativeWorkspacePath(summaryPath),
+  };
+}
+
+async function runReferenceAnalysis(job) {
+  const replication = job.replication || {};
+  const sourceId = String(replication.sourceId || "").trim();
+  if (!sourceId) {
+    throw new Error("Reference sourceId missing. Upload a reference video first.");
+  }
+  const sourcePath = path.join(SOURCE_VIDEO_ROOT, sourceId, "source.mp4");
+  if (!fs.existsSync(sourcePath)) {
+    throw new Error(`Reference video not found: ${relativeWorkspacePath(sourcePath)}`);
+  }
+
+  job.type = "viral_replication";
+  job.status = "analyzing_reference";
+  job.stageIndex = 0;
+  job.steps = makeViralReplicationSteps(0);
+  job.updatedAt = nowIso();
+  job.preview.statusText = "Analyzing";
+  job.preview.progress = 16;
+  job.preview.subtitle = "正在拆解参考爆款视频，生成 analysis.json。";
+  pushLog(job, `reference-analysis: source ${sourceId}`);
+  broadcastSnapshot(job);
+
+  await runLoggedProcess(
+    job,
+    "reference-analysis",
+    PYTHON_COMMAND,
+    [path.join("scripts", "analyze_video.py"), job.id, sourceId, "auto", "data"],
+    {cwd: WORKSPACE_ROOT, timeoutMs: 1800000, env: {PYTHONIOENCODING: "utf-8"}},
+  );
+
+  const analysisPath = path.join(ANALYSIS_ROOT, `${sourceId}.analysis.json`);
+  const summaryPath = path.join(ANALYSIS_ROOT, `${sourceId}.summary.json`);
+  if (!fs.existsSync(analysisPath)) {
+    throw new Error(`Reference analysis did not produce ${relativeWorkspacePath(analysisPath)}`);
+  }
+
+  job.replication = {
+    ...replication,
+    sourceId,
+    analysisPath: relativeWorkspacePath(analysisPath),
+    summaryPath: fs.existsSync(summaryPath) ? relativeWorkspacePath(summaryPath) : "",
+  };
+  job.status = "analysis_ready";
+  job.stageIndex = 1;
+  job.steps = makeViralReplicationSteps(1);
+  job.updatedAt = nowIso();
+  job.preview.statusText = "Analysis Ready";
+  job.preview.progress = 24;
+  job.preview.subtitle = "参考视频拆解完成，可以继续生成复刻计划。";
+  persistJobSnapshot(job, "Reference video analysis completed");
+  broadcastSnapshot(job);
+}
+
+async function runViralReplication(job, options = {}) {
+  const artifacts = ensureJobArtifactShape(job);
+  const replication = job.replication || {};
+  const delivery = Boolean(options.delivery);
+  const copyVariant = normalizeCopyRewriteVariant(replication.copyVariant || replication.rewriteVariant || "sharp_contrarian");
+  let analysisPath = resolveWorkspaceInputPath(replication.analysisPath);
+  if ((!analysisPath || !fs.existsSync(analysisPath)) && replication.sourceId) {
+    await runReferenceAnalysis(job);
+    analysisPath = resolveWorkspaceInputPath(job.replication?.analysisPath);
+  }
+  if (!analysisPath || !fs.existsSync(analysisPath)) {
+    throw new Error("analysis.json not found. Provide a workspace-relative analysisPath.");
+  }
+  const nextReplication = job.replication || replication;
+  const summaryPath = nextReplication.summaryPath ? resolveWorkspaceInputPath(nextReplication.summaryPath) : "";
+  if (summaryPath && !fs.existsSync(summaryPath)) {
+    throw new Error("summary.json not found. Leave summaryPath empty or provide an existing file.");
+  }
+
+  job.type = "viral_replication";
+  job.status = "replicating";
+  job.stageIndex = 1;
+  job.steps = makeViralReplicationSteps(1);
+  job.updatedAt = nowIso();
+  job.preview.statusText = "Replicating";
+  job.preview.progress = 28;
+  job.preview.subtitle = "正在运行爆款复刻 artifact pipeline。";
+  pushLog(job, `replication: analysis ${relativeWorkspacePath(analysisPath)}`);
+  broadcastSnapshot(job);
+
+  const args = [
+    path.join("scripts", "run_viral_replication_pipeline.py"),
+    "--workspace",
+    ".",
+    "--analysis",
+    relativeWorkspacePath(analysisPath),
+    "--job-id",
+    job.id,
+    "--account-id",
+    job.accountId || "default",
+    "--template-id",
+    nextReplication.templateId || job.templateId || "auto",
+    "--style-variant",
+    nextReplication.styleVariant || "auto",
+    "--strength",
+    nextReplication.strength || "medium",
+    "--topic",
+    nextReplication.targetTopic || job.topicTitle || job.prompt || "TARGET_TOPIC",
+    "--compile",
+    "--force",
+  ];
+  if (delivery) {
+    args.push(
+      "--delivery",
+      "--rewrite-variant",
+      copyVariant,
+      "--draft-copy-rewrite",
+      "--render-output",
+      relativeWorkspacePath(artifacts.outputVideoPath),
+    );
+    if (ensureArray(nextReplication.providerOrder).length) {
+      args.push("--provider-order", ensureArray(nextReplication.providerOrder).join(","));
+    }
+  }
+  if (summaryPath) {
+    args.splice(7, 0, "--summary", relativeWorkspacePath(summaryPath));
+  }
+
+  await runLoggedProcess(job, "replication", PYTHON_COMMAND, args, {
+    cwd: WORKSPACE_ROOT,
+    timeoutMs: delivery ? 1800000 : 600000,
+    env: {PYTHONIOENCODING: "utf-8"},
+  });
+
+  const status = safeReadJson(artifacts.replicationStatusPath) || {};
+  const renderProps = safeReadJson(artifacts.renderPropsPath) || {};
+  const compileReport = safeReadJson(artifacts.compileReportPath) || {};
+  const renderPackage = safeReadJson(artifacts.renderPackagePath) || {};
+  const target = renderProps.inputProps?.target || {};
+
+  job.status = delivery
+    ? renderPackage.status === "rendered"
+      ? "completed"
+      : renderPackage.status === "dry_run"
+        ? "render-ready"
+        : "needs_review"
+    : compileReport.status === "partial"
+      ? "needs_review"
+      : "planned";
+  job.stageIndex = delivery ? 9 : 5;
+  job.steps = makeViralReplicationSteps(job.stageIndex);
+  job.renderCompositionId = renderProps.composition?.compositionId || "replicated-video-preview";
+  job.templateId = target.templateId || job.templateId;
+  job.aspectRatio = target.aspectRatio || job.aspectRatio;
+  job.durationSec = Number(target.durationSec || job.durationSec || 60);
+  job.topicTitle = renderProps.inputProps?.topic || nextReplication.targetTopic || job.topicTitle;
+  job.title = `爆款复刻：${job.topicTitle || job.title}`;
+  job.preview.statusText = delivery ? (job.status === "completed" ? "Rendered" : "Needs Review") : job.status === "needs_review" ? "Needs Review" : "Replication Ready";
+  job.preview.progress = delivery ? 100 : 68;
+  job.preview.summary = `${job.renderCompositionId} / ${job.durationSec}s / ${job.aspectRatio}`;
+  job.preview.subtitle = delivery
+    ? `Final render output: ${relativeWorkspacePath(artifacts.outputVideoPath)}`
+    : status.status === "completed"
+      ? "复刻计划已生成，可查看 artifact 或继续生成成片。"
+      : "复刻 pipeline 已返回，请检查状态文件。";
+  job.updatedAt = nowIso();
+  pushLog(job, `replication: wrote ${relativeWorkspacePath(artifacts.replicationPlanPath)}`);
+  pushLog(job, `replication: wrote ${relativeWorkspacePath(artifacts.renderPropsPath)}`);
+  if (delivery) {
+    pushLog(job, `replication: wrote ${relativeWorkspacePath(artifacts.renderPackagePath)}`);
+    pushLog(job, `replication: wrote ${relativeWorkspacePath(artifacts.outputVideoPath)}`);
+    await refreshPosterFrame(job);
+  }
+  persistJobSnapshot(job, "Viral replication pipeline completed");
+  broadcastSnapshot(job);
+}
+
+async function runViralReplicationDelivery(job) {
+  return runViralReplication(job, {delivery: true});
+}
+
 async function generatePosterFrame(job) {
   const artifacts = ensureJobArtifactShape(job);
   const ffmpegAvailable = path.isAbsolute(FFMPEG_COMMAND) ? fs.existsSync(FFMPEG_COMMAND) : true;
@@ -4172,15 +6177,20 @@ async function ensurePosterFrame(job) {
   }
 }
 
-function writeRuntimeJobFiles(job, plan, subtitles = []) {
+function writeRuntimeJobFiles(job, plan, subtitles = [], options = {}) {
   const artifacts = ensureJobArtifactShape(job);
   const safePlan = sanitizeProductionPlan(job, plan);
-  job.topicTitle = safePlan.meta?.topic || job.topicTitle || inferJobTopic(job);
-  job.renderCompositionId = safePlan.meta?.renderCompositionId || job.renderCompositionId || "codex-job-preview";
+  const assetBundle = options.assetManifest
+    ? {assetPlan: readJobAssetPlan(job) || buildAssetPlan(job, safePlan), assetManifest: options.assetManifest}
+    : ensureJobAssetPlan(job, safePlan, {autoBindLocal: job.useAiImageAssets ? false : options.autoBindLocal});
+  const planWithAssets = applyAssetManifestToPlan(job, safePlan, assetBundle.assetManifest);
+  planWithAssets.timeline = buildTimelineFromSubtitles(subtitles, planWithAssets.timeline || safePlan.timeline || REAL_PIPELINE_TIMELINE);
+  job.topicTitle = planWithAssets.meta?.topic || job.topicTitle || inferJobTopic(job);
+  job.renderCompositionId = planWithAssets.meta?.renderCompositionId || job.renderCompositionId || "codex-job-preview";
   safeWriteJson(artifacts.requestPath, {
     id: job.id,
     prompt: job.prompt,
-    topicTitle: safePlan.meta?.topic || job.topicTitle || inferJobTopic(job),
+    topicTitle: planWithAssets.meta?.topic || job.topicTitle || inferJobTopic(job),
     accountId: job.accountId,
     templateId: job.templateId,
     compositionId: job.compositionId,
@@ -4190,19 +6200,21 @@ function writeRuntimeJobFiles(job, plan, subtitles = []) {
     activePresetIds: ensureArray(job.activePresetIds),
     openInstruction: job.openInstruction || "",
     instructionScope: job.instructionScope || "run",
+    useAiImageAssets: Boolean(job.useAiImageAssets),
+    imageAssetModel: normalizeImageAssetModel(job.imageAssetModel) || getImageApiConfig().model,
     updatedAt: nowIso(),
   });
   safeWriteJson(artifacts.planBriefPath, {
-    source: safePlan.meta?.planSource || "local-fallback",
-    headline: safePlan.headline,
-    toneSummary: safePlan.toneSummary,
-    scriptSections: safePlan.scriptSections,
-    generatedAt: safePlan.generatedAt,
+    source: planWithAssets.meta?.planSource || "local-fallback",
+    headline: planWithAssets.headline,
+    toneSummary: planWithAssets.toneSummary,
+    scriptSections: planWithAssets.scriptSections,
+    generatedAt: planWithAssets.generatedAt,
   });
-  safeWriteJson(artifacts.planPath, safePlan);
-  safeWriteJson(artifacts.unitsPath, safePlan.voiceoverUnits);
-  safeWriteText(artifacts.voiceoverTextPath, safePlan.voiceoverUnits.map((unit) => unit.text).join(" "));
-  safeWriteJson(artifacts.renderPropsPath, buildRenderProps(job, safePlan, subtitles));
+  safeWriteJson(artifacts.planPath, planWithAssets);
+  safeWriteJson(artifacts.unitsPath, planWithAssets.voiceoverUnits);
+  safeWriteText(artifacts.voiceoverTextPath, planWithAssets.voiceoverUnits.map((unit) => unit.text).join(" "));
+  safeWriteJson(artifacts.renderPropsPath, buildRenderProps(job, planWithAssets, subtitles));
 }
 
 async function runGeneratePlan(job) {
@@ -4229,6 +6241,7 @@ async function runGeneratePlan(job) {
     });
     pushLog(job, "plan: structured Codex brief generated");
   } catch (error) {
+    throw error;
     fallbackReason = error.message;
     job.planSource = "local-fallback";
     job.planFallbackReason = fallbackReason;
@@ -4246,7 +6259,24 @@ async function runGeneratePlan(job) {
     job.planFallbackReason = "";
   }
   updateJobFromPlan(job, plan);
-  writeRuntimeJobFiles(job, plan, []);
+  writeRuntimeJobFiles(job, plan, [], {autoBindLocal: !job.useAiImageAssets});
+  if (job.useAiImageAssets) {
+    const imageAssetModel = normalizeImageAssetModel(job.imageAssetModel) || getImageApiConfig().model;
+    job.preview.subtitle = `正在使用 ${imageAssetModel} 生成本条视频的图片素材...`;
+    pushLog(job, `assets: generating task-specific images with ${imageAssetModel}`);
+    resetUnlockedJobAssets(job);
+    broadcastSnapshot(job);
+    const generatedAssets = await generateFreshAssetsForJob(job, {
+      force: true,
+      status: "approved",
+      provider: "openai",
+      model: imageAssetModel,
+    });
+    writeRuntimeJobFiles(job, safeReadJson(job.artifacts.planPath) || plan, [], {
+      autoBindLocal: false,
+      assetManifest: generatedAssets.assetManifest,
+    });
+  }
   job.stageIndex = Math.max(job.stageIndex, 2);
   job.steps = makeVideoSteps(2);
   job.status = "planning";
@@ -4331,6 +6361,10 @@ async function runRender(job) {
     writeRuntimeJobFiles(job, renderPlan, renderSubtitles);
   }
 
+  validateJobAssetsForRender(job);
+
+  await runScreenLeakQa(job);
+
   job.stageIndex = 5;
   job.steps = makeVideoSteps(5);
   job.status = "rendering";
@@ -4400,6 +6434,7 @@ function createRealSession(configInput = {}) {
   const outputFile = path.join(os.tmpdir(), `codex-video-console-session-${Date.now()}-last-message.txt`);
 
   return new Promise((resolve, reject) => {
+    const diagnostics = createCodexDiagnostics("session-bootstrap", {codexSessionId: ""}, SESSION_BOOTSTRAP_PROMPT);
     let stdoutRemainder = "";
     let stderrRemainder = "";
     let failed = false;
@@ -4428,6 +6463,7 @@ function createRealSession(configInput = {}) {
       if (!trimmed) return;
       try {
         const payload = JSON.parse(trimmed);
+        updateCodexDiagnosticsFromPayload(diagnostics, payload);
         const errorMessage = extractCodexErrorMessage(payload);
         if (errorMessage) {
           lastCodexError = errorMessage;
@@ -4435,7 +6471,9 @@ function createRealSession(configInput = {}) {
         if (payload.type === "thread.started" && payload.thread_id) {
           threadId = payload.thread_id;
         }
-      } catch {}
+      } catch {
+        updateCodexDiagnosticsFromLine(diagnostics, trimmed, "stdout");
+      }
     };
 
     const flushRemainders = () => {
@@ -4505,20 +6543,24 @@ function createRealSession(configInput = {}) {
     };
 
     child.stdout.on("data", (chunk) => {
+      diagnostics.stdoutBytes += chunk.length;
       stdoutRemainder += chunk.toString("utf8");
       const lines = stdoutRemainder.split(/\r?\n/);
       stdoutRemainder = lines.pop() || "";
       for (const line of lines) {
+        diagnostics.stdoutLines += 1;
         handleLine(line);
         handleCompletionCandidate(line);
       }
     });
 
     child.stderr.on("data", (chunk) => {
+      diagnostics.stderrBytes += chunk.length;
       stderrRemainder += chunk.toString("utf8");
       const lines = stderrRemainder.split(/\r?\n/);
       stderrRemainder = lines.pop() || "";
       for (const line of lines) {
+        diagnostics.stderrLines += 1;
         handleLine(line);
         handleCompletionCandidate(line);
       }
@@ -4538,7 +6580,7 @@ function createRealSession(configInput = {}) {
       try {
         child.kill();
       } catch {}
-      reject(new Error(formatCodexFailureMessage("Codex session bootstrap timed out", lastCodexError)));
+      reject(new Error(formatCodexFailureMessage("Codex session bootstrap timed out", describeCodexTimeout(diagnostics, CODEX_PROCESS_TIMEOUT_MS))));
     }, CODEX_PROCESS_TIMEOUT_MS);
 
     child.on("exit", (code, signal) => {
@@ -4563,6 +6605,7 @@ function runRealCodex(job, latestMessage) {
   const initialSessionId = job.codexSessionId;
 
   return new Promise((resolve, reject) => {
+    const diagnostics = createCodexDiagnostics("turn", job, prompt);
     job.codexRunning = true;
     pushLog(job, job.codexSessionId ? `codex: resume ${job.codexSessionId}` : "codex: exec started");
     setPendingAssistant(job, "Codex 正在处理你的消息...");
@@ -4592,6 +6635,7 @@ function runRealCodex(job, latestMessage) {
       if (!trimmed) return;
       try {
         const payload = JSON.parse(trimmed);
+        updateCodexDiagnosticsFromPayload(diagnostics, payload);
         const errorMessage = extractCodexErrorMessage(payload);
         if (errorMessage) {
           lastCodexError = errorMessage;
@@ -4604,9 +6648,11 @@ function runRealCodex(job, latestMessage) {
       } catch {
         const cleaned = cleanCodexLogLine(trimmed);
         if (cleaned) {
+          updateCodexDiagnosticsFromLine(diagnostics, cleaned, "stdout");
           pushLog(job, cleaned);
           if (!lastCodexError && /(error|failed|denied|forbidden|unauthorized)/i.test(cleaned)) {
             lastCodexError = cleaned;
+            diagnostics.lastCodexError = cleaned;
           }
         }
       }
@@ -4718,20 +6764,24 @@ function runRealCodex(job, latestMessage) {
     };
 
     child.stdout.on("data", (chunk) => {
+      diagnostics.stdoutBytes += chunk.length;
       stdoutRemainder += chunk.toString("utf8");
       const lines = stdoutRemainder.split(/\r?\n/);
       stdoutRemainder = lines.pop() || "";
       for (const line of lines) {
+        diagnostics.stdoutLines += 1;
         handleLine(line);
         handleCompletionCandidate(line);
       }
     });
 
     child.stderr.on("data", (chunk) => {
+      diagnostics.stderrBytes += chunk.length;
       stderrRemainder += chunk.toString("utf8");
       const lines = stderrRemainder.split(/\r?\n/);
       stderrRemainder = lines.pop() || "";
       for (const line of lines) {
+        diagnostics.stderrLines += 1;
         handleLine(line);
         handleCompletionCandidate(line);
       }
@@ -4758,7 +6808,7 @@ function runRealCodex(job, latestMessage) {
       try {
         child.kill();
       } catch {}
-      reject(new Error(formatCodexFailureMessage(`Codex request timed out after ${CODEX_PROCESS_TIMEOUT_MS}ms`, lastCodexError)));
+      reject(new Error(formatCodexFailureMessage(`Codex request timed out after ${CODEX_PROCESS_TIMEOUT_MS}ms`, describeCodexTimeout(diagnostics, CODEX_PROCESS_TIMEOUT_MS))));
     }, CODEX_PROCESS_TIMEOUT_MS);
 
     child.on("exit", (code, signal) => {
@@ -4779,6 +6829,9 @@ async function advanceJob(job, action) {
   }
 
   const actionMap = {
+    "analyze-reference": runReferenceAnalysis,
+    "run-replication": runViralReplication,
+    "run-replication-delivery": runViralReplicationDelivery,
     "generate-plan": runGeneratePlan,
     tts: runTts,
     render: runRender,
@@ -4789,11 +6842,14 @@ async function advanceJob(job, action) {
   }
 
   job.pipelineRunning = true;
+  job.lastPipelineAction = action;
+  job.failedAction = "";
   job.updatedAt = nowIso();
   broadcastSnapshot(job);
 
   try {
     await runner(job);
+    job.failedAction = "";
     return job;
   } catch (error) {
     const termination = getJobTerminationRequest(job.id);
@@ -4810,6 +6866,7 @@ async function advanceJob(job, action) {
       throw cancellationError;
     }
     job.status = "failed";
+    job.failedAction = action;
     job.updatedAt = nowIso();
     job.preview.statusText = "Failed";
     job.preview.subtitle = String(error?.message || "??????");
@@ -4876,6 +6933,38 @@ function handleApi(req, res, url) {
     return true;
   }
 
+  if (req.method === "GET" && url.pathname === "/api/codex/status") {
+    checkCodexRuntime({force: forceSessionRefresh})
+      .then((payload) => writeJson(res, 200, {...payload, model: getCurrentCodexModel()}))
+      .catch((error) => writeJson(res, 200, {ok: false, error: error.message, checkedAt: nowIso()}));
+    return true;
+  }
+
+  if (req.method === "GET" && url.pathname === "/api/codex/config") {
+    writeJson(res, 200, {
+      ...codexConsoleConfig,
+      model: getCurrentCodexModel(),
+      defaultModel: DEFAULT_CODEX_MODEL,
+      updatedAt: nowIso(),
+    });
+    return true;
+  }
+
+  if (req.method === "PATCH" && url.pathname === "/api/codex/config") {
+    parseBody(req)
+      .then((body) => {
+        const model = normalizeCodexModel(body.model || body.codexModel || "");
+        const config = saveCodexConsoleConfig({model});
+        writeJson(res, 200, {
+          ...config,
+          defaultModel: DEFAULT_CODEX_MODEL,
+          updatedAt: nowIso(),
+        });
+      })
+      .catch((error) => writeJson(res, 400, {error: error.message}));
+    return true;
+  }
+
   if (req.method === "GET" && url.pathname === "/api/templates") {
     writeJson(res, 200, {items: listTemplates()});
     return true;
@@ -4900,6 +6989,14 @@ function handleApi(req, res, url) {
     listMonitorAccounts()
       .then((payload) => writeJson(res, 200, payload))
       .catch((error) => writeJson(res, 500, {error: error.message}));
+    return true;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/replication/uploads") {
+    parseBody(req, {limitBytes: 350_000_000})
+      .then((body) => saveReplicationReferenceUpload(body))
+      .then((payload) => writeJson(res, 200, payload))
+      .catch((error) => writeJson(res, 400, {error: error.message}));
     return true;
   }
 
@@ -5130,6 +7227,14 @@ function handleApi(req, res, url) {
     return true;
   }
 
+  const batchJobActionMatch = url.pathname.match(/^\/api\/batches\/([^/]+)\/jobs\/([^/]+)\/actions\/([^/]+)$/);
+  if (req.method === "POST" && batchJobActionMatch) {
+    runBatchJobAction(batchJobActionMatch[1], batchJobActionMatch[2], batchJobActionMatch[3])
+      .then((payload) => writeJson(res, 200, payload))
+      .catch((error) => writeJson(res, 400, {error: error.message}));
+    return true;
+  }
+
   if (req.method === "GET" && url.pathname === "/api/retry-queue") {
     writeJson(res, 200, {items: buildRetryQueue(url.searchParams)});
     return true;
@@ -5242,7 +7347,7 @@ function handleApi(req, res, url) {
         const sessionId = String(body.sessionId || "").trim();
         const config = body.config || body;
 
-        if (sessionId) {
+        if (sessionId && !prompt) {
           loadSessionCatalog({force: forceSessionRefresh});
           const sessionJob = createSessionJob(sessionId, config);
           if (!sessionJob) {
@@ -5259,10 +7364,22 @@ function handleApi(req, res, url) {
         }
 
         const job = createRuntimeJob(prompt, config);
+        if (sessionId) {
+          loadSessionCatalog({force: forceSessionRefresh});
+          if (!getSessionDetail(sessionId)) {
+            writeJson(res, 404, {error: "session not found"});
+            return;
+          }
+          job.codexSessionId = sessionId;
+          pushLog(job, `codex: bound session ${sessionId}`);
+        }
         attachMessage(job, "user", "You", prompt);
-        broadcastSnapshot(job);
-        const reply = await runRealCodex(job, prompt);
-        attachMessage(job, "assistant", "Codex", reply);
+        attachMessage(job, "assistant", "System", "视频任务已创建。下一步请点击“生成计划”或“一键生成 MP4”。");
+        job.preview.statusText = "Draft";
+        job.preview.subtitle = "任务已创建，等待生成计划。";
+        job.preview.progress = Math.max(Number(job.preview.progress || 0), 18);
+        pushLog(job, "task: created without starting Codex chat");
+        persistJobSnapshot(job, "Task created");
         broadcastSnapshot(job);
         writeJson(res, 201, detailFromJob(job));
       })
@@ -5283,6 +7400,150 @@ function handleApi(req, res, url) {
     return true;
   }
 
+  if (req.method === "DELETE" && detailMatch) {
+    try {
+      const result = deleteJobAndArtifacts(detailMatch[1]);
+      writeJson(res, 200, result);
+    } catch (error) {
+      const code = String(error.message || "").includes("not found") ? 404 : 400;
+      writeJson(res, code, {error: error.message});
+    }
+    return true;
+  }
+
+  const jobAssetsMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)\/assets$/);
+  if (req.method === "GET" && jobAssetsMatch) {
+    const job = findJob(decodeURIComponent(jobAssetsMatch[1]));
+    if (!job) {
+      writeJson(res, 404, {error: "job not found"});
+      return true;
+    }
+    try {
+      writeJson(res, 200, {...buildJobAssetPayload(job), job: detailFromJob(job)});
+    } catch (error) {
+      writeJson(res, 400, {error: error.message});
+    }
+    return true;
+  }
+
+  const jobAssetPlanMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)\/assets\/plan$/);
+  if (req.method === "POST" && jobAssetPlanMatch) {
+    const job = findJob(decodeURIComponent(jobAssetPlanMatch[1]));
+    if (!job) {
+      writeJson(res, 404, {error: "job not found"});
+      return true;
+    }
+    try {
+      const payload = buildJobAssetPayload(job);
+      pushLog(job, "assets: asset plan refreshed");
+      persistJobSnapshot(job, "Asset plan refreshed");
+      broadcastSnapshot(job);
+      writeJson(res, 200, {...payload, job: detailFromJob(job)});
+    } catch (error) {
+      writeJson(res, 400, {error: error.message});
+    }
+    return true;
+  }
+
+  const jobAssetBindMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)\/assets\/([^/]+)\/bind$/);
+  if (req.method === "POST" && jobAssetBindMatch) {
+    const job = findJob(decodeURIComponent(jobAssetBindMatch[1]));
+    if (!job) {
+      writeJson(res, 404, {error: "job not found"});
+      return true;
+    }
+    parseBody(req)
+      .then((body) => {
+        const assetPath = body.assetPath || body.sourcePath || body.path;
+        const bundle = bindLocalAssetToJob(job, decodeURIComponent(jobAssetBindMatch[2]), assetPath, {
+          locked: body.locked,
+          status: body.status || "approved",
+          force: body.force,
+        });
+        writeJson(res, 200, {
+          ...bundle,
+          assetStatus: buildAssetStatus(job),
+          localAssets: listAssets(),
+          job: detailFromJob(job),
+        });
+      })
+      .catch((error) => writeJson(res, 400, {error: error.message}));
+    return true;
+  }
+
+  const jobAssetGenerateAllMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)\/assets\/generate-fresh$/);
+  if (req.method === "POST" && jobAssetGenerateAllMatch) {
+    const job = findJob(decodeURIComponent(jobAssetGenerateAllMatch[1]));
+    if (!job) {
+      writeJson(res, 404, {error: "job not found"});
+      return true;
+    }
+    parseBody(req)
+      .then(async (body) => {
+        const bundle = await generateFreshAssetsForJob(job, {
+          force: Boolean(body?.force),
+          status: body?.status || "suggested",
+          provider: body?.provider || (job.useAiImageAssets ? "openai" : "svg"),
+          model: body?.model || job.imageAssetModel || getImageApiConfig().model,
+        });
+        writeJson(res, 200, {
+          ...bundle,
+          assetStatus: buildAssetStatus(job),
+          localAssets: listAssets(),
+          job: detailFromJob(job),
+        });
+      })
+      .catch((error) => writeJson(res, 400, {error: error.message}));
+    return true;
+  }
+
+  const jobAssetGenerateMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)\/assets\/([^/]+)\/generate$/);
+  if (req.method === "POST" && jobAssetGenerateMatch) {
+    const job = findJob(decodeURIComponent(jobAssetGenerateMatch[1]));
+    if (!job) {
+      writeJson(res, 404, {error: "job not found"});
+      return true;
+    }
+    parseBody(req)
+      .then(async (body) => {
+        const bundle = await generateFreshAssetForSlot(job, decodeURIComponent(jobAssetGenerateMatch[2]), {
+          force: Boolean(body?.force),
+          status: body?.status || "suggested",
+          provider: body?.provider || (job.useAiImageAssets ? "openai" : "svg"),
+          model: body?.model || job.imageAssetModel || getImageApiConfig().model,
+        });
+        writeJson(res, 200, {
+          ...bundle,
+          assetStatus: buildAssetStatus(job),
+          localAssets: listAssets(),
+          job: detailFromJob(job),
+        });
+      })
+      .catch((error) => writeJson(res, 400, {error: error.message}));
+    return true;
+  }
+
+  const jobAssetSlotMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)\/assets\/([^/]+)$/);
+  if (req.method === "PATCH" && jobAssetSlotMatch) {
+    const job = findJob(decodeURIComponent(jobAssetSlotMatch[1]));
+    if (!job) {
+      writeJson(res, 404, {error: "job not found"});
+      return true;
+    }
+    parseBody(req)
+      .then((body) => {
+        const bundle = updateJobAssetSlot(job, decodeURIComponent(jobAssetSlotMatch[2]), body || {});
+        writeJson(res, 200, {
+          ...bundle,
+          assetStatus: buildAssetStatus(job),
+          localAssets: listAssets(),
+          job: detailFromJob(job),
+        });
+      })
+      .catch((error) => writeJson(res, 400, {error: error.message}));
+    return true;
+  }
+
   const configMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)\/config$/);
   if (req.method === "PATCH" && configMatch) {
     const job = findJob(configMatch[1]);
@@ -5292,7 +7553,31 @@ function handleApi(req, res, url) {
     }
     parseBody(req)
       .then((body) => {
-        applyJobConfig(job, body);
+        const payload = body && typeof body === "object" ? body : {};
+        if (Object.prototype.hasOwnProperty.call(payload, "codexSessionId")) {
+          const nextSessionId = String(payload.codexSessionId || "").trim();
+          if (nextSessionId) {
+            loadSessionCatalog({force: forceSessionRefresh});
+            if (!getSessionDetail(nextSessionId)) {
+              throw new Error("session not found");
+            }
+          }
+          const normalizedSessionId = nextSessionId || null;
+          if ((job.codexSessionId || null) !== normalizedSessionId) {
+            job.codexSessionId = normalizedSessionId;
+            pushLog(job, normalizedSessionId ? `codex: bound session ${normalizedSessionId}` : "codex: session unbound");
+          }
+        }
+        applyJobConfig(job, payload);
+        const artifacts = ensureJobArtifactShape(job);
+        if (fs.existsSync(artifacts.planPath)) {
+          const plan = safeReadJson(artifacts.planPath);
+          const subtitles = fs.existsSync(artifacts.subtitlesPath) ? safeReadJson(artifacts.subtitlesPath) || [] : [];
+          if (plan) {
+            writeRuntimeJobFiles(job, plan, subtitles, {autoBindLocal: !job.useAiImageAssets});
+            pushLog(job, `config: subtitle font size set to ${normalizeSubtitleFontSize(job.subtitleFontSize, 28)}`);
+          }
+        }
         broadcastSnapshot(job);
         writeJson(res, 200, detailFromJob(job));
       })
@@ -5394,6 +7679,11 @@ function handleApi(req, res, url) {
         broadcastSnapshot(job);
         const reply = await runRealCodex(job, message);
         attachMessage(job, "assistant", "Codex", reply);
+        try {
+          refreshJobFromPlanArtifacts(job, "Plan refreshed after Codex script revision");
+        } catch (error) {
+          pushLog(job, `script: refresh skipped (${error.message})`);
+        }
         broadcastSnapshot(job);
         writeJson(res, 200, detailFromJob(job));
       })
@@ -5436,6 +7726,16 @@ function handleRequest(req, res) {
     return;
   }
 
+  if (url.pathname.startsWith("/generated-jobs/")) {
+    const filePath = resolveVideoPublicPath(url.pathname);
+    if (!filePath) {
+      writeText(res, 403, "Forbidden");
+      return;
+    }
+    serveFile(res, filePath);
+    return;
+  }
+
   if (url.pathname === "/monitor" || url.pathname === "/monitor/") {
     serveMonitorIndex(res);
     return;
@@ -5452,7 +7752,7 @@ function handleRequest(req, res) {
     return;
   }
 
-  const relativePath = url.pathname === "/" ? "/index.html" : url.pathname;
+  const relativePath = url.pathname === "/" || url.pathname === "/replication" ? "/index.html" : url.pathname;
   const filePath = path.resolve(WEB_ROOT, `.${relativePath}`);
   if (!filePath.startsWith(WEB_ROOT)) {
     writeText(res, 403, "Forbidden");

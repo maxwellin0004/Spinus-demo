@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
@@ -37,9 +37,29 @@
             <span>输出</span>
             <strong id="topOutputChip">data/jobs</strong>
           </div>
+          <div class="context-chip">
+            <span>模型</span>
+            <strong id="topModelChip">gpt-5.4</strong>
+          </div>
         </div>
 
+        <nav class="console-nav" aria-label="主导航">
+          <button class="is-active" type="button" data-console-nav="console">控制台</button>
+          <button type="button" data-console-nav="history">历史任务</button>
+          <button type="button" data-console-nav="batch">批量队列</button>
+          <button type="button" data-console-nav="docs">使用文档</button>
+          <button type="button" data-console-nav="sessions">Session 设置</button>
+        </nav>
+
         <div class="top-actions">
+          <a class="secondary-button" href="/replication">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 19V5" />
+              <path d="M4 19h16" />
+              <path d="m7 15 4-4 3 3 5-7" />
+            </svg>
+            爆款复刻
+          </a>
           <a class="secondary-button" href="/monitor">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M3 3v18h18" />
@@ -53,6 +73,13 @@
               <path d="M5 12h14" />
             </svg>
             新建视频任务
+          </button>
+          <button class="secondary-button" type="button" id="newSessionButton">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5v14" />
+              <path d="M5 12h14" />
+            </svg>
+            新建 Session
           </button>
           <button class="icon-button" type="button" title="刷新" aria-label="刷新" id="refreshButton">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -106,13 +133,13 @@
               <label for="sessionSelect">Session</label>
               <select id="sessionSelect" aria-label="选择本地 session"></select>
             </div>
-            <button class="secondary-button" type="button" id="newThreadButton">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 5v14" />
-                <path d="M5 12h14" />
-              </svg>
-              新建对话
-            </button>
+                      <button class="secondary-button" type="button" id="newThreadButton">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5v14" />
+              <path d="M5 12h14" />
+            </svg>
+            新建 Session
+          </button>
           </div>
 
           <div class="session-toolbar">
@@ -163,6 +190,13 @@
                 </svg>
                 素材
               </button>
+              <button class="secondary-button is-dark-action" type="button" id="createAndSendButton">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 5v14" />
+                  <path d="M5 12h14" />
+                </svg>
+                创建并发送
+              </button>
               <button class="primary-button" type="submit" id="composerSubmitButton">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="m22 2-7 20-4-9-9-4 20-7Z" />
@@ -184,10 +218,25 @@
               <button class="is-active" type="button" data-view="workflow">流程</button>
               <button type="button" data-view="script">脚本</button>
               <button type="button" data-view="subtitles">字幕</button>
+              <button type="button" data-view="assets">素材</button>
               <button type="button" data-view="resources">资源</button>
               <button type="button" data-view="logs">日志</button>
             </div>
           </div>
+
+          <section class="console-overview" aria-label="生产控制台总览">
+            <div class="quickstart-card">
+              <span class="eyebrow">Next Step</span>
+              <h3>先选账号和模板，再创建视频任务</h3>
+              <p>单条任务可以直接创建；批量任务在“批量队列”里按项目、活动和选题池运行。不绑定 session 也能生成计划、配音和渲染。</p>
+              <div class="quickstart-actions">
+                <button class="primary-button" type="button" id="quickCreateTaskButton">新建单条任务</button>
+                <button class="secondary-button" type="button" id="quickBatchButton">进入批量队列</button>
+                <button class="secondary-button" type="button" id="quickDocsButton">查看使用文档</button>
+              </div>
+            </div>
+            <div class="production-status-grid" id="productionStatusGrid"></div>
+          </section>
 
           <div class="task-header-card">
             <div class="task-card-copy">
@@ -213,6 +262,35 @@
                   </label>
                 </div>
               </div>
+              <div class="field-card">
+                <label for="generationModeInlineInput">执行模式</label>
+                <select id="generationModeInlineInput" aria-label="选择执行模式">
+                  <option value="auto">自动直出</option>
+                  <option value="review">脚本审阅后继续</option>
+                </select>
+              </div>
+              <div class="field-card">
+                <label for="subtitleFontSizeInlineInput">字幕字号</label>
+                <select id="subtitleFontSizeInlineInput" aria-label="选择字幕字号">
+                  <option value="24">小 24</option>
+                  <option value="28">标准 28</option>
+                  <option value="32">较大 32</option>
+                  <option value="36">大 36</option>
+                  <option value="40">特大 40</option>
+                  <option value="44">超大 44</option>
+                </select>
+              </div>
+              <div class="field-card">
+                <label for="subtitleColorInlineInput">字幕颜色</label>
+                <select id="subtitleColorInlineInput" aria-label="选择字幕颜色">
+                  <option value="#ffffff">白色</option>
+                  <option value="#ffd166">金黄</option>
+                  <option value="#67e8f9">青蓝</option>
+                  <option value="#fca5a5">浅红</option>
+                  <option value="#a78bfa">紫色</option>
+                  <option value="#86efac">浅绿</option>
+                </select>
+              </div>
               <div class="field-card compact">
                 <span>Composition</span>
                 <strong id="compositionLabel">-</strong>
@@ -226,6 +304,7 @@
 
           <div class="pipeline-banner is-hidden" id="pipelineBanner" role="status" aria-live="polite"></div>
           <section class="stats-strip" id="statsGrid" aria-label="工作台统计"></section>
+          <section class="pipeline-guide-card" id="pipelineGuide" aria-label="当前步骤与下一步"></section>
 
           <div class="work-scroll">
             <section class="account-profile-card">
@@ -309,6 +388,92 @@
                 <ol class="step-list" id="stepList"></ol>
               </div>
 
+              <div class="view-page" id="replicationView">
+                <div class="replication-page">
+                  <section class="replication-form-card">
+                    <div class="card-heading">
+                      <div>
+                        <span class="eyebrow">Viral Replication</span>
+                        <h3>爆款结构复刻</h3>
+                      </div>
+                      <button class="primary-button" type="button" id="createReplicationJobButton">创建复刻任务</button>
+                    </div>
+                    <div class="replication-form-grid">
+                      <label class="scale-field scale-field-wide" for="replicationVideoInput">
+                        <span>参考爆款视频</span>
+                        <input id="replicationVideoInput" type="file" accept="video/mp4,.mp4" />
+                      </label>
+                      <label class="scale-field" for="replicationReferenceTitleInput">
+                        <span>参考标题</span>
+                        <input id="replicationReferenceTitleInput" type="text" placeholder="可选：原视频标题或备注" />
+                      </label>
+                      <label class="scale-field" for="replicationReferencePlatformInput">
+                        <span>参考平台</span>
+                        <select id="replicationReferencePlatformInput">
+                          <option value="xiaohongshu">小红书</option>
+                          <option value="douyin">抖音</option>
+                          <option value="tiktok">TikTok</option>
+                          <option value="youtube_shorts">YouTube Shorts</option>
+                          <option value="local">本地视频</option>
+                        </select>
+                      </label>
+                      <label class="scale-field scale-field-wide" for="replicationReferenceDescriptionInput">
+                        <span>参考说明</span>
+                        <textarea id="replicationReferenceDescriptionInput" rows="3" placeholder="可选：补充原视频的标题、账号、发布时间、你想复刻的点"></textarea>
+                      </label>
+                      <label class="scale-field" for="replicationTopicInput">
+                        <span>目标主题</span>
+                        <input id="replicationTopicInput" type="text" placeholder="例如：为什么越想自律越拖延" />
+                      </label>
+                      <label class="scale-field" for="replicationAnalysisInput">
+                        <span>analysis.json 路径</span>
+                        <input id="replicationAnalysisInput" type="text" placeholder="data/analyses/manual_download4.analysis.json" />
+                      </label>
+                      <label class="scale-field" for="replicationSummaryInput">
+                        <span>summary.json 路径</span>
+                        <input id="replicationSummaryInput" type="text" placeholder="可选：data/analyses/manual_download4.summary.json" />
+                      </label>
+                      <label class="scale-field" for="replicationAccountInput">
+                        <span>目标账号</span>
+                        <select id="replicationAccountInput"></select>
+                      </label>
+                      <label class="scale-field" for="replicationTemplateInput">
+                        <span>目标模板</span>
+                        <select id="replicationTemplateInput"></select>
+                      </label>
+                      <label class="scale-field" for="replicationStrengthInput">
+                        <span>复刻强度</span>
+                        <select id="replicationStrengthInput">
+                          <option value="medium">中：结构和节奏</option>
+                          <option value="low">低：只复刻结构</option>
+                          <option value="high">高：结构、节奏和风格</option>
+                        </select>
+                      </label>
+                      <label class="scale-field" for="replicationCopyVariantInput">
+                        <span>文案风格</span>
+                        <select id="replicationCopyVariantInput">
+                          <option value="sharp_contrarian">犀利反差</option>
+                          <option value="warm_explainer">温和讲解</option>
+                        </select>
+                      </label>
+                      <label class="scale-field scale-field-wide" for="replicationProviderInput">
+                        <span>素材 Provider 顺序</span>
+                        <input id="replicationProviderInput" type="text" value="local_asset,local_api,openai_image,svg_fallback" />
+                      </label>
+                    </div>
+                    <div class="replication-actions">
+                      <button class="secondary-button" type="button" id="uploadReplicationVideoButton">上传参考视频</button>
+                      <button class="secondary-button" type="button" id="analyzeReplicationVideoButton">分析参考视频</button>
+                      <button class="secondary-button" type="button" id="runReplicationPipelineButton">运行复刻 Pipeline</button>
+                      <button class="primary-button" type="button" id="runReplicationDeliveryButton">生成复刻成片</button>
+                      <button class="secondary-button" type="button" id="selectLatestReplicationButton">选择最新复刻任务</button>
+                    </div>
+                  </section>
+
+                  <section class="replication-status-card" id="replicationStatusPanel"></section>
+                </div>
+              </div>
+
               <div class="view-page" id="scriptView">
                 <div class="script-structure" id="scriptStructure"></div>
               </div>
@@ -324,8 +489,12 @@
                 </div>
               </div>
 
+              <div class="view-page" id="assetsView">
+                <div class="asset-workbench" id="assetWorkbench"></div>
+              </div>
+
               <div class="view-page" id="resourcesView">
-                <div class="template-section">
+                <div class="template-section" id="batchConsoleSection">
                   <h3>项目与批量生产</h3>
                   <div class="scale-panel">
                     <div class="scale-grid">
@@ -362,8 +531,8 @@
                       <div class="topic-pool-list" id="topicPoolList"></div>
                     </div>
                     <label class="scale-field scale-field-wide" for="batchTopicInput">
-                      <span>同题批量选题</span>
-                      <textarea id="batchTopicInput" rows="3" placeholder="输入一个选题，会按所选账号风格创建多条可执行任务。"></textarea>
+                      <span>批量选题</span>
+                      <textarea id="batchTopicInput" rows="4" placeholder="一行一个选题。系统会按“选题 × 账号”创建队列，并默认自动重试失败任务 1 次。"></textarea>
                     </label>
                     <div class="batch-toolbar">
                       <div>
@@ -430,15 +599,19 @@
                   <h3>本地素材</h3>
                   <div class="resource-grid" id="resourceGrid"></div>
                 </div>
-                <div class="template-section">
+                <div class="template-section" id="historySection">
                   <h3>最近任务</h3>
                   <div class="history-toolbar" id="historyToolbar">
                     <div class="history-filter-bar">
                       <button type="button" class="ghost-button is-compact is-active" data-history-filter="all">全部</button>
-                      <button type="button" class="ghost-button is-compact" data-history-filter="active">进行中</button>
-                      <button type="button" class="ghost-button is-compact" data-history-filter="completed">已完成</button>
+                      <button type="button" class="ghost-button is-compact" data-history-filter="success">成功</button>
                       <button type="button" class="ghost-button is-compact" data-history-filter="failed">失败</button>
-                      <button type="button" class="ghost-button is-compact" data-history-filter="archived">已归档</button>
+                      <button type="button" class="ghost-button is-compact" data-history-filter="running">运行中</button>
+                      <button type="button" class="ghost-button is-compact" data-history-filter="has-video">有视频</button>
+                      <button type="button" class="ghost-button is-compact" data-history-filter="qa-failed">QA 失败</button>
+                    </div>
+                    <div class="history-search">
+                      <input id="historySearchInput" type="search" placeholder="搜索标题、账号、模板或 session" />
                     </div>
                     <div class="history-actions">
                       <button type="button" class="secondary-button is-small" id="recoverJobButton">恢复任务</button>
@@ -455,6 +628,66 @@
 
               <div class="view-page" id="logsView">
                 <pre class="log-stream" id="logStream" aria-live="polite"></pre>
+              </div>
+
+              <div class="view-page" id="docsView">
+                <section class="docs-panel" aria-label="使用文档">
+                  <div class="docs-hero">
+                    <div>
+                      <span class="eyebrow">User Guide</span>
+                      <h3>本地 AI 视频生产步骤</h3>
+                      <p>这个工作台支持单条视频和批量生成。日常使用可以不绑定 Codex session，直接从任务配置进入生成计划、配音、渲染和 Screen QA。</p>
+                    </div>
+                    <button class="primary-button" type="button" data-console-nav="console">回到控制台</button>
+                  </div>
+                  <div class="docs-grid">
+                    <article class="doc-step-card">
+                      <span>01</span>
+                      <h4>选择账号和模板</h4>
+                      <p>账号决定口吻、平台、CTA 和限制项；模板决定画面结构、比例、推荐时长和 Remotion composition。它们只影响新任务默认配置，不会改动当前 activeJob。</p>
+                    </article>
+                    <article class="doc-step-card">
+                      <span>02</span>
+                      <h4>创建单条任务</h4>
+                      <p>点击“新建单条任务”，填写视频主题、时长、平台和额外要求。创建后中间栏会显示当前任务、生产步骤和产物状态。</p>
+                    </article>
+                    <article class="doc-step-card">
+                      <span>03</span>
+                      <h4>不绑定 session 直接生成</h4>
+                      <p>Session 是可选的。没有绑定 session 时，仍然可以点击“生成计划”“配音”“渲染”或“一键生成 MP4”，前端会走本地生产链路。</p>
+                    </article>
+                    <article class="doc-step-card">
+                      <span>04</span>
+                      <h4>一键生成 MP4</h4>
+                      <p>点击“一键生成 MP4”会自动执行：生成计划、生成 TTS 与时间轴、绑定 Remotion、渲染视频、Screen QA。运行中按钮会锁定，避免重复触发。</p>
+                    </article>
+                    <article class="doc-step-card">
+                      <span>05</span>
+                      <h4>进入脚本审阅模式</h4>
+                      <p>在设置中选择“脚本审阅后继续”。生成计划后先检查脚本、字幕和镜头摘要，再决定是否继续配音和渲染。</p>
+                    </article>
+                    <article class="doc-step-card">
+                      <span>06</span>
+                      <h4>用 AI 修改脚本</h4>
+                      <p>展开 Session 区并绑定当前任务后，可以在对话框里要求 AI 修改 hook、结构、字幕或 CTA。修改建议会保留在当前任务上下文里。</p>
+                    </article>
+                    <article class="doc-step-card">
+                      <span>07</span>
+                      <h4>QA 失败的含义</h4>
+                      <p>Screen QA 用于阻止提示词、内部元数据或错误文案进入画面。QA 未通过时不能导出，需要重新生成计划或修正脚本后再渲染。</p>
+                    </article>
+                    <article class="doc-step-card">
+                      <span>08</span>
+                      <h4>使用批量生成</h4>
+                      <p>进入“批量队列”，按项目、活动、选题池组织任务。可以多个选题配多个账号，批量运行计划、配音和渲染，并查看失败重试队列。</p>
+                    </article>
+                    <article class="doc-step-card">
+                      <span>09</span>
+                      <h4>查看历史任务和产物</h4>
+                      <p>进入“历史任务”查看过去的任务、状态、视频、封面帧和下载入口。可以归档旧任务，保留可复用产物和日志。</p>
+                    </article>
+                  </div>
+                </section>
               </div>
             </div>
           </div>
@@ -564,6 +797,30 @@
             <p id="reviewOutputText">MP4、字幕和日志状态会在这里显示。</p>
             <div class="artifact-list" id="artifactList"></div>
           </div>
+          <section class="debug-assets-panel" id="debugAssetsPanel" hidden>
+            <div class="debug-panel-heading">
+              <div>
+                <span class="eyebrow">Debug Output</span>
+                <h3>素材 / 产物</h3>
+              </div>
+              <span class="mini-status" id="debugAssetsStatus">隐藏</span>
+            </div>
+            <div class="debug-diagnosis-grid" id="debugDiagnosisGrid"></div>
+            <div class="debug-section">
+              <div class="debug-section-head">
+                <strong>AI 生成素材</strong>
+                <span id="debugAssetCount">0</span>
+              </div>
+              <div class="debug-asset-grid" id="debugAssetGrid"></div>
+            </div>
+            <div class="debug-section">
+              <div class="debug-section-head">
+                <strong>工作流产物</strong>
+                <span id="debugArtifactCount">0</span>
+              </div>
+              <div class="debug-artifact-list" id="debugArtifactList"></div>
+            </div>
+          </section>
         </aside>
       </main>
     </div>
@@ -611,6 +868,42 @@
               <option value="full">创建后生成到 MP4</option>
             </select>
           </label>
+          <label>
+            <span>执行模式</span>
+            <select id="taskCreateGenerationModeInput" name="generationMode">
+              <option value="auto">自动直出</option>
+              <option value="review">脚本审阅后继续</option>
+            </select>
+          </label>
+          <label>
+            <span>字幕字号</span>
+            <select id="taskCreateSubtitleFontSizeInput" name="subtitleFontSize">
+              <option value="24">小 24</option>
+              <option value="28">标准 28</option>
+              <option value="32">较大 32</option>
+              <option value="36">大 36</option>
+              <option value="40">特大 40</option>
+              <option value="44">超大 44</option>
+            </select>
+          </label>
+          <label>
+            <span>字幕颜色</span>
+            <select id="taskCreateSubtitleColorInput" name="subtitleColor">
+              <option value="#ffffff">白色</option>
+              <option value="#ffd166">金黄</option>
+              <option value="#67e8f9">青蓝</option>
+              <option value="#fca5a5">浅红</option>
+              <option value="#a78bfa">紫色</option>
+              <option value="#86efac">浅绿</option>
+            </select>
+          </label>
+          <label class="settings-row full-width" for="taskCreateAiImageAssetsInput">
+            <span>
+              <strong>使用图片模型制作素材</strong>
+              <small>开启后，生成计划时会为本条视频生成全新图片素材。</small>
+            </span>
+            <input id="taskCreateAiImageAssetsInput" type="checkbox" />
+          </label>
           <div class="task-create-accounts full-width">
             <div>
               <span>账号</span>
@@ -621,6 +914,36 @@
           <div class="modal-actions">
             <button class="secondary-button" type="button" id="cancelTaskCreateButton">取消</button>
             <button class="primary-button" type="submit" id="submitTaskCreateButton">创建任务</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="scriptAiModal" hidden>
+      <section class="modal-card modal-card-compact" role="dialog" aria-modal="true" aria-labelledby="scriptAiModalTitle">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow">AI Script Revision</span>
+            <h2 id="scriptAiModalTitle">让 AI 修改当前脚本</h2>
+          </div>
+          <button class="icon-button" type="button" id="closeScriptAiModalButton" aria-label="关闭 AI 修改脚本">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6 18 18" />
+              <path d="M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+        <form class="modal-form" id="scriptAiForm">
+          <label class="full-width">
+            <span>修改要求</span>
+            <textarea id="scriptAiInstructionInput" rows="5" required placeholder="例如：把 Hook 再口语化一点，删掉模板说明，只保留交易判断顺序。"></textarea>
+          </label>
+          <div class="script-ai-scope full-width">
+            只会发送到当前任务的 Codex 对话，不会修改账号默认配置和模板。
+          </div>
+          <div class="modal-actions">
+            <button class="secondary-button" type="button" id="cancelScriptAiButton">取消</button>
+            <button class="primary-button" type="submit" id="submitScriptAiButton">发送给 AI</button>
           </div>
         </form>
       </section>
@@ -751,6 +1074,105 @@
       </section>
     </div>
 
+    <div class="modal-backdrop" id="settingsModal" hidden>
+      <section class="modal-card modal-card-compact settings-card" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow">Console Settings</span>
+            <h2 id="settingsModalTitle">控制台设置</h2>
+          </div>
+          <button class="icon-button" type="button" id="closeSettingsModalButton" aria-label="关闭设置">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6 18 18" />
+              <path d="M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="settings-form">
+          <label class="settings-row" for="showSessionControlsInput">
+            <span>
+              <strong>显示 Codex session 区</strong>
+              <small>关闭后隐藏左侧 session 选择和浏览区，不影响当前任务。</small>
+            </span>
+            <input id="showSessionControlsInput" type="checkbox" />
+          </label>
+
+          <label class="settings-field" for="generationModeInput">
+            <span>一键生成模式</span>
+            <select id="generationModeInput">
+              <option value="review">脚本审阅后继续</option>
+              <option value="auto">自动直出到 MP4</option>
+            </select>
+          </label>
+
+          <label class="settings-field" for="codexModelInput">
+            <span>Codex 模型</span>
+            <select id="codexModelInput"></select>
+            <small id="codexModelHint">修改后会影响后续所有 Codex 调用。</small>
+          </label>
+
+          <label class="settings-row" for="useAiImageAssetsInput">
+            <span>
+              <strong>默认使用图片模型素材</strong>
+              <small>新建任务时默认开启图片模型生成，让不同视频拥有不同素材。</small>
+            </span>
+            <input id="useAiImageAssetsInput" type="checkbox" />
+          </label>
+
+          <label class="settings-field" for="subtitleFontSizeInput">
+            <span>默认字幕字号</span>
+            <select id="subtitleFontSizeInput">
+              <option value="24">小 24</option>
+              <option value="28">标准 28</option>
+              <option value="32">较大 32</option>
+              <option value="36">大 36</option>
+              <option value="40">特大 40</option>
+              <option value="44">超大 44</option>
+            </select>
+            <small>用于新建任务，渲染时会写入 render-props.json。</small>
+          </label>
+
+          <label class="settings-field" for="subtitleColorInput">
+            <span>默认字幕颜色</span>
+            <select id="subtitleColorInput">
+              <option value="#ffffff">白色</option>
+              <option value="#ffd166">金黄</option>
+              <option value="#67e8f9">青蓝</option>
+              <option value="#fca5a5">浅红</option>
+              <option value="#a78bfa">紫色</option>
+              <option value="#86efac">浅绿</option>
+            </select>
+            <small>用于新建任务，渲染时会写入 render-props.json。</small>
+          </label>
+
+          <label class="settings-row" for="enforceQaBeforeExportInput">
+            <span>
+              <strong>导出前强制 Screen QA</strong>
+              <small>Screen QA 未通过时阻止导出，避免把有明显画面问题的视频交付出去。</small>
+            </span>
+            <input id="enforceQaBeforeExportInput" type="checkbox" />
+          </label>
+
+          <label class="settings-row" for="showDebugAssetsInput">
+            <span>
+              <strong>展示素材/产物</strong>
+              <small>在右侧审阅面板展示 AI 素材、prompt 路径和每个工作流产物，方便定位卡在哪一步。</small>
+            </span>
+            <input id="showDebugAssetsInput" type="checkbox" />
+          </label>
+        </div>
+
+        <div class="modal-actions settings-actions">
+          <button class="secondary-button" type="button" id="cancelSettingsButton">取消</button>
+          <button class="primary-button" type="button" id="saveSettingsButton">保存设置</button>
+        </div>
+      </section>
+    </div>
+
     <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
   </body>
 </html>
+
+
+

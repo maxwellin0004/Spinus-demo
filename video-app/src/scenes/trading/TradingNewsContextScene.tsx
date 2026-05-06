@@ -1,10 +1,11 @@
-import { AbsoluteFill, Img, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { THEME } from "../../theme/tokens";
 import { getTradingScenePalette, type TradingSceneVariant } from "./tradingSceneTheme";
+import { TradingImageFrame } from "./TradingImageFrame";
 
 type MediaCard = {
   imageSrc: string;
-  label: string;
+  label?: string;
   caption: string;
 };
 
@@ -39,6 +40,7 @@ export const TradingNewsContextScene: React.FC<TradingNewsContextSceneProps> = (
   const { fps } = useVideoConfig();
   const intro = spring({ fps, frame, config: { damping: 18, stiffness: 120 } });
   const palette = getTradingScenePalette(variant);
+  const visibleMediaCards = mediaCards.filter((card) => card.imageSrc || card.caption);
 
   return (
     <AbsoluteFill
@@ -52,7 +54,7 @@ export const TradingNewsContextScene: React.FC<TradingNewsContextSceneProps> = (
         padding: "74px 72px",
       }}
     >
-      <div style={{ color: palette.accent, fontSize: 21, letterSpacing: 1, marginBottom: 14 }}>{kicker}</div>
+      {kicker ? <div style={{ color: palette.accent, fontSize: 21, letterSpacing: 0, marginBottom: 14 }}>{kicker}</div> : null}
       <div
         style={{
           width: "100%",
@@ -113,8 +115,9 @@ export const TradingNewsContextScene: React.FC<TradingNewsContextSceneProps> = (
           );
         })}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 16, marginBottom: 22 }}>
-        {mediaCards.map((card, index) => {
+      {visibleMediaCards.length ? (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 16, marginBottom: 22 }}>
+          {visibleMediaCards.map((card, index) => {
             const mediaIntro = spring({
               fps,
               frame: frame - index * 7,
@@ -133,49 +136,39 @@ export const TradingNewsContextScene: React.FC<TradingNewsContextSceneProps> = (
                   boxShadow: palette.shadow,
                 }}
               >
-                <div style={{ height: 170, position: "relative" }}>
-                  <Img src={card.imageSrc} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  <div style={{ position: "absolute", inset: 0, background: palette.imageOverlay }} />
-                  <div
-                    style={{
-                      position: "absolute",
-                      left: 12,
-                      top: 12,
-                      padding: "8px 10px",
-                      borderRadius: 999,
-                      background: palette.chipBackground,
-                      border: `1px solid ${palette.border}`,
-                      fontSize: 13,
-                      letterSpacing: 0,
-                    }}
-                  >
-                    {card.label}
+                {card.imageSrc ? (
+                  <div style={{ height: 170, position: "relative" }}>
+                    <TradingImageFrame src={card.imageSrc} />
+                    <div style={{ position: "absolute", inset: 0, background: palette.imageOverlay }} />
                   </div>
-                </div>
+                ) : null}
                 <div style={{ padding: "14px 14px 16px", fontSize: 18, lineHeight: 1.42, color: palette.textSecondary, ...clampLines(3) }}>
                   {card.caption}
                 </div>
               </div>
             );
-        })}
-      </div>
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 4 }}>
-        {tags.map((tag) => (
-          <div
-            key={tag}
-            style={{
-              padding: "10px 16px",
-              borderRadius: 999,
-              border: `1px solid ${palette.borderStrong}`,
-              background: palette.panel,
-              fontSize: 18,
-              color: palette.textMuted,
-            }}
-          >
-            {tag}
-          </div>
-        ))}
-      </div>
+          })}
+        </div>
+      ) : null}
+      {tags.length ? (
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 4 }}>
+          {tags.map((tag) => (
+            <div
+              key={tag}
+              style={{
+                padding: "10px 16px",
+                borderRadius: 999,
+                border: `1px solid ${palette.borderStrong}`,
+                background: palette.panel,
+                fontSize: 18,
+                color: palette.textMuted,
+              }}
+            >
+              {tag}
+            </div>
+          ))}
+        </div>
+      ) : null}
     </AbsoluteFill>
   );
 };

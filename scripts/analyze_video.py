@@ -54,12 +54,22 @@ def append_log(log_path: Path, message: str) -> None:
         handle.write(f"[{now_iso()}] {message}\n")
 
 
+def find_ffmpeg() -> str | None:
+    ffmpeg_bin = shutil.which("ffmpeg")
+    if ffmpeg_bin:
+        return ffmpeg_bin
+    bundled = ROOT / "tools" / ("ffmpeg.exe" if sys.platform == "win32" else "ffmpeg")
+    if bundled.exists():
+        return str(bundled)
+    return None
+
+
 def load_prompt_config() -> dict[str, Any]:
     return read_json(Path(__file__).with_name("prompt_config.json"), {})
 
 
 def run_ffmpeg_extract_audio(source_video: Path, target_audio: Path) -> bool:
-    ffmpeg_bin = shutil.which("ffmpeg")
+    ffmpeg_bin = find_ffmpeg()
     if not ffmpeg_bin:
         return False
 
@@ -84,7 +94,7 @@ def run_ffmpeg_extract_audio(source_video: Path, target_audio: Path) -> bool:
 
 
 def run_ffmpeg_extract_frames(source_video: Path, frames_dir: Path, frame_index_path: Path) -> dict[str, Any]:
-    ffmpeg_bin = shutil.which("ffmpeg")
+    ffmpeg_bin = find_ffmpeg()
     if not ffmpeg_bin:
         return {
             "success": False,

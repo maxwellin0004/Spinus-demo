@@ -2,10 +2,16 @@ const els = {
   workspacePath: document.querySelector("#workspacePath"),
   connectionStatus: document.querySelector("#connectionStatus"),
   topSessionChip: document.querySelector("#topSessionChip"),
+  topModelChip: document.querySelector("#topModelChip"),
   topStatusChip: document.querySelector("#topStatusChip"),
   topOutputChip: document.querySelector("#topOutputChip"),
   openTaskModalButton: document.querySelector("#openTaskModalButton"),
+  quickCreateTaskButton: document.querySelector("#quickCreateTaskButton"),
+  quickBatchButton: document.querySelector("#quickBatchButton"),
+  quickDocsButton: document.querySelector("#quickDocsButton"),
+  newSessionButton: document.querySelector("#newSessionButton"),
   refreshButton: document.querySelector("#refreshButton"),
+  settingsButton: document.querySelector("#settingsButton"),
 
   chatAccountLabel: document.querySelector("#chatAccountLabel"),
   chatTemplateLabel: document.querySelector("#chatTemplateLabel"),
@@ -27,6 +33,7 @@ const els = {
   composerForm: document.querySelector("#composerForm"),
   composerInput: document.querySelector("#composerInput"),
   composerSubmitButton: document.querySelector("#composerSubmitButton"),
+  createAndSendButton: document.querySelector("#createAndSendButton"),
   attachButton: document.querySelector("#attachButton"),
 
   activeJobTitle: document.querySelector("#activeJobTitle"),
@@ -36,9 +43,14 @@ const els = {
   openAccountModalButton: document.querySelector("#openAccountModalButton"),
   templateSelect: document.querySelector("#templateSelect"),
   templateLockToggle: document.querySelector("#templateLockToggle"),
+  generationModeInlineInput: document.querySelector("#generationModeInlineInput"),
+  subtitleFontSizeInlineInput: document.querySelector("#subtitleFontSizeInlineInput"),
+  subtitleColorInlineInput: document.querySelector("#subtitleColorInlineInput"),
   compositionLabel: document.querySelector("#compositionLabel"),
   headerMetaChips: document.querySelector("#headerMetaChips"),
+  productionStatusGrid: document.querySelector("#productionStatusGrid"),
   pipelineBanner: document.querySelector("#pipelineBanner"),
+  pipelineGuide: document.querySelector("#pipelineGuide"),
   statsGrid: document.querySelector("#statsGrid"),
   campaignSelect: document.querySelector("#campaignSelect"),
   campaignNameInput: document.querySelector("#campaignNameInput"),
@@ -58,6 +70,25 @@ const els = {
   retryQueueList: document.querySelector("#retryQueueList"),
   batchList: document.querySelector("#batchList"),
   auditEventList: document.querySelector("#auditEventList"),
+  replicationVideoInput: document.querySelector("#replicationVideoInput"),
+  replicationReferenceTitleInput: document.querySelector("#replicationReferenceTitleInput"),
+  replicationReferencePlatformInput: document.querySelector("#replicationReferencePlatformInput"),
+  replicationReferenceDescriptionInput: document.querySelector("#replicationReferenceDescriptionInput"),
+  replicationTopicInput: document.querySelector("#replicationTopicInput"),
+  replicationAnalysisInput: document.querySelector("#replicationAnalysisInput"),
+  replicationSummaryInput: document.querySelector("#replicationSummaryInput"),
+  replicationAccountInput: document.querySelector("#replicationAccountInput"),
+  replicationTemplateInput: document.querySelector("#replicationTemplateInput"),
+  replicationStrengthInput: document.querySelector("#replicationStrengthInput"),
+  replicationCopyVariantInput: document.querySelector("#replicationCopyVariantInput"),
+  replicationProviderInput: document.querySelector("#replicationProviderInput"),
+  uploadReplicationVideoButton: document.querySelector("#uploadReplicationVideoButton"),
+  analyzeReplicationVideoButton: document.querySelector("#analyzeReplicationVideoButton"),
+  createReplicationJobButton: document.querySelector("#createReplicationJobButton"),
+  runReplicationPipelineButton: document.querySelector("#runReplicationPipelineButton"),
+  runReplicationDeliveryButton: document.querySelector("#runReplicationDeliveryButton"),
+  selectLatestReplicationButton: document.querySelector("#selectLatestReplicationButton"),
+  replicationStatusPanel: document.querySelector("#replicationStatusPanel"),
 
   accountProfileTitle: document.querySelector("#accountProfileTitle"),
   accountPlatformBadge: document.querySelector("#accountPlatformBadge"),
@@ -88,8 +119,10 @@ const els = {
   templateUpdatedLabel: document.querySelector("#templateUpdatedLabel"),
   templateDescriptionText: document.querySelector("#templateDescriptionText"),
   templatePathLabel: document.querySelector("#templatePathLabel"),
+  assetWorkbench: document.querySelector("#assetWorkbench"),
   resourceGrid: document.querySelector("#resourceGrid"),
   jobHistoryList: document.querySelector("#jobHistoryList"),
+  historySearchInput: document.querySelector("#historySearchInput"),
   recoverJobButton: document.querySelector("#recoverJobButton"),
   archiveJobButton: document.querySelector("#archiveJobButton"),
   logStream: document.querySelector("#logStream"),
@@ -115,6 +148,13 @@ const els = {
   reviewSummaryText: document.querySelector("#reviewSummaryText"),
   reviewOutputText: document.querySelector("#reviewOutputText"),
   artifactList: document.querySelector("#artifactList"),
+  debugAssetsPanel: document.querySelector("#debugAssetsPanel"),
+  debugAssetsStatus: document.querySelector("#debugAssetsStatus"),
+  debugDiagnosisGrid: document.querySelector("#debugDiagnosisGrid"),
+  debugAssetCount: document.querySelector("#debugAssetCount"),
+  debugAssetGrid: document.querySelector("#debugAssetGrid"),
+  debugArtifactCount: document.querySelector("#debugArtifactCount"),
+  debugArtifactList: document.querySelector("#debugArtifactList"),
 
   accountModal: document.querySelector("#accountModal"),
   taskCreateModal: document.querySelector("#taskCreateModal"),
@@ -128,14 +168,37 @@ const els = {
   taskCreateSessionField: document.querySelector("#taskCreateSessionField"),
   taskCreateSessionInput: document.querySelector("#taskCreateSessionInput"),
   taskCreateAfterInput: document.querySelector("#taskCreateAfterInput"),
+  taskCreateGenerationModeInput: document.querySelector("#taskCreateGenerationModeInput"),
+  taskCreateSubtitleFontSizeInput: document.querySelector("#taskCreateSubtitleFontSizeInput"),
+  taskCreateSubtitleColorInput: document.querySelector("#taskCreateSubtitleColorInput"),
+  taskCreateAiImageAssetsInput: document.querySelector("#taskCreateAiImageAssetsInput"),
   taskCreateAccountGrid: document.querySelector("#taskCreateAccountGrid"),
   taskCreateAccountHint: document.querySelector("#taskCreateAccountHint"),
+  scriptAiModal: document.querySelector("#scriptAiModal"),
+  scriptAiForm: document.querySelector("#scriptAiForm"),
+  scriptAiInstructionInput: document.querySelector("#scriptAiInstructionInput"),
+  closeScriptAiModalButton: document.querySelector("#closeScriptAiModalButton"),
+  cancelScriptAiButton: document.querySelector("#cancelScriptAiButton"),
+  submitScriptAiButton: document.querySelector("#submitScriptAiButton"),
   renderConfirmModal: document.querySelector("#renderConfirmModal"),
   renderConfirmSummary: document.querySelector("#renderConfirmSummary"),
   renderConfirmGrid: document.querySelector("#renderConfirmGrid"),
   closeRenderConfirmButton: document.querySelector("#closeRenderConfirmButton"),
   cancelRenderConfirmButton: document.querySelector("#cancelRenderConfirmButton"),
   confirmRenderButton: document.querySelector("#confirmRenderButton"),
+  settingsModal: document.querySelector("#settingsModal"),
+  closeSettingsModalButton: document.querySelector("#closeSettingsModalButton"),
+  cancelSettingsButton: document.querySelector("#cancelSettingsButton"),
+  saveSettingsButton: document.querySelector("#saveSettingsButton"),
+  showSessionControlsInput: document.querySelector("#showSessionControlsInput"),
+  generationModeInput: document.querySelector("#generationModeInput"),
+  codexModelInput: document.querySelector("#codexModelInput"),
+  codexModelHint: document.querySelector("#codexModelHint"),
+  useAiImageAssetsInput: document.querySelector("#useAiImageAssetsInput"),
+  subtitleFontSizeInput: document.querySelector("#subtitleFontSizeInput"),
+  subtitleColorInput: document.querySelector("#subtitleColorInput"),
+  enforceQaBeforeExportInput: document.querySelector("#enforceQaBeforeExportInput"),
+  showDebugAssetsInput: document.querySelector("#showDebugAssetsInput"),
   batchDetailDrawer: document.querySelector("#batchDetailDrawer"),
   batchDrawerTitle: document.querySelector("#batchDrawerTitle"),
   batchDrawerMeta: document.querySelector("#batchDrawerMeta"),
@@ -175,8 +238,24 @@ const EMPTY_PREVIEW = {
   imageUrl: "/workspace/assets/images/scenario_video_breakdown.jpg",
 };
 
+const SETTINGS_STORAGE_KEY = "codexVideoConsoleSettings";
+const DEFAULT_SETTINGS = {
+  showSessionControls: false,
+  generationMode: "review",
+  useAiImageAssets: false,
+  imageAssetModel: "gpt-image-2-all",
+  subtitleFontSize: 28,
+  subtitleColor: "#ffffff",
+  enforceQaBeforeExport: true,
+  showDebugAssets: false,
+};
+const SUBTITLE_COLOR_CHOICES = ["#ffffff", "#ffd166", "#fca5a5", "#67e8f9", "#a78bfa", "#86efac"];
+const CODEX_MODEL_CHOICES = ["gpt-5.4", "gpt-5.4-mini", "gpt-5.2"];
+
 const state = {
   project: null,
+  codexStatus: null,
+  codexConfig: {model: ""},
   accounts: [],
   presets: [],
   templates: [],
@@ -192,6 +271,7 @@ const state = {
   selectedCampaignId: "",
   selectedActivityId: "",
   selectedTopicId: "",
+  selectedTopicIds: [],
   batchAccountIds: [],
   batchFilterStatus: "all",
   batchFilterQuery: "",
@@ -227,7 +307,11 @@ const state = {
   busyReason: "",
   toastTimer: 0,
   historyFilter: "all",
+  historyQuery: "",
   renderConfirmResolver: null,
+  screenQaReports: {},
+  replicationUpload: null,
+  settings: {...DEFAULT_SETTINGS},
 };
 
 function escapeHtml(value) {
@@ -245,6 +329,46 @@ function ensureStringList(value) {
     .split(/[,\n]/)
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function ensureArray(value) {
+  return Array.isArray(value) ? value : [];
+}
+
+function parseBatchTopicsInput(value) {
+  const seen = new Set();
+  return String(value || "")
+    .split(/\r?\n/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .filter((item) => {
+      const key = item.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
+function syncBatchTopicInputFromSelection() {
+  if (!els.batchTopicInput) return;
+  const selected = state.selectedTopicIds
+    .map((topicId) => state.topics.find((topic) => topic.id === topicId))
+    .filter(Boolean);
+  els.batchTopicInput.value = selected.map((topic) => topic.title || "").filter(Boolean).join("\n");
+}
+
+function getBatchTopicPayloadFromInput() {
+  const topicsByTitle = new Map(
+    (Array.isArray(state.topics) ? state.topics : []).map((topic) => [String(topic.title || "").trim().toLowerCase(), topic]),
+  );
+  return parseBatchTopicsInput(els.batchTopicInput?.value).map((title) => {
+    const matched = topicsByTitle.get(title.toLowerCase());
+    return {
+      title,
+      topicId: matched?.id || "",
+      brief: matched?.brief || "",
+    };
+  });
 }
 
 function ensureArtifactListElement() {
@@ -265,6 +389,35 @@ function getArtifactManifest(job) {
 
 function getArtifactItem(job, key) {
   return getArtifactManifest(job)?.[key] || null;
+}
+
+function getScreenQaReportKey(job, item) {
+  return item?.url || `${job?.id || "no-job"}:screen-qa`;
+}
+
+async function loadScreenQaReport(job, item) {
+  if (!job?.id || !item?.exists || !item.url) return null;
+  const key = getScreenQaReportKey(job, item);
+  const cached = state.screenQaReports[key];
+  if (cached?.loading || cached?.report || cached?.error) return cached?.report || null;
+
+  state.screenQaReports[key] = {loading: true, report: null, error: ""};
+  try {
+    const response = await fetch(item.url, {cache: "no-store"});
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const report = await response.json();
+    state.screenQaReports[key] = {loading: false, report, error: ""};
+  } catch (error) {
+    state.screenQaReports[key] = {loading: false, report: null, error: error?.message || "\u8bfb\u53d6 QA \u62a5\u544a\u5931\u8d25"};
+  }
+
+  if (state.activeJob?.id === job.id) {
+    renderArtifactList(state.activeJob);
+    renderProductionStatus(state.activeJob);
+    setActionState();
+    renderActionHints(state.activeJob);
+  }
+  return state.screenQaReports[key]?.report || null;
 }
 
 function indexSteps(steps = []) {
@@ -313,18 +466,31 @@ function localizePublishStatus(status = "") {
 
 function getVisibleJobs() {
   const jobs = Array.isArray(state.jobs) ? state.jobs : [];
-  switch (state.historyFilter) {
-    case "active":
-      return jobs.filter((job) => !job.archived && !["completed", "failed"].includes(job.status));
-    case "completed":
-      return jobs.filter((job) => !job.archived && job.status === "completed");
-    case "failed":
-      return jobs.filter((job) => !job.archived && job.status === "failed");
-    case "archived":
-      return jobs.filter((job) => job.archived);
-    default:
-      return jobs;
-  }
+  const query = String(state.historyQuery || "").trim().toLowerCase();
+  return jobs.filter((job) => {
+    const account = getAccountById(job.accountId);
+    const template = getTemplateById(job.templateId);
+    const hasVideo = hasHistoryVideo(job);
+    const qaStatus = getHistoryQaStatus(job);
+    const isRunning = Boolean(job.pipelineRunning || job.codexRunning || !["completed", "failed", "canceled", "idle", "unknown"].includes(job.status));
+    const filterMatched =
+      state.historyFilter === "all" ||
+      (state.historyFilter === "success" && job.status === "completed") ||
+      (state.historyFilter === "completed" && job.status === "completed") ||
+      (state.historyFilter === "failed" && job.status === "failed") ||
+      (state.historyFilter === "running" && isRunning) ||
+      (state.historyFilter === "active" && isRunning) ||
+      (state.historyFilter === "has-video" && hasVideo) ||
+      (state.historyFilter === "qa-failed" && qaStatus === "failed") ||
+      (state.historyFilter === "archived" && job.archived);
+    if (!filterMatched) return false;
+    if (!query) return true;
+    return [job.title, job.id, job.codexSessionId, job.outputDir, account?.name, account?.platform, template?.title, template?.id]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase()
+      .includes(query);
+  });
 }
 
 function buildSessionRequestUrl(options = {}) {
@@ -448,6 +614,190 @@ function showToast(message, tone = "info") {
   }, 3200);
 }
 
+function normalizeSubtitleFontSize(value, fallback = 28) {
+  const number = Number(value || fallback);
+  if (!Number.isFinite(number)) return fallback;
+  return Math.min(52, Math.max(20, Math.round(number)));
+}
+
+function normalizeSubtitleColor(value, fallback = "#ffffff") {
+  const color = String(value || fallback).trim();
+  return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(color) ? color : fallback;
+}
+
+function loadSettings() {
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(SETTINGS_STORAGE_KEY) || "{}");
+    state.settings = {
+      ...DEFAULT_SETTINGS,
+      ...saved,
+      showSessionControls:
+        typeof saved.showSessionControls === "boolean" ? saved.showSessionControls : DEFAULT_SETTINGS.showSessionControls,
+      generationMode: saved.generationMode === "auto" ? "auto" : "review",
+      useAiImageAssets:
+        typeof saved.useAiImageAssets === "boolean" ? saved.useAiImageAssets : DEFAULT_SETTINGS.useAiImageAssets,
+      imageAssetModel: String(saved.imageAssetModel || DEFAULT_SETTINGS.imageAssetModel || "gpt-image-2-all"),
+      subtitleFontSize: normalizeSubtitleFontSize(saved.subtitleFontSize || DEFAULT_SETTINGS.subtitleFontSize),
+      subtitleColor: normalizeSubtitleColor(saved.subtitleColor || DEFAULT_SETTINGS.subtitleColor),
+      enforceQaBeforeExport: saved.enforceQaBeforeExport !== false,
+      showDebugAssets:
+        typeof saved.showDebugAssets === "boolean" ? saved.showDebugAssets : DEFAULT_SETTINGS.showDebugAssets,
+    };
+  } catch {
+    state.settings = {...DEFAULT_SETTINGS};
+  }
+}
+
+function saveSettings() {
+  window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(state.settings));
+}
+
+function renderCodexModelInput() {
+  if (!els.codexModelInput) return;
+  const currentModel = String(state.codexConfig?.model || "").trim();
+  const models = [...new Set([...CODEX_MODEL_CHOICES, currentModel].filter(Boolean))];
+  els.codexModelInput.innerHTML = models
+    .map((model) => `<option value="${escapeHtml(model)}">${escapeHtml(model)}</option>`)
+    .join("");
+  els.codexModelInput.value = currentModel || models[0] || "";
+  if (els.codexModelHint) {
+    els.codexModelHint.textContent = currentModel
+      ? `当前模型：${currentModel}。修改后会影响后续所有 Codex 调用。`
+      : "修改后会影响后续所有 Codex 调用。";
+  }
+}
+
+function applySettingsToUi() {
+  document.body.classList.toggle("is-session-hidden", !state.settings.showSessionControls);
+  if (els.generationModeInlineInput) {
+    els.generationModeInlineInput.value = state.settings.generationMode || "review";
+  }
+  if (els.subtitleFontSizeInlineInput) {
+    els.subtitleFontSizeInlineInput.value = String(normalizeSubtitleFontSize(state.settings.subtitleFontSize));
+  }
+  if (els.subtitleColorInlineInput) {
+    els.subtitleColorInlineInput.value = normalizeSubtitleColor(state.settings.subtitleColor);
+  }
+  if (els.taskCreateGenerationModeInput) {
+    els.taskCreateGenerationModeInput.value = state.settings.generationMode || "review";
+  }
+  if (els.taskCreateSubtitleFontSizeInput) {
+    els.taskCreateSubtitleFontSizeInput.value = String(normalizeSubtitleFontSize(state.settings.subtitleFontSize));
+  }
+  if (els.taskCreateSubtitleColorInput) {
+    els.taskCreateSubtitleColorInput.value = normalizeSubtitleColor(state.settings.subtitleColor);
+  }
+  if (els.taskCreateAiImageAssetsInput) {
+    els.taskCreateAiImageAssetsInput.checked = Boolean(state.settings.useAiImageAssets);
+  }
+  if (els.debugAssetsPanel) {
+    els.debugAssetsPanel.hidden = !state.settings.showDebugAssets;
+  }
+  if (els.debugAssetsStatus) {
+    els.debugAssetsStatus.textContent = state.settings.showDebugAssets ? "显示中" : "隐藏";
+  }
+}
+
+function updateGenerationMode(mode, options = {}) {
+  const nextMode = mode === "auto" ? "auto" : "review";
+  state.settings = {
+    ...state.settings,
+    generationMode: nextMode,
+  };
+  if (options.persist !== false) {
+    saveSettings();
+  }
+  applySettingsToUi();
+  if (options.toast) {
+    showToast(nextMode === "auto" ? "已切换为自动直出" : "已切换为脚本审阅后继续", "success");
+  }
+}
+
+function renderSettingsModal() {
+  renderCodexModelInput();
+  if (els.showSessionControlsInput) {
+    els.showSessionControlsInput.checked = Boolean(state.settings.showSessionControls);
+  }
+  if (els.generationModeInput) {
+    els.generationModeInput.value = state.settings.generationMode || "review";
+  }
+  if (els.subtitleColorInput) {
+    els.subtitleColorInput.value = normalizeSubtitleColor(state.settings.subtitleColor);
+  }
+  if (els.enforceQaBeforeExportInput) {
+    els.enforceQaBeforeExportInput.checked = state.settings.enforceQaBeforeExport !== false;
+  }
+  if (els.useAiImageAssetsInput) {
+    els.useAiImageAssetsInput.checked = Boolean(state.settings.useAiImageAssets);
+  }
+  if (els.subtitleFontSizeInput) {
+    els.subtitleFontSizeInput.value = String(normalizeSubtitleFontSize(state.settings.subtitleFontSize));
+  }
+  if (els.subtitleColorInput) {
+    els.subtitleColorInput.value = normalizeSubtitleColor(state.settings.subtitleColor);
+  }
+  if (els.showDebugAssetsInput) {
+    els.showDebugAssetsInput.checked = Boolean(state.settings.showDebugAssets);
+  }
+}
+
+function openSettingsModal() {
+  renderSettingsModal();
+  if (els.settingsModal) els.settingsModal.hidden = false;
+}
+
+function closeSettingsModal() {
+  if (els.settingsModal) els.settingsModal.hidden = true;
+}
+
+function persistSettingsFromModal() {
+  state.settings = {
+    showSessionControls: Boolean(els.showSessionControlsInput?.checked),
+    generationMode: els.generationModeInput?.value === "auto" ? "auto" : "review",
+    useAiImageAssets: Boolean(els.useAiImageAssetsInput?.checked),
+    imageAssetModel: state.settings.imageAssetModel || "gpt-image-2-all",
+    subtitleFontSize: normalizeSubtitleFontSize(els.subtitleFontSizeInput?.value || state.settings.subtitleFontSize),
+    subtitleColor: normalizeSubtitleColor(els.subtitleColorInput?.value || state.settings.subtitleColor),
+    enforceQaBeforeExport: els.enforceQaBeforeExportInput?.checked !== false,
+    showDebugAssets: Boolean(els.showDebugAssetsInput?.checked),
+  };
+  saveSettings();
+  applySettingsToUi();
+  renderDebugAssetsPanel(state.activeJob);
+  closeSettingsModal();
+  showToast("设置已保存", "success");
+}
+
+async function persistSettingsAndModelFromModal() {
+  state.settings = {
+    showSessionControls: Boolean(els.showSessionControlsInput?.checked),
+    generationMode: els.generationModeInput?.value === "auto" ? "auto" : "review",
+    useAiImageAssets: Boolean(els.useAiImageAssetsInput?.checked),
+    imageAssetModel: state.settings.imageAssetModel || "gpt-image-2-all",
+    subtitleFontSize: normalizeSubtitleFontSize(els.subtitleFontSizeInput?.value || state.settings.subtitleFontSize),
+    subtitleColor: normalizeSubtitleColor(els.subtitleColorInput?.value || state.settings.subtitleColor),
+    enforceQaBeforeExport: els.enforceQaBeforeExportInput?.checked !== false,
+    showDebugAssets: Boolean(els.showDebugAssetsInput?.checked),
+  };
+  saveSettings();
+  applySettingsToUi();
+  renderDebugAssetsPanel(state.activeJob);
+  const nextModel = String(els.codexModelInput?.value || "").trim();
+  if (nextModel && nextModel !== state.codexConfig?.model) {
+    const payload = await requestJson("/api/codex/config", {
+      method: "PATCH",
+      body: JSON.stringify({model: nextModel}),
+    });
+    state.codexConfig = {
+      ...payload,
+      model: payload.model || nextModel,
+    };
+  }
+  renderProject();
+  closeSettingsModal();
+  showToast("设置已保存", "success");
+}
+
 function normalizeErrorText(message = "") {
   const text = String(message || "").trim();
   if (!text) return "\u53d1\u751f\u672a\u77e5\u9519\u8bef\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u3002";
@@ -458,6 +808,14 @@ function normalizeErrorText(message = "") {
   if (text.includes("Activity not found")) return "\u6d3b\u52a8\u4e0d\u5b58\u5728\u6216\u5df2\u88ab\u5220\u9664\uff0c\u8bf7\u5237\u65b0\u540e\u91cd\u8bd5\u3002";
   if (text.includes("Topic title is required")) return "\u8bf7\u5148\u586b\u5199\u9009\u9898\u3002";
   if (text.includes("Task prompt is required")) return "\u8bf7\u5148\u586b\u5199\u89c6\u9891\u9700\u6c42\u6216\u9009\u9898\u3002";
+  if (text.includes("Task account is required")) return "请先选择一个账号，再创建视频任务。";
+  if (text.includes("Task template is required")) return "请先选择一个模板，再创建视频任务。";
+  if (text.includes("Create task explicitly first")) return "请先点击“新建视频任务”或“创建并发送”。输入第一条消息不会自动创建任务。";
+  if (text.includes("Active job is required for script revision")) return "请先选择或创建一个当前任务，再让 AI 修改脚本。";
+  if (text.includes("Job is running and cannot be deleted")) return "当前任务正在运行，不能删除。请等待完成或先取消任务。";
+  if (text.includes("Refusing to delete outside data/jobs")) return "删除已被阻止：目标目录不在 data/jobs 下。";
+  if (text.includes("Refusing to delete jobs root")) return "删除已被阻止：不能删除整个 data/jobs 目录。";
+  if (text.includes("Job directory not found")) return "任务目录不存在，已无法删除本地产物。";
   if (text.includes("Batch topic is required")) return "\u8bf7\u5148\u586b\u5199\u540c\u9898\u6279\u91cf\u9009\u9898\u3002";
   if (text.includes("Batch requires at least one active account")) return "\u81f3\u5c11\u9700\u8981\u9009\u62e9\u4e00\u4e2a\u672a\u5f52\u6863\u8d26\u53f7\u3002";
   if (text.includes("Batch is already running")) return "\u8be5\u6279\u91cf\u4efb\u52a1\u6b63\u5728\u8fd0\u884c\uff0c\u8bf7\u7b49\u5f85\u5f53\u524d\u961f\u5217\u5b8c\u6210\u3002";
@@ -473,13 +831,29 @@ function normalizeErrorText(message = "") {
   if (text.includes("Body too large")) return "\u8f93\u5165\u5185\u5bb9\u8fc7\u957f\uff0c\u8bf7\u7cbe\u7b80\u540e\u91cd\u8bd5\u3002";
   if (text.includes("Request timeout")) return "\u672c\u5730\u670d\u52a1\u8d85\u65f6\uff0c\u8bf7\u91cd\u8bd5\u3002";
   if (text.includes("Codex is already running for this job")) return "\u4e0a\u4e00\u6761 Codex \u8bf7\u6c42\u8fd8\u5728\u6267\u884c\uff0c\u8bf7\u7a0d\u5019\u3002";
+  if (text.includes("A pipeline action is already running")) return "\u5f53\u524d\u4efb\u52a1\u5df2\u6709\u751f\u4ea7\u6b65\u9aa4\u5728\u6267\u884c\uff0c\u8bf7\u7b49\u5f85\u5b8c\u6210\u540e\u518d\u64cd\u4f5c\u3002";
+  if (text.includes("Unsupported action")) return "\u8be5\u64cd\u4f5c\u6682\u4e0d\u652f\u6301\uff0c\u8bf7\u5237\u65b0\u9875\u9762\u540e\u91cd\u8bd5\u3002";
+  if (text.includes("Job canceled") || text.includes("job canceled")) return "\u4efb\u52a1\u5df2\u53d6\u6d88\u3002";
   if (text.includes("Poster frame does not exist yet")) return "\u5f53\u524d\u8fd8\u6ca1\u6709\u53ef\u7528\u7684\u5c01\u9762\u5e27\u3002";
   if (text.includes("Rendered video does not exist yet")) return "\u5f53\u524d\u8fd8\u6ca1\u6709\u53ef\u7528\u7684\u6e32\u67d3\u89c6\u9891\uff0c\u65e0\u6cd5\u91cd\u65b0\u6293\u5e27\u3002";
-  if (text.includes("Render content contains prompt leakage")) return "\u6e32\u67d3\u5df2\u963b\u6b62\uff1a\u68c0\u6d4b\u5230\u7528\u6237\u63d0\u793a\u8bcd\u8fdb\u5165\u753b\u9762\u6587\u6848\u3002\u8bf7\u5148\u91cd\u65b0\u751f\u6210\u8ba1\u5212\u548c\u914d\u97f3\u3002";
+  if (text.includes("Render content contains prompt leakage")) return "\u6e32\u67d3\u5df2\u963b\u6b62\uff1a\u68c0\u6d4b\u5230\u7528\u6237\u63d0\u793a\u8bcd\u8fdb\u5165\u753b\u9762\u6587\u6848\u3002\u8bf7\u5148\u70b9\u201cAI \u6539\u811a\u672c\u201d\uff0c\u518d\u7ee7\u7eed\u914d\u97f3\u6216\u6e32\u67d3\u3002";
+  if (text.includes("Screen visual QA failed")) return "\u6e32\u67d3\u5df2\u963b\u6b62\uff1a\u753b\u9762\u622a\u56fe QA \u68c0\u6d4b\u5230\u63d0\u793a\u8bcd\u6216\u5185\u90e8\u5143\u6570\u636e\u6cc4\u6f0f\uff0c\u8bf7\u5148\u70b9\u201cAI \u6539\u811a\u672c\u201d\u6216\u201c\u4ece\u5934\u91cd\u8dd1\u201d\u3002";
+  if (text.includes("Asset slot not found")) return "素材槽位不存在，请刷新素材清单后重试。";
+  if (text.includes("Asset slot is locked")) return "该素材槽位已锁定，请先解锁再替换。";
+  if (text.includes("Asset source must be inside assets/images")) return "素材来源不安全：只能绑定 assets/images 目录里的本地素材。";
+  if (text.includes("Asset source file not found")) return "素材文件不存在，请检查 assets/images 目录。";
+  if (text.includes("Required assets are missing")) return "渲染已阻止：必需素材还没有绑定，请先在“素材”页补齐。";
+  if (text.startsWith("Codex request timed out")) {
+    const detail = text.split(":").slice(1).join(":").trim();
+    return detail ? `Codex \u8bf7\u6c42\u8d85\u65f6\uff1a${detail}` : "Codex \u8bf7\u6c42\u8d85\u65f6\uff0c\u8bf7\u68c0\u67e5\u672c\u5730 Codex CLI \u72b6\u6001\u3002";
+  }
+  if (text.startsWith("Codex session bootstrap timed out")) {
+    const detail = text.split(":").slice(1).join(":").trim();
+    return detail ? `\u521b\u5efa\u672c\u5730 Codex session \u8d85\u65f6\uff1a${detail}` : "\u521b\u5efa\u672c\u5730 Codex session \u8d85\u65f6\u3002";
+  }
   if (text.includes("spawn EPERM")) return "\u672c\u5730 Codex \u8fdb\u7a0b\u88ab\u7cfb\u7edf\u62d2\u7edd\u542f\u52a8\uff0c\u8bf7\u68c0\u67e5 Codex CLI \u6743\u9650\u3002";
+  if (text.includes("spawn codex ENOENT") || text.includes("spawn ENOENT")) return "\u672c\u5730\u627e\u4e0d\u5230 Codex CLI\uff0c\u8bf7\u786e\u8ba4\u5df2\u5b89\u88c5\u5e76\u53ef\u4ece\u5f53\u524d\u8fdb\u7a0b\u8bbf\u95ee\u3002";
   if (text.includes("os error 5")) return "\u672c\u5730 Codex \u8fdb\u7a0b\u88ab\u62d2\u7edd\u8bbf\u95ee\uff0c\u8bf7\u68c0\u67e5\u6267\u884c\u6743\u9650\u3002";
-  if (text.startsWith("Codex request timed out")) return "Codex \u8bf7\u6c42\u8d85\u65f6\uff0c\u8bf7\u68c0\u67e5\u672c\u5730 Codex CLI \u72b6\u6001\u3002";
-  if (text.startsWith("Codex session bootstrap timed out")) return "\u521b\u5efa\u672c\u5730 Codex session \u8d85\u65f6\u3002";
   if (text.startsWith("Codex session bootstrap exited with code 1")) {
     const detail = text.split(":").slice(1).join(":").trim();
     return detail ? `\u521b\u5efa\u672c\u5730 Codex session \u5931\u8d25\uff1a${detail}` : "\u521b\u5efa\u672c\u5730 Codex session \u5931\u8d25\u3002";
@@ -516,6 +890,22 @@ function syncSessionUiFromJob(job) {
   }
 }
 
+function isCodexRuntimeReady() {
+  return state.codexStatus?.ok !== false;
+}
+
+function getCodexRuntimeMessage() {
+  const status = state.codexStatus;
+  if (!status || status.ok !== false) return "";
+  if (status.code === "EPERM" || String(status.error || "").includes("EPERM")) {
+    return "本地服务当前没有权限启动 Codex CLI。请用普通终端在仓库目录启动前端服务，或检查 Codex CLI 执行权限。";
+  }
+  if (status.code === "ENOENT" || String(status.error || "").includes("ENOENT")) {
+    return "本地服务找不到 Codex CLI。请确认 Codex 已安装，并且当前服务进程可以访问 codex 命令。";
+  }
+  return status.error || "Codex CLI 当前不可用。";
+}
+
 function cloneJob(job) {
   return job ? JSON.parse(JSON.stringify(job)) : null;
 }
@@ -525,12 +915,17 @@ function setBusy(isBusy, reason = "") {
   [
     els.sessionSelect,
     els.newThreadButton,
+    els.newSessionButton,
     els.toggleSessionDrawerButton,
     els.sessionRefreshButton,
     els.composerInput,
     els.composerSubmitButton,
+    els.createAndSendButton,
     els.attachButton,
     els.openTaskModalButton,
+    els.quickCreateTaskButton,
+    els.quickBatchButton,
+    els.quickDocsButton,
     els.refreshButton,
     els.accountSelect,
     els.openAccountModalButton,
@@ -538,7 +933,6 @@ function setBusy(isBusy, reason = "") {
     els.archiveAccountButton,
     els.deleteAccountButton,
     els.accountSubmitButton,
-    els.cancelAccountButton,
     els.templateSelect,
     els.templateLockToggle,
     els.openInstructionInput,
@@ -555,6 +949,7 @@ function setBusy(isBusy, reason = "") {
     els.batchStatusFilter,
     els.batchSearchInput,
     els.refreshBatchesButton,
+    els.historySearchInput,
     els.recoverJobButton,
     els.archiveJobButton,
     els.generatePlanButton,
@@ -562,32 +957,40 @@ function setBusy(isBusy, reason = "") {
     els.renderButton,
     els.runAllButton,
     els.submitTaskCreateButton,
-    els.cancelTaskCreateButton,
-    els.closeTaskCreateModalButton,
     els.taskCreateModeInput,
     els.taskCreateTemplateInput,
     els.taskCreatePromptInput,
     els.taskCreateSessionInput,
     els.taskCreateAfterInput,
+    els.taskCreateGenerationModeInput,
+    els.taskCreateSubtitleFontSizeInput,
+    els.scriptAiInstructionInput,
+    els.submitScriptAiButton,
     els.confirmRenderButton,
-    els.cancelRenderConfirmButton,
-    els.closeRenderConfirmButton,
     els.pauseBatchButton,
     els.resumeBatchButton,
     els.cancelBatchButton,
     els.forceCancelBatchButton,
     els.downloadBatchButton,
+    els.uploadReplicationVideoButton,
+    els.analyzeReplicationVideoButton,
+    els.createReplicationJobButton,
+    els.runReplicationPipelineButton,
+    els.runReplicationDeliveryButton,
+    els.selectLatestReplicationButton,
   ].forEach((element) => {
     if (element) element.disabled = isBusy;
   });
 
   document
     .querySelectorAll(
-      "[data-session-scope], [data-instruction-scope], [data-history-filter], [data-batch-account-id], [data-task-account-id], [data-batch-action], [data-batch-detail], [data-batch-download], .preset-chip",
+      "[data-session-scope], [data-instruction-scope], [data-history-filter], [data-history-action], [data-batch-account-id], [data-task-account-id], [data-batch-action], [data-batch-detail], [data-batch-download], [data-failed-job-action], .preset-chip",
     )
     .forEach((element) => {
       element.disabled = isBusy;
     });
+
+  setActionState();
 }
 
 function formatTimestamp(value) {
@@ -686,6 +1089,10 @@ function normalizeConfig(config = {}) {
     instructionScope: config.instructionScope === "session" ? "session" : "run",
     durationSec: Number(config.durationSec || account?.defaultDurationSec || template?.defaultDurationSec || 60),
     aspectRatio: config.aspectRatio || account?.aspectRatio || template?.aspectRatio || "9:16",
+    subtitleFontSize: normalizeSubtitleFontSize(config.subtitleFontSize || state.settings.subtitleFontSize),
+    subtitleColor: normalizeSubtitleColor(config.subtitleColor || state.settings.subtitleColor),
+    useAiImageAssets: Boolean(config.useAiImageAssets),
+    imageAssetModel: String(config.imageAssetModel || state.settings.imageAssetModel || "gpt-image-2-all"),
   };
 }
 
@@ -697,10 +1104,14 @@ function buildDefaultDraftConfig() {
     compositionId: firstAccount?.defaultCompositionId || state.templates[0]?.compositionId || "",
     durationSec: firstAccount?.defaultDurationSec || 60,
     aspectRatio: firstAccount?.aspectRatio || "9:16",
+    subtitleFontSize: normalizeSubtitleFontSize(state.settings.subtitleFontSize),
+    subtitleColor: normalizeSubtitleColor(state.settings.subtitleColor),
     templateLocked: true,
     activePresetIds: [],
     instructionScope: "run",
     openInstruction: "",
+    useAiImageAssets: Boolean(state.settings.useAiImageAssets),
+    imageAssetModel: state.settings.imageAssetModel || "gpt-image-2-all",
   });
 }
 
@@ -724,8 +1135,17 @@ function getCurrentConfig() {
       instructionScope: state.activeJob.instructionScope,
       durationSec: state.activeJob.durationSec,
       aspectRatio: state.activeJob.aspectRatio,
+      subtitleFontSize: state.activeJob.subtitleFontSize || state.settings.subtitleFontSize,
+      subtitleColor: state.activeJob.subtitleColor || state.settings.subtitleColor,
+      useAiImageAssets: Boolean(state.activeJob.useAiImageAssets),
+      imageAssetModel: state.activeJob.imageAssetModel || state.settings.imageAssetModel || "gpt-image-2-all",
     });
   }
+  ensureDraftConfig();
+  return normalizeConfig(state.draftConfig);
+}
+
+function getDraftConfig() {
   ensureDraftConfig();
   return normalizeConfig(state.draftConfig);
 }
@@ -734,12 +1154,448 @@ function setDraftConfig(config) {
   state.draftConfig = normalizeConfig(config);
 }
 
+function artifactExists(job, key) {
+  const item = getArtifactItem(job, key);
+  return Boolean(item?.exists);
+}
+
+function isStepFinished(status = "") {
+  return ["done", "completed", "success"].includes(String(status || "").toLowerCase());
+}
+
+function getJobReadiness(job = state.activeJob) {
+  const stepMap = indexSteps(job?.steps || []);
+  const stageIndex = Number(job?.stageIndex || 0);
+  const hasPlan = Boolean(
+    artifactExists(job, "plan") ||
+      artifactExists(job, "planBrief") ||
+      artifactExists(job, "voiceoverUnits") ||
+      isStepFinished(stepMap["generate-plan"]?.status) ||
+      stageIndex >= 2,
+  );
+  const hasTts = Boolean(
+    (artifactExists(job, "audio") && artifactExists(job, "subtitles")) ||
+      isStepFinished(stepMap.tts?.status) ||
+      stageIndex >= 4,
+  );
+  const hasVideo = Boolean(artifactExists(job, "video") || isStepFinished(stepMap.render?.status) || job?.status === "completed");
+  return {hasPlan, hasTts, hasVideo};
+}
+
+function getRetryActionForJob(job = state.activeJob) {
+  const action = String(job?.failedAction || job?.lastPipelineAction || "").trim();
+  if (["generate-plan", "tts", "render"].includes(action)) return action;
+  const readiness = getJobReadiness(job);
+  if (!readiness.hasPlan) return "generate-plan";
+  if (!readiness.hasTts) return "tts";
+  return "render";
+}
+
+function getPipelineActionLabel(action = "") {
+  const labels = {
+    "generate-plan": "\u751f\u6210\u8ba1\u5212",
+    tts: "\u751f\u6210\u914d\u97f3",
+    render: "\u6e32\u67d3\u89c6\u9891",
+  };
+  return labels[action] || action || "\u5f53\u524d\u6b65\u9aa4";
+}
+
+function getScreenQaCache(job) {
+  const item = getArtifactItem(job, "screenQa");
+  if (!item?.exists) return {status: "missing", report: null, item};
+  const cached = state.screenQaReports[getScreenQaReportKey(job, item)];
+  if (cached?.loading) return {status: "loading", report: null, item};
+  if (cached?.error) return {status: "error", report: null, item, error: cached.error};
+  if (!cached?.report) return {status: "unknown", report: null, item};
+  return {status: cached.report.status || "unknown", report: cached.report, item};
+}
+
+function getJobCapabilities(job = state.activeJob) {
+  const isJob = Boolean(job?.id && job.id !== "__pending_job__");
+  const isRuntime = job?.source === "runtime";
+  const isSession = job?.source === "session";
+  const isBusy = Boolean(state.busyReason);
+  const isPipelineBusy = Boolean(job?.pipelineRunning || job?.codexRunning);
+  const readiness = getJobReadiness(job);
+  const video = getArtifactItem(job, "video");
+  const audio = getArtifactItem(job, "audio");
+  const screenQa = getScreenQaCache(job);
+  const exportNeedsQa = Boolean(video?.exists && video.url && state.settings.enforceQaBeforeExport);
+  const qaPassed = screenQa.status === "passed";
+  const qaExportBlocked = exportNeedsQa && !qaPassed;
+  const needsCodexSession = Boolean(isRuntime && !job?.codexSessionId);
+  const needsCodexRuntime = Boolean(isRuntime && !isCodexRuntimeReady());
+  const codexRuntimeReason = getCodexRuntimeMessage();
+  const basePipelineReason = !isJob
+    ? "请先创建或选择一个视频任务。"
+    : !isRuntime
+      ? isSession
+        ? "当前只是本地 Codex session 视图。请新建视频任务，或把 session 绑定到视频任务后再生成。"
+        : "历史只读任务不能继续执行生产流水线。"
+      : isPipelineBusy
+        ? "当前任务正在执行，请等待本轮完成。"
+        : needsCodexRuntime
+          ? codexRuntimeReason
+        : needsCodexSession
+          ? "当前任务还没有绑定本地 session，请先绑定后再生成计划。"
+          : "";
+
+  return {
+    isJob,
+    isRuntime,
+    isSession,
+    readiness,
+    isPipelineBusy,
+    canChat: Boolean(isJob && (isRuntime || isSession) && !needsCodexRuntime && !isBusy),
+    canPlan: Boolean(isRuntime && !needsCodexRuntime && !needsCodexSession && !isPipelineBusy && !isBusy),
+    canTts: Boolean(isRuntime && readiness.hasPlan && !isPipelineBusy && !isBusy),
+    canRender: Boolean(isRuntime && readiness.hasTts && !isPipelineBusy && !isBusy),
+    canRunAll: Boolean(isRuntime && !isPipelineBusy && !isBusy && !needsCodexRuntime && (!needsCodexSession || readiness.hasPlan)),
+    canExport: Boolean(!isBusy && ((video?.exists && video.url && !qaExportBlocked) || (!video?.exists && audio?.exists && audio.url))),
+    canExportVideo: Boolean(video?.exists && video.url && !qaExportBlocked),
+    canExportAudio: Boolean(!video?.exists && audio?.exists && audio.url),
+    qaExportBlocked,
+    screenQa,
+    reason: basePipelineReason,
+    actionReasons: {
+      "generate-plan": basePipelineReason || (needsCodexSession ? "请先绑定本地 session，再生成计划。" : ""),
+      tts: basePipelineReason || (!readiness.hasPlan ? "\u8bf7\u5148\u751f\u6210\u8ba1\u5212\uff0c\u518d\u8fdb\u5165\u914d\u97f3\u3002" : ""),
+      render: basePipelineReason || (!readiness.hasTts ? "\u8bf7\u5148\u5b8c\u6210\u914d\u97f3\u548c\u5b57\u5e55\u65f6\u95f4\u8f74\uff0c\u518d\u6e32\u67d3 MP4\u3002" : ""),
+      "run-all": basePipelineReason || (needsCodexSession ? "请先绑定本地 session，再执行一键生成。" : ""),
+    },
+    exportReason: !video?.exists && !audio?.exists
+      ? "还没有可导出的产物。"
+      : qaExportBlocked
+        ? "Screen QA 未通过或报告未读取成功，已阻止导出。"
+        : "",
+  };
+}
+
+function getScreenQaOverview(job, readiness) {
+  const screenQa = getScreenQaCache(job);
+  if (!readiness.hasVideo) {
+    return {value: "待渲染", note: "渲染后自动检查", tone: "todo"};
+  }
+  if (screenQa.status === "passed") {
+    return {value: "已通过", note: "允许导出", tone: "ready"};
+  }
+  if (screenQa.status === "failed") {
+    return {value: "未通过", note: "已阻止导出", tone: "danger"};
+  }
+  if (screenQa.status === "loading") {
+    return {value: "读取中", note: "正在读取 QA 报告", tone: "warning"};
+  }
+  if (screenQa.status === "error") {
+    return {value: "需检查", note: screenQa.error || "QA 报告读取失败", tone: "warning"};
+  }
+  return {value: "待检查", note: "等待 Screen QA 报告", tone: "warning"};
+}
+
+function getPipelineGuide(job = state.activeJob) {
+  const stepMap = indexSteps(job?.steps || []);
+  const readiness = getJobReadiness(job);
+  const capabilities = getJobCapabilities(job);
+  const errorText = String(job?.errorMessage || job?.preview?.subtitle || "").trim();
+  const failed = String(job?.status || "").toLowerCase() === "failed";
+  const hasRenderLeak = /screen qa|prompt leakage|render content contains prompt leakage|提示词|画面文案|内部元数据/i.test(errorText);
+  const planDone = stepMap["generate-plan"]?.status === "completed" || readiness.hasPlan;
+  const ttsDone = stepMap.tts?.status === "completed" || readiness.hasTts;
+  const renderDone = stepMap.render?.status === "completed" || readiness.hasVideo;
+
+  if (!job?.id || job.id === "__pending_job__") {
+    return {
+      tone: "todo",
+      stageLabel: "尚未开始",
+      stageNote: "先创建视频任务，再进入计划、配音和渲染。",
+      nextLabel: "新建视频任务",
+      nextNote: "先选择账号和模板，系统会告诉你后面要点哪个按钮。",
+      actions: [{id: "new-task", label: "新建视频任务", tone: "primary"}],
+    };
+  }
+
+  if (!capabilities.isRuntime) {
+    return {
+      tone: "todo",
+      stageLabel: capabilities.isSession ? "本地 Session 只读" : "历史任务只读",
+      stageNote: capabilities.isSession
+        ? "这个视图只用于查看和对话，不能直接跑生产步骤。"
+        : "历史任务只能查看产物，不能直接继续生成。",
+      nextLabel: "新建视频任务",
+      nextNote: "如果要继续生产，请新建运行中的任务。",
+      actions: [{id: "new-task", label: "新建视频任务", tone: "primary"}],
+    };
+  }
+
+  if (failed) {
+    if (hasRenderLeak) {
+      return {
+        tone: "danger",
+        stageLabel: "渲染前被拦截",
+        stageNote: "Screen QA 检测到提示词或内部字段进入了画面文案。",
+        nextLabel: "先改脚本，再继续",
+        nextNote: "建议先打开 AI 改脚本，修掉泄漏后再重新跑配音和渲染。",
+        actions: [
+          {id: "open-script-ai", label: "AI 改脚本", tone: "primary"},
+          {id: "restart-pipeline", label: "从头重跑", tone: "secondary"},
+        ],
+      };
+    }
+
+    const retryAction = getRetryActionForJob(job);
+    return {
+      tone: "danger",
+      stageLabel: "任务已失败",
+      stageNote: normalizeErrorText(errorText || job?.preview?.subtitle || "当前步骤执行失败。"),
+      nextLabel: `重试 ${getPipelineActionLabel(retryAction)}`,
+      nextNote: "可以先重试当前失败步骤，也可以从头重新执行整条链路。",
+      actions: [
+        {id: "retry-current", label: `重试当前步骤：${getPipelineActionLabel(retryAction)}`, tone: "primary"},
+        {id: "restart-pipeline", label: "从头重跑", tone: "secondary"},
+      ],
+    };
+  }
+
+  if (job?.source === "runtime" && !isCodexRuntimeReady() && !planDone) {
+    return {
+      tone: "danger",
+      stageLabel: "Codex CLI 不可用",
+      stageNote: getCodexRuntimeMessage(),
+      nextLabel: "修复本地 Codex 运行环境",
+      nextNote: "当前服务进程不能启动 Codex，所以不能发送消息，也不能由 Codex 生成计划。",
+      actions: [],
+    };
+  }
+
+  if (job?.source === "runtime" && !job?.codexSessionId && !planDone) {
+    return {
+      tone: "warning",
+      stageLabel: "先绑定 session 再生成计划",
+      stageNote: "当前任务还没有绑定本地 session。先绑定后，计划才会由 Codex 生成。",
+      nextLabel: "绑定本地 session",
+      nextNote: "打开 session 列表，选择一个本地会话后再点“生成计划”。",
+      actions: [{id: "open-session-drawer", label: "绑定 session", tone: "primary"}],
+    };
+  }
+
+  if (!planDone) {
+    return {
+      tone: "warning",
+      stageLabel: "等待生成计划",
+      stageNote: "下一步是调用 Codex 生成脚本计划。",
+      nextLabel: "生成计划",
+      nextNote: state.settings.generationMode === "auto"
+        ? "生成后会继续进入配音和渲染。"
+        : "生成后会停在脚本审阅，确认无误再继续。",
+      actions: [{id: "generate-plan", label: "生成计划", tone: "primary"}],
+    };
+  }
+
+  if (!ttsDone) {
+    return {
+      tone: "warning",
+      stageLabel: "计划已完成",
+      stageNote: "下一步是生成配音和字幕时间轴。",
+      nextLabel: "继续配音",
+      nextNote: "点这个按钮后会进入 TTS，随后生成字幕与渲染参数。",
+      actions: [{id: "tts", label: "继续配音", tone: "primary"}],
+    };
+  }
+
+  if (!renderDone) {
+    return {
+      tone: "warning",
+      stageLabel: "配音已完成",
+      stageNote: "下一步是渲染 MP4，并自动跑 Screen QA。",
+      nextLabel: "继续渲染",
+      nextNote: "点这个按钮后会开始 Remotion 渲染，完成后会自动检查画面泄漏。",
+      actions: [{id: "render", label: "继续渲染", tone: "primary"}],
+    };
+  }
+
+  if (job?.status === "completed") {
+    return {
+      tone: "ready",
+      stageLabel: "产物已完成",
+      stageNote: "视频、封面和 QA 报告都已生成。",
+      nextLabel: "导出或打开输出目录",
+      nextNote: "如果还想检查细节，可以先打开产物目录或直接导出。",
+      actions: [{id: "export", label: "导出 MP4", tone: "primary"}],
+    };
+  }
+
+  return {
+    tone: "ready",
+    stageLabel: "渲染结果已就绪",
+    stageNote: "如果 QA 通过，可以直接导出视频。",
+    nextLabel: "导出 MP4",
+    nextNote: "如果导出被阻止，先查看右侧 QA 结果。",
+    actions: [{id: "export", label: "导出 MP4", tone: "primary"}],
+  };
+}
+
+function renderPipelineGuide(job = state.activeJob) {
+  if (!els.pipelineGuide) return;
+  const guide = getPipelineGuide(job);
+  const statusClass = `is-${escapeHtml(guide.tone || "todo")}`;
+  const actionButtons = ensureArray(guide.actions)
+    .map(
+      (action) =>
+        `<button class="${action.tone === "primary" ? "primary-button" : "secondary-button"} is-small" type="button" data-next-action="${escapeHtml(action.id)}">${escapeHtml(action.label)}</button>`,
+    )
+    .join("");
+  els.pipelineGuide.innerHTML = `
+    <div class="pipeline-guide-head">
+      <div>
+        <span class="eyebrow">Current Step</span>
+        <h3>${escapeHtml(guide.stageLabel)}</h3>
+      </div>
+      <span class="mini-status ${statusClass}">${escapeHtml(localizeJobStatus(job?.status || "idle"))}</span>
+    </div>
+    <div class="pipeline-guide-grid">
+      <div class="pipeline-guide-block ${statusClass}">
+        <span>当前阶段</span>
+        <strong>${escapeHtml(guide.stageLabel)}</strong>
+        <small>${escapeHtml(guide.stageNote)}</small>
+      </div>
+      <div class="pipeline-guide-block ${statusClass}">
+        <span>下一步</span>
+        <strong>${escapeHtml(guide.nextLabel)}</strong>
+        <small>${escapeHtml(guide.nextNote)}</small>
+      </div>
+      <div class="pipeline-guide-actions">
+        ${actionButtons}
+      </div>
+    </div>
+  `;
+}
+
+function renderProductionStatus(job = state.activeJob) {
+  if (!els.productionStatusGrid) return;
+  const config = getCurrentConfig();
+  const account = getAccountById(config.accountId);
+  const template = getTemplateById(config.templateId);
+  const readiness = getJobReadiness(job);
+  const video = getArtifactItem(job, "video");
+  const audio = getArtifactItem(job, "audio");
+  const qa = getScreenQaOverview(job, readiness);
+  const guide = getPipelineGuide(job);
+  const isRuntimeJob = Boolean(job?.id && job.id !== "__pending_job__");
+  const useAiImageAssets = Boolean(job?.useAiImageAssets || (!isRuntimeJob && config.useAiImageAssets));
+  const imageAssetModel = job?.imageAssetModel || config.imageAssetModel || state.settings.imageAssetModel || "gpt-image-2-all";
+  const items = [
+    {
+      label: "当前任务",
+      value: isRuntimeJob ? job.title || job.id : "未创建",
+      note: isRuntimeJob ? localizeJobStatus(job.status || "idle") : "先新建单条任务或选择历史任务",
+      tone: isRuntimeJob ? "ready" : "todo",
+    },
+    {
+      label: "账号",
+      value: account?.name || "未选择",
+      note: account ? platformLabel(account.platform) : "新任务必选",
+      tone: account ? "ready" : "todo",
+    },
+    {
+      label: "模板",
+      value: template?.title || config.templateId || "未选择",
+      note: config.compositionId || template?.compositionId || "新任务必选",
+      tone: template ? "ready" : "todo",
+    },
+    {
+      label: "生成计划",
+      value: readiness.hasPlan ? "Ready" : "待生成",
+      note: "video_plan.json / 脚本结构",
+      tone: readiness.hasPlan ? "ready" : "todo",
+    },
+    {
+      label: "素材模式",
+      value: useAiImageAssets ? "图片模型" : "本地素材",
+      note: useAiImageAssets ? imageAssetModel : "assets/images",
+      tone: useAiImageAssets ? "ready" : "todo",
+    },
+    {
+      label: "字幕字号",
+      value: String(normalizeSubtitleFontSize(job?.subtitleFontSize || config.subtitleFontSize)),
+      note: "Remotion subtitles",
+      tone: "ready",
+    },
+    {
+      label: "字幕颜色",
+      value: normalizeSubtitleColor(job?.subtitleColor || config.subtitleColor),
+      note: "SubtitleTrack",
+      tone: "ready",
+    },
+    {
+      label: "配音",
+      value: readiness.hasTts ? "Ready" : "待配音",
+      note: audio?.exists ? audio.fileName || "audio" : "TTS + subtitles",
+      tone: readiness.hasTts ? "ready" : "todo",
+    },
+    {
+      label: "渲染",
+      value: readiness.hasVideo ? "Ready" : "待渲染",
+      note: video?.exists ? video.fileName || "MP4" : "Remotion MP4",
+      tone: readiness.hasVideo ? "ready" : "todo",
+    },
+    {
+      label: "下一步",
+      value: guide.nextLabel,
+      note: guide.nextNote,
+      tone: guide.tone,
+    },
+    {
+      label: "Screen QA",
+      value: qa.value,
+      note: qa.note,
+      tone: qa.tone,
+    },
+    {
+      label: "产物",
+      value: readiness.hasVideo ? "可审阅" : readiness.hasTts ? "音频已就绪" : "待产出",
+      note: job?.outputDir || "data/jobs",
+      tone: readiness.hasVideo ? "ready" : readiness.hasTts ? "warning" : "todo",
+    },
+  ];
+
+  els.productionStatusGrid.innerHTML = items
+    .map(
+      (item) => `
+        <article class="production-status-card is-${escapeHtml(item.tone)}">
+          <span>${escapeHtml(item.label)}</span>
+          <strong>${escapeHtml(item.value)}</strong>
+          <small>${escapeHtml(item.note)}</small>
+        </article>
+      `,
+    )
+    .join("");
+}
+
+async function getExportTarget(job = state.activeJob) {
+  const video = getArtifactItem(job, "video");
+  if (video?.exists && video.url) {
+    if (!state.settings.enforceQaBeforeExport) return {item: video, blocked: false};
+    const screenQa = getArtifactItem(job, "screenQa");
+    const report = await loadScreenQaReport(job, screenQa);
+    if (report?.status === "passed") return {item: video, blocked: false};
+    return {
+      item: video,
+      blocked: true,
+      reason: report?.status === "failed"
+        ? "\u5df2\u963b\u6b62\u5bfc\u51fa\uff1aScreen QA \u68c0\u6d4b\u672a\u901a\u8fc7\uff0c\u8bf7\u5148\u91cd\u65b0\u751f\u6210\u6216\u4fee\u590d\u753b\u9762\u3002"
+        : "\u5df2\u963b\u6b62\u5bfc\u51fa\uff1a\u672a\u8bfb\u53d6\u5230\u901a\u8fc7\u7684 Screen QA \u62a5\u544a\u3002",
+    };
+  }
+  const audio = getArtifactItem(job, "audio");
+  if (audio?.exists && audio.url) return {item: audio, blocked: false};
+  return {item: null, blocked: true, reason: "\u8fd8\u6ca1\u6709\u53ef\u5bfc\u51fa\u7684\u4ea7\u7269\uff0c\u8bf7\u5148\u5b8c\u6210\u914d\u97f3\u6216\u6e32\u67d3\u3002"};
+}
+
 function canChat(job) {
-  return Boolean(job && (job.source === "runtime" || job.source === "session"));
+  return getJobCapabilities(job).canChat;
 }
 
 function canRunPipeline(job) {
-  return Boolean(job && job.source === "runtime");
+  return Boolean(job?.id && job.id !== "__pending_job__" && job.source === "runtime");
 }
 
 function canConfigureJob(job) {
@@ -786,6 +1642,9 @@ function getDisplayedSessionLabel(job) {
 function renderTopContext(config, job) {
   const sessionLabel = getDisplayedSessionLabel(job);
   els.topSessionChip.textContent = sessionLabel;
+  if (els.topModelChip) {
+    els.topModelChip.textContent = state.codexConfig?.model || "gpt-5.4";
+  }
   els.topStatusChip.textContent = localizeJobStatus(job?.status || "idle");
   els.topOutputChip.textContent = job?.outputDir || "data/jobs";
 }
@@ -820,7 +1679,15 @@ function renderProject() {
 
   const visibleCount = Number(state.sessionTotal || state.project.localSessionCount || 0);
   const suffix = visibleCount > 0 ? ` | ${visibleCount}\u4e2a session` : "";
-  els.connectionStatus.innerHTML = `<span></span>${escapeHtml((state.project.codexBridge || "Codex CLI") + suffix)}`;
+  const codexSuffix =
+    state.codexStatus?.ok === false
+      ? ` | 不可用：${normalizeErrorText(state.codexStatus.error || state.codexStatus.code || "")}`
+      : state.codexStatus?.version
+        ? ` | ${state.codexStatus.version}`
+        : "";
+  const modelSuffix = state.codexConfig?.model ? ` | ${state.codexConfig.model}` : "";
+  els.connectionStatus.classList.toggle("is-error", state.codexStatus?.ok === false);
+  els.connectionStatus.innerHTML = `<span></span>${escapeHtml((state.project.codexBridge || "Codex CLI") + suffix + codexSuffix + modelSuffix)}`;
 
   document.querySelectorAll("[data-session-scope]").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.sessionScope === state.sessionScope);
@@ -964,6 +1831,11 @@ function getSelectedTopic() {
   return state.topics.find((topic) => topic.id === state.selectedTopicId) || null;
 }
 
+function getSelectedBatchTopics() {
+  const ids = new Set(ensureStringList(state.selectedTopicIds));
+  return (Array.isArray(state.topics) ? state.topics : []).filter((topic) => ids.has(topic.id));
+}
+
 function localizeTopicStatus(status = "") {
   const map = {
     idea: "待生成",
@@ -993,14 +1865,25 @@ function renderTopicPool() {
   els.topicPoolList.innerHTML = topics
     .slice(0, 8)
     .map(
-      (topic) => `
-        <button type="button" class="topic-chip ${topic.id === state.selectedTopicId ? "is-selected" : ""}" data-topic-id="${escapeHtml(topic.id)}">
+      (topic) => {
+        const selected = topic.id === state.selectedTopicId || state.selectedTopicIds.includes(topic.id);
+        return `
+        <button type="button" class="topic-chip ${selected ? "is-selected" : ""}" data-topic-id="${escapeHtml(topic.id)}">
           <strong>${escapeHtml(topic.title)}</strong>
           <small>${escapeHtml(localizeTopicStatus(topic.status))}${topic.batchId ? ` | ${escapeHtml(topic.batchId.slice(0, 18))}` : ""}</small>
         </button>
-      `,
+      `;
+      },
     )
     .join("");
+}
+
+function updateBatchCreateButtonState(config = getCurrentConfig()) {
+  if (!els.createBatchButton) return;
+  const selectedAccountIds = ensureBatchAccountSelection(config);
+  const hasTopics = getBatchTopicPayloadFromInput().length > 0;
+  els.createBatchButton.disabled = Boolean(state.busyReason) || !selectedAccountIds.length || !hasTopics;
+  els.createBatchButton.title = hasTopics ? "" : "请先输入选题，或从选题池选择一个或多个选题。";
 }
 
 function renderBatchPanel(config = getCurrentConfig()) {
@@ -1022,9 +1905,7 @@ function renderBatchPanel(config = getCurrentConfig()) {
     return;
   }
 
-  if (els.createBatchButton) {
-    els.createBatchButton.disabled = Boolean(state.busyReason) || !selectedAccountIds.size;
-  }
+  updateBatchCreateButtonState(config);
 
   els.batchAccountGrid.innerHTML = accounts
     .map((account) => {
@@ -1092,6 +1973,31 @@ function countBatchArtifacts(batch) {
   return batch.artifacts.items.filter((item) => item.key === "video").length;
 }
 
+function formatBatchArtifactStatus(job) {
+  const status = job?.artifactStatus || {};
+  const manifest = job?.artifactManifest || {};
+  const ready = [
+    status.plan || manifest.plan?.exists ? "计划" : "",
+    status.audio || manifest.audio?.exists ? "音频" : "",
+    status.subtitles || manifest.subtitles?.exists ? "字幕" : "",
+    status.poster || manifest.poster?.exists ? "封面" : "",
+    status.video || manifest.video?.exists || job?.hasVideo ? "视频" : "",
+  ].filter(Boolean);
+  return ready.length ? ready.join(" / ") : "暂无产物";
+}
+
+function formatBatchJobScope(job, batch) {
+  const accountName = getAccountById(job?.accountId)?.name || job?.accountName || job?.accountId || "-";
+  return [
+    batch?.campaignName || job?.campaignName || job?.campaignId || "",
+    batch?.activityName || job?.activityName || job?.activityId || "",
+    job?.topicTitle || batch?.topic || "",
+    accountName,
+  ]
+    .filter(Boolean)
+    .join(" / ");
+}
+
 function getStepClass(status = "") {
   const value = String(status || "waiting").toLowerCase();
   if (["done", "completed", "success"].includes(value)) return "is-done";
@@ -1139,8 +2045,8 @@ function renderBatchList() {
       const progress = total ? `${planReady}/${total}` : "-";
       const isRunning = isBatchRunning(batch);
       const canRunPlan = total > 0 && planReady < total;
-      const canRunTts = total > 0 && ttsReady < total;
-      const canRunRender = total > 0 && renderReady < total;
+      const canRunTts = total > 0 && planReady > 0 && ttsReady < planReady;
+      const canRunRender = total > 0 && ttsReady > 0 && renderReady < ttsReady;
       const retryAction = batch.runState?.action || "generate-plan";
       const jobButtons = (jobs.length ? jobs : (batch.jobIds || []).map((id) => ({id, title: id, status: "idle"})))
         .slice(0, 6)
@@ -1170,9 +2076,12 @@ function renderBatchList() {
             <small>项目：${escapeHtml(batch.campaignName || batch.campaignId || "-")}</small>
             <small>活动：${escapeHtml(batch.activityName || batch.activityId || "-")}</small>
             <small>任务数：${escapeHtml(total)}</small>
+            <small>选题：${escapeHtml(batch.topicCount || 1)}</small>
+            <small>账号：${escapeHtml(batch.accountCount || batch.accountIds?.length || "-")}</small>
             <small>计划 ${escapeHtml(planReady)}/${escapeHtml(total)}</small>
             <small>配音 ${escapeHtml(ttsReady)}/${escapeHtml(total)}</small>
             <small>渲染 ${escapeHtml(renderReady)}/${escapeHtml(total)}</small>
+            <small>自动重试：${batch.autoRetry === false ? "关闭" : `开启 ${escapeHtml(batch.autoRetryCount || 0)}/${escapeHtml(batch.maxAutoRetries ?? 1)}`}</small>
             ${runStateText ? `<small>${escapeHtml(runStateText)}</small>` : ""}
           </div>
           <div class="batch-job-row">${jobButtons}</div>
@@ -1218,6 +2127,8 @@ function renderBatchDrawer() {
       <div><span>渲染产物</span><strong>${escapeHtml(videos)}</strong></div>
       <div><span>项目</span><strong>${escapeHtml(detail.campaignName || detail.campaignId || "-")}</strong></div>
       <div><span>活动</span><strong>${escapeHtml(detail.activityName || detail.activityId || "-")}</strong></div>
+      <div><span>选题 / 账号</span><strong>${escapeHtml(detail.topicCount || 1)} / ${escapeHtml(detail.accountCount || activeAccountIds.length || "-")}</strong></div>
+      <div><span>失败自动重试</span><strong>${detail.autoRetry === false ? "关闭" : `开启 ${detail.autoRetryCount || 0}/${detail.maxAutoRetries ?? 1}`}</strong></div>
       <div><span>当前队列</span><strong>${escapeHtml(runStateText || "-")}</strong></div>
       <div><span>当前 job 已耗时</span><strong>${escapeHtml(formatDurationMs(runState.currentElapsedMs))}</strong></div>
       <div><span>当前 job 预计</span><strong>${escapeHtml(formatDurationMs(runState.currentJobEstimateMs))}</strong></div>
@@ -1263,6 +2174,20 @@ function renderBatchDrawer() {
             : job.retryArtifactAt
               ? `重试产物 ${formatDateTime(job.retryArtifactAt)}`
               : "";
+          const artifactStatus = formatBatchArtifactStatus(job);
+          const qaStatus = localizeQaStatus(job.screenQaStatus || "missing");
+          const errorText = job.errorMessage || runState.lastError || "";
+          const scopeText = formatBatchJobScope(job, detail);
+          const retryCount = Number(job.retryCount || 0);
+          const retryActions =
+            job.status === "failed"
+              ? `
+                <div class="batch-job-action-row">
+                  <button type="button" class="secondary-button is-small is-danger" data-batch-job-action="retry-current" data-batch-id="${escapeHtml(detail.id)}" data-batch-job-id="${escapeHtml(job.id)}">重试当前步骤</button>
+                  <button type="button" class="secondary-button is-small" data-batch-job-action="restart" data-batch-id="${escapeHtml(detail.id)}" data-batch-job-id="${escapeHtml(job.id)}">从头重新生成</button>
+                </div>
+              `
+              : "";
           return `
             <article class="batch-job-detail ${job.status === "failed" ? "is-danger" : ""}">
               <div class="batch-job-detail-head">
@@ -1278,6 +2203,14 @@ function renderBatchDrawer() {
                 <small>${escapeHtml(localizeStepStatus(currentStatus))}</small>
                 ${timingText ? `<small>${escapeHtml(timingText)}</small>` : ""}
               </div>
+              <div class="batch-job-metrics">
+                <div><span>归档</span><strong>${escapeHtml(scopeText || "-")}</strong></div>
+                <div><span>产物</span><strong>${escapeHtml(artifactStatus)}</strong></div>
+                <div><span>QA</span><strong>${escapeHtml(qaStatus)}</strong></div>
+                <div><span>重试次数</span><strong>${escapeHtml(retryCount)}</strong></div>
+              </div>
+              ${errorText ? `<div class="batch-job-error"><span>错误信息</span><strong>${escapeHtml(errorText)}</strong></div>` : ""}
+              ${retryActions}
               <div class="batch-step-strip">${stepStrip}</div>
               ${
                 logs.length
@@ -1312,6 +2245,23 @@ function renderBatchDrawer() {
         `;
       })
       .join("");
+    const archiveSummary = jobs
+      .map((job) => {
+        const accountName = getAccountById(job.accountId)?.name || job.accountName || job.accountId || "-";
+        const label = [
+          detail.campaignName || job.campaignName || job.campaignId || "未归档项目",
+          detail.activityName || job.activityName || job.activityId || "未归档活动",
+          job.topicTitle || detail.topic || "未命名选题",
+          accountName,
+        ].join(" / ");
+        return `
+          <div class="batch-archive-row">
+            <strong>${escapeHtml(label)}</strong>
+            <span>${escapeHtml(formatBatchArtifactStatus(job))} · ${escapeHtml(localizeQaStatus(job.screenQaStatus || "missing"))}</span>
+          </div>
+        `;
+      })
+      .join("");
     els.batchDrawerArtifacts.innerHTML = `
       <div class="batch-artifact-head">
         <div>
@@ -1327,6 +2277,7 @@ function renderBatchDrawer() {
           <span>只看失败重试后产物</span>
         </label>
       </div>
+      <div class="batch-archive-list">${archiveSummary || `<div class="batch-job-empty-log">还没有可归档的 job。</div>`}</div>
       <div class="batch-artifact-list">
         ${[...videoItems, ...otherItems]
           .map(
@@ -1423,6 +2374,42 @@ async function controlBatchQueue(command, options = {}) {
   }
 }
 
+function localizeBatchJobAction(action = "") {
+  const map = {
+    "retry-current": "重试当前步骤",
+    restart: "从头重新生成",
+  };
+  return map[action] || action || "单任务操作";
+}
+
+async function runBatchJobAction(batchId, jobId, action) {
+  if (!batchId || !jobId || !action) return null;
+  const label = localizeBatchJobAction(action);
+  setBusy(true, `batch-job-${action}`);
+  setBanner(`正在执行${label}...`, "info");
+  try {
+    const payload = await requestJson(
+      `/api/batches/${encodeURIComponent(batchId)}/jobs/${encodeURIComponent(jobId)}/actions/${encodeURIComponent(action)}`,
+      {method: "POST"},
+    );
+    if (payload.job) mergeJob(payload.job);
+    if (payload.batch) {
+      state.batchDetail = payload.batch;
+      state.selectedBatchId = payload.batch.id || batchId;
+    }
+    await reloadScaleCollections();
+    await loadBatchDetail(batchId, {open: true});
+    setBanner(`${label}已提交并同步最新状态。`, "success");
+    showToast(`${label}已完成`, "success");
+    return payload;
+  } catch (error) {
+    reportError(`${label}失败`, error);
+    throw error;
+  } finally {
+    setBusy(false);
+  }
+}
+
 function getBatchArtifactDownloadFilters(batchId) {
   const batch = state.batchDetail?.id === batchId ? state.batchDetail : null;
   if (!batch) return {};
@@ -1459,8 +2446,17 @@ function downloadBatchArtifacts(batchId = state.selectedBatchId || state.batchDe
 function bindBatchDrawerDynamicActions() {
   els.batchDrawerJobs?.querySelectorAll("[data-batch-job-id]").forEach((button) => {
     button.addEventListener("click", () => {
+      if (button.dataset.batchJobAction) return;
       const jobId = button.dataset.batchJobId;
       if (jobId) selectJob(jobId).catch(console.error);
+    });
+  });
+  els.batchDrawerJobs?.querySelectorAll("[data-batch-job-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const batchId = button.dataset.batchId || state.selectedBatchId || state.batchDetail?.id || "";
+      const jobId = button.dataset.batchJobId || "";
+      const action = button.dataset.batchJobAction || "";
+      runBatchJobAction(batchId, jobId, action).catch(console.error);
     });
   });
   els.batchDrawerArtifacts?.querySelectorAll("[data-batch-download]").forEach((button) => {
@@ -1635,12 +2631,15 @@ function renderMessages(messages = [], pendingAssistantText = "") {
 
   els.threadList.innerHTML = items
     .map(
-      (message) => `
+      (message) => {
+        const text = message.text ?? message.content ?? message.message ?? "";
+        return `
         <article class="message ${escapeHtml(message.role || "assistant")} ${message.pending ? "is-pending" : ""}">
-          <div class="meta">${escapeHtml(message.meta || (message.role === "user" ? "You" : "Codex"))}</div>
-          <div class="bubble">${escapeHtml(message.text || "")}</div>
+          <div class="meta">${escapeHtml(message.meta || message.author || (message.role === "user" ? "You" : "Codex"))}</div>
+          <div class="bubble">${escapeHtml(text)}</div>
         </article>
-      `,
+      `;
+      },
     )
     .join("");
   els.threadList.scrollTop = els.threadList.scrollHeight;
@@ -1660,8 +2659,8 @@ function renderSteps(steps = []) {
       <li class="step-card is-onboarding">
         <div class="step-index">02</div>
         <div class="step-copy">
-          <strong>\u53d1\u9001\u7b2c\u4e00\u6761\u9700\u6c42</strong>
-          <p>\u5728\u5de6\u4fa7\u5bf9\u8bdd\u533a\u63cf\u8ff0\u89c6\u9891\u4e3b\u9898\u3001\u5e73\u53f0\u3001\u65f6\u957f\u548c\u989d\u5916\u8981\u6c42\u3002</p>
+          <strong>明确创建视频任务</strong>
+          <p>点击“新建视频任务”或“创建并发送”。输入框的发送按钮只用于当前任务对话，不会自动创建新任务。</p>
         </div>
         <span class="step-state">Prompt</span>
       </li>
@@ -1693,27 +2692,87 @@ function renderSteps(steps = []) {
     .join("");
 }
 
-function renderScriptStructure(sections = []) {
-  if (!sections.length) {
+function sectionText(sections = [], labels = []) {
+  const normalizedLabels = labels.map((label) => String(label).toLowerCase());
+  return (
+    sections.find((section) => normalizedLabels.includes(String(section.label || "").toLowerCase()))?.text ||
+    ""
+  );
+}
+
+function buildScriptReviewModel(jobOrSections = []) {
+  const job = Array.isArray(jobOrSections) ? null : jobOrSections;
+  const sections = Array.isArray(jobOrSections) ? jobOrSections : Array.isArray(job?.scriptSections) ? job.scriptSections : [];
+  const productionSections = sections.filter(
+    (section) => !["account", "template", "instructions"].includes(String(section.label || "").toLowerCase()),
+  );
+  const hook = sectionText(sections, ["Hook"]) || productionSections[0]?.text || "";
+  const body = sectionText(sections, ["Body"]) || productionSections[1]?.text || "";
+  const close = sectionText(sections, ["Close"]) || productionSections[2]?.text || "";
+  const voiceover = [hook, body, close].filter(Boolean).join("\n\n") || productionSections.map((section) => section.text).filter(Boolean).join("\n\n");
+  const shotStructure = productionSections.length
+    ? productionSections.map((section, index) => `${String(index + 1).padStart(2, "0")} ${section.label || "Scene"}：${section.text || ""}`).join("\n")
+    : job?.preview?.shot || job?.renderCompositionId || "";
+  return {
+    job,
+    sections,
+    title: job?.title || job?.preview?.headline || "未命名脚本",
+    hook: hook || "等待生成 Hook。",
+    voiceover: voiceover || "生成计划后会展示口播脚本。",
+    subtitleSummary: job?.preview?.subtitle || hook || "字幕摘要会在生成计划或配音后更新。",
+    shotStructure: shotStructure || "镜头结构会跟随模板和脚本结构生成。",
+  };
+}
+
+function renderScriptStructure(jobOrSections = []) {
+  const review = buildScriptReviewModel(jobOrSections);
+  const readiness = getJobReadiness(review.job);
+  if (!review.sections.length) {
     els.scriptStructure.innerHTML = `
       <div class="panel-empty">
         <strong>\u8fd8\u6ca1\u6709\u811a\u672c\u7ed3\u6784</strong>
-        <p>\u751f\u6210\u8ba1\u5212\u540e\uff0c\u8fd9\u91cc\u4f1a\u663e\u793a Hook\u3001\u6b63\u6587\u3001\u8f6c\u573a\u548c\u7ed3\u5c3e\u7ed3\u6784\u3002</p>
+        <p>生成计划后，这里会展示标题、Hook、口播脚本、字幕摘要和镜头结构。脚本审阅模式会先停在这里。</p>
       </div>
     `;
     return;
   }
 
-  els.scriptStructure.innerHTML = sections
-    .map(
-      (section) => `
-        <article class="structure-card">
-          <span>${escapeHtml(section.label || "Section")}</span>
-          <p>${escapeHtml(section.text || "")}</p>
+  els.scriptStructure.innerHTML = `
+    <section class="script-review-panel">
+      <div class="script-review-head">
+        <div>
+          <span class="eyebrow">Script Review</span>
+          <h3>${escapeHtml(review.title)}</h3>
+        </div>
+        <div class="script-review-actions">
+          <button class="secondary-button is-small" type="button" data-script-action="ai-rewrite">让 AI 修改脚本</button>
+          <button class="primary-button is-small" type="button" data-script-action="continue" ${readiness.hasPlan ? "" : "disabled"}>继续配音并渲染</button>
+        </div>
+      </div>
+      <div class="script-review-grid">
+        <article class="structure-card script-review-card">
+          <span>Title</span>
+          <p>${escapeHtml(review.title)}</p>
         </article>
-      `,
-    )
-    .join("");
+        <article class="structure-card script-review-card">
+          <span>Hook</span>
+          <p>${escapeHtml(review.hook)}</p>
+        </article>
+        <article class="structure-card script-review-card is-wide">
+          <span>Voiceover Script</span>
+          <p>${escapeHtml(review.voiceover)}</p>
+        </article>
+        <article class="structure-card script-review-card">
+          <span>Subtitle Summary</span>
+          <p>${escapeHtml(review.subtitleSummary)}</p>
+        </article>
+        <article class="structure-card script-review-card">
+          <span>Shot Structure</span>
+          <p>${escapeHtml(review.shotStructure)}</p>
+        </article>
+      </div>
+    </section>
+  `;
 }
 
 function renderLogs(lines = []) {
@@ -1960,6 +3019,22 @@ function renderHeader(config, job) {
   }
   els.chatSessionLabel.textContent = sessionLabel;
   els.chatOutputLabel.textContent = job?.outputDir || "data/jobs";
+  if (els.compositionLabel) {
+    els.compositionLabel.textContent = config.compositionId || template?.compositionId || "-";
+  }
+  if (els.headerMetaChips) {
+    els.headerMetaChips.innerHTML = [
+      `${config.durationSec || 60}s`,
+      config.aspectRatio || "9:16",
+      `字幕 ${normalizeSubtitleFontSize(config.subtitleFontSize)}`,
+      `颜色 ${normalizeSubtitleColor(config.subtitleColor)}`,
+    ]
+      .map((item) => `<span class="tiny-chip">${escapeHtml(item)}</span>`)
+      .join("");
+  }
+  if (els.subtitleFontSizeInlineInput) {
+    els.subtitleFontSizeInlineInput.value = String(normalizeSubtitleFontSize(config.subtitleFontSize));
+  }
 
   const tags = buildActiveInstructionTags(config);
   els.activeInstructionStrip.innerHTML = tags.length
@@ -2035,6 +3110,258 @@ function renderResources() {
     .join("");
 }
 
+function renderReplicationSelectors() {
+  if (els.replicationAccountInput) {
+    const current = els.replicationAccountInput.value || getCurrentConfig().accountId || listSelectableAccounts()[0]?.id || "";
+    els.replicationAccountInput.innerHTML = listSelectableAccounts()
+      .map((account) => `<option value="${escapeHtml(account.id)}">${escapeHtml(account.name || account.id)}</option>`)
+      .join("");
+    els.replicationAccountInput.value = state.accounts.some((account) => account.id === current) ? current : state.accounts[0]?.id || "";
+  }
+  if (els.replicationTemplateInput) {
+    const current = els.replicationTemplateInput.value || getCurrentConfig().templateId || "auto";
+    els.replicationTemplateInput.innerHTML = [
+      `<option value="auto">自动推荐</option>`,
+      ...state.templates.map((template) => `<option value="${escapeHtml(template.id)}">${escapeHtml(template.title || template.id)}</option>`),
+    ].join("");
+    els.replicationTemplateInput.value =
+      current === "auto" || state.templates.some((template) => template.id === current) ? current : "auto";
+  }
+}
+
+function getViralReplicationJobs() {
+  return ensureArray(state.jobs).filter((job) => job?.type === "viral_replication");
+}
+
+function replicationArtifactCard(job, key, label) {
+  const item = getArtifactItem(job, key);
+  const exists = Boolean(item?.exists);
+  return `
+    <article class="replication-artifact-card ${exists ? "is-ready" : "is-missing"}">
+      <span>${escapeHtml(label)}</span>
+      <strong>${exists ? "已生成" : "未生成"}</strong>
+      <small>${escapeHtml(item?.path || "-")}</small>
+      ${exists && item?.url ? `<a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">打开 JSON</a>` : ""}
+    </article>
+  `;
+}
+
+function renderReplicationStatusPanel(job = state.activeJob) {
+  if (!els.replicationStatusPanel) return;
+  const replicationJobs = getViralReplicationJobs();
+  const active = job?.type === "viral_replication" ? job : replicationJobs[0] || null;
+  if (!active) {
+    els.replicationStatusPanel.innerHTML = `
+      <div class="asset-empty">
+        <span class="eyebrow">Replication Status</span>
+        <h3>还没有爆款复刻任务</h3>
+        <p>先上传参考爆款视频，再分析生成 analysis.json；也可以直接填写已有 analysis.json 路径后创建任务。</p>
+      </div>
+    `;
+    return;
+  }
+
+  const replication = active.replication || {};
+  const artifacts = [
+    ["viralBreakdown", "viral_breakdown.json"],
+    ["moduleMatchReport", "module_match_report.json"],
+    ["replicationPlan", "replication_plan.json"],
+    ["renderProps", "render-props.json"],
+    ["compileReport", "compile_report.json"],
+    ["copyRewrite", "copy_rewrite.json"],
+    ["deliveryAssetManifest", "asset_manifest.json"],
+    ["voiceoverPackage", "voiceover_package.json"],
+    ["finalRenderProps", "render-props.final.json"],
+    ["renderPackage", "render_package.json"],
+    ["video", "output.mp4"],
+  ];
+  els.replicationStatusPanel.innerHTML = `
+    <div class="card-heading">
+      <div>
+        <span class="eyebrow">Active Replication Job</span>
+        <h3>${escapeHtml(active.title || active.id)}</h3>
+      </div>
+      <span class="mini-status">${escapeHtml(active.status || "draft")}</span>
+    </div>
+    <div class="replication-meta-grid">
+      <div><span>任务 ID</span><strong>${escapeHtml(active.id)}</strong></div>
+      <div><span>目标主题</span><strong>${escapeHtml(replication.targetTopic || active.topicTitle || active.prompt || "-")}</strong></div>
+      <div><span>复刻强度</span><strong>${escapeHtml(replication.strength || "medium")}</strong></div>
+      <div><span>参考分析</span><strong>${escapeHtml(replication.analysisPath || "-")}</strong></div>
+    </div>
+    <div class="replication-artifact-grid">
+      ${artifacts.map(([key, label]) => replicationArtifactCard(active, key, label)).join("")}
+    </div>
+    <div class="replication-job-list">
+      ${replicationJobs
+        .slice(0, 6)
+        .map(
+          (item) => `
+            <button type="button" class="${item.id === active.id ? "is-active" : ""}" data-replication-job-id="${escapeHtml(item.id)}">
+              <strong>${escapeHtml(item.title || item.id)}</strong>
+              <span>${escapeHtml(item.status || "draft")} / ${escapeHtml(formatDateTime(item.updatedAt))}</span>
+            </button>
+          `,
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function renderReplicationPage(job = state.activeJob) {
+  renderReplicationSelectors();
+  renderReplicationStatusPanel(job);
+}
+
+function getAssetSlots(job) {
+  return ensureArray(job?.assetPlan?.slots);
+}
+
+function getAssetManifestItems(job) {
+  return ensureArray(job?.assetManifest?.items);
+}
+
+function getAssetManifestItem(job, slotId) {
+  return getAssetManifestItems(job).find((item) => item.slotId === slotId) || null;
+}
+
+function localizeAssetStatus(status = "") {
+  const map = {
+    suggested: "建议素材",
+    approved: "已确认",
+    generated: "AI 生成",
+    searched: "网络素材",
+    missing: "待绑定",
+  };
+  return map[status] || status || "待绑定";
+}
+
+function renderAssetWorkbench(job) {
+  if (!els.assetWorkbench) return;
+  if (!job || job.id === "__pending_job__") {
+    els.assetWorkbench.innerHTML = `
+      <div class="asset-empty">
+        <span class="eyebrow">Asset Workbench</span>
+        <h3>还没有当前任务素材清单</h3>
+        <p>创建或恢复一个任务后，可以为模板槽位绑定本地素材。未绑定 session 也可以使用素材工作台。</p>
+      </div>
+    `;
+    return;
+  }
+
+  const slots = getAssetSlots(job);
+  const status = job.assetStatus || {};
+  const localAssets = state.assets || [];
+  const localChoices = localAssets.slice(0, 8);
+  const hasPlan = slots.length > 0;
+  const missingRequired = Number(status.missingRequiredCount || 0);
+  const useAiImageAssets = Boolean(job.useAiImageAssets);
+  const imageAssetModel = job.imageAssetModel || state.settings.imageAssetModel || "gpt-image-2-all";
+
+  if (!hasPlan) {
+    els.assetWorkbench.innerHTML = `
+      <div class="asset-workbench-head">
+        <div>
+          <span class="eyebrow">Asset Workbench</span>
+          <h3>生成素材清单</h3>
+          <p>素材清单会根据当前任务模板建立槽位，并优先自动绑定 assets/images 里的本地素材。</p>
+        </div>
+        <button class="primary-button" type="button" data-asset-action="ensure-plan">生成素材清单</button>
+      </div>
+      <div class="asset-empty">
+        <strong>当前还没有素材槽位</strong>
+        <p>建议先生成计划，再刷新素材清单；也可以现在直接生成默认模板槽位。</p>
+      </div>
+    `;
+    return;
+  }
+
+  const slotCards = slots
+    .map((slot) => {
+      const item = getAssetManifestItem(job, slot.id);
+      const isBound = Boolean(item?.path || item?.renderSrc);
+      const preview = item?.url
+        ? `<img src="${escapeHtml(item.url)}" alt="${escapeHtml(item.label || slot.label)}" />`
+        : `<div class="asset-preview-placeholder">待绑定</div>`;
+      const localButtons = localChoices
+        .map((asset) => {
+          const assetPath = asset.path || String(asset.url || "").replace(/^\/workspace\//, "");
+          return `
+            <button type="button" class="asset-source-button" data-asset-action="bind-local" data-slot-id="${escapeHtml(
+              slot.id,
+            )}" data-asset-path="${escapeHtml(assetPath)}">
+              ${escapeHtml(asset.name)}
+            </button>
+          `;
+        })
+        .join("");
+      return `
+        <article class="asset-slot-card ${isBound ? "is-bound" : "is-missing"}">
+          <div class="asset-slot-preview">${preview}</div>
+          <div class="asset-slot-main">
+            <div class="asset-slot-title">
+              <div>
+                <strong>${escapeHtml(slot.label || slot.id)}</strong>
+                <span>${slot.required ? "必需" : "可选"} | ${escapeHtml(slot.type || "image")} | ${escapeHtml(
+                  slot.targetPath || slot.id,
+                )}</span>
+              </div>
+              <span class="mini-status">${escapeHtml(localizeAssetStatus(item?.status || (isBound ? "suggested" : "missing")))}</span>
+            </div>
+            <p>${escapeHtml(slot.prompt || "为当前画面提供可渲染素材。")}</p>
+            <div class="asset-slot-meta">
+              <span>来源：${escapeHtml(item?.source === "ai" ? "AI 新生成" : item?.sourceName || item?.source || "未绑定")}</span>
+              <span>${item?.locked ? "已锁定" : "可替换"}</span>
+              ${item?.promptPath ? `<span>Prompt：${escapeHtml(item.promptPath)}</span>` : ""}
+            </div>
+            <div class="asset-local-list">${localButtons || "<span>assets/images 里还没有可用素材。</span>"}</div>
+            <div class="asset-actions">
+              <button class="secondary-button is-small" type="button" data-asset-action="approve" data-slot-id="${escapeHtml(
+                slot.id,
+              )}" ${!isBound ? "disabled" : ""}>确认素材</button>
+              <button class="secondary-button is-small" type="button" data-asset-action="toggle-lock" data-slot-id="${escapeHtml(
+                slot.id,
+              )}" ${!isBound ? "disabled" : ""}>${item?.locked ? "解锁" : "锁定"}</button>
+              <button class="secondary-button is-small" type="button" data-asset-action="generate-ai" data-slot-id="${escapeHtml(
+                slot.id,
+              )}">AI 生成</button>
+              <button class="secondary-button is-small" type="button" data-asset-action="web-placeholder" data-slot-id="${escapeHtml(
+                slot.id,
+              )}">网络获取</button>
+            </div>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  els.assetWorkbench.innerHTML = `
+    <div class="asset-workbench-head">
+      <div>
+        <span class="eyebrow">Asset Workbench</span>
+        <h3>模板素材槽位</h3>
+        <p>渲染前会把已绑定素材写入 video_plan.json 和 Remotion props，必需素材缺失时会阻止渲染。</p>
+      </div>
+      <div class="asset-workbench-actions">
+        <button class="secondary-button" type="button" data-asset-action="ensure-plan">刷新素材清单</button>
+        <button class="primary-button" type="button" data-asset-action="generate-fresh">生成全新素材</button>
+      </div>
+    </div>
+    <div class="asset-status-grid">
+      <div><span>模式</span><strong>${escapeHtml(useAiImageAssets ? "图片模型" : "本地")}</strong></div>
+      <div><span>槽位</span><strong>${Number(status.slotCount || slots.length)}</strong></div>
+      <div><span>已绑定</span><strong>${Number(status.boundCount || 0)}</strong></div>
+      <div><span>必需</span><strong>${Number(status.requiredCount || 0)}</strong></div>
+      <div class="${missingRequired ? "is-warning" : ""}"><span>缺失必需</span><strong>${missingRequired}</strong></div>
+      <div><span>已锁定</span><strong>${Number(status.lockedCount || 0)}</strong></div>
+    </div>
+    <div class="asset-mode-note">${escapeHtml(
+      useAiImageAssets ? `useAiImageAssets: true / ${imageAssetModel}` : "useAiImageAssets: false / assets/images",
+    )}</div>
+    <div class="asset-slot-grid">${slotCards}</div>
+  `;
+}
+
 function buildArtifactActions(item) {
   if (!item?.exists || !item.url) {
     return `<span class="artifact-link is-disabled">\u5f85\u751f\u6210</span>`;
@@ -2067,6 +3394,70 @@ function buildPosterCard(item) {
         )}">\u590d\u5236\u8def\u5f84</button>
         <button type="button" class="artifact-link artifact-button" data-poster-action="refresh">\u91cd\u65b0\u6293\u5e27</button>
         ${defaultAction}
+      </div>
+    </div>
+  `;
+}
+
+function buildScreenQaCard(job, item) {
+  const key = getScreenQaReportKey(job, item);
+  const cached = state.screenQaReports[key];
+  if (item?.exists && !cached) {
+    loadScreenQaReport(job, item);
+  }
+
+  const report = cached?.report || null;
+  const loading = Boolean(cached?.loading);
+  const error = cached?.error || "";
+  const textLeaks = Array.isArray(report?.textLeaks) ? report.textLeaks : [];
+  const ocrLeaks = Array.isArray(report?.ocrLeaks) ? report.ocrLeaks : [];
+  const warnings = Array.isArray(report?.warnings) ? report.warnings : [];
+  const frameCount = Array.isArray(report?.frames) ? report.frames.length : 0;
+  const leak = ocrLeaks[0] || textLeaks[0] || null;
+  const status = !item?.exists
+    ? "pending"
+    : loading
+      ? "loading"
+      : error
+        ? "warning"
+        : report?.status === "failed"
+          ? "failed"
+          : report?.status === "passed"
+            ? "passed"
+            : "unknown";
+  const statusLabel = {
+    pending: "\u5f85\u751f\u6210",
+    loading: "\u8bfb\u53d6\u4e2d",
+    warning: "\u9700\u68c0\u67e5",
+    failed: "\u5df2\u62e6\u622a",
+    passed: "\u5df2\u901a\u8fc7",
+    unknown: "\u672a\u77e5",
+  }[status];
+  const summary = !item?.exists
+    ? "\u6e32\u67d3\u524d\u4f1a\u81ea\u52a8\u62bd\u53d6\u5173\u952e\u753b\u9762\u68c0\u67e5\u63d0\u793a\u8bcd\u6cc4\u6f0f\u3002"
+    : loading
+      ? "\u6b63\u5728\u8bfb\u53d6 screen-qa/report.json\u3002"
+      : error
+        ? error
+        : leak
+          ? `${leak.rule || "leak"} | ${leak.path || `frame ${leak.frame || "-"}`} | ${leak.text || ""}`
+          : `frames ${frameCount || "-"} | text leaks ${textLeaks.length} | ocr leaks ${ocrLeaks.length} | warnings ${warnings.length}`;
+  const action = item?.exists && item.url
+    ? `<div class="artifact-actions"><a class="artifact-link" href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">\u6253\u5f00\u62a5\u544a</a><a class="artifact-link" href="${escapeHtml(item.url)}" download="${escapeHtml(item.fileName || "report.json")}">\u4e0b\u8f7d</a></div>`
+    : '<span class="artifact-link is-disabled">\u5f85\u6e32\u67d3</span>';
+
+  return `
+    <div class="artifact-qa-card is-${escapeHtml(status)}">
+      <div class="artifact-qa-main">
+        <span class="artifact-qa-dot"></span>
+        <div class="artifact-copy">
+          <strong>Screen QA</strong>
+          <span>${escapeHtml(summary)}</span>
+        </div>
+      </div>
+      <div class="artifact-qa-side">
+        <span class="artifact-qa-status">${escapeHtml(statusLabel)}</span>
+        ${action}
       </div>
     </div>
   `;
@@ -2106,7 +3497,8 @@ function renderArtifactList(job) {
 
   const manifest = getArtifactManifest(job);
   const poster = manifest.poster;
-  const items = ["planBrief", "plan", "voiceoverUnits", "subtitles", "alignment", "audio", "video"]
+  const screenQa = manifest.screenQa;
+  const items = ["planBrief", "plan", "assetPlan", "assetManifest", "voiceoverUnits", "subtitles", "alignment", "audio", "video"]
     .map((key) => manifest[key])
     .filter(Boolean);
 
@@ -2131,7 +3523,197 @@ function renderArtifactList(job) {
     })
     .join("");
 
-  container.innerHTML = `${buildPosterCard(poster)}${rows}`;
+  container.innerHTML = `${buildPosterCard(poster)}${buildScreenQaCard(job, screenQa)}${rows}`;
+}
+
+function getDebugArtifactItems(job) {
+  const manifest = getArtifactManifest(job);
+  return [
+    "request",
+    "planBrief",
+    "plan",
+    "assetPlan",
+    "assetManifest",
+    "voiceoverUnits",
+    "voiceoverText",
+    "subtitles",
+    "alignment",
+    "renderProps",
+    "screenQa",
+    "poster",
+    "audio",
+    "video",
+  ]
+    .map((key) => manifest[key])
+    .filter(Boolean);
+}
+
+function buildDebugDiagnosis(job) {
+  const manifest = getArtifactManifest(job);
+  const assetStatus = job?.assetStatus || {};
+  const assetItems = ensureArray(job?.assetManifest?.items);
+  const qaStatus = getHistoryQaStatus(job);
+  const confirmedAssets = assetItems.filter((item) => item.status === "approved").length;
+  const assetSummary = assetStatus.slotCount
+    ? `${Number(assetStatus.boundCount || 0)}/${Number(assetStatus.slotCount || 0)} 已绑定，${confirmedAssets} 已确认`
+    : "未生成素材清单";
+  return [
+    {
+      label: "计划",
+      status: manifest.plan?.exists ? "ready" : "missing",
+      value: manifest.plan?.exists ? "已生成" : "未生成",
+    },
+    {
+      label: "素材",
+      status: Number(assetStatus.missingRequiredCount || 0) ? "warning" : assetItems.length ? "ready" : "missing",
+      value: assetSummary,
+    },
+    {
+      label: "配音",
+      status: manifest.audio?.exists ? "ready" : manifest.voiceoverUnits?.exists ? "pending" : "missing",
+      value: manifest.audio?.exists ? "音频已生成" : manifest.voiceoverUnits?.exists ? "口播已生成，待配音" : "未生成",
+    },
+    {
+      label: "字幕",
+      status: manifest.subtitles?.exists || manifest.alignment?.exists ? "ready" : "missing",
+      value: manifest.alignment?.exists ? "已对齐" : manifest.subtitles?.exists ? "字幕已生成" : "未生成",
+    },
+    {
+      label: "渲染",
+      status: manifest.video?.exists ? "ready" : manifest.renderProps?.exists ? "pending" : "missing",
+      value: manifest.video?.exists ? "MP4 已生成" : manifest.renderProps?.exists ? "参数已生成，待渲染" : "未生成",
+    },
+    {
+      label: "QA",
+      status: qaStatus === "passed" ? "ready" : qaStatus === "failed" ? "danger" : manifest.screenQa?.exists ? "warning" : "missing",
+      value: localizeQaStatus(qaStatus),
+    },
+  ];
+}
+
+function buildDebugAssetCard(item) {
+  const preview = item?.url
+    ? `<img src="${escapeHtml(item.url)}" alt="${escapeHtml(item.label || item.slotId || "素材")}" />`
+    : `<div class="asset-preview-placeholder">无预览</div>`;
+  const source = item?.source === "ai" ? "AI 新生成" : item?.source === "local" ? "本地素材" : item?.source || "未知来源";
+  const promptLink = item?.promptPath
+    ? `<a href="/workspace/${escapeHtml(item.promptPath)}" target="_blank" rel="noreferrer">Prompt</a>`
+    : `<span>无 Prompt</span>`;
+  const openLink = item?.url ? `<a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">打开</a>` : `<span>待生成</span>`;
+  return `
+    <article class="debug-asset-card">
+      <div class="debug-asset-preview">${preview}</div>
+      <div class="debug-asset-copy">
+        <strong>${escapeHtml(item?.label || item?.slotId || "素材")}</strong>
+        <span>${escapeHtml(source)} | ${escapeHtml(localizeAssetStatus(item?.status || "suggested"))}${item?.locked ? " | 已锁定" : ""}</span>
+        <small>${escapeHtml(item?.targetPath || "-")}</small>
+        <small>${escapeHtml(item?.path || item?.renderSrc || "-")}</small>
+        <div class="debug-link-row">${openLink}${promptLink}</div>
+      </div>
+    </article>
+  `;
+}
+
+function buildDebugArtifactRow(item) {
+  const stateClass = item?.exists ? "is-ready" : "is-missing";
+  const action = item?.exists && item?.url
+    ? `<a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">打开</a>`
+    : `<span>待生成</span>`;
+  return `
+    <div class="debug-artifact-row ${stateClass}">
+      <div>
+        <strong>${escapeHtml(item?.label || item?.key || "产物")}</strong>
+        <span>${escapeHtml(item?.exists ? "已生成" : "未生成")} | ${escapeHtml(item?.path || "-")}</span>
+      </div>
+      ${action}
+    </div>
+  `;
+}
+
+function renderDebugAssetsPanel(job) {
+  if (!els.debugAssetsPanel) return;
+  els.debugAssetsPanel.hidden = !state.settings.showDebugAssets;
+  if (els.debugAssetsStatus) {
+    els.debugAssetsStatus.textContent = state.settings.showDebugAssets ? "显示中" : "隐藏";
+  }
+  if (!state.settings.showDebugAssets) return;
+
+  const diagnosis = buildDebugDiagnosis(job);
+  if (els.debugDiagnosisGrid) {
+    els.debugDiagnosisGrid.innerHTML = diagnosis
+      .map(
+        (item) => `
+          <div class="debug-diagnosis-card is-${escapeHtml(item.status)}">
+            <span>${escapeHtml(item.label)}</span>
+            <strong>${escapeHtml(item.value)}</strong>
+          </div>
+        `,
+      )
+      .join("");
+  }
+
+  const assetItems = ensureArray(job?.assetManifest?.items);
+  if (els.debugAssetCount) els.debugAssetCount.textContent = String(assetItems.length);
+  if (els.debugAssetGrid) {
+    els.debugAssetGrid.innerHTML = assetItems.length
+      ? assetItems.map(buildDebugAssetCard).join("")
+      : '<div class="artifact-empty">还没有素材 manifest。先生成素材清单或点击“生成全新素材”。</div>';
+  }
+
+  const artifactItems = getDebugArtifactItems(job);
+  if (els.debugArtifactCount) {
+    els.debugArtifactCount.textContent = `${artifactItems.filter((item) => item.exists).length}/${artifactItems.length}`;
+  }
+  if (els.debugArtifactList) {
+    els.debugArtifactList.innerHTML = artifactItems.length
+      ? artifactItems.map(buildDebugArtifactRow).join("")
+      : '<div class="artifact-empty">还没有工作流产物。</div>';
+  }
+}
+
+function hasHistoryVideo(job) {
+  if (typeof job?.hasVideo === "boolean") return job.hasVideo;
+  const video = getArtifactItem(job, "video");
+  return Boolean(video?.exists);
+}
+
+function getHistoryQaStatus(job) {
+  const direct = String(job?.screenQaStatus || "").trim();
+  if (direct) return direct;
+  const item = getArtifactItem(job, "screenQa");
+  if (!item?.exists) return "missing";
+  const cached = getScreenQaCache(job);
+  return cached.status || "unknown";
+}
+
+function localizeQaStatus(status = "") {
+  const value = String(status || "missing").toLowerCase();
+  const map = {
+    passed: "已通过",
+    failed: "QA 失败",
+    loading: "读取中",
+    error: "需检查",
+    warning: "需检查",
+    unknown: "未知",
+    missing: "未生成",
+  };
+  return map[value] || value;
+}
+
+function getHistoryMeta(job) {
+  const account = getAccountById(job.accountId);
+  const template = getTemplateById(job.templateId);
+  const qaStatus = getHistoryQaStatus(job);
+  return {
+    accountName: account?.name || job.accountId || "-",
+    templateName: template?.title || job.templateId || "-",
+    sessionLabel: job.codexSessionId ? `Session ${String(job.codexSessionId).slice(0, 8)}` : "未绑定",
+    outputDir: job.outputDir || "data/jobs",
+    hasVideo: hasHistoryVideo(job),
+    qaStatus,
+    qaLabel: localizeQaStatus(qaStatus),
+    updatedAt: formatDateTime(job.updatedAt),
+  };
 }
 
 function renderJobHistory() {
@@ -2147,19 +3729,32 @@ function renderJobHistory() {
   }
   els.jobHistoryList.innerHTML = jobs
     .map((job) => {
-      const metaBits = [
-        localizeJobStatus(job.status || "unknown"),
-        job.archived ? "\u5df2\u5f52\u6863" : null,
-        job.outputDir || "data/jobs",
-      ].filter(Boolean);
+      const meta = getHistoryMeta(job);
       return `
-        <button type="button" class="history-item ${job.id === state.activeJob?.id ? "is-selected" : ""} ${job.archived ? "is-archived" : ""}" data-job-id="${escapeHtml(job.id)}">
-          <span>${escapeHtml(formatDateTime(job.updatedAt))}</span>
-          <strong>${escapeHtml(job.title || job.id)}</strong>
-          <div class="history-item-meta">
-            ${metaBits.map((bit) => `<small>${escapeHtml(bit)}</small>`).join("")}
+        <article class="history-item ${job.id === state.activeJob?.id ? "is-selected" : ""} ${job.archived ? "is-archived" : ""}">
+          <div class="history-item-head">
+            <div>
+              <span>${escapeHtml(meta.updatedAt)}</span>
+              <strong>${escapeHtml(job.title || job.id)}</strong>
+            </div>
+            <div class="history-state-stack">
+              <small class="history-state">${escapeHtml(localizeJobStatus(job.status || "unknown"))}</small>
+              <small class="history-state is-${escapeHtml(meta.qaStatus)}">${escapeHtml(meta.qaLabel)}</small>
+            </div>
           </div>
-        </button>
+          <div class="history-detail-grid">
+            <div><span>账号</span><strong>${escapeHtml(meta.accountName)}</strong></div>
+            <div><span>模板</span><strong>${escapeHtml(meta.templateName)}</strong></div>
+            <div><span>Session</span><strong>${escapeHtml(meta.sessionLabel)}</strong></div>
+            <div><span>输出目录</span><strong>${escapeHtml(meta.outputDir)}</strong></div>
+            <div><span>视频</span><strong>${meta.hasVideo ? "有视频" : "未生成"}</strong></div>
+            <div><span>更新</span><strong>${escapeHtml(meta.updatedAt)}</strong></div>
+          </div>
+          <div class="history-row-actions">
+            <button type="button" class="secondary-button is-small" data-history-action="restore" data-job-id="${escapeHtml(job.id)}">恢复为当前任务</button>
+            <button type="button" class="secondary-button is-small is-danger" data-history-action="delete" data-job-id="${escapeHtml(job.id)}">删除历史任务</button>
+          </div>
+        </article>
       `;
     })
     .join("");
@@ -2211,10 +3806,15 @@ function enhanceReviewCards(job, config) {
 
 function renderActionHints(job) {
   const hints = [];
+  const capabilities = getJobCapabilities(job);
   if (!job) {
     hints.push("\u5148\u9009\u62e9 session \u6216\u76f4\u63a5\u53d1\u7b2c\u4e00\u6761\u6d88\u606f\u521b\u5efa\u4efb\u52a1\u3002");
   } else if (!job.codexSessionId) {
     hints.push("\u5f53\u524d\u4efb\u52a1\u8fd8\u6ca1\u6709\u7ed1\u5b9a\u672c\u5730 session\u3002");
+  }
+
+  if (capabilities.reason) {
+    hints.push(capabilities.reason);
   }
 
   const stepMap = indexSteps(job?.steps || []);
@@ -2236,13 +3836,32 @@ function renderActionHints(job) {
     hints.push("Codex \u989d\u5ea6\u4e0d\u53ef\u7528\uff0c\u672c\u6b21\u8ba1\u5212\u5df2\u81ea\u52a8\u5207\u6362\u4e3a\u672c\u5730 fallback\u3002");
   }
 
-  els.actionHints.innerHTML = hints.map((hint) => `<span class="tiny-chip">${escapeHtml(hint)}</span>`).join("");
+  if (capabilities.qaExportBlocked) {
+    hints.push(capabilities.exportReason);
+  }
+
+  const retryAction = getRetryActionForJob(job);
+  const failedControls =
+    job?.status === "failed" && capabilities.isRuntime
+      ? `
+        <button class="tiny-action-button" type="button" data-failed-job-action="retry-current">
+          \u91cd\u8bd5\u5f53\u524d\u6b65\u9aa4\uff1a${escapeHtml(getPipelineActionLabel(retryAction))}
+        </button>
+        <button class="tiny-action-button is-strong" type="button" data-failed-job-action="restart-pipeline">
+          \u4ece\u5934\u91cd\u65b0\u751f\u6210
+        </button>
+      `
+      : "";
+  els.actionHints.innerHTML = `${hints.map((hint) => `<span class="tiny-chip">${escapeHtml(hint)}</span>`).join("")}${failedControls}`;
 }
 
 function renderHistoryToolbar() {
   document.querySelectorAll("[data-history-filter]").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.historyFilter === state.historyFilter);
   });
+  if (els.historySearchInput && els.historySearchInput.value !== state.historyQuery) {
+    els.historySearchInput.value = state.historyQuery || "";
+  }
   const job = state.activeJob;
   const canManage = Boolean(job?.id && job.id !== "__pending_job__" && job.source !== "session");
   const canRecover = Boolean(job?.id && job.id !== "__pending_job__" && job.source !== "session");
@@ -2315,7 +3934,7 @@ function openRenderConfirmModal() {
 
 function renderTaskCreateModal(options = {}) {
   if (!els.taskCreateModal) return;
-  const config = getCurrentConfig();
+  const config = getDraftConfig();
   const mode = els.taskCreateModeInput?.value || "single";
   const accounts = listSelectableAccounts(config.accountId);
   const selected = new Set(
@@ -2338,7 +3957,7 @@ function renderTaskCreateModal(options = {}) {
   }
 
   if (els.taskCreateSessionInput) {
-    const currentSessionId = els.taskCreateSessionInput.value || "";
+    const currentSessionId = els.taskCreateSessionInput.value || state.selectedSessionId || "";
     els.taskCreateSessionInput.innerHTML = [
       '<option value="">不绑定，新建任务上下文</option>',
       ...state.sessions.map(
@@ -2357,6 +3976,18 @@ function renderTaskCreateModal(options = {}) {
     if (mode === "batch" && els.taskCreateAfterInput.value === "full") {
       els.taskCreateAfterInput.value = "plan";
     }
+  }
+  if (els.taskCreateGenerationModeInput) {
+    els.taskCreateGenerationModeInput.value = state.settings.generationMode || "review";
+  }
+  if (els.taskCreateAiImageAssetsInput) {
+    els.taskCreateAiImageAssetsInput.checked = Boolean(state.settings.useAiImageAssets);
+  }
+  if (els.taskCreateSubtitleFontSizeInput) {
+    els.taskCreateSubtitleFontSizeInput.value = String(normalizeSubtitleFontSize(state.settings.subtitleFontSize));
+  }
+  if (els.taskCreateSubtitleColorInput) {
+    els.taskCreateSubtitleColorInput.value = normalizeSubtitleColor(state.settings.subtitleColor);
   }
   if (els.taskCreateAccountHint) {
     els.taskCreateAccountHint.textContent =
@@ -2396,12 +4027,23 @@ function renderTaskCreateModal(options = {}) {
   }
 }
 
-function openTaskCreateModal() {
-  const config = getCurrentConfig();
+function openTaskCreateModal(options = {}) {
+  const config = getDraftConfig();
   state.taskCreateAccountIds = [config.accountId || listSelectableAccounts()[0]?.id || ""].filter(Boolean);
   if (els.taskCreateModeInput) els.taskCreateModeInput.value = "single";
   if (els.taskCreateAfterInput) els.taskCreateAfterInput.value = "none";
-  renderTaskCreateModal({resetPrompt: true});
+  if (els.taskCreateGenerationModeInput) els.taskCreateGenerationModeInput.value = state.settings.generationMode || "review";
+  if (els.taskCreateSubtitleFontSizeInput) {
+    els.taskCreateSubtitleFontSizeInput.value = String(normalizeSubtitleFontSize(state.settings.subtitleFontSize));
+  }
+  if (els.taskCreateSubtitleColorInput) {
+    els.taskCreateSubtitleColorInput.value = normalizeSubtitleColor(state.settings.subtitleColor);
+  }
+  if (els.taskCreateAiImageAssetsInput) els.taskCreateAiImageAssetsInput.checked = Boolean(state.settings.useAiImageAssets);
+  renderTaskCreateModal({resetPrompt: options.resetPrompt !== false});
+  if (options.prompt && els.taskCreatePromptInput) {
+    els.taskCreatePromptInput.value = options.prompt;
+  }
   if (els.taskCreateModal) els.taskCreateModal.hidden = false;
   window.setTimeout(() => els.taskCreatePromptInput?.focus(), 0);
 }
@@ -2410,8 +4052,18 @@ function closeTaskCreateModal() {
   if (els.taskCreateModal) els.taskCreateModal.hidden = true;
 }
 
+function validateTaskCreationSelection(accountIds = [], templateId = "") {
+  const selectedAccountIds = ensureStringList(accountIds);
+  if (!selectedAccountIds.length || !selectedAccountIds.some((accountId) => getAccountById(accountId))) {
+    throw new Error("Task account is required");
+  }
+  if (!String(templateId || "").trim() || !getTemplateById(templateId)) {
+    throw new Error("Task template is required");
+  }
+}
+
 function getTaskCreateConfig(accountId) {
-  const current = getCurrentConfig();
+  const current = getDraftConfig();
   const account = getAccountById(accountId) || getCurrentAccount() || listSelectableAccounts()[0] || null;
   const templateId = els.taskCreateTemplateInput?.value || current.templateId || account?.defaultTemplateId || state.templates[0]?.id || "";
   const template = getTemplateById(templateId);
@@ -2422,6 +4074,10 @@ function getTaskCreateConfig(accountId) {
     templateId,
     compositionId: template?.compositionId || account?.defaultCompositionId || current.compositionId || "",
     templateLocked: true,
+    subtitleFontSize: normalizeSubtitleFontSize(els.taskCreateSubtitleFontSizeInput?.value || state.settings.subtitleFontSize),
+    subtitleColor: normalizeSubtitleColor(els.taskCreateSubtitleColorInput?.value || state.settings.subtitleColor),
+    useAiImageAssets: Boolean(els.taskCreateAiImageAssetsInput?.checked),
+    imageAssetModel: state.settings.imageAssetModel || "gpt-image-2-all",
   });
 }
 
@@ -2433,6 +4089,7 @@ function selectCreatedJob(job) {
 
 async function createSingleTaskFromModal(prompt) {
   const accountId = state.taskCreateAccountIds[0] || getCurrentConfig().accountId;
+  validateTaskCreationSelection([accountId], els.taskCreateTemplateInput?.value || getDraftConfig().templateId);
   const config = getTaskCreateConfig(accountId);
   const sessionId = String(els.taskCreateSessionInput?.value || "").trim();
   let job;
@@ -2440,16 +4097,9 @@ async function createSingleTaskFromModal(prompt) {
   if (sessionId) {
     job = await requestJson("/api/jobs", {
       method: "POST",
-      body: JSON.stringify({sessionId, config}),
+      body: JSON.stringify({prompt, sessionId, config}),
     });
     selectCreatedJob(job);
-    if (prompt) {
-      job = await requestJson(`/api/jobs/${encodeURIComponent(job.id)}/codex/message`, {
-        method: "POST",
-        body: JSON.stringify({message: prompt}),
-      });
-      selectCreatedJob(job);
-    }
   } else {
     job = await requestJson("/api/jobs", {
       method: "POST",
@@ -2464,8 +4114,10 @@ async function createSingleTaskFromModal(prompt) {
 
 async function createBatchTaskFromModal(prompt) {
   const selectedAccountIds = state.taskCreateAccountIds.filter(Boolean);
+  validateTaskCreationSelection(selectedAccountIds, els.taskCreateTemplateInput?.value || getDraftConfig().templateId);
   if (!selectedAccountIds.length) throw new Error("Batch requires at least one active account");
   const config = getTaskCreateConfig(selectedAccountIds[0]);
+  const useAiImageAssets = Boolean(els.taskCreateAiImageAssetsInput?.checked);
   const payload = await requestJson("/api/batches", {
     method: "POST",
     body: JSON.stringify({
@@ -2478,9 +4130,15 @@ async function createBatchTaskFromModal(prompt) {
       templateId: config.templateId,
       durationSec: config.durationSec,
       aspectRatio: config.aspectRatio,
+      subtitleFontSize: config.subtitleFontSize,
+      subtitleColor: config.subtitleColor,
       templateLocked: true,
       activePresetIds: config.activePresetIds,
       openInstruction: config.openInstruction,
+      useAiImageAssets,
+      imageAssetModel: state.settings.imageAssetModel || "gpt-image-2-all",
+      autoRetry: true,
+      maxAutoRetries: 1,
     }),
   });
 
@@ -2500,6 +4158,13 @@ async function createTaskFromModal() {
   }
   const mode = els.taskCreateModeInput?.value || "single";
   const afterAction = els.taskCreateAfterInput?.value || "none";
+  updateGenerationMode(els.taskCreateGenerationModeInput?.value || state.settings.generationMode || "review", {persist: true});
+  state.settings = {
+    ...state.settings,
+    useAiImageAssets: Boolean(els.taskCreateAiImageAssetsInput?.checked),
+    imageAssetModel: state.settings.imageAssetModel || "gpt-image-2-all",
+  };
+  saveSettings();
   setBusy(true, "create-task-modal");
   setBanner("正在创建视频任务...", "info");
   let result = null;
@@ -2521,17 +4186,245 @@ async function createTaskFromModal() {
     await runAction("generate-plan");
   }
   if (mode !== "batch" && afterAction === "full") {
-    await runFullPipeline();
+    await runFullPipelineStable();
   }
   return result;
 }
 
+function arrayBufferToBase64(buffer) {
+  const bytes = new Uint8Array(buffer);
+  const chunkSize = 0x8000;
+  let binary = "";
+  for (let index = 0; index < bytes.length; index += chunkSize) {
+    const chunk = bytes.subarray(index, index + chunkSize);
+    binary += String.fromCharCode(...chunk);
+  }
+  return window.btoa(binary);
+}
+
+async function uploadReplicationReferenceVideo() {
+  const file = els.replicationVideoInput?.files?.[0] || null;
+  if (!file) {
+    throw new Error("请先选择一个 MP4 参考视频。");
+  }
+  if (!/\.mp4$/i.test(file.name || "")) {
+    throw new Error("第一版上传入口只接受 MP4 文件。");
+  }
+
+  setBusy(true, "upload-replication-video");
+  setBanner("正在上传参考爆款视频...", "info");
+  try {
+    const dataBase64 = await arrayBufferToBase64(await file.arrayBuffer());
+    const payload = await requestJson("/api/replication/uploads", {
+      method: "POST",
+      timeoutMs: 120000,
+      body: JSON.stringify({
+        fileName: file.name,
+        mimeType: file.type || "video/mp4",
+        dataBase64,
+        title: String(els.replicationReferenceTitleInput?.value || "").trim(),
+        description: String(els.replicationReferenceDescriptionInput?.value || "").trim(),
+        platform: String(els.replicationReferencePlatformInput?.value || "local").trim(),
+        language: "zh-CN",
+      }),
+    });
+    state.replicationUpload = payload;
+    if (els.replicationAnalysisInput) els.replicationAnalysisInput.value = payload.analysisPath || "";
+    if (els.replicationSummaryInput) els.replicationSummaryInput.value = payload.summaryPath || "";
+    if (els.replicationTopicInput && !els.replicationTopicInput.value.trim()) {
+      els.replicationTopicInput.value = payload.title || payload.sourceId || "";
+    }
+    setBanner("参考视频已上传，下一步点击“分析参考视频”。", "success");
+    showToast("参考视频已上传", "success");
+    renderReplicationStatusPanel(state.activeJob);
+    return payload;
+  } catch (error) {
+    reportError("上传参考视频失败", error);
+    throw error;
+  } finally {
+    setBusy(false);
+  }
+}
+
+function readReplicationForm() {
+  const topic = String(els.replicationTopicInput?.value || "").trim();
+  const analysisPath = String(els.replicationAnalysisInput?.value || "").trim();
+  const summaryPath = String(els.replicationSummaryInput?.value || "").trim();
+  const sourceId = String(state.replicationUpload?.sourceId || state.activeJob?.replication?.sourceId || "").trim();
+  if (!topic) throw new Error("目标主题不能为空");
+  if (!analysisPath && !sourceId) throw new Error("请先上传参考视频，或填写已有 analysis.json 路径。");
+  const providerOrder = String(els.replicationProviderInput?.value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const accountId = String(els.replicationAccountInput?.value || getCurrentConfig().accountId || "").trim();
+  const templateId = String(els.replicationTemplateInput?.value || "auto").trim() || "auto";
+  return {
+    prompt: topic,
+    config: {
+      type: "viral_replication",
+      accountId,
+      templateId: templateId === "auto" ? getCurrentConfig().templateId || "new_signals" : templateId,
+      templateLocked: templateId !== "auto",
+      useAiImageAssets: Boolean(state.settings.useAiImageAssets),
+      imageAssetModel: state.settings.imageAssetModel || "gpt-image-2-all",
+      replication: {
+        sourceId,
+        targetTopic: topic,
+        analysisPath,
+        summaryPath,
+        strength: String(els.replicationStrengthInput?.value || "medium"),
+        templateId,
+        styleVariant: "auto",
+        copyVariant: String(els.replicationCopyVariantInput?.value || "sharp_contrarian").trim() || "sharp_contrarian",
+        deliveryMode: "draft",
+        providerOrder,
+      },
+    },
+  };
+}
+
+async function createReplicationJobFromPage() {
+  setBusy(true, "create-replication");
+  setBanner("正在创建爆款复刻任务...", "info");
+  try {
+    const payload = readReplicationForm();
+    const job = await requestJson("/api/jobs", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    selectCreatedJob(job);
+    await syncCollections();
+    openWorkbenchSection("replication");
+    setBanner("爆款复刻任务已创建。", "success");
+    showToast("爆款复刻任务已创建", "success");
+    return job;
+  } catch (error) {
+    reportError("创建爆款复刻任务失败", error);
+    throw error;
+  } finally {
+    setBusy(false);
+  }
+}
+
+async function analyzeReplicationReferenceForActiveJob() {
+  let job = state.activeJob?.type === "viral_replication" ? state.activeJob : null;
+  if (!job) {
+    job = await createReplicationJobFromPage();
+  }
+  if (!job?.id) return null;
+
+  setBusy(true, "analyze-replication-reference");
+  setBanner("正在分析参考视频，生成 analysis.json...", "info");
+  try {
+    const updated = await requestJson(`/api/jobs/${encodeURIComponent(job.id)}/actions/analyze-reference`, {
+      method: "POST",
+      timeoutMs: 1800000,
+    });
+    renderJob(updated);
+    if (els.replicationAnalysisInput) els.replicationAnalysisInput.value = updated.replication?.analysisPath || "";
+    if (els.replicationSummaryInput) els.replicationSummaryInput.value = updated.replication?.summaryPath || "";
+    bindDynamicLists();
+    await syncCollections();
+    openWorkbenchSection("replication");
+    setBanner("参考视频分析完成，可以运行复刻 Pipeline。", "success");
+    showToast("参考视频分析完成", "success");
+    return updated;
+  } catch (error) {
+    reportError("分析参考视频失败", error);
+    throw error;
+  } finally {
+    setBusy(false);
+  }
+}
+
+async function runReplicationPipelineForActiveJob() {
+  let job = state.activeJob?.type === "viral_replication" ? state.activeJob : null;
+  if (!job) {
+    job = await createReplicationJobFromPage();
+  }
+  if (!job?.id) return;
+  if (!job.replication?.analysisPath && job.replication?.sourceId) {
+    job = await analyzeReplicationReferenceForActiveJob();
+  }
+  setBusy(true, "run-replication");
+  setBanner("正在运行爆款复刻 pipeline...", "info");
+  try {
+    const updated = await requestJson(`/api/jobs/${encodeURIComponent(job.id)}/actions/run-replication`, {
+      method: "POST",
+    });
+    renderJob(updated);
+    bindDynamicLists();
+    await syncCollections();
+    openWorkbenchSection("replication");
+    setBanner("爆款复刻计划已生成。", "success");
+    showToast("复刻 pipeline 已完成", "success");
+  } catch (error) {
+    reportError("运行爆款复刻 pipeline 失败", error);
+    throw error;
+  } finally {
+    setBusy(false);
+  }
+}
+
+async function runReplicationDeliveryForActiveJob() {
+  let job = state.activeJob?.type === "viral_replication" ? state.activeJob : null;
+  if (!job) {
+    job = await createReplicationJobFromPage();
+  }
+  if (!job?.id) return;
+  if (!job.replication?.analysisPath && job.replication?.sourceId) {
+    job = await analyzeReplicationReferenceForActiveJob();
+  }
+  setBusy(true, "run-replication-delivery");
+  setBanner("正在生成复刻成片：计划 -> 文案 -> 素材 -> 配音 -> 渲染...", "info");
+  try {
+    const updated = await requestJson(`/api/jobs/${encodeURIComponent(job.id)}/actions/run-replication-delivery`, {
+      method: "POST",
+      timeoutMs: 1800000,
+    });
+    renderJob(updated);
+    bindDynamicLists();
+    await syncCollections();
+    openWorkbenchSection("replication");
+    setBanner("复刻成片已生成。", "success");
+    showToast("复刻成片已生成", "success");
+  } catch (error) {
+    reportError("生成复刻成片失败", error);
+    throw error;
+  } finally {
+    setBusy(false);
+  }
+}
+
+function selectLatestReplicationJob() {
+  const job = getViralReplicationJobs()[0] || null;
+  if (!job) {
+    showToast("还没有爆款复刻任务", "warning");
+    return;
+  }
+  renderJob(job);
+  bindDynamicLists();
+  openWorkbenchSection("replication");
+}
+
 function setActionState() {
-  const pipelineEnabled = canRunPipeline(state.activeJob);
-  els.generatePlanButton.disabled = !pipelineEnabled;
-  els.ttsButton.disabled = !pipelineEnabled;
-  els.renderButton.disabled = !pipelineEnabled;
-  if (els.runAllButton) els.runAllButton.disabled = !pipelineEnabled;
+  const capabilities = getJobCapabilities(state.activeJob);
+  const disabledReason = capabilities.reason || "";
+  els.generatePlanButton.disabled = !capabilities.canPlan;
+  els.generatePlanButton.title = capabilities.canPlan ? "" : capabilities.actionReasons?.["generate-plan"] || disabledReason;
+  els.ttsButton.disabled = !capabilities.canTts;
+  els.ttsButton.title = capabilities.canTts ? "" : capabilities.actionReasons?.tts || disabledReason;
+  els.renderButton.disabled = !capabilities.canRender;
+  els.renderButton.title = capabilities.canRender ? "" : capabilities.actionReasons?.render || disabledReason;
+  if (els.runAllButton) {
+    els.runAllButton.disabled = !capabilities.canRunAll;
+    els.runAllButton.title = capabilities.canRunAll ? "" : capabilities.actionReasons?.["run-all"] || disabledReason;
+  }
+  if (els.exportButton) {
+    els.exportButton.disabled = !capabilities.canExport;
+    els.exportButton.title = capabilities.canExport ? "" : capabilities.exportReason;
+  }
 }
 
 function renderEmptyJob() {
@@ -2542,6 +4435,7 @@ function renderEmptyJob() {
   const config = getCurrentConfig();
   renderProject();
   renderStats();
+  renderProductionStatus(null);
   renderAccountSelect(config);
   renderTemplateSelect(config);
   renderHeader(config, null);
@@ -2549,7 +4443,8 @@ function renderEmptyJob() {
   renderInstructionArea(config);
   renderMessages([]);
   renderSteps([]);
-  renderScriptStructure([]);
+  renderPipelineGuide(null);
+  renderScriptStructure(null);
   renderLogs([]);
   renderPreview(EMPTY_PREVIEW, "idle");
   renderPreviewMedia(null);
@@ -2562,7 +4457,9 @@ function renderEmptyJob() {
   renderHistoryToolbar();
   renderSessionSelect();
   renderSessionList();
+  renderAssetWorkbench(null);
   renderResources();
+  renderReplicationPage(null);
   renderActionHints(null);
   setActionState();
 }
@@ -2580,29 +4477,161 @@ function renderJob(job) {
 
   renderProject();
   renderStats();
-  renderAccountSelect(config);
-  renderTemplateSelect(config);
+  renderProductionStatus(job);
+  renderAccountSelect(getDraftConfig());
+  renderTemplateSelect(getDraftConfig());
   renderHeader(config, job);
   renderAccountProfile(config);
   renderInstructionArea(config);
   renderMessages(job.messages || [], job.pendingAssistantText || "");
   renderSteps(job.steps || []);
-  renderScriptStructure(job.scriptSections || []);
+  renderPipelineGuide(job);
+  renderScriptStructure(job);
   renderLogs(job.logs || []);
   renderPreview(job.preview || EMPTY_PREVIEW, job.status || "idle");
   renderPreviewMedia(job);
   renderReviewCards(job, config);
+  renderDebugAssetsPanel(job);
   enhanceReviewCards(job, config);
   renderTemplateGovernance(config);
   renderTemplateGallery(config);
-  renderScaleTools(config);
+  renderScaleTools(getDraftConfig());
   renderJobHistory();
   renderHistoryToolbar();
   renderSessionSelect();
   renderSessionList();
+  renderAssetWorkbench(job);
   renderResources();
+  renderReplicationPage(job);
   renderActionHints(job);
   setActionState();
+}
+
+function applyAssetPayload(payload = {}) {
+  if (payload.localAssets) state.assets = payload.localAssets;
+  const nextJob = payload.job || state.activeJob;
+  if (!nextJob) return;
+  if (payload.assetPlan) nextJob.assetPlan = payload.assetPlan;
+  if (payload.assetManifest) nextJob.assetManifest = payload.assetManifest;
+  if (payload.assetStatus) nextJob.assetStatus = payload.assetStatus;
+  renderJob(nextJob);
+  bindDynamicLists();
+}
+
+async function ensureAssetPlanForActiveJob() {
+  if (!state.activeJob?.id) {
+    showToast("请先创建或恢复一个任务。", "warning");
+    return;
+  }
+  setBusy(true, "asset-plan");
+  try {
+    const payload = await requestJson(`/api/jobs/${encodeURIComponent(state.activeJob.id)}/assets/plan`, {method: "POST"});
+    applyAssetPayload(payload);
+    showToast("素材清单已刷新。", "success");
+  } catch (error) {
+    reportError("素材清单生成失败", error);
+  } finally {
+    setBusy(false);
+  }
+}
+
+async function bindLocalAssetToSlot(slotId, assetPath) {
+  if (!state.activeJob?.id || !slotId || !assetPath) {
+    showToast("缺少任务或素材槽位。", "warning");
+    return;
+  }
+  setBusy(true, "asset-bind");
+  try {
+    const payload = await requestJson(
+      `/api/jobs/${encodeURIComponent(state.activeJob.id)}/assets/${encodeURIComponent(slotId)}/bind`,
+      {
+        method: "POST",
+        body: JSON.stringify({assetPath, status: "approved"}),
+      },
+    );
+    applyAssetPayload(payload);
+    showToast("本地素材已绑定。", "success");
+  } catch (error) {
+    reportError("素材绑定失败", error);
+  } finally {
+    setBusy(false);
+  }
+}
+
+async function updateAssetSlot(slotId, patch = {}) {
+  if (!state.activeJob?.id || !slotId) {
+    showToast("缺少任务或素材槽位。", "warning");
+    return;
+  }
+  setBusy(true, "asset-update");
+  try {
+    const payload = await requestJson(
+      `/api/jobs/${encodeURIComponent(state.activeJob.id)}/assets/${encodeURIComponent(slotId)}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(patch),
+      },
+    );
+    applyAssetPayload(payload);
+    showToast("素材状态已更新。", "success");
+  } catch (error) {
+    reportError("素材状态更新失败", error);
+  } finally {
+    setBusy(false);
+  }
+}
+
+async function generateAiAssetForSlot(slotId, options = {}) {
+  if (!state.activeJob?.id || !slotId) {
+    showToast("缺少任务或素材槽位。", "warning");
+    return;
+  }
+  setBusy(true, "asset-generate");
+  try {
+    const payload = await requestJson(
+      `/api/jobs/${encodeURIComponent(state.activeJob.id)}/assets/${encodeURIComponent(slotId)}/generate`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          force: Boolean(options.force),
+          status: "suggested",
+          provider: "openai",
+          model: state.activeJob.imageAssetModel || state.settings.imageAssetModel || "gpt-image-2-all",
+        }),
+      },
+    );
+    applyAssetPayload(payload);
+    showToast("AI 素材已生成，请预览后确认。", "success");
+  } catch (error) {
+    reportError("AI 素材生成失败", error);
+  } finally {
+    setBusy(false);
+  }
+}
+
+async function generateFreshAssetsForActiveJob(options = {}) {
+  if (!state.activeJob?.id) {
+    showToast("请先创建或恢复一个任务。", "warning");
+    return;
+  }
+  setBusy(true, "asset-generate-all");
+  try {
+    const payload = await requestJson(`/api/jobs/${encodeURIComponent(state.activeJob.id)}/assets/generate-fresh`, {
+      method: "POST",
+      body: JSON.stringify({
+        force: Boolean(options.force),
+        status: "suggested",
+        provider: "openai",
+        model: state.activeJob.imageAssetModel || state.settings.imageAssetModel || "gpt-image-2-all",
+      }),
+    });
+    applyAssetPayload(payload);
+    showToast("全新素材已生成，请逐项确认或锁定。", "success");
+  } catch (error) {
+    reportError("全新素材生成失败", error);
+  } finally {
+    setBusy(false);
+  }
 }
 
 function bindDynamicLists() {
@@ -2613,10 +4642,16 @@ function bindDynamicLists() {
     });
   });
 
-  els.jobHistoryList.querySelectorAll("[data-job-id]").forEach((button) => {
+  els.jobHistoryList.querySelectorAll("[data-history-action]").forEach((button) => {
     button.addEventListener("click", () => {
       const jobId = button.dataset.jobId;
-      if (jobId) selectJob(jobId).catch(console.error);
+      const action = button.dataset.historyAction || "restore";
+      if (!jobId) return;
+      if (action === "delete") {
+        deleteHistoryJob(jobId).catch(console.error);
+        return;
+      }
+      selectJob(jobId).catch(console.error);
     });
   });
 
@@ -2631,6 +4666,112 @@ function bindDynamicLists() {
     button.addEventListener("click", () => {
       const jobId = button.dataset.batchJobId;
       if (jobId) selectJob(jobId).catch(console.error);
+    });
+  });
+
+  els.replicationStatusPanel?.querySelectorAll("[data-replication-job-id]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const jobId = button.dataset.replicationJobId;
+      if (jobId) selectJob(jobId).then(() => openWorkbenchSection("replication")).catch(console.error);
+    });
+  });
+
+  els.actionHints?.querySelectorAll("[data-failed-job-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const action = button.dataset.failedJobAction;
+      if (action === "retry-current") {
+        retryFailedCurrentStep().catch(console.error);
+      } else if (action === "restart-pipeline") {
+        restartFailedJobFromHead().catch(console.error);
+      }
+    });
+  });
+
+  els.pipelineGuide?.querySelectorAll("[data-next-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const action = button.dataset.nextAction;
+      if (!action) return;
+      if (action === "new-task") {
+        openTaskCreateModal();
+        return;
+      }
+      if (action === "open-session-drawer") {
+        if (els.sessionDrawer) {
+          state.sessionDrawerOpen = true;
+          els.sessionDrawer.hidden = false;
+        }
+        if (els.toggleSessionDrawerButton) {
+          els.toggleSessionDrawerButton.classList.add("is-open");
+        }
+        return;
+      }
+      if (action === "generate-plan" || action === "tts" || action === "render") {
+        runAction(action).catch(console.error);
+        return;
+      }
+      if (action === "open-script-ai") {
+        openScriptAiModal();
+        return;
+      }
+      if (action === "retry-current") {
+        retryFailedCurrentStep().catch(console.error);
+        return;
+      }
+      if (action === "restart-pipeline") {
+        restartFailedJobFromHead().catch(console.error);
+        return;
+      }
+      if (action === "export") {
+        els.exportButton?.click();
+        return;
+      }
+    });
+  });
+
+  els.scriptStructure?.querySelectorAll("[data-script-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const action = button.dataset.scriptAction;
+      if (action === "ai-rewrite") {
+        openScriptAiModal();
+      } else if (action === "continue") {
+        continueAfterScriptReview().catch(console.error);
+      }
+    });
+  });
+
+  els.assetWorkbench?.querySelectorAll("[data-asset-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (state.busyReason) return;
+      const action = button.dataset.assetAction;
+      const slotId = button.dataset.slotId || "";
+      if (action === "ensure-plan") {
+        ensureAssetPlanForActiveJob().catch(console.error);
+        return;
+      }
+      if (action === "generate-fresh") {
+        generateFreshAssetsForActiveJob().catch(console.error);
+        return;
+      }
+      if (action === "bind-local") {
+        bindLocalAssetToSlot(slotId, button.dataset.assetPath || "").catch(console.error);
+        return;
+      }
+      if (action === "approve") {
+        updateAssetSlot(slotId, {status: "approved"}).catch(console.error);
+        return;
+      }
+      if (action === "toggle-lock") {
+        const item = getAssetManifestItem(state.activeJob, slotId);
+        updateAssetSlot(slotId, {locked: !item?.locked}).catch(console.error);
+        return;
+      }
+      if (action === "generate-ai") {
+        generateAiAssetForSlot(slotId).catch(console.error);
+        return;
+      }
+      if (action === "web-placeholder") {
+        showToast("网络获取素材入口已预留；当前版本先使用 assets/images 的本地素材。", "info");
+      }
     });
   });
 
@@ -2658,11 +4799,13 @@ function bindDynamicLists() {
     button.addEventListener("click", () => {
       const topicId = button.dataset.topicId || "";
       const topic = state.topics.find((item) => item.id === topicId);
-      state.selectedTopicId = topicId;
-      if (topic && els.batchTopicInput) {
-        els.batchTopicInput.value = topic.title || "";
-      }
-      renderScaleTools(getCurrentConfig());
+      const selected = new Set(ensureStringList(state.selectedTopicIds));
+      if (selected.has(topicId)) selected.delete(topicId);
+      else selected.add(topicId);
+      state.selectedTopicIds = [...selected].filter(Boolean);
+      state.selectedTopicId = state.selectedTopicIds[state.selectedTopicIds.length - 1] || "";
+      if (topic) syncBatchTopicInputFromSelection();
+      renderScaleTools(getDraftConfig());
       bindDynamicLists();
     });
   });
@@ -2673,7 +4816,7 @@ function bindDynamicLists() {
         (item) => item.dataset.batchAccountId,
       );
       state.batchAccountIds = selected.filter(Boolean);
-      renderBatchPanel(getCurrentConfig());
+      renderBatchPanel(getDraftConfig());
       bindDynamicLists();
     });
   });
@@ -2730,6 +4873,8 @@ async function loadBootstrap(options = {}) {
 
   const [
     projectPayload,
+    codexStatusPayload,
+    codexConfigPayload,
     templatePayload,
     assetPayload,
     jobsPayload,
@@ -2746,6 +4891,8 @@ async function loadBootstrap(options = {}) {
   ] =
     await Promise.all([
       requestJson(`/api/projects${refreshFlag}`),
+      requestJson(`/api/codex/status${refreshFlag}`),
+      requestJson("/api/codex/config"),
       requestJson("/api/templates"),
       requestJson("/api/assets"),
       requestJson("/api/jobs"),
@@ -2762,6 +4909,12 @@ async function loadBootstrap(options = {}) {
     ]);
 
   state.project = projectPayload;
+  state.codexStatus = codexStatusPayload || null;
+  state.codexConfig = {
+    model: codexConfigPayload?.model || state.codexConfig?.model || "",
+    defaultModel: codexConfigPayload?.defaultModel || state.codexConfig?.defaultModel || "",
+    updatedAt: codexConfigPayload?.updatedAt || "",
+  };
   state.templates = templatePayload.items || [];
   state.assets = assetPayload.items || [];
   state.jobs = jobsPayload.items || [];
@@ -2796,6 +4949,11 @@ async function loadBootstrap(options = {}) {
 
   closeEventSource();
   renderEmptyJob();
+  if (window.location.pathname === "/replication") {
+    openWorkbenchSection("replication");
+  } else {
+    setReplicationPageMode(false);
+  }
   bindDynamicLists();
 }
 
@@ -2811,6 +4969,38 @@ async function selectJob(jobId) {
     return job;
   } catch (error) {
     reportError("\u52a0\u8f7d\u4efb\u52a1\u5931\u8d25", error);
+    throw error;
+  } finally {
+    setBusy(false);
+  }
+}
+
+async function deleteHistoryJob(jobId) {
+  const job = (state.jobs || []).find((item) => item.id === jobId) || (state.activeJob?.id === jobId ? state.activeJob : null);
+  const title = job?.title || jobId;
+  const outputDir = job?.outputDir || `data/jobs/${jobId}`;
+  const confirmed = window.confirm(
+    `确定删除历史任务“${title}”吗？\n\n这会永久删除本地目录：${outputDir}\n后端会再次校验路径必须位于 data/jobs 下，避免误删其他目录。`,
+  );
+  if (!confirmed) return null;
+
+  setBusy(true, "delete-history-job");
+  setBanner("正在删除历史任务和本地产物目录...", "info");
+  try {
+    const deletingActive = state.activeJob?.id === jobId;
+    await requestJson(`/api/jobs/${encodeURIComponent(jobId)}`, {method: "DELETE"});
+    if (deletingActive) {
+      closeEventSource();
+      state.activeJob = null;
+      await loadBootstrap({preserveSelection: false, forceRefresh: true});
+    } else {
+      await syncCollections({forceRefresh: true});
+    }
+    setBanner("历史任务已删除。", "success");
+    showToast("历史任务已删除", "success");
+    return true;
+  } catch (error) {
+    reportError("删除历史任务失败", error);
     throw error;
   } finally {
     setBusy(false);
@@ -2866,7 +5056,7 @@ async function reloadScaleCollections() {
   ensureCampaignSelection();
   ensureActivitySelection();
   renderStats();
-  renderScaleTools(getCurrentConfig());
+  renderScaleTools(getDraftConfig());
   renderJobHistory();
   renderHistoryToolbar();
   bindDynamicLists();
@@ -2959,12 +5149,13 @@ async function createTopicFromInput() {
         title,
         projectId: project.id,
         activityId: activity?.id || "",
-        accountIds: ensureBatchAccountSelection(getCurrentConfig()),
+        accountIds: ensureBatchAccountSelection(getDraftConfig()),
       }),
     });
     state.selectedTopicId = topic.id;
+    state.selectedTopicIds = [...new Set([...ensureStringList(state.selectedTopicIds), topic.id])];
     if (els.topicPoolInput) els.topicPoolInput.value = "";
-    if (els.batchTopicInput) els.batchTopicInput.value = topic.title;
+    syncBatchTopicInputFromSelection();
     await reloadScaleCollections();
     setBanner("选题已加入选题池。", "success");
     showToast("选题已加入", "success");
@@ -2978,14 +5169,15 @@ async function createTopicFromInput() {
 }
 
 async function createBatchFromInput() {
-  const topic = String(els.batchTopicInput?.value || "").trim();
-  if (!topic) {
+  const topics = getBatchTopicPayloadFromInput();
+  if (!topics.length) {
     reportError("", new Error("Batch topic is required"));
     els.batchTopicInput?.focus();
     return null;
   }
+  const topic = topics[0]?.title || "";
 
-  const config = getCurrentConfig();
+  const config = getDraftConfig();
   const selectedAccountIds = ensureBatchAccountSelection(config);
   if (!selectedAccountIds.length) {
     reportError("", new Error("Batch requires at least one active account"));
@@ -2999,10 +5191,11 @@ async function createBatchFromInput() {
       method: "POST",
       body: JSON.stringify({
         topic,
+        topics,
         campaignId: getSelectedCampaign()?.id || "",
         activityId: getSelectedActivity()?.id || "",
-        topicId: state.selectedTopicId || "",
-        topicBrief: getSelectedTopic()?.brief || "",
+        topicId: topics.length === 1 ? topics[0]?.topicId || state.selectedTopicId || "" : "",
+        topicBrief: topics.length === 1 ? topics[0]?.brief || getSelectedTopic()?.brief || "" : "",
         accountIds: selectedAccountIds,
         templateId: config.templateId,
         durationSec: config.durationSec,
@@ -3010,10 +5203,14 @@ async function createBatchFromInput() {
         templateLocked: config.templateLocked,
         activePresetIds: config.activePresetIds,
         openInstruction: config.openInstruction,
+        autoRetry: true,
+        maxAutoRetries: 1,
       }),
     });
 
     if (els.batchTopicInput) els.batchTopicInput.value = "";
+    state.selectedTopicId = "";
+    state.selectedTopicIds = [];
     (payload.jobs || []).forEach(mergeJob);
     await reloadScaleCollections();
 
@@ -3025,7 +5222,7 @@ async function createBatchFromInput() {
       renderScaleTools(config);
     }
     bindDynamicLists();
-    setBanner("批量任务已创建。每条任务可以单独生成计划、配音和渲染。", "success");
+    setBanner("批量任务已创建。默认会对失败任务自动重试 1 次，也可以在详情里人工重试单个 job。", "success");
     showToast(`已创建 ${payload.jobs?.length || 0} 条批量任务`, "success");
     return payload;
   } catch (error) {
@@ -3122,18 +5319,24 @@ function confirmTemplateChange(nextTemplateId, reason = "manual") {
 async function requestTemplateChange(templateId, options = {}) {
   const nextTemplate = getTemplateById(templateId);
   if (!nextTemplate) return null;
-  if (!confirmTemplateChange(nextTemplate.id, options.reason || "manual")) {
+  const target = options.target || "draft";
+  const baseConfig = target === "job" ? getCurrentConfig() : getDraftConfig();
+  const patch = {
+    templateId: nextTemplate.id,
+    compositionId: nextTemplate.compositionId || "",
+    durationSec: nextTemplate.defaultDurationSec || baseConfig.durationSec,
+    aspectRatio: nextTemplate.aspectRatio || baseConfig.aspectRatio,
+    ...(options.templateLocked === undefined ? {} : {templateLocked: options.templateLocked}),
+  };
+
+  if (target === "job" && !confirmTemplateChange(nextTemplate.id, options.reason || "manual")) {
     if (state.activeJob) renderJob(state.activeJob);
     else renderEmptyJob();
     return null;
   }
-  return applyConfigPatch({
-    templateId: nextTemplate.id,
-    compositionId: nextTemplate.compositionId || "",
-    durationSec: nextTemplate.defaultDurationSec || getCurrentConfig().durationSec,
-    aspectRatio: nextTemplate.aspectRatio || getCurrentConfig().aspectRatio,
-    ...(options.templateLocked === undefined ? {} : {templateLocked: options.templateLocked}),
-  });
+
+  if (target === "job") return applyConfigPatch(patch);
+  return applyDraftConfigPatch(patch, "\u5df2\u66f4\u65b0\u65b0\u4efb\u52a1\u9ed8\u8ba4\u6a21\u677f\uff0c\u5f53\u524d\u4efb\u52a1\u4e0d\u53d7\u5f71\u54cd\u3002");
 }
 
 async function applyConfigPatch(patch) {
@@ -3159,6 +5362,24 @@ async function applyConfigPatch(patch) {
   }
 }
 
+function applyDraftConfigPatch(patch, message = "") {
+  const nextConfig = normalizeConfig({...getDraftConfig(), ...patch});
+  setDraftConfig(nextConfig);
+  if (state.activeJob) {
+    renderAccountSelect(nextConfig);
+    renderTemplateSelect(nextConfig);
+    renderScaleTools(nextConfig);
+    renderTaskCreateModal();
+    renderActionHints(state.activeJob);
+    bindDynamicLists();
+  } else {
+    renderEmptyJob();
+    bindDynamicLists();
+  }
+  if (message) showToast(message, "success");
+  return nextConfig;
+}
+
 async function createSession() {
   setBusy(true, "create-session");
   setSessionUi("", "creating");
@@ -3167,7 +5388,7 @@ async function createSession() {
   try {
     const job = await requestJson("/api/sessions", {
       method: "POST",
-      body: JSON.stringify({config: getCurrentConfig()}),
+      body: JSON.stringify({config: getDraftConfig()}),
     });
     state.pendingSessionLabel = "";
     renderJob(job);
@@ -3192,7 +5413,9 @@ async function createJob(prompt) {
   if (!trimmedPrompt) return null;
 
   const previousJob = cloneJob(state.activeJob);
-  const config = getCurrentConfig();
+  const config = getDraftConfig();
+  validateTaskCreationSelection([config.accountId], config.templateId);
+  const sessionId = String(state.selectedSessionId || "").trim();
   const now = new Date().toISOString();
   const pendingJob = {
     id: "__pending_job__",
@@ -3206,9 +5429,12 @@ async function createJob(prompt) {
     activePresetIds: [...config.activePresetIds],
     openInstruction: config.openInstruction,
     instructionScope: config.instructionScope,
+    useAiImageAssets: Boolean(config.useAiImageAssets),
+    imageAssetModel: config.imageAssetModel || state.settings.imageAssetModel || "gpt-image-2-all",
     durationSec: config.durationSec,
     aspectRatio: config.aspectRatio,
     outputDir: "data/jobs",
+    codexSessionId: sessionId || null,
     messages: [
       {
         role: "user",
@@ -3217,19 +5443,19 @@ async function createJob(prompt) {
         createdAt: now,
       },
     ],
-    pendingAssistantText: "Codex \u6b63\u5728\u7406\u89e3\u9700\u6c42\u5e76\u521b\u5efa\u4efb\u52a1...",
+    pendingAssistantText: "\u6b63\u5728\u521b\u5efa\u89c6\u9891\u4efb\u52a1...",
     steps: [],
     logs: [],
     scriptSections: [],
     preview: {
       ...EMPTY_PREVIEW,
-      statusText: "\u89c4\u5212\u4e2d",
+      statusText: "\u521b\u5efa\u4e2d",
       headline: "\u6b63\u5728\u521b\u5efa\u4efb\u52a1",
-      summary: "Codex \u6b63\u5728\u6839\u636e\u5f53\u524d\u8d26\u53f7\u3001\u6a21\u677f\u548c\u6307\u4ee4\u751f\u6210\u89c6\u9891\u4efb\u52a1\u3002",
-      subtitle: "\u4efb\u52a1\u521b\u5efa\u4e2d\uff0c\u7a0d\u540e\u4f1a\u663e\u793a\u811a\u672c\u548c\u5b57\u5e55\u9884\u89c8\u3002",
+      summary: "\u6b63\u5728\u6839\u636e\u5f53\u524d\u8d26\u53f7\u3001\u6a21\u677f\u548c\u6307\u4ee4\u5efa\u7acb\u4efb\u52a1\u6863\u6848\u3002",
+      subtitle: "\u4efb\u52a1\u521b\u5efa\u540e\uff0c\u4e0b\u4e00\u6b65\u53ef\u4ee5\u70b9\u51fb\u201c\u751f\u6210\u8ba1\u5212\u201d\u6216\u201c\u4e00\u952e\u751f\u6210 MP4\u201d\u3002",
       progress: 0.18,
     },
-    codexRunning: true,
+    codexRunning: false,
     createdAt: now,
     updatedAt: now,
     artifactManifest: {},
@@ -3245,6 +5471,7 @@ async function createJob(prompt) {
       method: "POST",
       body: JSON.stringify({
         prompt: trimmedPrompt,
+        sessionId,
         config,
       }),
     });
@@ -3253,7 +5480,7 @@ async function createJob(prompt) {
     connectToEvents(job.id);
     els.composerInput.value = "";
     await syncCollections();
-    setBanner("\u4efb\u52a1\u5df2\u521b\u5efa\uff0c\u6b63\u5728\u540c\u6b65\u6700\u65b0\u72b6\u6001\u3002", "success");
+    setBanner("\u4efb\u52a1\u5df2\u521b\u5efa\u3002\u4e0b\u4e00\u6b65\uff1a\u70b9\u51fb\u201c\u751f\u6210\u8ba1\u5212\u201d\u6216\u201c\u4e00\u952e\u751f\u6210 MP4\u201d\u3002", "success");
     return job;
   } catch (error) {
     if (previousJob) {
@@ -3270,6 +5497,14 @@ async function createJob(prompt) {
   }
 }
 
+function getJobsForSession(sessionId) {
+  const targetSessionId = String(sessionId || "").trim();
+  if (!targetSessionId) return [];
+  return (Array.isArray(state.jobs) ? state.jobs : [])
+    .filter((job) => job?.source === "runtime" && job.codexSessionId === targetSessionId)
+    .sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")));
+}
+
 async function attachSession(sessionId) {
   const targetSessionId = String(sessionId || "").trim();
   if (!targetSessionId) return null;
@@ -3282,18 +5517,49 @@ async function attachSession(sessionId) {
 
   const session = state.sessions.find((item) => item.id === targetSessionId);
   state.pendingSessionLabel = session?.threadName || `Session ${targetSessionId.slice(0, 8)}`;
-  setBusy(true, "attach-session");
   setSessionUi(targetSessionId, "binding");
-  setBanner("\u6b63\u5728\u7ed1\u5b9a\u672c\u5730 session...", "info");
   renderSessionSelect();
   renderSessionList();
 
+  const relatedJobs = getJobsForSession(targetSessionId);
+  const latestRelatedJob = relatedJobs[0] || null;
+  if (latestRelatedJob && latestRelatedJob.id !== state.activeJob?.id) {
+    const countText =
+      relatedJobs.length > 1
+        ? `\u627e\u5230 ${relatedJobs.length} \u4e2a\u5173\u8054\u4efb\u52a1\uff0c\u5df2\u5207\u6362\u5230\u6700\u8fd1\u66f4\u65b0\u7684\u4e00\u4e2a\u3002`
+        : "\u5df2\u5207\u6362\u5230\u8be5 session \u5173\u8054\u7684\u89c6\u9891\u4efb\u52a1\u3002";
+    const selectedJob = await selectJob(latestRelatedJob.id);
+    setBanner(countText, relatedJobs.length > 1 ? "warning" : "success");
+    return selectedJob;
+  }
+
+  if (!state.activeJob) {
+    state.pendingSessionLabel = "";
+    setSessionUi(targetSessionId, "linked");
+    renderSessionSelect();
+    renderSessionList();
+    setBanner("\u5df2\u9009\u62e9\u672c\u5730 session\u3002\u4e0b\u4e00\u6b21\u65b0\u5efa\u89c6\u9891\u4efb\u52a1\u6216\u53d1\u9001\u7b2c\u4e00\u6761\u9700\u6c42\u65f6\u4f1a\u81ea\u52a8\u7ed1\u5b9a\u5b83\u3002", "info");
+    els.composerInput?.focus();
+    return null;
+  }
+
+  if (state.activeJob.source !== "runtime" || state.activeJob.id === "__pending_job__") {
+    state.pendingSessionLabel = "";
+    setSessionUi(targetSessionId, "linked");
+    renderSessionSelect();
+    renderSessionList();
+    setBanner("\u5df2\u9009\u62e9\u672c\u5730 session\u3002\u5f53\u524d\u4e0d\u662f\u53ef\u751f\u4ea7\u7684\u89c6\u9891\u4efb\u52a1\uff0c\u4e0d\u4f1a\u6539\u5199\u5f53\u524d\u4efb\u52a1\u3002", "warning");
+    return null;
+  }
+
+  setBusy(true, "attach-session");
+  setBanner("\u6b63\u5728\u7ed1\u5b9a\u672c\u5730 session...", "info");
   try {
-    const job = await requestJson("/api/jobs", {
-      method: "POST",
+    const job = await requestJson(`/api/jobs/${encodeURIComponent(state.activeJob.id)}/config`, {
+      method: "PATCH",
       body: JSON.stringify({
-        sessionId: targetSessionId,
-        config: getCurrentConfig(),
+        ...getCurrentConfig(),
+        codexSessionId: targetSessionId,
       }),
     });
     state.pendingSessionLabel = "";
@@ -3303,7 +5569,7 @@ async function attachSession(sessionId) {
     state.sessionDrawerOpen = false;
     els.sessionDrawer.hidden = true;
     await loadSessions();
-    setBanner("\u5df2\u7ed1\u5b9a\u672c\u5730 session\uff0c\u53ef\u4ee5\u7ee7\u7eed\u5728\u8be5\u4e0a\u4e0b\u6587\u4e2d\u5bf9\u8bdd\u3002", "success");
+    setBanner("\u5df2\u628a\u672c\u5730 session \u7ed1\u5b9a\u5230\u5f53\u524d\u89c6\u9891\u4efb\u52a1\uff0c\u53ef\u4ee5\u7ee7\u7eed\u751f\u6210\u8ba1\u5212\u3001\u914d\u97f3\u548c\u6e32\u67d3\u3002", "success");
     return job;
   } catch (error) {
     setSessionUi(targetSessionId, "failed");
@@ -3318,12 +5584,12 @@ async function sendMessage(message) {
   const trimmedMessage = String(message || "").trim();
   if (!trimmedMessage) return null;
 
-  if (!state.activeJob && state.selectedSessionId) {
-    await attachSession(state.selectedSessionId);
-  }
-
   if (!state.activeJob || !canChat(state.activeJob)) {
-    return createJob(trimmedMessage);
+    const messageText = normalizeErrorText("Create task explicitly first");
+    setBanner(messageText, "warning");
+    showToast(messageText, "warning");
+    openTaskCreateModal({prompt: trimmedMessage, resetPrompt: false});
+    return null;
   }
 
   const previousJob = cloneJob(state.activeJob);
@@ -3369,14 +5635,106 @@ async function sendMessage(message) {
   }
 }
 
+async function createAndSendFromComposer() {
+  const text = String(els.composerInput?.value || "").trim();
+  if (!text) {
+    showToast("请先输入视频需求。", "info");
+    els.composerInput?.focus();
+    return null;
+  }
+  try {
+    const job = await createJob(text);
+    els.composerInput.value = "";
+    return job;
+  } catch (error) {
+    reportError("创建并发送失败", error);
+    return null;
+  }
+}
+
+function openScriptAiModal() {
+  if (!state.activeJob?.id || state.activeJob.id === "__pending_job__") {
+    reportError("", new Error("Active job is required for script revision"));
+    return;
+  }
+  const review = buildScriptReviewModel(state.activeJob);
+  if (els.scriptAiInstructionInput) {
+    els.scriptAiInstructionInput.value =
+      `请优化当前任务脚本：\n- 保留主题和账号风格\n- 不修改账号默认配置和模板\n- 优化 Hook、口播脚本、字幕摘要和镜头结构\n- 不要把提示词、配置说明、文件路径写进视频画面\n\n当前标题：${review.title}`;
+  }
+  if (els.scriptAiModal) els.scriptAiModal.hidden = false;
+  window.setTimeout(() => els.scriptAiInstructionInput?.focus(), 0);
+}
+
+function closeScriptAiModal() {
+  if (els.scriptAiModal) els.scriptAiModal.hidden = true;
+}
+
+function buildScriptRevisionPrompt(instruction = "") {
+  const review = buildScriptReviewModel(state.activeJob);
+  const outputDir = state.activeJob?.outputDir || "";
+  return [
+    "请只修改当前视频任务的脚本，不要修改账号默认配置、模板库或其他任务。",
+    `当前 job: ${state.activeJob?.id || ""}`,
+    `当前输出目录: ${outputDir}`,
+    "",
+    "目标：优化标题、Hook、口播脚本、字幕摘要和镜头结构。修改必须继续服务当前主题，不要把用户提示词、内部配置、文件路径、账号/模板说明写进视频画面。",
+    "",
+    "请优先更新当前 job 目录中的 video_plan.json、voiceover_units.json、voiceover.txt、render-props.json；如果这些文件不存在，请返回可替换的脚本方案，并说明需要先生成计划。",
+    "",
+    "当前脚本摘要：",
+    `标题：${review.title}`,
+    `Hook：${review.hook}`,
+    `字幕摘要：${review.subtitleSummary}`,
+    `镜头结构：${review.shotStructure}`,
+    "",
+    "我的修改要求：",
+    instruction,
+  ].join("\n");
+}
+
+async function submitScriptAiRevision() {
+  const instruction = String(els.scriptAiInstructionInput?.value || "").trim();
+  if (!instruction) {
+    showToast("请先填写脚本修改要求。", "info");
+    els.scriptAiInstructionInput?.focus();
+    return null;
+  }
+  closeScriptAiModal();
+  activateWorkbenchView("script");
+  setConsoleNavActive("console");
+  return sendMessage(buildScriptRevisionPrompt(instruction));
+}
+
+async function continueAfterScriptReview() {
+  if (!state.activeJob) {
+    reportError("", new Error("Active job is required for script revision"));
+    return null;
+  }
+  const readiness = getJobReadiness(state.activeJob);
+  if (!readiness.hasPlan) {
+    setBanner("请先生成计划，再进入脚本审阅和继续生产。", "warning");
+    showToast("请先生成计划", "warning");
+    return null;
+  }
+  setBanner("脚本已进入继续生产：配音 -> 渲染 -> Screen QA。", "info");
+  return runFullPipelineStable();
+}
+
 async function runAction(action) {
-  if (!canRunPipeline(state.activeJob)) return null;
-  const actionLabelMap = {
-    "generate-plan": "\u751f\u6210\u8ba1\u5212",
-    tts: "\u751f\u6210\u914d\u97f3",
-    render: "\u6e32\u67d3\u89c6\u9891",
+  const capabilities = getJobCapabilities(state.activeJob);
+  const capabilityMap = {
+    "generate-plan": "canPlan",
+    tts: "canTts",
+    render: "canRender",
   };
-  const actionLabel = actionLabelMap[action] || action;
+  const actionLabel = getPipelineActionLabel(action);
+  if (!capabilities[capabilityMap[action]]) {
+    const message = capabilities.actionReasons?.[action] || capabilities.reason || "\u5f53\u524d\u72b6\u6001\u4e0d\u652f\u6301\u6267\u884c\u8fd9\u4e2a\u52a8\u4f5c\u3002";
+    setBanner(message, "warning");
+    showToast(message, "warning");
+    return null;
+  }
   setBusy(true, `run-${action}`);
   setBanner(`\u6b63\u5728\u6267\u884c${actionLabel}...`, "info");
   try {
@@ -3385,7 +5743,13 @@ async function runAction(action) {
     });
     renderJob(job);
     bindDynamicLists();
-    setBanner(`${actionLabel}\u5df2\u542f\u52a8\uff0c\u6b63\u5728\u540c\u6b65\u6700\u65b0\u72b6\u6001\u3002`, "success");
+    if (action === "generate-plan" && state.settings.generationMode !== "auto") {
+      activateWorkbenchView("script");
+      setConsoleNavActive("console");
+      setBanner("脚本审阅模式：计划已生成，已暂停。请检查脚本，必要时让 AI 修改，然后再继续配音和渲染。", "info");
+      return job;
+    }
+    setBanner(`${actionLabel}\u5df2\u5b8c\u6210\uff0c\u5df2\u540c\u6b65\u6700\u65b0\u72b6\u6001\u3002`, "success");
     return job;
   } catch (error) {
     reportError(`${actionLabel}\u5931\u8d25`, error);
@@ -3393,6 +5757,25 @@ async function runAction(action) {
   } finally {
     setBusy(false);
   }
+}
+
+async function retryFailedCurrentStep() {
+  if (!state.activeJob || state.activeJob.status !== "failed") {
+    showToast("\u5f53\u524d\u6ca1\u6709\u9700\u8981\u91cd\u8bd5\u7684\u5931\u8d25\u4efb\u52a1\u3002", "warning");
+    return null;
+  }
+  const action = getRetryActionForJob(state.activeJob);
+  setBanner(`\u6b63\u5728\u91cd\u8bd5${getPipelineActionLabel(action)}...`, "info");
+  return runAction(action);
+}
+
+async function restartFailedJobFromHead() {
+  if (!state.activeJob || state.activeJob.status !== "failed") {
+    showToast("\u5f53\u524d\u6ca1\u6709\u9700\u8981\u4ece\u5934\u751f\u6210\u7684\u5931\u8d25\u4efb\u52a1\u3002", "warning");
+    return null;
+  }
+  setBanner("\u6b63\u5728\u4ece\u5934\u6267\u884c\uff1a\u751f\u6210\u8ba1\u5212 -> \u914d\u97f3 -> \u6e32\u67d3...", "info");
+  return runFullPipelineStable();
 }
 
 async function executePipelineAction(action) {
@@ -3407,7 +5790,13 @@ async function executePipelineAction(action) {
 }
 
 async function runFullPipeline() {
-  if (!canRunPipeline(state.activeJob)) return null;
+  const capabilities = getJobCapabilities(state.activeJob);
+  if (!capabilities.canRunAll) {
+    const message = capabilities.reason || "\u5f53\u524d\u72b6\u6001\u4e0d\u652f\u6301\u4e00\u952e\u751f\u6210\u3002";
+    setBanner(message, "warning");
+    showToast(message, "warning");
+    return null;
+  }
   const steps = [
     {action: "generate-plan", label: "生成计划"},
     {action: "tts", label: "配音"},
@@ -3419,11 +5808,14 @@ async function runFullPipeline() {
       await executePipelineAction(step.action);
     }
 
-    setBusy(false);
+    if (state.settings.generationMode !== "auto") {
+      setBusy(false);
     const confirmed = await openRenderConfirmModal();
     if (!confirmed) {
       setBanner("已停在渲染前确认。确认脚本和配音后可继续渲染。", "info");
       return state.activeJob;
+    }
+
     }
 
     setBusy(true, "run-full");
@@ -3434,6 +5826,54 @@ async function runFullPipeline() {
     return job;
   } catch (error) {
     reportError("一键生成 MP4 失败", error);
+    throw error;
+  } finally {
+    setBusy(false);
+    setActionState();
+  }
+}
+
+async function runFullPipelineStable() {
+  const capabilities = getJobCapabilities(state.activeJob);
+  if (!capabilities.canRunAll) {
+    const message = capabilities.actionReasons?.["run-all"] || capabilities.reason || "\u5f53\u524d\u72b6\u6001\u4e0d\u652f\u6301\u4e00\u952e\u751f\u6210\u3002";
+    setBanner(message, "warning");
+    showToast(message, "warning");
+    return null;
+  }
+
+  setBusy(true, "run-full");
+  try {
+    const initialReadiness = getJobReadiness(state.activeJob);
+    if (!initialReadiness.hasPlan) {
+      setBanner("一键生成：正在生成计划...", "info");
+      await executePipelineAction("generate-plan");
+      if (state.settings.generationMode !== "auto") {
+        activateWorkbenchView("script");
+        setConsoleNavActive("console");
+        setBanner("脚本审阅模式：计划已生成，已暂停。请检查脚本，必要时让 AI 修改，然后点击“继续配音并渲染”。", "info");
+        showToast("已暂停在脚本审阅", "info");
+        return state.activeJob;
+      }
+    }
+
+    const afterPlanReadiness = getJobReadiness(state.activeJob);
+    if (!afterPlanReadiness.hasTts) {
+      setBanner("一键生成：正在生成配音和字幕时间轴...", "info");
+      await executePipelineAction("tts");
+    }
+
+    const afterTtsReadiness = getJobReadiness(state.activeJob);
+    if (!afterTtsReadiness.hasVideo) {
+      setBanner("\u4e00\u952e\u751f\u6210\uff1a\u6b63\u5728\u6e32\u67d3 MP4 \u5e76\u6267\u884c Screen QA...", "info");
+      await executePipelineAction("render");
+    }
+
+    setBanner("\u4e00\u952e\u751f\u6210\u5df2\u5b8c\u6210\uff0cMP4 \u5df2\u5199\u5165\u4ea7\u7269\u76ee\u5f55\u3002", "success");
+    showToast("MP4 \u5df2\u751f\u6210", "success");
+    return state.activeJob;
+  } catch (error) {
+    reportError("\u4e00\u952e\u751f\u6210 MP4 \u5931\u8d25", error);
     throw error;
   } finally {
     setBusy(false);
@@ -3602,23 +6042,21 @@ async function reloadAccounts() {
 }
 
 async function syncAccountSelection(account, options = {}) {
-  const currentConfig = getCurrentConfig();
+  const currentConfig = getDraftConfig();
   const nextConfig = normalizeConfig({
     ...currentConfig,
     ...buildConfigFromAccount(account, currentConfig, {forceTemplate: Boolean(options.forceTemplate)}),
   });
 
-  if (canConfigureJob(state.activeJob) && state.activeJob.id !== "__pending_job__") {
-    const job = await requestJson(`/api/jobs/${encodeURIComponent(state.activeJob.id)}/config`, {
-      method: "PATCH",
-      body: JSON.stringify(nextConfig),
-    });
-    renderJob(job);
-    return job;
-  }
-
   setDraftConfig(nextConfig);
-  renderEmptyJob();
+  if (state.activeJob) {
+    renderAccountSelect(nextConfig);
+    renderTemplateSelect(nextConfig);
+    renderScaleTools(nextConfig);
+    bindDynamicLists();
+  } else {
+    renderEmptyJob();
+  }
   return nextConfig;
 }
 
@@ -3724,13 +6162,72 @@ function scheduleInstructionUpdate() {
   }, 260);
 }
 
+function setConsoleNavActive(target = "console") {
+  document.querySelectorAll(".console-nav [data-console-nav]").forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.consoleNav === target);
+  });
+}
+
+function activateWorkbenchView(viewId = "workflow") {
+  const targetView = document.querySelector(`#${viewId}View`);
+  if (!targetView) return;
+  state.activeView = viewId;
+  document.querySelectorAll(".segmented-control button").forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.view === viewId);
+  });
+  document.querySelectorAll(".view-page").forEach((page) => page.classList.remove("is-active"));
+  targetView.classList.add("is-active");
+}
+
+function setReplicationPageMode(enabled) {
+  document.body.classList.toggle("is-replication-route", Boolean(enabled));
+}
+
+function openWorkbenchSection(target = "console") {
+  if (target === "sessions") {
+    setConsoleNavActive("sessions");
+    openSettingsModal();
+    return;
+  }
+  if (target === "docs") {
+    activateWorkbenchView("docs");
+    setConsoleNavActive("docs");
+    return;
+  }
+  if (target === "batch") {
+    activateWorkbenchView("resources");
+    setConsoleNavActive("batch");
+    document.querySelector("#batchConsoleSection")?.scrollIntoView({block: "start", behavior: "smooth"});
+    return;
+  }
+  if (target === "replication") {
+    setReplicationPageMode(true);
+    activateWorkbenchView("replication");
+    setConsoleNavActive("replication");
+    renderReplicationPage(state.activeJob);
+    return;
+  }
+  setReplicationPageMode(false);
+  if (target === "history") {
+    activateWorkbenchView("resources");
+    setConsoleNavActive("history");
+    document.querySelector("#historySection")?.scrollIntoView({block: "start", behavior: "smooth"});
+    return;
+  }
+  activateWorkbenchView("workflow");
+  setConsoleNavActive("console");
+}
+
 document.querySelectorAll(".segmented-control button").forEach((button) => {
   button.addEventListener("click", () => {
-    state.activeView = button.dataset.view || "workflow";
-    document.querySelectorAll(".segmented-control button").forEach((item) => item.classList.remove("is-active"));
-    document.querySelectorAll(".view-page").forEach((page) => page.classList.remove("is-active"));
-    button.classList.add("is-active");
-    document.querySelector(`#${state.activeView}View`).classList.add("is-active");
+    activateWorkbenchView(button.dataset.view || "workflow");
+    setConsoleNavActive("console");
+  });
+});
+
+document.querySelectorAll("[data-console-nav]").forEach((button) => {
+  button.addEventListener("click", () => {
+    openWorkbenchSection(button.dataset.consoleNav || "console");
   });
 });
 
@@ -3758,6 +6255,12 @@ document.querySelectorAll("[data-history-filter]").forEach((button) => {
   });
 });
 
+els.historySearchInput?.addEventListener("input", () => {
+  state.historyQuery = els.historySearchInput.value || "";
+  renderJobHistory();
+  bindDynamicLists();
+});
+
 els.sessionSearchInput.addEventListener("input", () => {
   state.sessionQuery = els.sessionSearchInput.value || "";
   if (state.sessionSearchTimer) window.clearTimeout(state.sessionSearchTimer);
@@ -3773,8 +6276,8 @@ els.sessionSelect.addEventListener("change", async () => {
   if (!sessionId) {
     state.pendingSessionLabel = "";
     setSessionUi("", "unbound");
-    closeEventSource();
-    renderEmptyJob();
+    renderSessionSelect();
+    renderSessionList();
     setBanner("", "info");
     els.composerInput.focus();
     return;
@@ -3796,6 +6299,18 @@ els.newThreadButton.addEventListener("click", async () => {
     void error;
   } finally {
     els.newThreadButton.disabled = false;
+  }
+});
+
+els.newSessionButton?.addEventListener("click", async () => {
+  els.newSessionButton.disabled = true;
+  try {
+    await createSession();
+    els.composerInput.focus();
+  } catch (error) {
+    void error;
+  } finally {
+    els.newSessionButton.disabled = false;
   }
 });
 
@@ -3822,6 +6337,9 @@ els.sessionLoadMoreButton?.addEventListener("click", async () => {
 });
 
 els.openTaskModalButton?.addEventListener("click", openTaskCreateModal);
+els.quickCreateTaskButton?.addEventListener("click", openTaskCreateModal);
+els.quickBatchButton?.addEventListener("click", () => openWorkbenchSection("batch"));
+els.quickDocsButton?.addEventListener("click", () => openWorkbenchSection("docs"));
 els.closeTaskCreateModalButton?.addEventListener("click", closeTaskCreateModal);
 els.cancelTaskCreateButton?.addEventListener("click", closeTaskCreateModal);
 els.taskCreateModeInput?.addEventListener("change", () => {
@@ -3829,6 +6347,9 @@ els.taskCreateModeInput?.addEventListener("change", () => {
   renderTaskCreateModal();
 });
 els.taskCreateTemplateInput?.addEventListener("change", () => renderTaskCreateModal());
+els.taskCreateGenerationModeInput?.addEventListener("change", () => {
+  updateGenerationMode(els.taskCreateGenerationModeInput.value, {persist: true});
+});
 els.taskCreateForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
@@ -3841,10 +6362,68 @@ els.taskCreateModal?.addEventListener("click", (event) => {
   if (event.target === els.taskCreateModal) closeTaskCreateModal();
 });
 
+els.uploadReplicationVideoButton?.addEventListener("click", async () => {
+  try {
+    await uploadReplicationReferenceVideo();
+  } catch (error) {
+    void error;
+  }
+});
+
+els.analyzeReplicationVideoButton?.addEventListener("click", async () => {
+  try {
+    await analyzeReplicationReferenceForActiveJob();
+  } catch (error) {
+    void error;
+  }
+});
+
+els.createReplicationJobButton?.addEventListener("click", async () => {
+  try {
+    await createReplicationJobFromPage();
+  } catch (error) {
+    void error;
+  }
+});
+
+els.runReplicationPipelineButton?.addEventListener("click", async () => {
+  try {
+    await runReplicationPipelineForActiveJob();
+  } catch (error) {
+    void error;
+  }
+});
+
+els.runReplicationDeliveryButton?.addEventListener("click", async () => {
+  try {
+    await runReplicationDeliveryForActiveJob();
+  } catch (error) {
+    void error;
+  }
+});
+
+els.selectLatestReplicationButton?.addEventListener("click", selectLatestReplicationJob);
+
+els.scriptAiForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  try {
+    await submitScriptAiRevision();
+  } catch (error) {
+    void error;
+  }
+});
+els.closeScriptAiModalButton?.addEventListener("click", closeScriptAiModal);
+els.cancelScriptAiButton?.addEventListener("click", closeScriptAiModal);
+els.scriptAiModal?.addEventListener("click", (event) => {
+  if (event.target === els.scriptAiModal) closeScriptAiModal();
+});
+
 els.campaignSelect?.addEventListener("change", async () => {
   state.selectedCampaignId = els.campaignSelect.value || "";
   state.selectedActivityId = "";
   state.selectedTopicId = "";
+  state.selectedTopicIds = [];
+  if (els.batchTopicInput) els.batchTopicInput.value = "";
   try {
     await reloadScaleCollections();
   } catch (error) {
@@ -3873,6 +6452,8 @@ els.campaignNameInput?.addEventListener("keydown", async (event) => {
 els.activitySelect?.addEventListener("change", async () => {
   state.selectedActivityId = els.activitySelect.value || "";
   state.selectedTopicId = "";
+  state.selectedTopicIds = [];
+  if (els.batchTopicInput) els.batchTopicInput.value = "";
   try {
     await reloadScaleCollections();
   } catch (error) {
@@ -3916,6 +6497,14 @@ els.topicPoolInput?.addEventListener("keydown", async (event) => {
   }
 });
 
+els.batchTopicInput?.addEventListener("input", () => {
+  state.selectedTopicIds = [];
+  state.selectedTopicId = "";
+  updateBatchCreateButtonState(getDraftConfig());
+  renderTopicPool();
+  bindDynamicLists();
+});
+
 els.batchStatusFilter?.addEventListener("change", async () => {
   state.batchFilterStatus = els.batchStatusFilter.value || "all";
   try {
@@ -3951,17 +6540,12 @@ els.createBatchButton?.addEventListener("click", async () => {
 
 els.accountSelect.addEventListener("change", async () => {
   const account = getAccountById(els.accountSelect.value);
-  const currentConfig = getCurrentConfig();
+  const currentConfig = getDraftConfig();
   try {
-    if (!currentConfig.templateLocked && account?.defaultTemplateId && account.defaultTemplateId !== currentConfig.templateId) {
-      const changed = confirmTemplateChange(account.defaultTemplateId, "account-default");
-      if (!changed) {
-        if (state.activeJob) renderJob(state.activeJob);
-        else renderEmptyJob();
-        return;
-      }
-    }
-    await applyConfigPatch(buildConfigFromAccount(account, currentConfig, {forceTemplate: false}));
+    applyDraftConfigPatch(
+      buildConfigFromAccount(account, currentConfig, {forceTemplate: false}),
+      "\u5df2\u66f4\u65b0\u65b0\u4efb\u52a1\u9ed8\u8ba4\u8d26\u53f7\uff0c\u5f53\u524d\u4efb\u52a1\u4e0d\u53d7\u5f71\u54cd\u3002",
+    );
   } catch (error) {
     void error;
   }
@@ -3980,10 +6564,32 @@ els.templateSelect.addEventListener("change", async () => {
 
 els.templateLockToggle.addEventListener("change", async () => {
   try {
-    await applyConfigPatch({templateLocked: els.templateLockToggle.checked});
+    applyDraftConfigPatch({templateLocked: els.templateLockToggle.checked});
   } catch (error) {
     void error;
   }
+});
+
+els.generationModeInlineInput?.addEventListener("change", () => {
+  updateGenerationMode(els.generationModeInlineInput.value, {persist: true, toast: true});
+});
+
+els.subtitleFontSizeInlineInput?.addEventListener("change", () => {
+  const subtitleFontSize = normalizeSubtitleFontSize(els.subtitleFontSizeInlineInput.value);
+  state.settings = {...state.settings, subtitleFontSize};
+  saveSettings();
+  applyConfigPatch({subtitleFontSize})
+    .then(() => showToast(`字幕字号已更新为 ${subtitleFontSize}`, "success"))
+    .catch(console.error);
+});
+
+els.subtitleColorInlineInput?.addEventListener("change", () => {
+  const subtitleColor = normalizeSubtitleColor(els.subtitleColorInlineInput.value);
+  state.settings = {...state.settings, subtitleColor};
+  saveSettings();
+  applyConfigPatch({subtitleColor})
+    .then(() => showToast(`瀛楀箷棰滆壊宸叉洿鏂颁负 ${subtitleColor}`, "success"))
+    .catch(console.error);
 });
 
 els.openInstructionInput.addEventListener("input", scheduleInstructionUpdate);
@@ -3991,7 +6597,11 @@ els.openInstructionInput.addEventListener("input", scheduleInstructionUpdate);
 els.composerForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const text = els.composerInput.value.trim();
-  if (!text) return;
+  if (!text) {
+    showToast("\u8bf7\u5148\u8f93\u5165\u89c6\u9891\u9700\u6c42\u6216\u8981\u7ee7\u7eed\u8ffd\u95ee\u7684\u5185\u5bb9\u3002", "info");
+    els.composerInput.focus();
+    return;
+  }
 
   try {
     await sendMessage(text);
@@ -3999,6 +6609,10 @@ els.composerForm.addEventListener("submit", async (event) => {
   } catch (error) {
     void error;
   }
+});
+
+els.createAndSendButton?.addEventListener("click", async () => {
+  await createAndSendFromComposer();
 });
 
 els.generatePlanButton.addEventListener("click", async () => {
@@ -4019,8 +6633,6 @@ els.ttsButton.addEventListener("click", async () => {
 
 els.renderButton.addEventListener("click", async () => {
   try {
-    const confirmed = await openRenderConfirmModal();
-    if (!confirmed) return;
     await runAction("render");
   } catch (error) {
     void error;
@@ -4029,7 +6641,7 @@ els.renderButton.addEventListener("click", async () => {
 
 els.runAllButton?.addEventListener("click", async () => {
   try {
-    await runFullPipeline();
+    await runFullPipelineStable();
   } catch (error) {
     void error;
   }
@@ -4093,18 +6705,15 @@ els.openOutputButton?.addEventListener("click", async () => {
   reportError("\u590d\u5236\u8f93\u51fa\u76ee\u5f55\u5931\u8d25", new Error("\u8bf7\u624b\u52a8\u590d\u5236\u8f93\u51fa\u76ee\u5f55\u8def\u5f84"));
 });
 
-els.exportButton?.addEventListener("click", () => {
-  const video = getArtifactItem(state.activeJob, "video");
-  if (video?.exists && video.url) {
-    triggerDownload(video);
+els.exportButton?.addEventListener("click", async () => {
+  const target = await getExportTarget(state.activeJob);
+  if (target.blocked) {
+    setBanner(target.reason, "warning");
+    showToast(target.reason, "warning");
+    setActionState();
     return;
   }
-  const audio = getArtifactItem(state.activeJob, "audio");
-  if (audio?.exists && audio.url) {
-    triggerDownload(audio);
-    return;
-  }
-  showToast("\u8fd8\u6ca1\u6709\u53ef\u5bfc\u51fa\u7684\u4ea7\u7269\uff0c\u8bf7\u5148\u5b8c\u6210\u914d\u97f3\u6216\u6e32\u67d3\u3002", "info");
+  triggerDownload(target.item);
 });
 
 els.refreshButton.addEventListener("click", async () => {
@@ -4163,6 +6772,20 @@ els.closeRenderConfirmButton?.addEventListener("click", () => closeRenderConfirm
 els.cancelRenderConfirmButton?.addEventListener("click", () => closeRenderConfirmModal(false));
 els.confirmRenderButton?.addEventListener("click", () => closeRenderConfirmModal(true));
 
+els.settingsButton?.addEventListener("click", openSettingsModal);
+els.closeSettingsModalButton?.addEventListener("click", closeSettingsModal);
+els.cancelSettingsButton?.addEventListener("click", closeSettingsModal);
+els.saveSettingsButton?.addEventListener("click", () => {
+  persistSettingsAndModelFromModal().catch((error) => {
+    reportError("保存设置失败", error);
+  });
+});
+els.settingsModal?.addEventListener("click", (event) => {
+  if (event.target === els.settingsModal) {
+    closeSettingsModal();
+  }
+});
+
 els.batchDetailDrawer?.addEventListener("click", (event) => {
   if (event.target === els.batchDetailDrawer) {
     closeBatchDrawer();
@@ -4206,6 +6829,10 @@ window.addEventListener("keydown", (event) => {
     closeRenderConfirmModal(false);
     return;
   }
+  if (els.settingsModal && !els.settingsModal.hidden) {
+    closeSettingsModal();
+    return;
+  }
   if (!els.accountModal.hidden) {
     closeAccountModal();
     return;
@@ -4217,6 +6844,8 @@ window.addEventListener("keydown", (event) => {
   }
 });
 
+loadSettings();
+applySettingsToUi();
 loadBootstrap().catch((error) => {
   console.error(error);
   const message = `\u521d\u59cb\u5316\u5931\u8d25\uff1a${normalizeErrorText(error?.message || error)}`;

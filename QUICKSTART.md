@@ -119,6 +119,16 @@ npm run dev
 python ./scripts/analyze_video.py job_demo manual_download4 auto data
 ```
 
+Table-first Stage 2 recommended path:
+
+```powershell
+python ./scripts/run_table_first_analysis.py job_demo_table manual_download4 draft_then_review data
+```
+
+This produces `data/jobs/<job_id>/analysis_tables.md` for review first, then
+compiles the reviewed table artifact into the normal downstream
+`data/analyses/<source_id>.analysis.json`.
+
 执行前提：
 
 - `data/source_videos/manual_download4/source.mp4` 存在

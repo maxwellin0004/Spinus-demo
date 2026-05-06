@@ -1,0 +1,417 @@
+{
+  "id": "download14_test",
+  "filename": "download (14).mp4",
+  "title": "download (14) reference video",
+  "description": "User-provided reference video for viral replication workflow test",
+  "cover_text": "",
+  "first_frame_text": "",
+  "platform": "local",
+  "track": "reference replication test",
+  "language": "zh",
+  "duration_sec": 52.38,
+  "tags": [
+    "reference",
+    "replication",
+    "workflow-test"
+  ],
+  "status": "analysis_ready",
+  "_frame_index": {
+    "success": true,
+    "source": "ffmpeg_fps_1",
+    "count": 52,
+    "frames": [
+      {
+        "index": 0,
+        "time_sec": 0.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0001.jpg",
+        "name": "frame_0001.jpg"
+      },
+      {
+        "index": 1,
+        "time_sec": 1.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0002.jpg",
+        "name": "frame_0002.jpg"
+      },
+      {
+        "index": 2,
+        "time_sec": 2.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0003.jpg",
+        "name": "frame_0003.jpg"
+      },
+      {
+        "index": 3,
+        "time_sec": 3.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0004.jpg",
+        "name": "frame_0004.jpg"
+      },
+      {
+        "index": 4,
+        "time_sec": 4.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0005.jpg",
+        "name": "frame_0005.jpg"
+      },
+      {
+        "index": 5,
+        "time_sec": 5.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0006.jpg",
+        "name": "frame_0006.jpg"
+      },
+      {
+        "index": 6,
+        "time_sec": 6.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0007.jpg",
+        "name": "frame_0007.jpg"
+      },
+      {
+        "index": 7,
+        "time_sec": 7.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0008.jpg",
+        "name": "frame_0008.jpg"
+      },
+      {
+        "index": 8,
+        "time_sec": 8.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0009.jpg",
+        "name": "frame_0009.jpg"
+      },
+      {
+        "index": 9,
+        "time_sec": 9.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0010.jpg",
+        "name": "frame_0010.jpg"
+      },
+      {
+        "index": 10,
+        "time_sec": 10.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0011.jpg",
+        "name": "frame_0011.jpg"
+      },
+      {
+        "index": 11,
+        "time_sec": 11.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0012.jpg",
+        "name": "frame_0012.jpg"
+      },
+      {
+        "index": 12,
+        "time_sec": 12.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0013.jpg",
+        "name": "frame_0013.jpg"
+      },
+      {
+        "index": 13,
+        "time_sec": 13.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0014.jpg",
+        "name": "frame_0014.jpg"
+      },
+      {
+        "index": 14,
+        "time_sec": 14.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0015.jpg",
+        "name": "frame_0015.jpg"
+      },
+      {
+        "index": 15,
+        "time_sec": 15.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0016.jpg",
+        "name": "frame_0016.jpg"
+      },
+      {
+        "index": 16,
+        "time_sec": 16.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0017.jpg",
+        "name": "frame_0017.jpg"
+      },
+      {
+        "index": 17,
+        "time_sec": 17.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0018.jpg",
+        "name": "frame_0018.jpg"
+      },
+      {
+        "index": 18,
+        "time_sec": 18.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0019.jpg",
+        "name": "frame_0019.jpg"
+      },
+      {
+        "index": 19,
+        "time_sec": 19.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0020.jpg",
+        "name": "frame_0020.jpg"
+      },
+      {
+        "index": 20,
+        "time_sec": 20.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0021.jpg",
+        "name": "frame_0021.jpg"
+      },
+      {
+        "index": 21,
+        "time_sec": 21.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0022.jpg",
+        "name": "frame_0022.jpg"
+      },
+      {
+        "index": 22,
+        "time_sec": 22.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0023.jpg",
+        "name": "frame_0023.jpg"
+      },
+      {
+        "index": 23,
+        "time_sec": 23.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0024.jpg",
+        "name": "frame_0024.jpg"
+      },
+      {
+        "index": 24,
+        "time_sec": 24.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0025.jpg",
+        "name": "frame_0025.jpg"
+      },
+      {
+        "index": 25,
+        "time_sec": 25.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0026.jpg",
+        "name": "frame_0026.jpg"
+      },
+      {
+        "index": 26,
+        "time_sec": 26.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0027.jpg",
+        "name": "frame_0027.jpg"
+      },
+      {
+        "index": 27,
+        "time_sec": 27.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0028.jpg",
+        "name": "frame_0028.jpg"
+      },
+      {
+        "index": 28,
+        "time_sec": 28.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0029.jpg",
+        "name": "frame_0029.jpg"
+      },
+      {
+        "index": 29,
+        "time_sec": 29.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0030.jpg",
+        "name": "frame_0030.jpg"
+      },
+      {
+        "index": 30,
+        "time_sec": 30.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0031.jpg",
+        "name": "frame_0031.jpg"
+      },
+      {
+        "index": 31,
+        "time_sec": 31.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0032.jpg",
+        "name": "frame_0032.jpg"
+      },
+      {
+        "index": 32,
+        "time_sec": 32.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0033.jpg",
+        "name": "frame_0033.jpg"
+      },
+      {
+        "index": 33,
+        "time_sec": 33.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0034.jpg",
+        "name": "frame_0034.jpg"
+      },
+      {
+        "index": 34,
+        "time_sec": 34.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0035.jpg",
+        "name": "frame_0035.jpg"
+      },
+      {
+        "index": 35,
+        "time_sec": 35.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0036.jpg",
+        "name": "frame_0036.jpg"
+      },
+      {
+        "index": 36,
+        "time_sec": 36.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0037.jpg",
+        "name": "frame_0037.jpg"
+      },
+      {
+        "index": 37,
+        "time_sec": 37.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0038.jpg",
+        "name": "frame_0038.jpg"
+      },
+      {
+        "index": 38,
+        "time_sec": 38.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0039.jpg",
+        "name": "frame_0039.jpg"
+      },
+      {
+        "index": 39,
+        "time_sec": 39.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0040.jpg",
+        "name": "frame_0040.jpg"
+      },
+      {
+        "index": 40,
+        "time_sec": 40.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0041.jpg",
+        "name": "frame_0041.jpg"
+      },
+      {
+        "index": 41,
+        "time_sec": 41.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0042.jpg",
+        "name": "frame_0042.jpg"
+      },
+      {
+        "index": 42,
+        "time_sec": 42.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0043.jpg",
+        "name": "frame_0043.jpg"
+      },
+      {
+        "index": 43,
+        "time_sec": 43.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0044.jpg",
+        "name": "frame_0044.jpg"
+      },
+      {
+        "index": 44,
+        "time_sec": 44.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0045.jpg",
+        "name": "frame_0045.jpg"
+      },
+      {
+        "index": 45,
+        "time_sec": 45.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0046.jpg",
+        "name": "frame_0046.jpg"
+      },
+      {
+        "index": 46,
+        "time_sec": 46.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0047.jpg",
+        "name": "frame_0047.jpg"
+      },
+      {
+        "index": 47,
+        "time_sec": 47.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0048.jpg",
+        "name": "frame_0048.jpg"
+      },
+      {
+        "index": 48,
+        "time_sec": 48.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0049.jpg",
+        "name": "frame_0049.jpg"
+      },
+      {
+        "index": 49,
+        "time_sec": 49.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0050.jpg",
+        "name": "frame_0050.jpg"
+      },
+      {
+        "index": 50,
+        "time_sec": 50.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0051.jpg",
+        "name": "frame_0051.jpg"
+      },
+      {
+        "index": 51,
+        "time_sec": 51.0,
+        "path": "data\\preprocess\\download14_test\\frames\\frame_0052.jpg",
+        "name": "frame_0052.jpg"
+      }
+    ]
+  },
+  "_frame_summaries": [
+    {
+      "time_sec": 0.0,
+      "name": "frame_0001.jpg",
+      "summary": "近景低角度的科幻/机甲风格角色侧脸与发光装置特写，强烈背光与能量光束形成高对比氛围。画面中心偏下叠加中英双语字幕。",
+      "visible_text": [
+        "这是我听过最遗憾",
+        "This is the most regrettal"
+      ],
+      "layout_guess": "主画面占满全屏；字幕居中下方叠加（中文在上、英文在下），中间有轻微描边/投影以保证可读性。",
+      "visual_type_guess": "角色/机甲特写 + 能量光效氛围（带双语字幕的字幕帧）",
+      "source": "api",
+      "model": "gpt-5.4-nano"
+    },
+    {
+      "time_sec": 13.0,
+      "name": "frame_0014.jpg",
+      "summary": "户外航海/海上画面，人物手持船舵/栏杆遮挡前景，远处海面与城市天际线；画面上叠加剧情式标题与字幕，形成“旅行/吐槽”风格封面关键帧。",
+      "visible_text": [
+        "《月亮六便士》",
+        "毛姆/看（书评）",
+        "我也少点运气",
+        "and I'm a bit unlucky.",
+        "@书海拾光人"
+      ],
+      "layout_guess": "上方居中大标题；中下区域前景为人物手部/船舵；底部居中叠加中英双语字幕，最下方有账号水印。",
+      "visual_type_guess": "海上风景+人物前景遮挡的字幕海报/封面关键帧",
+      "source": "api",
+      "model": "gpt-5.4-nano"
+    },
+    {
+      "time_sec": 26.0,
+      "name": "frame_0027.jpg",
+      "summary": "夜景草地场景中，一名人物背对远行，顶部叠加剧集/剧情相关字幕标题与作者标签，底部给出中文释义与英文字幕及账号水印，用于情感类文案解读。",
+      "visible_text": [
+        "《月亮六便士》",
+        "毛姐/看（书评）",
+        "因为念念不忘却没有回应",
+        "Because the unrequited love has no response.",
+        "@书海拾光人"
+      ],
+      "layout_guess": "上方居中大标题（白色），其下为小号红色副标题；画面中下部居中人物远景；底部居中叠加一行中文字幕及下一行英文字幕；最底部有账号水印@书海拾光人。",
+      "visual_type_guess": "情感鸡汤/书评文案叠字的电影化风景字幕关键帧（人物远景+多层字幕HUD）",
+      "source": "api",
+      "model": "gpt-5.4-nano"
+    },
+    {
+      "time_sec": 38.0,
+      "name": "frame_0039.jpg",
+      "summary": "室内窗户外景与人物剪影，顶部为书名/作者字样海报式标题条，中部有字幕旁白，底部有账号水印。整体为对话/旁白场景的关键画面。",
+      "visible_text": [
+        "《月亮与六便士》",
+        "毛姆/看（书评）",
+        "我们既然走进了彼此的青春",
+        "Since we have entered each other's youth.",
+        "@书海拾光人"
+      ],
+      "layout_guess": "上方横向标题条（白底大字+红色副标题）居中叠加；中下部两行字幕居中；底部靠下偏左/居中显示账号水印。",
+      "visual_type_guess": "剧情/纪录风格的窗边人物剪影+字幕叠加（电影感/短视频对话旁白画面）",
+      "source": "api",
+      "model": "gpt-5.4-nano"
+    },
+    {
+      "time_sec": 51.0,
+      "name": "frame_0052.jpg",
+      "summary": "夜晚/蓝调风景中，一名人物在草坡上远景行走；画面顶部叠加剧集/话题字幕，底部为双语字幕和账号水印，整体用于影视剪辑/标题引导。",
+      "visible_text": [
+        "《月亮与六便士》",
+        "毛姐/看（书评）",
+        "这就够了",
+        "That’s enough.",
+        "@书海拾光人"
+      ],
+      "layout_guess": "上方居中大标题（白色主字+红色副标题/括注）；画面中部偏下人物远景；底部居中字幕双语；最下方为居中或略偏下的账号@水印。",
+      "visual_type_guess": "风景人物远景+影视字幕叠加（标题字幕/双语字幕/水印）",
+      "source": "api",
+      "model": "gpt-5.4-nano"
+    }
+  ],
+  "updated_at": "2026-05-05T17:34:30+0800"
+}

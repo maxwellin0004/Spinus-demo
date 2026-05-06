@@ -1,0 +1,33 @@
+{
+  "template_id": "cinematic_quote_full_bleed",
+  "template_name": "Cinematic Quote Full Bleed",
+  "template_name_zh": "电影感全屏语录模板",
+  "version": "v1.0",
+  "status": "draft",
+  "description": "Full-bleed cinematic background with top title/source, lower bilingual subtitle area, bottom creator handle, soft glow, film grain, and slow push motion.",
+  "positioning": {
+    "tracks": ["literature", "emotion", "self_growth", "education", "ai"],
+    "platforms": ["Douyin", "TikTok", "Xiaohongshu", "Bilibili"],
+    "aspect_ratios": ["3:4", "9:16"],
+    "duration_sec_range": [30, 70],
+    "video_types": ["cinematic quote", "emotional narration", "book-note montage", "full-screen subtitle essay"]
+  },
+  "template_decision": {
+    "composition_id": "cinematic-quote-replication",
+    "layout_archetype": "cinematic_quote_full_bleed",
+    "needs_full_bleed_background": true
+  },
+  "fixed_rules": {
+    "visual_system": {
+      "background_style": "full_bleed_cinematic",
+      "title_position": "top_center",
+      "subtitle_position": "lower_center",
+      "creator_handle_position": "bottom_center",
+      "image_text_policy": "render_text_in_remotion_only"
+    },
+    "motion": {
+      "primary": "slow_push_full_bleed",
+      "transition": "hard_cut_or_soft_fade"
+    }
+  }
+}
