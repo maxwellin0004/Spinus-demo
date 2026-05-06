@@ -1,0 +1,627 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  BRAND
+  CREATOR
+}
+
+enum AdminLevel {
+  FOUNDER
+  STAFF
+}
+
+enum AdminDataScope {
+  ALL
+  ASSIGNED
+  TEAM
+}
+
+enum UserStatus {
+  ACTIVE
+  PENDING
+  FROZEN
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  FROZEN
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum CreatorLevel {
+  NEW
+  VERIFIED
+  PRO
+  ELITE
+}
+
+enum CampaignStatus {
+  DRAFT
+  PENDING_REVIEW
+  REJECTED
+  ACTIVE
+  PAUSED
+  COMPLETED
+  ARCHIVED
+}
+
+enum TaskStatus {
+  ACTIVE
+  PAUSED
+  CLOSED
+}
+
+enum ApplicationStatus {
+  APPLIED
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum DraftStatus {
+  DRAFT
+  SUBMITTED
+  BLOCKED
+}
+
+enum SubmissionStatus {
+  DRAFT_CREATED
+  SUBMITTED
+  REVISION_REQUESTED
+  APPROVED
+  REJECTED
+  PUBLISHED
+  PROOF_SUBMITTED
+  VERIFIED
+  SETTLED
+}
+
+enum ReviewDecision {
+  APPROVED
+  REVISION_REQUESTED
+  REJECTED
+}
+
+enum ProofStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+  NEEDS_SUPPLEMENT
+}
+
+enum WalletTxType {
+  EARNING
+  WITHDRAWAL
+  ADJUSTMENT
+  FREEZE
+  UNFREEZE
+}
+
+enum WalletTxStatus {
+  PENDING
+  APPROVED
+  PAID
+  REJECTED
+  FAILED
+}
+
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  PAID
+  REJECTED
+}
+
+enum ComplianceRuleType {
+  SENSITIVE_WORD
+  PROHIBITED_EXPRESSION
+  DISCLOSURE
+  PLATFORM_RULE
+}
+
+enum BrandRequestStatus {
+  SUBMITTED
+  IN_REVIEW
+  ACCEPTED
+  CONVERTED
+  CLOSED
+}
+
+enum SocialVerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+model User {
+  id                String             @id @default(cuid())
+  email             String             @unique
+  passwordHash      String
+  role              UserRole
+  status            UserStatus         @default(ACTIVE)
+  adminProfile      AdminProfile?
+  brandProfile      BrandProfile?
+  creatorProfile    CreatorProfile?
+  submissionReviews SubmissionReview[] @relation("Reviewer")
+  brandMessages     BrandMessage[]     @relation("BrandMessageAuthor")
+  notifications     Notification[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model AdminProfile {
+  id              String           @id @default(cuid())
+  userId          String           @unique
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  displayName     String
+  level           AdminLevel       @default(STAFF)
+  permissions     String[]         @default([])
+  dataScope       AdminDataScope   @default(ASSIGNED)
+  teamName        String?
+  wechat          String?
+  createdById     String?
+  managedBrands   BrandProfile[]   @relation("BrandResponsible")
+  managedCreators CreatorProfile[] @relation("CreatorResponsible")
+  brandRequests   BrandRequest[]   @relation("BrandRequestResponsible")
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model BrandProfile {
+  id                 String         @id @default(cuid())
+  userId             String         @unique
+  user               User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  brandName          String
+  companyName        String
+  contactName        String
+  email              String
+  telegram           String?
+  whatsapp           String?
+  website            String?
+  industry           String
+  country            String
+  logoUrl            String?
+  description        String
+  reviewStatus       ReviewStatus   @default(PENDING)
+  riskLevel          RiskLevel      @default(LOW)
+  internalNote       String?
+  responsibleAdminId String?
+  responsibleAdmin   AdminProfile?  @relation("BrandResponsible", fields: [responsibleAdminId], references: [id], onDelete: SetNull)
+  isDemo             Boolean        @default(false)
+  budgetBalance      Decimal        @default(0) @db.Decimal(12, 2)
+  campaigns          Campaign[]
+  requests           BrandRequest[]
+  messages           BrandMessage[]
+  invoices           Invoice[]
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+}
+
+model BrandRequest {
+  id                  String             @id @default(cuid())
+  brandId             String
+  brand               BrandProfile       @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  responsibleAdminId  String?
+  responsibleAdmin    AdminProfile?      @relation("BrandRequestResponsible", fields: [responsibleAdminId], references: [id], onDelete: SetNull)
+  title               String
+  objective           String
+  description         String
+  budget              Decimal?           @db.Decimal(12, 2)
+  expectedLaunchDate  DateTime?
+  status              BrandRequestStatus @default(SUBMITTED)
+  convertedCampaignId String?
+  messages            BrandMessage[]
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+}
+
+model CreatorProfile {
+  id                 String              @id @default(cuid())
+  userId             String              @unique
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  displayName        String
+  fullName           String?
+  email              String
+  country            String
+  languages          String[]            @default([])
+  categories         String[]            @default([])
+  contentTypes       String[]            @default([])
+  bio                String?
+  avatarUrl          String?
+  level              CreatorLevel        @default(NEW)
+  reviewStatus       ReviewStatus        @default(PENDING)
+  riskLevel          RiskLevel           @default(LOW)
+  riskScore          Int                 @default(0)
+  violationCount     Int                 @default(0)
+  completionRate     Decimal             @default(0) @db.Decimal(6, 2)
+  cumulativeIncome   Decimal             @default(0) @db.Decimal(12, 2)
+  completedTasks     Int                 @default(0)
+  responsibleAdminId String?
+  responsibleAdmin   AdminProfile?       @relation("CreatorResponsible", fields: [responsibleAdminId], references: [id], onDelete: SetNull)
+  isDemo             Boolean             @default(false)
+  socialAccounts     SocialAccount[]
+  applications       TaskApplication[]
+  drafts             ContentDraft[]
+  submissions        Submission[]
+  proofs             Proof[]
+  wallet             Wallet?
+  withdrawalRequests WithdrawalRequest[]
+  walletTransactions WalletTransaction[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+model SocialAccount {
+  id                 String                   @id @default(cuid())
+  creatorId          String
+  creator            CreatorProfile           @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  platform           String
+  accountName        String
+  accountUrl         String
+  followers          Int                      @default(0)
+  avgViews           Int                      @default(0)
+  contentType        String
+  country            String
+  language           String
+  verified           Boolean                  @default(false)
+  verificationStatus SocialVerificationStatus @default(PENDING)
+  verificationNote   String?
+  verifiedAt         DateTime?
+  note               String?
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+}
+
+model Campaign {
+  id                      String            @id @default(cuid())
+  brandId                 String
+  brand                   BrandProfile      @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  title                   String
+  productName             String?
+  landingUrl              String?
+  industry                String
+  description             String
+  objective               String
+  targetPlatforms         String[]          @default([])
+  targetCountries         String[]          @default([])
+  targetLanguages         String[]          @default([])
+  targetAudience          String?
+  startDate               DateTime
+  endDate                 DateTime
+  totalBudget             Decimal           @db.Decimal(12, 2)
+  creatorBudget           Decimal           @db.Decimal(12, 2)
+  platformFee             Decimal           @db.Decimal(12, 2)
+  baseReward              Decimal           @db.Decimal(12, 2)
+  bonusRules              Json?
+  brief                   String
+  mustInclude             String[]          @default([])
+  mustNotInclude          String[]          @default([])
+  visualRequirements      String[]          @default([])
+  hashtags                String[]          @default([])
+  cta                     String
+  disclosureRequired      Boolean           @default(true)
+  status                  CampaignStatus    @default(DRAFT)
+  reviewNote              String?
+  slotsTotal              Int               @default(10)
+  maxPerCreator           Int               @default(1)
+  allowMultiPlatformProof Boolean           @default(false)
+  riskLevel               RiskLevel         @default(LOW)
+  isDemo                  Boolean           @default(false)
+  assets                  CampaignAsset[]
+  tasks                   CampaignTask[]
+  drafts                  ContentDraft[]
+  submissions             Submission[]
+  proofs                  Proof[]
+  metricsSnapshots        MetricsSnapshot[]
+  messages                BrandMessage[]
+  invoices                Invoice[]
+  createdAt               DateTime          @default(now())
+  updatedAt               DateTime          @updatedAt
+}
+
+model CampaignAsset {
+  id         String   @id @default(cuid())
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  kind       String
+  name       String
+  url        String
+  createdAt  DateTime @default(now())
+}
+
+model CampaignTask {
+  id                   String            @id @default(cuid())
+  campaignId           String
+  campaign             Campaign          @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  title                String
+  platform             String
+  contentType          String
+  rewardAmount         Decimal           @db.Decimal(12, 2)
+  slotsTotal           Int
+  slotsTaken           Int               @default(0)
+  creatorLevelRequired CreatorLevel      @default(NEW)
+  deadline             DateTime
+  status               TaskStatus        @default(ACTIVE)
+  applications         TaskApplication[]
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+}
+
+model TaskApplication {
+  id              String            @id @default(cuid())
+  taskId          String
+  task            CampaignTask      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  creatorId       String
+  creator         CreatorProfile    @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  status          ApplicationStatus @default(APPLIED)
+  applicationNote String?
+  approvedAt      DateTime?
+  drafts          ContentDraft[]
+  submissions     Submission[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@unique([taskId, creatorId])
+}
+
+model ContentDraft {
+  id                String          @id @default(cuid())
+  applicationId     String
+  application       TaskApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  creatorId         String
+  creator           CreatorProfile  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  campaignId        String
+  campaign          Campaign        @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  platform          String
+  title             String
+  script            String
+  caption           String
+  hashtags          String[]        @default([])
+  coverText         String
+  aiGeneratedRaw    Json?
+  creatorEditedText String?
+  riskCheckResult   Json?
+  status            DraftStatus     @default(DRAFT)
+  submissions       Submission[]
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model Submission {
+  id                 String              @id @default(cuid())
+  applicationId      String
+  application        TaskApplication     @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  draftId            String
+  draft              ContentDraft        @relation(fields: [draftId], references: [id], onDelete: Cascade)
+  creatorId          String
+  creator            CreatorProfile      @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  campaignId         String
+  campaign           Campaign            @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  status             SubmissionStatus    @default(SUBMITTED)
+  submittedAt        DateTime            @default(now())
+  approvedAt         DateTime?
+  rejectedAt         DateTime?
+  revisionNote       String?
+  reviews            SubmissionReview[]
+  proofs             Proof[]
+  walletTransactions WalletTransaction[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+model SubmissionReview {
+  id           String         @id @default(cuid())
+  submissionId String
+  submission   Submission     @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  reviewerId   String
+  reviewer     User           @relation("Reviewer", fields: [reviewerId], references: [id], onDelete: Cascade)
+  reviewerRole UserRole
+  decision     ReviewDecision
+  comment      String
+  riskPoints   String[]       @default([])
+  createdAt    DateTime       @default(now())
+}
+
+model Proof {
+  id                 String            @id @default(cuid())
+  submissionId       String
+  submission         Submission        @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  creatorId          String
+  creator            CreatorProfile    @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  campaignId         String
+  campaign           Campaign          @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  platform           String
+  postUrl            String
+  screenshotUrl      String?
+  publishedAt        DateTime
+  views              Int               @default(0)
+  likes              Int               @default(0)
+  comments           Int               @default(0)
+  shares             Int               @default(0)
+  saves              Int               @default(0)
+  clicks             Int               @default(0)
+  conversions        Int               @default(0)
+  verificationStatus ProofStatus       @default(PENDING)
+  adminNote          String?
+  metricsSnapshots   MetricsSnapshot[]
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+}
+
+model MetricsSnapshot {
+  id          String   @id @default(cuid())
+  proofId     String
+  proof       Proof    @relation(fields: [proofId], references: [id], onDelete: Cascade)
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  views       Int      @default(0)
+  likes       Int      @default(0)
+  comments    Int      @default(0)
+  shares      Int      @default(0)
+  saves       Int      @default(0)
+  clicks      Int      @default(0)
+  conversions Int      @default(0)
+  snapshotAt  DateTime @default(now())
+}
+
+model Wallet {
+  id                  String              @id @default(cuid())
+  creatorId           String              @unique
+  creator             CreatorProfile      @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  availableBalance    Decimal             @default(0) @db.Decimal(12, 2)
+  frozenBalance       Decimal             @default(0) @db.Decimal(12, 2)
+  cumulativeIncome    Decimal             @default(0) @db.Decimal(12, 2)
+  cumulativeWithdrawn Decimal             @default(0) @db.Decimal(12, 2)
+  currency            String              @default("USD")
+  payoutWalletAddress String?
+  bankInfo            Json?
+  settlementStatus    String              @default("ACTIVE")
+  transactions        WalletTransaction[]
+  withdrawalRequests  WithdrawalRequest[]
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+}
+
+model WalletTransaction {
+  id                  String             @id @default(cuid())
+  walletId            String
+  wallet              Wallet             @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  creatorId           String
+  creator             CreatorProfile     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  type                WalletTxType
+  amount              Decimal            @db.Decimal(12, 2)
+  currency            String             @default("USD")
+  status              WalletTxStatus     @default(PENDING)
+  relatedSubmissionId String?
+  relatedSubmission   Submission?        @relation(fields: [relatedSubmissionId], references: [id])
+  relatedWithdrawalId String?
+  withdrawalRequest   WithdrawalRequest? @relation(fields: [relatedWithdrawalId], references: [id])
+  isDemo              Boolean            @default(false)
+  note                String?
+  createdAt           DateTime           @default(now())
+}
+
+model WithdrawalRequest {
+  id            String              @id @default(cuid())
+  walletId      String
+  wallet        Wallet              @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  creatorId     String
+  creator       CreatorProfile      @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  amount        Decimal             @db.Decimal(12, 2)
+  currency      String              @default("USD")
+  payoutMethod  String
+  payoutDetails Json?
+  status        WithdrawalStatus    @default(PENDING)
+  adminNote     String?
+  isDemo        Boolean             @default(false)
+  transactions  WalletTransaction[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+}
+
+model Invoice {
+  id              String       @id @default(cuid())
+  brandId         String
+  brand           BrandProfile @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  campaignId      String?
+  campaign        Campaign?    @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  invoiceNumber   String?      @unique
+  amount          Decimal      @db.Decimal(12, 2)
+  currency        String       @default("USD")
+  status          String       @default("OPEN")
+  dueDate         DateTime?
+  paidAt          DateTime?
+  paymentMethod   String?
+  paymentProofUrl String?
+  note            String?
+  isDemo          Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+}
+
+model BrandMessage {
+  id             String        @id @default(cuid())
+  brandId        String
+  brand          BrandProfile  @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  requestId      String?
+  request        BrandRequest? @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  campaignId     String?
+  campaign       Campaign?     @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  authorUserId   String?
+  author         User?         @relation("BrandMessageAuthor", fields: [authorUserId], references: [id], onDelete: SetNull)
+  authorRole     UserRole
+  body           String
+  visibleToBrand Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  body      String
+  href      String?
+  unread    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id          String    @id @default(cuid())
+  actorUserId String?
+  actorRole   UserRole?
+  action      String
+  entityType  String
+  entityId    String
+  beforeJson  Json?
+  afterJson   Json?
+  ipAddress   String?
+  createdAt   DateTime  @default(now())
+}
+
+model ComplianceRule {
+  id          String             @id @default(cuid())
+  type        ComplianceRuleType
+  keyword     String
+  severity    RiskLevel          @default(MEDIUM)
+  description String?
+  active      Boolean            @default(true)
+  createdById String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model RiskFlag {
+  id         String    @id @default(cuid())
+  entityType String
+  entityId   String
+  level      RiskLevel
+  reason     String
+  createdAt  DateTime  @default(now())
+}
+
+model Dispute {
+  id           String   @id @default(cuid())
+  submissionId String?
+  creatorId    String?
+  brandId      String?
+  status       String   @default("OPEN")
+  reason       String
+  resolution   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
