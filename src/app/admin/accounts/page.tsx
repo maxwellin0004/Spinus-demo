@@ -95,7 +95,7 @@ export default async function AdminAccountsPage({
                 <option key={admin.id} value={admin.id}>{admin.displayName} · {admin.user.email}</option>
               ))}
             </Select>
-            <Field label="币种" name="currency" defaultValue="USD" />
+            <Field label="币种" name="currency" defaultValue="CNY" />
             {canDemo ? (
               <label className="md:col-span-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900">
                 <input className="mr-2" name="isDemo" type="checkbox" />

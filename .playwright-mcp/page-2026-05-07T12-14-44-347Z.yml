@@ -1,0 +1,93 @@
+- main [ref=e2]:
+  - navigation [ref=e3]:
+    - link "T 小黄雀联盟 小黄雀联盟" [ref=e4] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e5]: T
+      - generic [ref=e6]:
+        - generic [ref=e7]: 小黄雀联盟
+        - generic [ref=e8]: 小黄雀联盟
+    - link "登录" [ref=e10] [cursor=pointer]:
+      - /url: /auth/login
+  - generic [ref=e11]:
+    - generic [ref=e12]:
+      - generic [ref=e13]: Google Stitch 风格重设计
+      - heading "AI 创作者增长任务的三方协作画布。" [level=1] [ref=e15]
+      - paragraph [ref=e16]: 从品牌 Brief 到创作者 AI 内容、发布证明、钱包结算和报告导出，Tanglin Rd 把每个状态、审核意见和资金流都放进同一个可追踪运营系统。
+      - generic [ref=e17]:
+        - link "使用测试账号" [ref=e18] [cursor=pointer]:
+          - /url: /auth/login
+        - link "注册工作台" [ref=e19] [cursor=pointer]:
+          - /url: /auth/register
+      - generic [ref=e20]:
+        - paragraph [ref=e21]: 演示账号
+        - paragraph [ref=e22]:
+          - strong [ref=e23]: admin@test.com
+          - text: ","
+          - strong [ref=e24]: brand@test.com
+          - text: ","
+          - strong [ref=e25]: creator@test.com
+          - text: / password123
+    - generic [ref=e29]:
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - generic [ref=e32]:
+            - paragraph [ref=e33]: 实时投放看板
+            - heading "创作者投放闭环" [level=2] [ref=e34]
+          - generic [ref=e35]: 第一版闭环
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - generic [ref=e39]: "1"
+            - generic [ref=e40]: 品牌简报
+          - generic [ref=e41]:
+            - generic [ref=e42]: "2"
+            - generic [ref=e43]: 平台审核
+          - generic [ref=e44]:
+            - generic [ref=e45]: "3"
+            - generic [ref=e46]: 创作者工作台
+          - generic [ref=e47]:
+            - generic [ref=e48]: "4"
+            - generic [ref=e49]: 内容审批
+          - generic [ref=e50]:
+            - generic [ref=e51]: "5"
+            - generic [ref=e52]: 证明验证
+          - generic [ref=e53]:
+            - generic [ref=e54]: "6"
+            - generic [ref=e55]: 钱包结算
+          - generic [ref=e56]:
+            - generic [ref=e57]: "7"
+            - generic [ref=e58]: 报告导出
+      - generic [ref=e59]:
+        - generic [ref=e60]:
+          - paragraph [ref=e65]: 角色工作台
+          - generic [ref=e66]: "3"
+        - generic [ref=e67]:
+          - paragraph [ref=e72]: 交付阶段
+          - generic [ref=e73]: "16"
+        - generic [ref=e74]:
+          - paragraph [ref=e79]: 数据库指标
+          - generic [ref=e80]: 10+
+        - generic [ref=e81]:
+          - paragraph [ref=e86]: 模拟/真实模型
+          - generic [ref=e87]: AI
+  - generic [ref=e88]:
+    - link "工作台 平台运营控制台 审核品牌、Campaign、内容、Proof 和结算，所有关键动作写入 audit log。 进入画布 →" [ref=e89] [cursor=pointer]:
+      - /url: /auth/login
+      - generic [ref=e90]:
+        - paragraph [ref=e91]: 工作台
+        - paragraph [ref=e92]: 平台运营控制台
+      - paragraph [ref=e93]: 审核品牌、Campaign、内容、Proof 和结算，所有关键动作写入 audit log。
+      - paragraph [ref=e94]: 进入画布 →
+    - link "工作台 品牌投放作战室 用 7 步表单发布 Campaign，审核创作者内容，查看投放报告和 CSV。 进入画布 →" [ref=e95] [cursor=pointer]:
+      - /url: /auth/login
+      - generic [ref=e96]:
+        - paragraph [ref=e97]: 工作台
+        - paragraph [ref=e98]: 品牌投放作战室
+      - paragraph [ref=e99]: 用 7 步表单发布 Campaign，审核创作者内容，查看投放报告和 CSV。
+      - paragraph [ref=e100]: 进入画布 →
+    - link "工作台 创作者内容工作台 接任务、用 AI 生成脚本与标题、人工发布后回传 proof 并提现。 进入画布 →" [ref=e101] [cursor=pointer]:
+      - /url: /auth/login
+      - generic [ref=e102]:
+        - paragraph [ref=e103]: 工作台
+        - paragraph [ref=e104]: 创作者内容工作台
+      - paragraph [ref=e105]: 接任务、用 AI 生成脚本与标题、人工发布后回传 proof 并提现。
+      - paragraph [ref=e106]: 进入画布 →

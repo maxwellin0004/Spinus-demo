@@ -1,0 +1,269 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - link "Tanglin KOL 投放平台 三方投放协作后台" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e5]:
+          - paragraph [ref=e6]: Tanglin
+          - paragraph [ref=e7]: KOL 投放平台
+          - paragraph [ref=e8]: 三方投放协作后台
+      - navigation [ref=e9]:
+        - generic [ref=e10]:
+          - paragraph [ref=e11]: 总览
+          - generic [ref=e12]:
+            - link "仪表盘" [ref=e13] [cursor=pointer]:
+              - /url: /admin
+            - link "全局报表" [ref=e14] [cursor=pointer]:
+              - /url: /admin/reports
+            - link "操作日志" [ref=e15] [cursor=pointer]:
+              - /url: /admin/audit
+        - generic [ref=e16]:
+          - paragraph [ref=e17]: 客户与账号
+          - generic [ref=e18]:
+            - link "BD 邀请数据" [ref=e19] [cursor=pointer]:
+              - /url: /admin/invitations
+            - link "员工权限" [ref=e20] [cursor=pointer]:
+              - /url: /admin/staff
+            - link "账号开通" [ref=e21] [cursor=pointer]:
+              - /url: /admin/accounts
+            - link "品牌管理" [ref=e22] [cursor=pointer]:
+              - /url: /admin/brands
+            - link "KOL 管理" [ref=e23] [cursor=pointer]:
+              - /url: /admin/creators
+            - link "社媒审核" [ref=e24] [cursor=pointer]:
+              - /url: /admin/social-accounts
+        - generic [ref=e25]:
+          - paragraph [ref=e26]: 投放履约
+          - generic [ref=e27]:
+            - link "推广管理" [ref=e28] [cursor=pointer]:
+              - /url: /admin/campaigns
+            - link "内容审核" [ref=e29] [cursor=pointer]:
+              - /url: /admin/submissions
+            - link "发布验收" [ref=e30] [cursor=pointer]:
+              - /url: /admin/proofs
+            - link "争议处理" [ref=e31] [cursor=pointer]:
+              - /url: /admin/disputes
+        - generic [ref=e32]:
+          - paragraph [ref=e33]: 财务与规则
+          - generic [ref=e34]:
+            - link "资金运营" [ref=e35] [cursor=pointer]:
+              - /url: /admin/payments
+            - link "规则中心" [ref=e36] [cursor=pointer]:
+              - /url: /admin/compliance
+            - link "平台配置" [ref=e37] [cursor=pointer]:
+              - /url: /admin/settings
+        - generic [ref=e38]:
+          - paragraph [ref=e39]: 系统工具
+          - generic [ref=e40]:
+            - link "抓取队列" [ref=e41] [cursor=pointer]:
+              - /url: /admin/crawler
+            - link "演示数据" [ref=e42] [cursor=pointer]:
+              - /url: /admin/demo
+      - generic [ref=e43]:
+        - paragraph [ref=e44]: 协作流程
+        - paragraph [ref=e45]: 任务、审核、发布凭证、争议和钱包事件保持联动。
+    - generic [ref=e46]:
+      - banner [ref=e47]:
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - generic [ref=e50]: 管理端
+            - generic [ref=e52]: admin@test.com
+            - link "1 未读" [ref=e53] [cursor=pointer]:
+              - /url: /admin/notifications
+              - generic [ref=e54]: 1 未读
+          - button "退出登录" [ref=e57]
+      - main [ref=e58]:
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - generic [ref=e61]:
+              - paragraph [ref=e62]: 管理端
+              - heading "财务中心" [level=1] [ref=e63]
+            - generic [ref=e64]:
+              - link "导出财务流水 CSV" [ref=e65] [cursor=pointer]:
+                - /url: /api/admin/finance.csv
+              - link "导出提现 CSV" [ref=e66] [cursor=pointer]:
+                - /url: /api/admin/withdrawals.csv
+          - generic [ref=e67]:
+            - combobox [ref=e68]:
+              - option "只看真实数据" [selected]
+              - option "包含演示数据"
+              - option "只看演示数据"
+            - button "筛选" [ref=e69]
+          - generic [ref=e70]:
+            - heading "商家付款与托管确认" [level=2] [ref=e71]
+            - table [ref=e74]:
+              - rowgroup [ref=e75]:
+                - row "商家 推广活动 付款单 金额 状态 凭证 创建时间" [ref=e76]:
+                  - columnheader "商家" [ref=e77]
+                  - columnheader "推广活动" [ref=e78]
+                  - columnheader "付款单" [ref=e79]
+                  - columnheader "金额" [ref=e80]
+                  - columnheader "状态" [ref=e81]
+                  - columnheader "凭证" [ref=e82]
+                  - columnheader "创建时间" [ref=e83]
+              - rowgroup [ref=e84]:
+                - row "test 新品种草推广 PAY-T4TA052W ¥300 待付款 - 2026年5月7日" [ref=e85]:
+                  - cell "test" [ref=e86]
+                  - cell "新品种草推广" [ref=e87]
+                  - cell "PAY-T4TA052W" [ref=e88]
+                  - cell "¥300" [ref=e89]
+                  - cell "待付款" [ref=e90]:
+                    - generic [ref=e91]: 待付款
+                  - cell "-" [ref=e93]
+                  - cell "2026年5月7日" [ref=e94]
+                - row "test 新品种草推广 PAY-KYTD07M0 ¥300 待付款 - 2026年5月7日" [ref=e95]:
+                  - cell "test" [ref=e96]
+                  - cell "新品种草推广" [ref=e97]
+                  - cell "PAY-KYTD07M0" [ref=e98]
+                  - cell "¥300" [ref=e99]
+                  - cell "待付款" [ref=e100]:
+                    - generic [ref=e101]: 待付款
+                  - cell "-" [ref=e103]
+                  - cell "2026年5月7日" [ref=e104]
+                - row "test 小红书新品种草 PAY-DNE4U91M ¥400 待付款 - 2026年5月6日" [ref=e105]:
+                  - cell "test" [ref=e106]
+                  - cell "小红书新品种草" [ref=e107]
+                  - cell "PAY-DNE4U91M" [ref=e108]
+                  - cell "¥400" [ref=e109]
+                  - cell "待付款" [ref=e110]:
+                    - generic [ref=e111]: 待付款
+                  - cell "-" [ref=e113]
+                  - cell "2026年5月6日" [ref=e114]
+          - generic [ref=e115]:
+            - generic [ref=e117]:
+              - generic [ref=e118]:
+                - text: test 付款备注
+                - textbox "test 付款备注" [ref=e119]: V1 campaign escrow payment order. Admin confirmation required before activation.
+              - generic [ref=e120]:
+                - button "打开发票/付款单" [ref=e121]
+                - button "确认已付款" [ref=e122]
+                - button "拒绝" [ref=e123]
+                - button "作废" [ref=e124]
+            - generic [ref=e126]:
+              - generic [ref=e127]:
+                - text: test 付款备注
+                - textbox "test 付款备注" [ref=e128]: V1 campaign escrow payment order. Admin confirmation required before activation.
+              - generic [ref=e129]:
+                - button "打开发票/付款单" [ref=e130]
+                - button "确认已付款" [ref=e131]
+                - button "拒绝" [ref=e132]
+                - button "作废" [ref=e133]
+            - generic [ref=e135]:
+              - generic [ref=e136]:
+                - text: test 付款备注
+                - textbox "test 付款备注" [ref=e137]: V1 campaign escrow payment order. Admin confirmation required before activation.
+              - generic [ref=e138]:
+                - button "打开发票/付款单" [ref=e139]
+                - button "确认已付款" [ref=e140]
+                - button "拒绝" [ref=e141]
+                - button "作废" [ref=e142]
+          - generic [ref=e143]:
+            - heading "商家退款申请" [level=2] [ref=e144]
+            - generic [ref=e145]:
+              - paragraph [ref=e146]: 暂无记录
+              - paragraph [ref=e147]: 流程开始后，记录会显示在这里。
+          - generic [ref=e148]:
+            - heading "商家资金流水" [level=2] [ref=e149]
+            - table [ref=e152]:
+              - rowgroup [ref=e153]:
+                - row "商家 推广活动 类型 金额 状态 余额前 余额后 时间" [ref=e154]:
+                  - columnheader "商家" [ref=e155]
+                  - columnheader "推广活动" [ref=e156]
+                  - columnheader "类型" [ref=e157]
+                  - columnheader "金额" [ref=e158]
+                  - columnheader "状态" [ref=e159]
+                  - columnheader "余额前" [ref=e160]
+                  - columnheader "余额后" [ref=e161]
+                  - columnheader "时间" [ref=e162]
+              - rowgroup [ref=e163]:
+                - row "test 新品种草推广 PAYMENT ¥300 待处理 ¥0 ¥0 2026年5月7日" [ref=e164]:
+                  - cell "test" [ref=e165]
+                  - cell "新品种草推广" [ref=e166]
+                  - cell "PAYMENT" [ref=e167]
+                  - cell "¥300" [ref=e168]
+                  - cell "待处理" [ref=e169]:
+                    - generic [ref=e170]: 待处理
+                  - cell "¥0" [ref=e172]
+                  - cell "¥0" [ref=e173]
+                  - cell "2026年5月7日" [ref=e174]
+                - row "test 新品种草推广 PAYMENT ¥300 待处理 ¥0 ¥0 2026年5月7日" [ref=e175]:
+                  - cell "test" [ref=e176]
+                  - cell "新品种草推广" [ref=e177]
+                  - cell "PAYMENT" [ref=e178]
+                  - cell "¥300" [ref=e179]
+                  - cell "待处理" [ref=e180]:
+                    - generic [ref=e181]: 待处理
+                  - cell "¥0" [ref=e183]
+                  - cell "¥0" [ref=e184]
+                  - cell "2026年5月7日" [ref=e185]
+                - row "test 小红书新品种草 PAYMENT ¥400 待处理 ¥0 ¥0 2026年5月6日" [ref=e186]:
+                  - cell "test" [ref=e187]
+                  - cell "小红书新品种草" [ref=e188]
+                  - cell "PAYMENT" [ref=e189]
+                  - cell "¥400" [ref=e190]
+                  - cell "待处理" [ref=e191]:
+                    - generic [ref=e192]: 待处理
+                  - cell "¥0" [ref=e194]
+                  - cell "¥0" [ref=e195]
+                  - cell "2026年5月6日" [ref=e196]
+          - generic [ref=e197]:
+            - heading "KOL 收益入账记录" [level=2] [ref=e198]
+            - table [ref=e201]:
+              - rowgroup [ref=e202]:
+                - row "KOL 推广活动 金额 状态 创建时间" [ref=e203]:
+                  - columnheader "KOL" [ref=e204]
+                  - columnheader "推广活动" [ref=e205]
+                  - columnheader "金额" [ref=e206]
+                  - columnheader "状态" [ref=e207]
+                  - columnheader "创建时间" [ref=e208]
+              - rowgroup [ref=e209]:
+                - row "test3 新品种草推广 ¥30 已通过 2026年5月7日" [ref=e210]:
+                  - cell "test3" [ref=e211]
+                  - cell "新品种草推广" [ref=e212]
+                  - cell "¥30" [ref=e213]
+                  - cell "已通过" [ref=e214]:
+                    - generic [ref=e215]: 已通过
+                  - cell "2026年5月7日" [ref=e217]
+                - row "test1 新品种草推广 US$30 待处理 2026年5月7日" [ref=e218]:
+                  - cell "test1" [ref=e219]
+                  - cell "新品种草推广" [ref=e220]
+                  - cell "US$30" [ref=e221]
+                  - cell "待处理" [ref=e222]:
+                    - generic [ref=e223]: 待处理
+                  - cell "2026年5月7日" [ref=e225]
+                - row "雀仔增长 AI 研究助手创作者发布 ¥180 已通过 2026年5月6日" [ref=e226]:
+                  - cell "雀仔增长" [ref=e227]
+                  - cell "AI 研究助手创作者发布" [ref=e228]
+                  - cell "¥180" [ref=e229]
+                  - cell "已通过" [ref=e230]:
+                    - generic [ref=e231]: 已通过
+                  - cell "2026年5月6日" [ref=e233]
+          - generic [ref=e234]:
+            - heading "KOL 提现申请" [level=2] [ref=e235]
+            - table [ref=e238]:
+              - rowgroup [ref=e239]:
+                - row "KOL 金额 方式 状态 创建时间" [ref=e240]:
+                  - columnheader "KOL" [ref=e241]
+                  - columnheader "金额" [ref=e242]
+                  - columnheader "方式" [ref=e243]
+                  - columnheader "状态" [ref=e244]
+                  - columnheader "创建时间" [ref=e245]
+              - rowgroup [ref=e246]:
+                - row "雀仔增长 ¥50 人工转账 待处理 2026年5月6日" [ref=e247]:
+                  - cell "雀仔增长" [ref=e248]
+                  - cell "¥50" [ref=e249]
+                  - cell "人工转账" [ref=e250]
+                  - cell "待处理" [ref=e251]:
+                    - generic [ref=e252]: 待处理
+                  - cell "2026年5月6日" [ref=e254]
+          - generic [ref=e257]:
+            - generic [ref=e258]:
+              - text: 雀仔增长 提现备注
+              - textbox "雀仔增长 提现备注" [ref=e259]
+            - generic [ref=e260]:
+              - button "通过" [ref=e261]
+              - button "标记已打款" [ref=e262]
+              - button "拒绝" [ref=e263]
+  - button "Open Next.js Dev Tools" [ref=e269] [cursor=pointer]:
+    - img [ref=e270]
+  - alert [ref=e273]

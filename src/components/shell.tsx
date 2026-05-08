@@ -2,54 +2,65 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { UserRole } from "@prisma/client";
 import { destroySession, requireRole } from "@/lib/auth";
+import { getAdminContext, hasAdminPermission, type AdminPermission } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { StatusBadge } from "@/components/ui";
-import { getAdminContext, hasAdminPermission, type AdminPermission } from "@/lib/admin";
 
-const nav = {
+type NavItem = [href: string, label: string];
+type NavGroup = { title: string; items: NavItem[] };
+
+const navGroups: Record<UserRole, NavGroup[]> = {
   [UserRole.ADMIN]: [
-    ["/admin", "仪表盘"],
-    ["/admin/staff", "员工权限"],
-    ["/admin/accounts", "账号开通"],
-    ["/admin/brands", "品牌管理"],
-    ["/admin/creators", "创作者管理"],
-    ["/admin/campaigns", "推广管理"],
-    ["/admin/submissions", "内容审核"],
-    ["/admin/proofs", "证明审核"],
-    ["/admin/payments", "结算钱包"],
-    ["/admin/compliance", "合规风控"],
-    ["/admin/reports", "全局报表"],
-    ["/admin/audit", "操作日志"],
-    ["/admin/demo", "演示数据"],
+    { title: "总览", items: [["/admin", "仪表盘"], ["/admin/reports", "全局报表"], ["/admin/audit", "操作日志"]] },
+    {
+      title: "客户与账号",
+      items: [
+        ["/admin/invitations", "BD 邀请数据"],
+        ["/admin/staff", "员工权限"],
+        ["/admin/accounts", "账号开通"],
+        ["/admin/brands", "品牌管理"],
+        ["/admin/creators", "KOL 管理"],
+        ["/admin/social-accounts", "社媒审核"],
+      ],
+    },
+    {
+      title: "投放履约",
+      items: [
+        ["/admin/campaigns", "推广管理"],
+        ["/admin/submissions", "内容审核"],
+        ["/admin/proofs", "发布验收"],
+        ["/admin/disputes", "争议处理"],
+      ],
+    },
+    { title: "财务与规则", items: [["/admin/payments", "资金运营"], ["/admin/compliance", "规则中心"], ["/admin/settings", "平台配置"]] },
+    { title: "系统工具", items: [["/admin/crawler", "抓取队列"], ["/admin/demo", "演示数据"]] },
   ],
   [UserRole.BRAND]: [
-    ["/brand", "仪表盘"],
-    ["/brand/profile", "品牌资料"],
-    ["/brand/requests", "需求沟通"],
-    ["/brand/campaigns", "推广活动"],
-    ["/brand/campaigns/new", "新建推广"],
-    ["/brand/billing", "账单"],
+    { title: "品牌工作台", items: [["/brand", "仪表盘"], ["/brand/profile", "品牌资料"], ["/brand/requests", "需求沟通"]] },
+    { title: "投放", items: [["/brand/campaigns", "推广活动"], ["/brand/campaigns/new", "新建推广"], ["/brand/billing", "账单"]] },
   ],
   [UserRole.CREATOR]: [
-    ["/creator", "仪表盘"],
-    ["/creator/profile", "个人资料"],
-    ["/creator/marketplace", "任务大厅"],
-    ["/creator/my-tasks", "我的任务"],
-    ["/creator/wallet", "钱包提现"],
+    { title: "创作者工作台", items: [["/creator", "仪表盘"], ["/creator/profile", "个人资料"]] },
+    { title: "任务与收益", items: [["/creator/marketplace", "任务大厅"], ["/creator/my-tasks", "我的任务"], ["/creator/wallet", "钱包提现"]] },
   ],
 };
 
 const adminNavPermissions: Record<string, AdminPermission | null> = {
   "/admin": null,
+  "/admin/invitations": null,
   "/admin/staff": "staff.manage",
   "/admin/accounts": "account.create",
   "/admin/brands": "account.create",
   "/admin/creators": "account.create",
+  "/admin/social-accounts": "account.freeze",
+  "/admin/crawler": "account.freeze",
   "/admin/campaigns": "campaign.manage",
   "/admin/submissions": "content.review",
   "/admin/proofs": "proof.review",
+  "/admin/disputes": "proof.review",
   "/admin/payments": "payment.manage",
   "/admin/compliance": "compliance.manage",
+  "/admin/settings": "compliance.manage",
   "/admin/reports": "reports.view",
   "/admin/audit": "audit.view",
   "/admin/demo": "demo.manage",
@@ -64,65 +75,96 @@ export async function AppShell({ role, children }: { role: UserRole; children: R
   const adminContext = role === UserRole.ADMIN ? await getAdminContext() : null;
   const session = adminContext ?? await requireRole(role);
   const roleRoot = role === UserRole.ADMIN ? "/admin" : role === UserRole.BRAND ? "/brand" : "/creator";
-  const visibleNav = role === UserRole.ADMIN && adminContext
-    ? nav[role].filter(([href]) => {
-        const permission = adminNavPermissions[href];
-        return !permission || hasAdminPermission(adminContext.profile, permission);
-      })
-    : nav[role];
+  const visibleGroups = navGroups[role]
+    .map((group) => ({
+      ...group,
+      items:
+        role === UserRole.ADMIN && adminContext
+          ? group.items.filter(([href]) => {
+              const permission = adminNavPermissions[href];
+              return !permission || hasAdminPermission(adminContext.profile, permission);
+            })
+          : group.items,
+    }))
+    .filter((group) => group.items.length > 0);
+  const primaryNav = visibleGroups.flatMap((group) => group.items).slice(0, 4);
   const notifications = await prisma.notification.count({
     where: { userId: session.userId, unread: true },
   });
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_10%_0,rgba(244,176,0,0.42)_0,transparent_28rem),radial-gradient(circle_at_92%_8%,rgba(103,232,249,0.28)_0,transparent_24rem),linear-gradient(135deg,#fffaf0,#f7f2e8_42%,#eef8d7)]">
-      <aside className="fixed inset-y-0 left-0 hidden w-72 border-r border-stone-200/70 bg-white/58 p-5 backdrop-blur-2xl xl:block">
+    <div className="min-h-screen bg-[linear-gradient(135deg,#fffaf0,#f7f2e8_48%,#f1f7e6)]">
+      <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col border-r border-stone-200/80 bg-white/72 p-5 backdrop-blur-xl xl:flex">
         <Link href="/" className="block">
-          <div className="relative overflow-hidden rounded-[2rem] border border-stone-200 bg-[linear-gradient(135deg,#17211c,#344035)] p-5 text-white shadow-2xl">
-            <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-[var(--accent)] blur-2xl" />
-            <div className="absolute -bottom-10 left-6 h-24 w-24 rounded-full bg-[var(--cyan)]/70 blur-2xl" />
-            <p className="relative text-xs font-black uppercase tracking-[0.28em] text-amber-200">小黄雀联盟</p>
-            <p className="relative mt-2 text-3xl font-black tracking-tight">创作者运营台</p>
-            <p className="relative mt-3 text-xs leading-5 text-white/70">面向品牌、创作者和平台方的 AI 投放协作画布。</p>
+          <div className="rounded-2xl border border-stone-200 bg-[linear-gradient(135deg,#17211c,#334138)] p-4 text-white shadow-sm">
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-amber-200">Tanglin</p>
+            <p className="mt-2 text-2xl font-black tracking-tight">KOL 投放平台</p>
+            <p className="mt-2 text-xs leading-5 text-white/70">三方投放协作后台</p>
           </div>
         </Link>
-        <nav className="mt-6 grid gap-2">
-          {visibleNav.map(([href, label]) => (
-            <Link className="rounded-2xl border border-transparent px-4 py-3 text-sm font-black text-stone-700 transition hover:border-stone-200 hover:bg-white/80 hover:text-stone-950 hover:shadow-sm" href={href} key={href}>
-              {label}
-            </Link>
+        <nav className="mt-6 grid flex-1 gap-5 overflow-y-auto pr-1">
+          {visibleGroups.map((group) => (
+            <div key={group.title}>
+              <p className="px-3 text-[0.68rem] font-black uppercase tracking-[0.18em] text-stone-400">{group.title}</p>
+              <div className="mt-2 grid gap-1">
+                {group.items.map(([href, label]) => (
+                  <Link className="rounded-xl px-3 py-2.5 text-sm font-bold text-stone-700 transition hover:bg-white hover:text-stone-950 hover:shadow-sm" href={href} key={href}>
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
-        <div className="absolute bottom-5 left-5 right-5 rounded-[1.5rem] border border-stone-200 bg-white/70 p-4 text-sm text-stone-600">
-          <p className="font-black text-stone-950">协作画布</p>
-          <p className="mt-1">任务、审核、发布证明和钱包事件保持联动。</p>
+        <div className="mt-5 rounded-2xl border border-stone-200 bg-white/80 p-4 text-sm text-stone-600">
+          <p className="font-black text-stone-950">协作流程</p>
+          <p className="mt-1">任务、审核、发布凭证、争议和钱包事件保持联动。</p>
         </div>
       </aside>
       <div className="xl:pl-72">
-        <header className="sticky top-0 z-20 border-b border-stone-200/70 bg-[rgba(255,250,240,0.78)] px-5 py-4 backdrop-blur-2xl">
+        <header className="sticky top-0 z-20 border-b border-stone-200/80 bg-[rgba(255,250,240,0.88)] px-4 py-3 backdrop-blur-xl md:px-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 md:gap-3">
               <StatusBadge>{role}</StatusBadge>
-              <span className="text-sm text-stone-500">{session.email}</span>
+              <span className="max-w-[13rem] truncate text-sm text-stone-500 md:max-w-none">{session.email}</span>
               <Link href={`${roleRoot}/notifications`}>
-                <StatusBadge>{notifications} unread</StatusBadge>
+                <StatusBadge>{notifications} 未读</StatusBadge>
               </Link>
             </div>
             <div className="flex flex-wrap gap-2 xl:hidden">
-              {visibleNav.slice(0, 5).map(([href, label]) => (
-                <Link className="rounded-full bg-white/75 px-3 py-2 text-xs font-black text-stone-700 shadow-sm" href={href} key={href}>
+              {primaryNav.map(([href, label]) => (
+                <Link className="rounded-full border border-stone-200 bg-white/80 px-3 py-2 text-xs font-black text-stone-700 shadow-sm" href={href} key={href}>
                   {label}
                 </Link>
               ))}
+              <details className="group relative">
+                <summary className="list-none rounded-full border border-stone-200 bg-white/90 px-3 py-2 text-xs font-black text-stone-800 shadow-sm marker:hidden">
+                  全部菜单
+                </summary>
+                <div className="absolute right-0 top-11 z-30 grid max-h-[70vh] w-[min(22rem,calc(100vw-2rem))] gap-4 overflow-y-auto rounded-2xl border border-stone-200 bg-white p-4 shadow-xl">
+                  {visibleGroups.map((group) => (
+                    <div key={group.title}>
+                      <p className="text-[0.68rem] font-black uppercase tracking-[0.18em] text-stone-400">{group.title}</p>
+                      <div className="mt-2 grid gap-1">
+                        {group.items.map(([href, label]) => (
+                          <Link className="rounded-xl px-3 py-2 text-sm font-bold text-stone-700 hover:bg-stone-50" href={href} key={href}>
+                            {label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </details>
             </div>
             <form action={logout}>
-              <button className="rounded-full border border-stone-200 bg-white/80 px-4 py-2 text-sm font-black text-stone-700 shadow-sm" type="submit">
+              <button className="rounded-full border border-stone-200 bg-white/80 px-4 py-2 text-sm font-black text-stone-700 shadow-sm transition hover:bg-white" type="submit">
                 退出登录
               </button>
             </form>
           </div>
         </header>
-        <main className="mx-auto max-w-7xl px-5 py-8 md:px-8">{children}</main>
+        <main className="mx-auto max-w-7xl px-4 py-6 md:px-8">{children}</main>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { UserRole, WalletTxStatus, WalletTxType } from "@prisma/client";
+import { UserRole } from "@prisma/client";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { CreatorOnboardingCard, CreatorOperatorCard } from "@/components/creator-ops";
@@ -31,9 +31,6 @@ export default async function CreatorDashboard() {
     { label: "创作者审核", done: creator.reviewStatus === "APPROVED", detail: `当前状态：${creator.reviewStatus}` },
     { label: "收款信息", done: walletReady, detail: walletReady ? "已填写收款钱包/银行信息。" : "填写后才方便提现。", href: "/creator/profile" },
   ];
-  const pendingSettlement = creator.wallet?.transactions
-    .filter((tx) => tx.type === WalletTxType.EARNING && tx.status === WalletTxStatus.PENDING)
-    .reduce((sum, tx) => sum + Number(tx.amount), 0) ?? 0;
   const available = Number(creator.wallet?.availableBalance ?? 0);
   const cards = [
     ["Open tasks", activeTasks],
@@ -42,7 +39,6 @@ export default async function CreatorDashboard() {
     ["Under review", submissions.filter((submission) => submission.status === "SUBMITTED").length],
     ["Need publish", submissions.filter((submission) => submission.status === "APPROVED").length],
     ["Need proof", submissions.filter((submission) => submission.status === "PUBLISHED" || submission.status === "APPROVED").length],
-    ["Pending settlement", money(pendingSettlement)],
     ["Available balance", money(available)],
     ["Cumulative income", money(creator.wallet?.cumulativeIncome ?? creator.cumulativeIncome)],
     ["Completed tasks", creator.completedTasks],

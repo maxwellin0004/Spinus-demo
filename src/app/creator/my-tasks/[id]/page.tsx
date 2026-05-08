@@ -1,11 +1,11 @@
-import Link from "next/link";
-import { ApplicationStatus, SubmissionStatus, UserRole } from "@prisma/client";
+﻿import Link from "next/link";
+import { ApplicationStatus, ProofStatus, PublicationStatus, SubmissionStatus, UserRole } from "@prisma/client";
 import { submitProofAction } from "@/lib/actions";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { CopyButton } from "@/components/copy-button";
 import { CreatorOperatorCard, CreatorTaskTimeline } from "@/components/creator-ops";
-import { Button, Card, Field, PageHeader, StatusBadge } from "@/components/ui";
+import { Button, Card, Field, PageHeader, PostMetricsPanel, StatusBadge } from "@/components/ui";
 import { money, shortDate } from "@/lib/format";
 
 export default async function CreatorTaskRunPage({
@@ -13,60 +13,130 @@ export default async function CreatorTaskRunPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string; applied?: string }>;
+  searchParams: Promise<{ error?: string; applied?: string; submitted?: string; proof?: string }>;
 }) {
   const session = await requireRole(UserRole.CREATOR);
   const { id } = await params;
-  const { error, applied } = await searchParams;
+  const { error, applied, submitted, proof: proofSubmitted } = await searchParams;
   const application = await prisma.taskApplication.findFirst({
     where: { id, creator: { userId: session.userId } },
     include: {
       creator: { include: { responsibleAdmin: { include: { user: true } } } },
       task: { include: { campaign: { include: { assets: true } } } },
-      submissions: { include: { draft: true, reviews: { orderBy: { createdAt: "desc" } }, proofs: { orderBy: { createdAt: "desc" } } }, orderBy: { createdAt: "desc" } },
+      submissions: {
+        include: {
+          draft: true,
+          reviews: { orderBy: { createdAt: "desc" } },
+          proofs: { include: { postMetricSnapshots: { orderBy: { fetchedAt: "desc" }, take: 3 }, crawlerJobs: { orderBy: { createdAt: "desc" }, take: 1 } }, orderBy: { createdAt: "desc" } },
+        },
+        orderBy: { createdAt: "desc" },
+      },
     },
   });
   if (!application) return <PageHeader title="未找到任务" />;
+
   const submission = application.submissions[0];
-  const proof = submission?.proofs[0];
-  const canPublish = submission?.status === SubmissionStatus.APPROVED;
+  const latestProof = submission?.proofs[0];
+  const latestPostSnapshot = latestProof?.postMetricSnapshots.find((snapshot) => snapshot.status === "SUCCESS");
+  const latestCrawlerSnapshot = latestProof?.postMetricSnapshots[0];
+  const latestCrawlerJob = latestProof?.crawlerJobs[0];
+  const campaign = application.task.campaign;
+  const requiresDraftReview = campaign.requiresDraftReview;
+  const publishDeadline = application.task.publishDeadline ?? application.task.deadline;
+  // eslint-disable-next-line react-hooks/purity
+  const now = Date.now();
+  const publishExpired = now > publishDeadline.getTime();
   const canCreate = application.status === ApplicationStatus.APPROVED;
-  const hasSubmission = Boolean(submission);
-  const hasProof = Boolean(proof);
+  const canOpenStudio = canCreate && (!submission || submission.status === SubmissionStatus.REVISION_REQUESTED);
+  const canSubmitLink = submission?.status === SubmissionStatus.APPROVED && !publishExpired;
+  const hasPendingOrAcceptedProof = submission?.proofs.some((item) => item.verificationStatus !== ProofStatus.REJECTED) ?? false;
+  const canSubmitProof = canSubmitLink && !hasPendingOrAcceptedProof;
+  const finalCopy = submission
+    ? [
+        submission.draft.title,
+        "",
+        submission.draft.script,
+        "",
+        submission.draft.caption,
+        submission.draft.hashtags.join(" "),
+        campaign.cta,
+      ].filter(Boolean).join("\n")
+    : "";
+
+  const applicationApproved = application.status === ApplicationStatus.APPROVED;
+  const applicationRejected = application.status === ApplicationStatus.REJECTED;
+  const applicationDetail = applicationApproved
+    ? `已通过${application.approvedAt ? ` · ${shortDate(application.approvedAt)}` : ""}`
+    : applicationRejected
+      ? "未通过"
+      : `待通过 · 申请于 ${shortDate(application.createdAt)}`;
+
   const timeline = [
-    { label: "已申请", done: true, detail: shortDate(application.createdAt), active: application.status === "APPLIED" },
-    { label: "已通过", done: application.status === "APPROVED", detail: application.status === "REJECTED" ? "申请被拒绝" : shortDate(application.approvedAt), active: application.status === "APPROVED" && !hasSubmission },
-    { label: "制作中", done: hasSubmission || canCreate, detail: hasSubmission ? "已提交内容" : "等待制作内容", active: canCreate && !hasSubmission },
-    { label: "待审核", done: submission?.status === "SUBMITTED" || ["REVISION_REQUESTED", "APPROVED", "PROOF_SUBMITTED", "VERIFIED", "SETTLED"].includes(submission?.status ?? ""), detail: submission ? shortDate(submission.submittedAt) : "未提交", active: submission?.status === "SUBMITTED" },
-    { label: "需修改", done: submission?.status === "REVISION_REQUESTED", detail: submission?.revisionNote ?? "无", active: submission?.status === "REVISION_REQUESTED" },
-    { label: "待发布", done: canPublish || ["PROOF_SUBMITTED", "VERIFIED", "SETTLED"].includes(submission?.status ?? ""), detail: canPublish ? "内容已通过，准备发布" : "等待内容通过", active: canPublish },
-    { label: "待 Proof", done: hasProof || submission?.status === "PROOF_SUBMITTED" || submission?.status === "VERIFIED" || submission?.status === "SETTLED", detail: hasProof ? shortDate(proof?.createdAt) : "发布后回传链接和截图", active: submission?.status === "PROOF_SUBMITTED" },
-    { label: "待结算", done: submission?.status === "VERIFIED" || submission?.status === "SETTLED", detail: submission?.status === "VERIFIED" ? "等待 Admin 确认收益" : "Proof 通过后进入", active: submission?.status === "VERIFIED" },
-    { label: "已结算", done: submission?.status === "SETTLED", detail: submission?.status === "SETTLED" ? "收益已入钱包" : "等待结算", active: submission?.status === "SETTLED" },
+    {
+      label: "申请状态",
+      done: applicationApproved,
+      detail: applicationDetail,
+      active: application.status === ApplicationStatus.APPLIED,
+    },
+    ...(requiresDraftReview
+      ? [
+          {
+            label: "内容草稿",
+            done: Boolean(submission),
+            detail: submission ? shortDate(submission.submittedAt) : "等待提交草稿",
+            active: canCreate && !submission,
+          },
+          {
+            label: "商家审稿",
+            done: submission?.status === SubmissionStatus.APPROVED || ["PROOF_SUBMITTED", "VERIFIED", "SETTLED"].includes(submission?.status ?? ""),
+            detail: submission?.revisionNote ?? submission?.status ?? "未提交",
+            active: submission?.status === SubmissionStatus.SUBMITTED || submission?.status === SubmissionStatus.REVISION_REQUESTED,
+          },
+        ]
+      : []),
+    {
+      label: "发布链接",
+      done: Boolean(latestProof),
+      detail: latestProof ? shortDate(latestProof.createdAt) : `发布截止 ${shortDate(publishDeadline)}`,
+      active: canSubmitProof || submission?.status === SubmissionStatus.PROOF_SUBMITTED,
+    },
+    {
+      label: "商家验收",
+      done: latestProof?.verificationStatus === ProofStatus.VERIFIED,
+      detail: latestProof?.verificationStatus ?? "等待链接",
+      active: latestProof?.verificationStatus === ProofStatus.PENDING,
+    },
+    {
+      label: "收益入账",
+      done: submission?.publicationStatus === PublicationStatus.ACCEPTED || submission?.status === SubmissionStatus.VERIFIED || submission?.status === SubmissionStatus.SETTLED,
+      detail: submission?.settlementStatus ?? "验收通过后入账",
+      active: submission?.status === SubmissionStatus.VERIFIED,
+    },
   ];
-  const finalCopy = submission ? [
-    submission.draft.title,
-    "",
-    submission.draft.script,
-    "",
-    submission.draft.caption,
-    submission.draft.hashtags.join(" "),
-    application.task.campaign.cta,
-  ].filter(Boolean).join("\n") : "";
 
   return (
     <div className="grid gap-6">
       <PageHeader eyebrow="任务工作区" title={application.task.title}>
         <StatusBadge>{application.status}</StatusBadge>
-        {canCreate ? <Link className="rounded-full bg-amber-400 px-5 py-3 text-sm font-semibold text-stone-950" href={`/creator/content-studio/${application.id}`}>内容工作台</Link> : null}
+        {submission ? <StatusBadge>{submission.status}</StatusBadge> : null}
+        {canOpenStudio ? (
+          <Link className="rounded-full bg-amber-400 px-5 py-3 text-sm font-semibold text-stone-950" href={`/creator/content-studio/${application.id}`}>
+            {requiresDraftReview ? "提交内容草稿" : "填写发布内容"}
+          </Link>
+        ) : null}
       </PageHeader>
+
       {error ? <div className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</div> : null}
-      {applied ? <div className="rounded-2xl bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">申请已提交，等待品牌或平台审核。</div> : null}
+      {applied ? <div className="rounded-2xl bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">申请已提交，等待商家审核。</div> : null}
+      {submitted ? <div className="rounded-2xl bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">{requiresDraftReview ? "内容草稿已提交。" : "内容已提交，可以进入发布阶段。"}</div> : null}
+      {proofSubmitted ? <div className="rounded-2xl bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">发布链接已提交，等待商家验收。</div> : null}
+
       <section className="grid gap-5 xl:grid-cols-[1.35fr_0.65fr]">
         <Card>
-          <h2 className="text-xl font-semibold">{application.task.campaign.title}</h2>
-          <p className="mt-2 text-stone-600">{application.task.campaign.brief}</p>
-          <p className="mt-3 text-sm font-semibold">奖励：{money(application.task.rewardAmount)} · 截止时间：{shortDate(application.task.deadline)}</p>
+          <h2 className="text-xl font-semibold">{campaign.title}</h2>
+          <p className="mt-2 whitespace-pre-wrap text-stone-600">{campaign.brief}</p>
+          <p className="mt-3 text-sm font-semibold">奖励：{money(application.task.rewardAmount)} · 发布截止：{shortDate(publishDeadline)}</p>
+          <p className="mt-2 text-sm text-stone-500">流程：{requiresDraftReview ? "需要商家审稿" : "免草稿审稿，提交内容后直接进入发布阶段"}</p>
           {application.applicationNote ? <p className="mt-3 rounded-2xl bg-stone-100 p-3 text-sm text-stone-600">申请说明：{application.applicationNote}</p> : null}
         </Card>
         <CreatorOperatorCard
@@ -75,79 +145,115 @@ export default async function CreatorTaskRunPage({
           wechat={application.creator.responsibleAdmin?.wechat}
         />
       </section>
+
       <CreatorTaskTimeline items={timeline} />
+
       {submission ? (
         <Card>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-xl font-semibold">最新提交</h2>
-            <StatusBadge>{submission.status}</StatusBadge>
+            <h2 className="text-xl font-semibold">{requiresDraftReview ? "已提交内容" : "发布内容"}</h2>
+            <div className="flex flex-wrap gap-2">
+              <StatusBadge>{submission.status}</StatusBadge>
+              <StatusBadge>{submission.publicationStatus}</StatusBadge>
+            </div>
           </div>
           <p className="mt-3 font-semibold">{submission.draft.title}</p>
-          <p className="mt-2 whitespace-pre-wrap text-sm text-stone-700">{submission.draft.script}</p>
+          <p className="mt-2 whitespace-pre-wrap text-sm text-stone-700">{submission.draft.caption}</p>
+          <p className="mt-2 text-sm text-stone-600">{submission.draft.hashtags.join(" ")}</p>
           {submission.reviews.length ? (
             <div className="mt-4 rounded-2xl bg-stone-100 p-4 text-sm">
               <p className="font-semibold">最新审核意见</p>
               <p>{submission.reviews[0].comment}</p>
             </div>
           ) : null}
+          {submission.revisionNote && submission.publicationStatus === PublicationStatus.REJECTED ? (
+            <div className="mt-4 rounded-2xl bg-red-50 p-4 text-sm text-red-700">
+              <p className="font-semibold">发布链接被拒绝</p>
+              <p>{submission.revisionNote}</p>
+            </div>
+          ) : null}
         </Card>
       ) : (
         <Card>
           <h2 className="text-xl font-semibold">下一步</h2>
-          <p className="mt-2 text-sm text-stone-600">{canCreate ? "申请已通过，可以进入内容工作台制作草稿。" : "申请正在审核，通过后才能进入内容工作台。"}</p>
+          <p className="mt-2 text-sm text-stone-600">
+            {canCreate
+              ? requiresDraftReview
+                ? "申请已通过，请进入内容草稿页提交给商家审稿。"
+                : "申请已通过，请填写发布内容，提交后直接进入发布链接阶段。"
+              : "申请正在审核，通过后才能制作内容。"}
+          </p>
         </Card>
       )}
-      {canPublish ? (
+
+      {submission?.status === SubmissionStatus.APPROVED ? (
         <Card>
-          <h2 className="text-xl font-semibold">发布助手</h2>
-          <p className="mt-2 text-sm text-stone-500">本产品不存储第三方平台密码，不模拟登录，也不自动发布。请复制已通过内容，手动发布后再提交证明。</p>
+          <h2 className="text-xl font-semibold">发布链接提交</h2>
+          <p className="mt-2 text-sm text-stone-500">第一版只要求提交公开可访问的发布链接。链接失效或不可访问，默认由 KOL 负责补交。</p>
           <section className="mt-4 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
             <div className="rounded-2xl bg-stone-100 p-4 text-sm">
-              <p className="font-semibold">已通过文案</p>
+              <p className="font-semibold">发布文案</p>
               <p className="mt-2 font-black">{submission.draft.title}</p>
               <p className="mt-2 whitespace-pre-wrap">{submission.draft.caption}</p>
               <p className="mt-2">{submission.draft.hashtags.join(" ")}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <CopyButton text={submission.draft.title} label="复制标题" />
                 <CopyButton text={submission.draft.caption} label="复制文案" />
-                <CopyButton text={submission.draft.hashtags.join(" ")} label="复制 Hashtag" />
+                <CopyButton text={submission.draft.hashtags.join(" ")} label="复制话题" />
                 <CopyButton text={finalCopy} label="复制全部" />
               </div>
             </div>
             <div className="rounded-2xl border border-stone-200 bg-white/70 p-4 text-sm">
-              <p className="font-black text-stone-950">发布 Checklist</p>
+              <p className="font-black text-stone-950">发布确认</p>
               <ul className="mt-3 grid gap-2 text-stone-600">
-                {application.task.campaign.disclosureRequired ? <li>包含商业合作披露。</li> : null}
-                <li>确认 CTA：{application.task.campaign.cta}</li>
-                <li>确认禁用表达：{application.task.campaign.mustNotInclude.join(", ")}</li>
-                <li>确认发布后能回传链接、截图和基础数据。</li>
+                {campaign.disclosureRequired ? <li>已包含广告披露：{submission.draft.disclosurePosition}</li> : null}
+                <li>已确认 CTA：{campaign.cta}</li>
+                <li>已确认禁用表达：{campaign.mustNotInclude.join(", ") || "无"}</li>
+                <li>发布链接必须公开可访问，并匹配任务平台：{application.task.platform}</li>
               </ul>
             </div>
           </section>
-          <section className="mt-4 rounded-2xl border border-stone-200 bg-white/70 p-4">
-            <p className="font-black text-stone-950">素材下载区</p>
-            <div className="mt-3 flex flex-wrap gap-2 text-sm">
-              {application.task.campaign.assets.map((asset) => (
-                <a className="rounded-full border border-stone-200 bg-white px-4 py-2 font-semibold text-stone-950" href={asset.url} key={asset.id} download>下载 {asset.name}</a>
-              ))}
+          {latestProof ? (
+            <div className="mt-4 rounded-2xl border border-stone-200 bg-white/70 p-4 text-sm">
+              <p className="font-black text-stone-950">最近提交</p>
+              <p className="mt-2">
+                <Link className="font-semibold text-stone-950" href={latestProof.postUrl} target="_blank">打开链接</Link>
+                <span className="ml-3">{latestProof.verificationStatus} / {latestProof.publicationStatus}</span>
+              </p>
+              {latestProof.rejectionReason ? <p className="mt-2 text-red-700">{latestProof.rejectionReason}: {latestProof.rejectionNote}</p> : null}
+              <div className="mt-4 rounded-2xl bg-stone-50 p-3">
+                <p className="font-black text-stone-950">自动核验</p>
+                <div className="mt-2 grid gap-2 md:grid-cols-3">
+                  <p><strong>状态：</strong>{latestCrawlerJob ? latestCrawlerJob.status : latestCrawlerSnapshot ? latestCrawlerSnapshot.status : "等待核验"}</p>
+                  <p><strong>最近抓取：</strong>{latestCrawlerSnapshot ? shortDate(latestCrawlerSnapshot.fetchedAt) : "-"}</p>
+                  <p><strong>作者匹配：</strong>{latestPostSnapshot?.authorMatchStatus ?? "未核验"}</p>
+                  <p><strong>浏览：</strong>{latestPostSnapshot?.viewCount == null ? "未获取" : latestPostSnapshot.viewCount.toLocaleString("zh-CN")}</p>
+                  <p><strong>点赞：</strong>{latestPostSnapshot?.likeCount == null ? "未获取" : latestPostSnapshot.likeCount.toLocaleString("zh-CN")}</p>
+                  <p><strong>收藏：</strong>{latestPostSnapshot?.favoriteCount == null ? "未获取" : latestPostSnapshot.favoriteCount.toLocaleString("zh-CN")}</p>
+                  <p><strong>评论：</strong>{latestPostSnapshot?.commentCount == null ? "未获取" : latestPostSnapshot.commentCount.toLocaleString("zh-CN")}</p>
+                  <p><strong>分享：</strong>{latestPostSnapshot?.shareCount == null ? "未获取" : latestPostSnapshot.shareCount.toLocaleString("zh-CN")}</p>
+                  <p><strong>提示：</strong>{latestCrawlerSnapshot?.failureReason ? "自动核验失败，请等待商家人工验收。" : "-"}</p>
+                </div>
+                <div className="mt-4">
+                  <PostMetricsPanel snapshot={latestPostSnapshot} latestAttempt={latestCrawlerSnapshot} />
+                </div>
+              </div>
             </div>
-          </section>
-          <form action={submitProofAction.bind(null, submission.id)} className="mt-5 grid gap-4 md:grid-cols-2">
-            <Field label="Post URL" name="postUrl" required placeholder="https://..." />
-            <Field label="Published at" name="publishedAt" type="datetime-local" required />
-            <input className="rounded-2xl border border-stone-200 bg-white px-4 py-3" name="screenshot" type="file" />
-            <Field label="Screenshot URL (optional)" name="screenshotUrl" />
-            <Field label="Views" name="views" type="number" defaultValue={0} />
-            <Field label="Likes" name="likes" type="number" defaultValue={0} />
-            <Field label="Comments" name="comments" type="number" defaultValue={0} />
-            <Field label="Shares" name="shares" type="number" defaultValue={0} />
-            <Field label="Saves" name="saves" type="number" defaultValue={0} />
-            <Field label="Clicks" name="clicks" type="number" defaultValue={0} />
-            <Field label="Conversions" name="conversions" type="number" defaultValue={0} />
-            <div className="flex items-end"><Button variant="secondary">提交发布证明</Button></div>
-          </form>
+          ) : null}
+          {canSubmitProof ? (
+            <form action={submitProofAction.bind(null, submission.id)} className="mt-5 grid gap-4 md:grid-cols-2">
+              <Field label="发布链接" name="postUrl" required placeholder="https://..." />
+              <Field label="发布时间" name="publishedAt" type="datetime-local" required />
+              <div className="flex items-end"><Button variant="secondary">提交发布链接</Button></div>
+            </form>
+          ) : (
+            <div className="mt-5 rounded-2xl bg-stone-100 p-4 text-sm text-stone-600">
+              {publishExpired ? "发布截止时间已过，请等待商家或平台处理。" : "当前已有发布链接等待验收，或该任务已进入后续阶段。"}
+            </div>
+          )}
         </Card>
       ) : null}
     </div>
   );
 }
+

@@ -1,76 +1,134 @@
-import { UserRole } from "@prisma/client";
+import { ProofStatus, SubmissionStatus, UserRole } from "@prisma/client";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { DataTable, EmptyState, LinkButton, MetricCard, PageHeader } from "@/components/ui";
-import { money, number } from "@/lib/format";
-import { ReportChart } from "@/components/report-chart";
+import { DataTable, EmptyState, LinkButton, MetricCard, PageHeader, StatusBadge } from "@/components/ui";
+import { money, number, shortDate } from "@/lib/format";
 
 export default async function BrandCampaignReportPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await requireRole(UserRole.BRAND);
   const { id } = await params;
   const campaign = await prisma.campaign.findFirst({
     where: { id, brand: { userId: session.userId } },
-    include: { proofs: { include: { creator: true, submission: { include: { draft: true } } } }, tasks: { include: { applications: true } } },
+    include: {
+      tasks: { include: { applications: true } },
+      submissions: {
+        include: {
+          creator: true,
+          draft: true,
+          proofs: { include: { postMetricSnapshots: { orderBy: { fetchedAt: "desc" }, take: 3 } }, orderBy: { createdAt: "desc" } },
+          application: { include: { task: true, selectedSocialAccount: { include: { metricSnapshots: { orderBy: { fetchedAt: "desc" }, take: 3 } } } } },
+        },
+        orderBy: { createdAt: "desc" },
+      },
+      proofs: true,
+    },
   });
-  if (!campaign) return <PageHeader title="未找到报告" />;
-  const totals = campaign.proofs.reduce(
-    (acc, proof) => ({
-      views: acc.views + proof.views,
-      likes: acc.likes + proof.likes,
-      comments: acc.comments + proof.comments,
-      shares: acc.shares + proof.shares,
-      saves: acc.saves + proof.saves,
-      clicks: acc.clicks + proof.clicks,
-      conversions: acc.conversions + proof.conversions,
-    }),
-    { views: 0, likes: 0, comments: 0, shares: 0, saves: 0, clicks: 0, conversions: 0 },
-  );
-  const cpa = totals.conversions ? Number(campaign.creatorBudget) / totals.conversions : 0;
-  const cpm = totals.views ? (Number(campaign.creatorBudget) / totals.views) * 1000 : 0;
-  const cpe = totals.likes + totals.comments + totals.shares + totals.saves ? Number(campaign.creatorBudget) / (totals.likes + totals.comments + totals.shares + totals.saves) : 0;
-  const chartData = campaign.proofs.map((proof) => ({ name: proof.platform, views: proof.views, clicks: proof.clicks, conversions: proof.conversions }));
+  if (!campaign) return <PageHeader title="未找到报表" />;
+
+  const applications = campaign.tasks.flatMap((task) => task.applications);
+  const approvedApplications = applications.filter((application) => application.status === "APPROVED").length;
+  const submittedDrafts = campaign.submissions.length;
+  const approvedSubmissionStatuses: SubmissionStatus[] = [SubmissionStatus.APPROVED, SubmissionStatus.PROOF_SUBMITTED, SubmissionStatus.VERIFIED, SubmissionStatus.SETTLED];
+  const approvedDrafts = campaign.submissions.filter((submission) => approvedSubmissionStatuses.includes(submission.status)).length;
+  const linkSubmitted = campaign.proofs.length;
+  const acceptedLinks = campaign.proofs.filter((proof) => proof.verificationStatus === ProofStatus.VERIFIED).length;
+  const rejectedLinks = campaign.proofs.filter((proof) => proof.verificationStatus === ProofStatus.REJECTED).length;
+  const settled = campaign.submissions.filter((submission) => submission.status === SubmissionStatus.SETTLED).length;
+  const completionRate = approvedApplications ? `${Math.round((acceptedLinks / approvedApplications) * 100)}%` : "0%";
 
   return (
     <div className="grid gap-6">
-      <PageHeader eyebrow="推广报告" title={campaign.title}>
+      <PageHeader eyebrow="Campaign 报表" title={campaign.title}>
+        <StatusBadge>{campaign.status}</StatusBadge>
         <LinkButton href={`/api/brand/campaigns/${campaign.id}/report.csv`} variant="ghost">导出 CSV</LinkButton>
       </PageHeader>
-      {campaign.proofs.length === 0 ? <EmptyState title="No verified proof yet" body="Report metrics appear after Admin verifies creator proof." /> : null}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <MetricCard label="Budget" value={money(campaign.totalBudget)} />
-        <MetricCard label="Views" value={number(totals.views)} />
-        <MetricCard label="Clicks" value={number(totals.clicks)} />
-        <MetricCard label="Conversions" value={number(totals.conversions)} />
-        <MetricCard label="CPA / CPM / CPE" value={`${money(cpa)} / ${money(cpm)} / ${money(cpe)}`} />
+
+      {campaign.submissions.length === 0 ? <EmptyState title="暂无履约记录" body="KOL 提交草稿或发布链接后，报表会显示履约状态。" /> : null}
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+        <MetricCard label="托管预算" value={money(campaign.escrowAmount, campaign.currency)} />
+        <MetricCard label="通过 KOL" value={approvedApplications} />
+        <MetricCard label="草稿提交" value={submittedDrafts} />
+        <MetricCard label="发布链接" value={linkSubmitted} />
+        <MetricCard label="验收通过" value={acceptedLinks} sub={`完成率 ${completionRate}`} />
+        <MetricCard label="已结算" value={settled} />
       </div>
-      <div className="rounded-3xl border border-stone-200 bg-white p-5">
-        <ReportChart data={chartData} />
-      </div>
+
       <section>
-        <h2 className="mb-3 text-xl font-semibold">内容排行榜</h2>
+        <h2 className="mb-3 text-xl font-semibold">任务履约汇总</h2>
         <DataTable
-          headers={["Content", "Creator", "Platform", "Views", "Likes", "Clicks", "Conversions"]}
-          rows={campaign.proofs.sort((a, b) => b.views - a.views).map((proof) => [
-            proof.submission.draft.title,
-            proof.creator.displayName,
-            proof.platform,
-            number(proof.views),
-            number(proof.likes),
-            number(proof.clicks),
-            number(proof.conversions),
+          headers={["平台", "内容形式", "名额", "申请", "通过", "奖励", "发布截止"]}
+          rows={campaign.tasks.map((task) => [
+            task.platform,
+            task.contentType,
+            `${task.slotsTaken}/${task.slotsTotal}`,
+            task.applications.length,
+            task.applications.filter((application) => application.status === "APPROVED").length,
+            money(task.rewardAmount, campaign.currency),
+            shortDate(task.publishDeadline ?? task.deadline),
           ])}
         />
       </section>
+
       <section>
-        <h2 className="mb-3 text-xl font-semibold">创作者排行榜</h2>
+        <h2 className="mb-3 text-xl font-semibold">KOL 履约明细</h2>
         <DataTable
-          headers={["Creator", "Views", "Interactions", "Conversions"]}
-          rows={campaign.proofs.map((proof) => [
-            proof.creator.displayName,
-            number(proof.views),
-            number(proof.likes + proof.comments + proof.shares + proof.saves),
-            number(proof.conversions),
-          ])}
+          headers={["KOL", "平台", "账号", "草稿状态", "发布状态", "结算状态", "发布链接", "粉丝快照", "浏览", "点赞", "收藏", "评论", "分享", "作者匹配", "更新时间"]}
+          rows={campaign.submissions.map((submission) => {
+            const latestProof = submission.proofs[0];
+            const latestPostSnapshot = latestProof?.postMetricSnapshots.find((snapshot) => snapshot.status === "SUCCESS");
+            const latestAccountSnapshot = submission.application.selectedSocialAccount?.metricSnapshots.find((snapshot) => snapshot.status === "SUCCESS");
+            return [
+              submission.creator.displayName,
+              submission.application.task.platform,
+              submission.application.selectedSocialAccount?.accountName ?? "-",
+              submission.status,
+              latestProof ? `${latestProof.verificationStatus} / ${latestProof.publicationStatus}` : submission.publicationStatus,
+              submission.settlementStatus,
+              latestProof ? <a className="font-semibold text-stone-950" href={latestProof.postUrl} key={latestProof.id} target="_blank">打开链接</a> : "-",
+              latestAccountSnapshot?.followerCount == null ? "-" : number(latestAccountSnapshot.followerCount),
+              latestPostSnapshot?.viewCount == null ? "-" : number(latestPostSnapshot.viewCount),
+              latestPostSnapshot?.likeCount == null ? "-" : number(latestPostSnapshot.likeCount),
+              latestPostSnapshot?.favoriteCount == null ? "-" : number(latestPostSnapshot.favoriteCount),
+              latestPostSnapshot?.commentCount == null ? "-" : number(latestPostSnapshot.commentCount),
+              latestPostSnapshot?.shareCount == null ? "-" : number(latestPostSnapshot.shareCount),
+              latestPostSnapshot?.authorMatchStatus ?? "-",
+              shortDate(submission.updatedAt),
+            ];
+          })}
+        />
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-xl font-semibold">验收结果</h2>
+        <DataTable
+          headers={["发布链接", "KOL", "状态", "拒绝原因", "补交次数", "提交时间"]}
+          rows={campaign.submissions.flatMap((submission) =>
+            submission.proofs.map((proof) => [
+              <a className="font-semibold text-stone-950" href={proof.postUrl} key={proof.id} target="_blank">打开链接</a>,
+              submission.creator.displayName,
+              <StatusBadge key="s">{proof.verificationStatus}</StatusBadge>,
+              proof.rejectionReason ? `${proof.rejectionReason}: ${proof.rejectionNote ?? ""}` : "-",
+              proof.resubmissionCount,
+              shortDate(proof.createdAt),
+            ]),
+          )}
+        />
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-xl font-semibold">数据指标</h2>
+        <DataTable
+          headers={["发布数", "验收通过", "验收拒绝", "播放", "点赞", "点击", "转化"]}
+          rows={[[
+            linkSubmitted,
+            acceptedLinks,
+            rejectedLinks,
+            number(campaign.proofs.reduce((sum, proof) => sum + proof.views, 0)),
+            number(campaign.proofs.reduce((sum, proof) => sum + proof.likes, 0)),
+            number(campaign.proofs.reduce((sum, proof) => sum + proof.clicks, 0)),
+            number(campaign.proofs.reduce((sum, proof) => sum + proof.conversions, 0)),
+          ]]}
         />
       </section>
     </div>

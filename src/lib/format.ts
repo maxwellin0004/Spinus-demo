@@ -1,4 +1,4 @@
-export function money(value: number | string | { toString(): string } | null | undefined, currency = "USD") {
+export function money(value: number | string | { toString(): string } | null | undefined, currency = "CNY") {
   const numeric = Number(value ?? 0);
   return new Intl.NumberFormat("zh-CN", {
     style: "currency",

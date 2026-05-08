@@ -1,0 +1,147 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - link "Tanglin KOL 投放平台 三方投放协作后台" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e5]:
+          - paragraph [ref=e6]: Tanglin
+          - paragraph [ref=e7]: KOL 投放平台
+          - paragraph [ref=e8]: 三方投放协作后台
+      - navigation [ref=e9]:
+        - generic [ref=e10]:
+          - paragraph [ref=e11]: 创作者工作台
+          - generic [ref=e12]:
+            - link "仪表盘" [ref=e13] [cursor=pointer]:
+              - /url: /creator
+            - link "个人资料" [ref=e14] [cursor=pointer]:
+              - /url: /creator/profile
+        - generic [ref=e15]:
+          - paragraph [ref=e16]: 任务与收益
+          - generic [ref=e17]:
+            - link "任务大厅" [ref=e18] [cursor=pointer]:
+              - /url: /creator/marketplace
+            - link "我的任务" [ref=e19] [cursor=pointer]:
+              - /url: /creator/my-tasks
+            - link "钱包提现" [ref=e20] [cursor=pointer]:
+              - /url: /creator/wallet
+      - generic [ref=e21]:
+        - paragraph [ref=e22]: 协作流程
+        - paragraph [ref=e23]: 任务、审核、发布凭证、争议和钱包事件保持联动。
+    - generic [ref=e24]:
+      - banner [ref=e25]:
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - generic [ref=e28]: 创作者
+            - generic [ref=e30]: creator@test.com
+            - link "1 未读" [ref=e31] [cursor=pointer]:
+              - /url: /creator/notifications
+              - generic [ref=e32]: 1 未读
+          - button "退出登录" [ref=e35]
+      - main [ref=e36]:
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - generic [ref=e39]:
+              - paragraph [ref=e40]: KOL 中心
+              - heading "钱包与提现" [level=1] [ref=e41]
+            - generic [ref=e42]:
+              - generic [ref=e43]: CNY
+              - generic [ref=e45]: 最低提现 ￥20
+          - generic [ref=e47]:
+            - generic [ref=e48]:
+              - paragraph [ref=e51]: 预计收入
+              - generic [ref=e52]: ¥0
+              - generic [ref=e53]: 已申请但尚未通过，不计入钱包。
+            - generic [ref=e54]:
+              - paragraph [ref=e57]: 待审核收入
+              - generic [ref=e58]: ¥0
+              - generic [ref=e59]: 内容或发布链接正在审核中。
+            - generic [ref=e60]:
+              - paragraph [ref=e63]: 已入账收入
+              - generic [ref=e64]: ¥180
+              - generic [ref=e65]: 商家验收通过后直接进入可提现余额。
+            - generic [ref=e66]:
+              - paragraph [ref=e69]: 可提现余额
+              - generic [ref=e70]: ¥92
+              - generic [ref=e71]: 可立即申请提现。
+            - generic [ref=e72]:
+              - paragraph [ref=e75]: 冻结金额
+              - generic [ref=e76]: ¥0
+              - generic [ref=e77]: 提现申请处理中，暂时冻结。
+          - generic [ref=e78]:
+            - heading "收益路径" [level=2] [ref=e79]
+            - generic [ref=e80]:
+              - paragraph [ref=e81]: 预计收入：任务申请中，只用于预估。
+              - paragraph [ref=e82]: 待审核收入：内容草稿或发布链接等待商家处理。
+              - paragraph [ref=e83]: 已入账收入：商家验收通过后直接进入可提现余额。
+              - paragraph [ref=e84]: 可提现/冻结：可提现余额可发起提现；冻结金额来自处理中提现单。
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - paragraph [ref=e89]: 累计入账
+              - generic [ref=e90]: ¥1,104
+            - generic [ref=e91]:
+              - paragraph [ref=e94]: 累计提现
+              - generic [ref=e95]: ¥0
+            - generic [ref=e96]:
+              - paragraph [ref=e99]: 提现处理中
+              - generic [ref=e100]: "1"
+            - generic [ref=e101]:
+              - paragraph [ref=e104]: 收益流水
+              - generic [ref=e105]: "1"
+          - generic [ref=e106]:
+            - heading "申请提现" [level=2] [ref=e107]
+            - paragraph [ref=e108]: 第一版只支持人民币提现申请，平台人工处理。提交后金额会先冻结。
+            - generic [ref=e109]:
+              - generic [ref=e110]:
+                - text: 提现金额
+                - spinbutton "提现金额" [ref=e111]: "20"
+              - generic [ref=e112]:
+                - text: 收款方式
+                - combobox "收款方式" [ref=e113]:
+                  - option "银行卡" [selected]
+                  - option "支付宝"
+                  - option "微信"
+                  - option "其他"
+              - generic [ref=e115]:
+                - text: 收款信息
+                - textbox "收款信息" [ref=e116]:
+                  - /placeholder: 开户行、银行卡号、姓名，或支付宝/微信收款账号
+              - button "提交提现" [ref=e118]
+          - generic [ref=e119]:
+            - heading "交易流水" [level=2] [ref=e120]
+            - table [ref=e123]:
+              - rowgroup [ref=e124]:
+                - row "类型 金额 状态 说明 创建时间" [ref=e125]:
+                  - columnheader "类型" [ref=e126]
+                  - columnheader "金额" [ref=e127]
+                  - columnheader "状态" [ref=e128]
+                  - columnheader "说明" [ref=e129]
+                  - columnheader "创建时间" [ref=e130]
+              - rowgroup [ref=e131]:
+                - row "任务收益 ¥180 已通过 种子数据：收益已确认。 2026年5月6日" [ref=e132]:
+                  - cell "任务收益" [ref=e133]
+                  - cell "¥180" [ref=e134]
+                  - cell "已通过" [ref=e135]:
+                    - generic [ref=e136]: 已通过
+                  - cell "种子数据：收益已确认。" [ref=e138]
+                  - cell "2026年5月6日" [ref=e139]
+          - generic [ref=e140]:
+            - heading "提现记录" [level=2] [ref=e141]
+            - table [ref=e144]:
+              - rowgroup [ref=e145]:
+                - row "金额 方式 状态 平台备注 创建时间" [ref=e146]:
+                  - columnheader "金额" [ref=e147]
+                  - columnheader "方式" [ref=e148]
+                  - columnheader "状态" [ref=e149]
+                  - columnheader "平台备注" [ref=e150]
+                  - columnheader "创建时间" [ref=e151]
+              - rowgroup [ref=e152]:
+                - row "¥50 人工转账 待处理 - 2026年5月6日" [ref=e153]:
+                  - cell "¥50" [ref=e154]
+                  - cell "人工转账" [ref=e155]
+                  - cell "待处理" [ref=e156]:
+                    - generic [ref=e157]: 待处理
+                  - cell "-" [ref=e159]
+                  - cell "2026年5月6日" [ref=e160]
+  - button "Open Next.js Dev Tools" [ref=e166] [cursor=pointer]:
+    - img [ref=e167]
+  - alert [ref=e170]

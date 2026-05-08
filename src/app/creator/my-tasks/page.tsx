@@ -14,8 +14,8 @@ function taskStage(status: ApplicationStatus, latest?: { status: SubmissionStatu
   if (latest.status === SubmissionStatus.REVISION_REQUESTED) return { label: "需要修改", next: "查看审核意见后重新编辑提交。" };
   if (latest.status === SubmissionStatus.APPROVED) return { label: "待发布", next: "进入发布助手，复制文案并手动发布。" };
   if (latest.status === SubmissionStatus.PUBLISHED || latest.status === SubmissionStatus.PROOF_SUBMITTED) return { label: "待 Proof 审核", next: "等待 Admin 验证发布链接和数据。" };
-  if (latest.status === SubmissionStatus.VERIFIED) return { label: "待结算", next: "Proof 已验证，等待平台确认收益入账。" };
-  if (latest.status === SubmissionStatus.SETTLED) return { label: "已结算", next: "收益已进入钱包或已完成结算。" };
+  if (latest.status === SubmissionStatus.VERIFIED) return { label: "已验收", next: "Proof 已验证，收益会直接进入钱包。" };
+  if (latest.status === SubmissionStatus.SETTLED) return { label: "已入账", next: "收益已进入可提现余额。" };
   return { label: "已结束", next: "该任务当前无需操作。" };
 }
 

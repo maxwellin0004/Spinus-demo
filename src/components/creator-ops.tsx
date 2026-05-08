@@ -28,7 +28,7 @@ export function CreatorOnboardingCard({
       </div>
       <div className="mt-5 grid gap-3 md:grid-cols-2">
         {items.map((item) => (
-          <div className="rounded-3xl border border-stone-200 bg-white/75 p-4" key={item.label}>
+          <div className="rounded-2xl border border-stone-200 bg-white/75 p-4" key={item.label}>
             <div className="flex items-center gap-3">
               <span className={`h-3 w-3 rounded-full ${item.done ? "bg-emerald-500" : "bg-amber-400"}`} />
               <p className="font-black text-stone-950">{item.label}</p>
@@ -84,9 +84,9 @@ export function CreatorTaskTimeline({
         <h2 className="text-xl font-black text-stone-950">任务进度时间线</h2>
         <StatusBadge>{items.filter((item) => item.done).length}/{items.length}</StatusBadge>
       </div>
-      <ol className="mt-6 grid gap-3 md:grid-cols-3 xl:grid-cols-5">
+      <ol className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
         {items.map((item, index) => (
-          <li className={`rounded-3xl border p-4 ${item.active ? "border-amber-300 bg-amber-50" : item.done ? "border-emerald-200 bg-emerald-50/60" : "border-stone-200 bg-white/70"}`} key={item.label}>
+          <li className={`rounded-2xl border p-4 ${item.active ? "border-amber-300 bg-amber-50" : item.done ? "border-emerald-200 bg-emerald-50/60" : "border-stone-200 bg-white/70"}`} key={item.label}>
             <div className="flex items-center gap-3">
               <span className={`grid h-8 w-8 place-items-center rounded-full text-sm font-black ${item.done ? "bg-amber-400 text-stone-950" : "bg-stone-200 text-stone-500"}`}>
                 {index + 1}

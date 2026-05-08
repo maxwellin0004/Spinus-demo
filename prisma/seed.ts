@@ -50,6 +50,8 @@ async function passwordHash() {
 
 async function main() {
   await prisma.$transaction([
+    prisma.brandLedgerTransaction.deleteMany(),
+    prisma.brandRefundRequest.deleteMany(),
     prisma.walletTransaction.deleteMany(),
     prisma.withdrawalRequest.deleteMany(),
     prisma.wallet.deleteMany(),
@@ -68,15 +70,33 @@ async function main() {
     prisma.socialAccount.deleteMany(),
     prisma.brandProfile.deleteMany(),
     prisma.creatorProfile.deleteMany(),
+    prisma.invitationAttribution.deleteMany(),
+    prisma.invitationCode.deleteMany(),
     prisma.notification.deleteMany(),
     prisma.auditLog.deleteMany(),
     prisma.complianceRule.deleteMany(),
     prisma.riskFlag.deleteMany(),
     prisma.dispute.deleteMany(),
+    prisma.platformSettings.deleteMany(),
     prisma.user.deleteMany(),
   ]);
 
   const hash = await passwordHash();
+
+  await prisma.platformSettings.create({
+    data: {
+      id: "platform",
+      acceptanceSlaDays: 3,
+      highValueReviewThreshold: 50,
+      resubmissionGraceDays: 2,
+      minimumWithdrawalAmount: 20,
+      kolPreviewMaxMb: 50,
+      platformFeeRate: 0,
+      platformContactEmail: "support@tanglin.local",
+      riskIndustryKeywords: ["金融", "医疗", "医美", "保健", "投资", "教育", "减肥", "母婴"],
+      riskIndustryPrompt: "该行业容易涉及效果承诺、资质证明或监管要求。请确认 brief 不包含夸大承诺，并准备必要资质。",
+    },
+  });
 
   const admin = await prisma.user.create({
     data: {
@@ -97,6 +117,33 @@ async function main() {
     },
   });
   const adminProfile = await prisma.adminProfile.findUniqueOrThrow({ where: { userId: admin.id } });
+
+  await prisma.user.create({
+    data: {
+      email: "bd@test.com",
+      passwordHash: hash,
+      role: UserRole.ADMIN,
+      status: UserStatus.ACTIVE,
+      adminProfile: {
+        create: {
+          displayName: "BD Sarah",
+          level: AdminLevel.STAFF,
+          permissions: ["account.create", "reports.view"],
+          dataScope: AdminDataScope.ASSIGNED,
+          teamName: "商务运营组",
+          wechat: "bd_sarah",
+          createdById: admin.id,
+          invitationCodes: {
+            create: {
+              code: "BD2026",
+              active: true,
+              createdById: admin.id,
+            },
+          },
+        },
+      },
+    },
+  });
 
   const brandUser = await prisma.user.create({
     data: {
@@ -202,7 +249,7 @@ async function main() {
                 create: {
                   availableBalance: Number(completionRate),
                   cumulativeIncome: Number(completionRate) * 12,
-                  currency: "USD",
+                  currency: "CNY",
                 },
               },
             },
@@ -237,7 +284,7 @@ async function main() {
       creatorBudget: 10500,
       platformFee: 4500,
       baseReward: 180,
-      bonusRules: { views: "每额外 1 万次已验证播放奖励 USD 20", clicks: "每个已验证点击奖励 USD 1" },
+      bonusRules: { views: "每额外 1 万次已验证播放奖励 CNY 20", clicks: "每个已验证点击奖励 CNY 1" },
       brief: "说明小黄雀研究助手如何把分散资料快速整理成可核验的发布简报。表达要务实，不承诺收益或效果。",
       mustInclude: ["AI 研究助手", "来源可追溯简报", "发布前人工确认"],
       mustNotInclude: ["保证收益", "官方合作虚假声明", "零风险收入"],
@@ -474,7 +521,7 @@ async function main() {
       creatorId: creator.id,
       type: WalletTxType.EARNING,
       amount: 180,
-      currency: "USD",
+      currency: "CNY",
       status: WalletTxStatus.APPROVED,
       relatedSubmissionId: submission.id,
       note: "种子数据：收益已确认。",
@@ -486,9 +533,9 @@ async function main() {
       walletId: wallet.id,
       creatorId: creator.id,
       amount: 50,
-      currency: "USD",
-      payoutMethod: "USDT",
-      payoutDetails: { address: "TSeedWalletAddress" },
+      currency: "CNY",
+      payoutMethod: "人工转账",
+      payoutDetails: { account: "seed-payout-account" },
       status: WithdrawalStatus.PENDING,
     },
   });

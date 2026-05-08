@@ -1,4 +1,4 @@
-"use server";
+﻿"use server";
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -7,16 +7,27 @@ import {
   AdminDataScope,
   AdminLevel,
   ApplicationStatus,
+  BrandLedgerTxStatus,
+  BrandLedgerTxType,
+  BrandRefundStatus,
   BrandRequestStatus,
   CampaignStatus,
   ComplianceRuleType,
+  CrawlerJobStatus,
+  CrawlerJobType,
+  CrawlerTargetType,
   CreatorLevel,
+  DisputeDecision,
+  DisputeStatus,
+  DraftReviewStatus,
   DraftStatus,
+  PublicationStatus,
   ProofStatus,
   ReviewDecision,
   ReviewStatus,
   RiskLevel,
   SocialVerificationStatus,
+  SettlementStatus,
   SubmissionStatus,
   TaskStatus,
   UserRole,
@@ -24,6 +35,7 @@ import {
   WalletTxStatus,
   WalletTxType,
   WithdrawalStatus,
+  Prisma,
 } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { audit } from "@/lib/audit";
@@ -33,24 +45,269 @@ import { csv, text } from "@/lib/format";
 import { hasCreatorLevel } from "@/lib/levels";
 import { saveUploadedFile } from "@/lib/storage";
 import { ADMIN_PERMISSIONS, hasAdminPermission, isFounder, requireAdminPermission } from "@/lib/admin";
+import { createCrawlerJob, toCrawlerPlatform } from "@/lib/crawler";
+import {
+  applyAdminLevelInviteRules,
+  applyInviteCodeChange,
+  ensureStaffInviteCode,
+  findActiveInvitation,
+  generateUniqueInviteCode,
+  inviteValidationMessage,
+  isValidInviteCode,
+  normalizeInviteCode,
+} from "@/lib/invitations";
 
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
 });
 
+const PAYMENT_PROOF_MAX_BYTES = 8 * 1024 * 1024;
+
+function roundMoney(value: number) {
+  return Math.round(value * 100) / 100;
+}
+
+async function creditAcceptedSubmissionEarning({
+  tx,
+  actorUserId,
+  actorRole,
+  submissionId,
+  campaignId,
+  creatorId,
+  creatorUserId,
+  rewardAmount,
+  note,
+}: {
+  tx: Prisma.TransactionClient;
+  actorUserId?: string;
+  actorRole?: UserRole;
+  submissionId: string;
+  campaignId: string;
+  creatorId: string;
+  creatorUserId: string;
+  rewardAmount: number | string | { toString(): string };
+  note: string;
+}) {
+  const amount = roundMoney(Number(rewardAmount));
+  if (amount <= 0) return;
+
+  const existingFinalEarning = await tx.walletTransaction.findFirst({
+    where: {
+      relatedSubmissionId: submissionId,
+      type: WalletTxType.EARNING,
+      status: { in: [WalletTxStatus.APPROVED, WalletTxStatus.PAID] },
+    },
+  });
+  if (existingFinalEarning) return;
+
+  const campaign = await tx.campaign.findUnique({
+    where: { id: campaignId },
+    include: { brand: true },
+  });
+  if (!campaign) return;
+
+  const wallet = await tx.wallet.upsert({
+    where: { creatorId },
+    update: {},
+    create: { creatorId, currency: campaign.currency || "CNY" },
+  });
+  const pendingEarning = await tx.walletTransaction.findFirst({
+    where: {
+      relatedSubmissionId: submissionId,
+      type: WalletTxType.EARNING,
+      status: WalletTxStatus.PENDING,
+    },
+  });
+
+  if (pendingEarning) {
+    await tx.walletTransaction.update({
+      where: { id: pendingEarning.id },
+      data: {
+        amount,
+        currency: wallet.currency,
+        status: WalletTxStatus.APPROVED,
+        note,
+      },
+    });
+  } else {
+    await tx.walletTransaction.create({
+      data: {
+        walletId: wallet.id,
+        creatorId,
+        type: WalletTxType.EARNING,
+        amount,
+        currency: wallet.currency,
+        status: WalletTxStatus.APPROVED,
+        relatedSubmissionId: submissionId,
+        isDemo: campaign.isDemo,
+        note,
+      },
+    });
+  }
+
+  await tx.wallet.update({
+    where: { id: wallet.id },
+    data: {
+      availableBalance: { increment: amount },
+      cumulativeIncome: { increment: amount },
+    },
+  });
+  await tx.creatorProfile.update({
+    where: { id: creatorId },
+    data: {
+      cumulativeIncome: { increment: amount },
+      completedTasks: { increment: 1 },
+    },
+  });
+  await tx.submission.update({
+    where: { id: submissionId },
+    data: {
+      status: SubmissionStatus.SETTLED,
+      settlementStatus: SettlementStatus.PAID_TO_WALLET,
+      settlementAmount: amount,
+      acceptedAt: new Date(),
+    },
+  });
+
+  const platformFee = roundMoney(amount * Number(campaign.platformFeeRate));
+  const releaseTarget = roundMoney(amount + platformFee);
+  const frozenBefore = Number(campaign.escrowFrozenAmount);
+  const releasedFromEscrow = Math.min(frozenBefore, releaseTarget);
+  const platformFeeRecognized = Math.max(0, roundMoney(releasedFromEscrow - amount));
+
+  if (releasedFromEscrow > 0) {
+    await tx.brandProfile.update({
+      where: { id: campaign.brandId },
+      data: { frozenEscrowBalance: { decrement: releasedFromEscrow } },
+    });
+    await tx.campaign.update({
+      where: { id: campaignId },
+      data: {
+        escrowFrozenAmount: { decrement: releasedFromEscrow },
+        escrowReleasedAmount: { increment: releasedFromEscrow },
+      },
+    });
+    await tx.brandLedgerTransaction.create({
+      data: {
+        brandId: campaign.brandId,
+        campaignId,
+        type: BrandLedgerTxType.KOL_SETTLEMENT,
+        amount,
+        currency: campaign.currency,
+        status: BrandLedgerTxStatus.CONFIRMED,
+        beforeBalance: campaign.brand.budgetBalance,
+        afterBalance: campaign.brand.budgetBalance,
+        createdById: actorUserId,
+        note: "Creator reward released from escrow after proof acceptance.",
+      },
+    });
+    if (platformFeeRecognized > 0) {
+      await tx.brandLedgerTransaction.create({
+        data: {
+          brandId: campaign.brandId,
+          campaignId,
+          type: BrandLedgerTxType.PLATFORM_FEE,
+          amount: platformFeeRecognized,
+          currency: campaign.currency,
+          status: BrandLedgerTxStatus.CONFIRMED,
+          beforeBalance: campaign.brand.budgetBalance,
+          afterBalance: campaign.brand.budgetBalance,
+          createdById: actorUserId,
+          note: "Platform service fee recognized with accepted creator delivery.",
+        },
+      });
+    }
+  }
+
+  await tx.notification.create({
+    data: {
+      userId: creatorUserId,
+      title: "任务收益已入账",
+      body: `${wallet.currency} ${amount} 已进入可提现余额。`,
+      href: "/creator/wallet",
+    },
+  });
+  await tx.auditLog.create({
+    data: {
+      actorUserId,
+      actorRole,
+      action: "wallet.earning_credited",
+      entityType: "submission",
+      entityId: submissionId,
+      afterJson: {
+        amount,
+        currency: wallet.currency,
+        campaignId,
+        releasedFromEscrow,
+        platformFeeRecognized,
+      },
+    },
+  });
+}
+
+async function returnCampaignUnusedEscrow({
+  tx,
+  actorUserId,
+  campaignId,
+  note,
+}: {
+  tx: Prisma.TransactionClient;
+  actorUserId?: string;
+  campaignId: string;
+  note: string;
+}) {
+  const campaign = await tx.campaign.findUnique({
+    where: { id: campaignId },
+    include: { brand: true },
+  });
+  if (!campaign) return 0;
+  const refundable = Number(campaign.escrowFrozenAmount);
+  if (refundable <= 0) return 0;
+
+  await tx.brandProfile.update({
+    where: { id: campaign.brandId },
+    data: {
+      budgetBalance: { increment: refundable },
+      frozenEscrowBalance: { decrement: refundable },
+    },
+  });
+  await tx.campaign.update({
+    where: { id: campaignId },
+    data: {
+      escrowFrozenAmount: { decrement: refundable },
+      escrowReleasedAmount: { increment: refundable },
+    },
+  });
+  await tx.brandLedgerTransaction.create({
+    data: {
+      brandId: campaign.brandId,
+      campaignId,
+      type: BrandLedgerTxType.REFUND,
+      amount: refundable,
+      currency: campaign.currency,
+      status: BrandLedgerTxStatus.CONFIRMED,
+      beforeBalance: campaign.brand.budgetBalance,
+      afterBalance: Number(campaign.brand.budgetBalance) + refundable,
+      createdById: actorUserId,
+      note,
+    },
+  });
+  return refundable;
+}
+
 export async function loginAction(formData: FormData) {
   const parsed = loginSchema.safeParse({
     email: text(formData.get("email")).toLowerCase(),
     password: text(formData.get("password")),
   });
-  if (!parsed.success) redirect("/auth/login?error=Invalid%20login%20form");
+  if (!parsed.success) redirect(`/auth/login?error=${encodeURIComponent("请填写有效邮箱和密码。")}`);
 
   const user = await prisma.user.findUnique({ where: { email: parsed.data.email } });
   if (!user || !(await verifyPassword(parsed.data.password, user.passwordHash))) {
-    redirect("/auth/login?error=Invalid%20email%20or%20password");
+    redirect(`/auth/login?error=${encodeURIComponent("邮箱或密码错误。")}`);
   }
-  if (user.status === UserStatus.FROZEN) redirect("/auth/login?error=Account%20is%20frozen");
+  if (user.status === UserStatus.FROZEN) redirect(`/auth/login?error=${encodeURIComponent("账号已被冻结，请联系平台。")}`);
 
   await createSession(user);
   redirect(roleHome(user.role));
@@ -63,66 +320,116 @@ const registerSchema = z.object({
   name: z.string().min(2),
   country: z.string().min(2),
   industry: z.string().optional(),
+  inviteCode: z.string().optional(),
 });
 
 export async function registerAction(formData: FormData) {
+  const role = text(formData.get("role"));
+  const name = text(formData.get("name"));
+  const country = text(formData.get("country"));
+  const industry = text(formData.get("industry"));
+  const email = text(formData.get("email")).toLowerCase();
+  const password = text(formData.get("password"));
+  const inviteCode = normalizeInviteCode(text(formData.get("inviteCode")));
+  const inviteLocked = text(formData.get("inviteLocked")) === "1";
+  const registerErrorPath = (message: string) =>
+    `/auth/register?${new URLSearchParams({
+      error: message,
+      ...(inviteLocked && inviteCode ? { invite: inviteCode } : {}),
+    }).toString()}`;
+  if (!["BRAND", "CREATOR"].includes(role)) redirect(`/auth/register?error=${encodeURIComponent("请选择注册角色。")}`);
+  if (name.length < 2) redirect(`/auth/register?error=${encodeURIComponent("请填写工作台/显示名称，至少 2 个字符。")}`);
+  if (country.length < 2) redirect(`/auth/register?error=${encodeURIComponent("请填写国家或地区。")}`);
+  if (role === "BRAND" && industry.length < 2) redirect(`/auth/register?error=${encodeURIComponent("品牌方需要填写行业。")}`);
+  if (password.length < 8) redirect(`/auth/register?error=${encodeURIComponent("密码至少需要 8 位。")}`);
+  if (inviteCode && !isValidInviteCode(inviteCode)) redirect(registerErrorPath(inviteValidationMessage()));
   const parsed = registerSchema.safeParse({
-    email: text(formData.get("email")).toLowerCase(),
-    password: text(formData.get("password")),
-    role: text(formData.get("role")),
-    name: text(formData.get("name")),
-    country: text(formData.get("country")),
-    industry: text(formData.get("industry")),
+    email,
+    password,
+    role,
+    name,
+    country,
+    industry,
+    inviteCode,
   });
-  if (!parsed.success) redirect("/auth/register?error=Please%20check%20required%20fields");
+  if (!parsed.success) redirect(`/auth/register?error=${encodeURIComponent("请检查邮箱格式和必填字段。")}`);
 
   const exists = await prisma.user.findUnique({ where: { email: parsed.data.email } });
-  if (exists) redirect("/auth/register?error=Email%20already%20exists");
+  if (exists) redirect(`/auth/register?error=${encodeURIComponent("该邮箱已经注册，请直接登录。")}`);
 
-  const user = await prisma.user.create({
-    data: {
-      email: parsed.data.email,
-      passwordHash: await hashPassword(parsed.data.password),
-      role: parsed.data.role as UserRole,
-      status: UserStatus.ACTIVE,
-      brandProfile:
-        parsed.data.role === "BRAND"
-          ? {
-              create: {
-                brandName: parsed.data.name,
-                companyName: parsed.data.name,
-                contactName: parsed.data.name,
-                email: parsed.data.email,
-                industry: parsed.data.industry || "General",
-                country: parsed.data.country,
-                description: "New brand profile pending review.",
-                reviewStatus: ReviewStatus.PENDING,
-              },
-            }
-          : undefined,
-      creatorProfile:
-        parsed.data.role === "CREATOR"
-          ? {
-              create: {
-                displayName: parsed.data.name,
-                email: parsed.data.email,
-                country: parsed.data.country,
-                languages: ["English"],
-                categories: [],
-                contentTypes: [],
-                reviewStatus: ReviewStatus.PENDING,
-                wallet: { create: { currency: "USD" } },
-              },
-            }
-          : undefined,
-    },
+  const invitation = parsed.data.inviteCode ? await findActiveInvitation(parsed.data.inviteCode, prisma) : null;
+  if (parsed.data.inviteCode && (!invitation || !invitation.active)) {
+    redirect(registerErrorPath("邀请码无效或已停用，请检查后重试；没有邀请码可移除 URL 中的 invite 参数后继续注册。"));
+  }
+
+  const user = await prisma.$transaction(async (tx) => {
+    const created = await tx.user.create({
+      data: {
+        email: parsed.data.email,
+        passwordHash: await hashPassword(parsed.data.password),
+        role: parsed.data.role as UserRole,
+        status: UserStatus.ACTIVE,
+        brandProfile:
+          parsed.data.role === "BRAND"
+            ? {
+                create: {
+                  brandName: parsed.data.name,
+                  companyName: parsed.data.name,
+                  contactName: parsed.data.name,
+                  email: parsed.data.email,
+                  industry: parsed.data.industry || "General",
+                  country: parsed.data.country,
+                  description: "New brand profile pending review.",
+                  reviewStatus: ReviewStatus.PENDING,
+                  responsibleAdminId: invitation?.adminProfileId,
+                },
+              }
+            : undefined,
+        creatorProfile:
+          parsed.data.role === "CREATOR"
+            ? {
+                create: {
+                  displayName: parsed.data.name,
+                  email: parsed.data.email,
+                  country: parsed.data.country,
+                  languages: ["中文"],
+                  categories: [],
+                  contentTypes: [],
+                  reviewStatus: ReviewStatus.PENDING,
+                  responsibleAdminId: invitation?.adminProfileId,
+                  wallet: { create: { currency: "CNY" } },
+                },
+              }
+            : undefined,
+      },
+    });
+
+    if (invitation) {
+      await tx.invitationAttribution.create({
+        data: {
+          userId: created.id,
+          invitationCodeId: invitation.id,
+          codeSnapshot: invitation.code,
+          invitedByAdminId: invitation.adminProfileId,
+        },
+      });
+      await tx.notification.create({
+        data: {
+          userId: invitation.adminProfile.userId,
+          title: parsed.data.role === "BRAND" ? "新品牌方通过你的邀请码注册" : "新创作者通过你的邀请码注册",
+          body: `${parsed.data.name} (${parsed.data.email}) 使用邀请码 ${invitation.code} 完成注册。`,
+          href: "/admin/invitations",
+        },
+      });
+    }
+    return created;
   });
 
   await audit({
     action: "auth.register",
     entityType: "user",
     entityId: user.id,
-    afterJson: { role: user.role, email: user.email },
+    afterJson: { role: user.role, email: user.email, inviteCode: invitation?.code },
   });
   await createSession(user);
   redirect(roleHome(user.role));
@@ -196,7 +503,7 @@ export async function updateBrandProfileAction(formData: FormData) {
     logoUrl: uploadedLogo || text(formData.get("logoUrl")),
     description: text(formData.get("description")),
   });
-  if (!parsed.success) redirect("/brand/profile?error=请检查品牌资料必填项");
+  if (!parsed.success) redirect("/brand/profile?error=璇锋鏌ュ搧鐗岃祫鏂欏繀濉」");
 
   await prisma.$transaction(async (tx) => {
     await tx.brandProfile.update({
@@ -471,25 +778,49 @@ export async function createAdminStaffAction(formData: FormData) {
   if (!parsed.success) redirect("/admin/staff?error=Invalid%20staff%20form");
 
   const permissions = formData.getAll("permissions").map(String).filter((permission) => ADMIN_PERMISSIONS.includes(permission as never));
-  const user = await prisma.user.create({
-    data: {
-      email: parsed.data.email,
-      passwordHash: await hashPassword(parsed.data.password),
-      role: UserRole.ADMIN,
-      status: UserStatus.ACTIVE,
-      adminProfile: {
-        create: {
-          displayName: parsed.data.displayName,
-          level: parsed.data.level,
-          permissions: parsed.data.level === AdminLevel.FOUNDER ? [...ADMIN_PERMISSIONS] : permissions,
-          dataScope: parsed.data.dataScope,
-          teamName: parsed.data.teamName || null,
-          wechat: parsed.data.wechat || null,
-          createdById: context.userId,
+  const inviteCodeInput = normalizeInviteCode(text(formData.get("inviteCode")));
+  const inviteActive = formData.get("inviteActive") === "on";
+  const inviteNote = text(formData.get("inviteNote"));
+
+  let user;
+  try {
+    user = await prisma.$transaction(async (tx) => {
+      const created = await tx.user.create({
+        data: {
+          email: parsed.data.email,
+          passwordHash: await hashPassword(parsed.data.password),
+          role: UserRole.ADMIN,
+          status: UserStatus.ACTIVE,
+          adminProfile: {
+            create: {
+              displayName: parsed.data.displayName,
+              level: parsed.data.level,
+              permissions: parsed.data.level === AdminLevel.FOUNDER ? [...ADMIN_PERMISSIONS] : permissions,
+              dataScope: parsed.data.dataScope,
+              teamName: parsed.data.teamName || null,
+              wechat: parsed.data.wechat || null,
+              createdById: context.userId,
+            },
+          },
         },
-      },
-    },
-  });
+        include: { adminProfile: true },
+      });
+      if (created.adminProfile && parsed.data.level === AdminLevel.STAFF) {
+        await applyInviteCodeChange({
+          db: tx,
+          adminProfileId: created.adminProfile.id,
+          code: inviteCodeInput || (await generateUniqueInviteCode(tx)),
+          active: inviteActive,
+          note: inviteNote,
+          createdById: context.userId,
+        });
+      }
+      return created;
+    });
+  } catch (error) {
+    if (error instanceof Error) redirect(`/admin/staff?error=${encodeURIComponent(error.message)}`);
+    throw error;
+  }
 
   await audit({
     action: "admin_staff.created",
@@ -511,39 +842,67 @@ export async function updateAdminStaffAction(adminProfileId: string, formData: F
   const status = text(formData.get("status")) as UserStatus;
   const password = text(formData.get("password"));
   const permissions = formData.getAll("permissions").map(String).filter((permission) => ADMIN_PERMISSIONS.includes(permission as never));
+  const inviteCodeInput = normalizeInviteCode(text(formData.get("inviteCode")));
+  const inviteActive = formData.get("inviteActive") === "on";
+  const inviteNote = text(formData.get("inviteNote"));
 
-  await prisma.$transaction(async (tx) => {
-    await tx.adminProfile.update({
-      where: { id: adminProfileId },
-      data: {
-        displayName: text(formData.get("displayName")) || before.displayName,
-        level,
-        dataScope,
-        teamName: text(formData.get("teamName")) || null,
-        wechat: text(formData.get("wechat")) || null,
-        permissions: level === AdminLevel.FOUNDER ? [...ADMIN_PERMISSIONS] : permissions,
-      },
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.adminProfile.update({
+        where: { id: adminProfileId },
+        data: {
+          displayName: text(formData.get("displayName")) || before.displayName,
+          level,
+          dataScope,
+          teamName: text(formData.get("teamName")) || null,
+          wechat: text(formData.get("wechat")) || null,
+          permissions: level === AdminLevel.FOUNDER ? [...ADMIN_PERMISSIONS] : permissions,
+        },
+      });
+      await tx.user.update({
+        where: { id: before.userId },
+        data: {
+          status: status || before.user.status,
+          passwordHash: password.length >= 8 ? await hashPassword(password) : undefined,
+        },
+      });
+      if (inviteCodeInput) {
+        await applyInviteCodeChange({
+          db: tx,
+          adminProfileId,
+          code: inviteCodeInput,
+          active: inviteActive,
+          note: inviteNote,
+          createdById: context.userId,
+        });
+      } else if (before.level === AdminLevel.FOUNDER && level === AdminLevel.STAFF) {
+        await ensureStaffInviteCode({ db: tx, adminProfileId, createdById: context.userId });
+      }
+      await applyAdminLevelInviteRules({
+        db: tx,
+        adminProfileId,
+        previousLevel: before.level,
+        nextLevel: level,
+        createdById: context.userId,
+      });
+      await tx.auditLog.create({
+        data: {
+          actorUserId: context.userId,
+          actorRole: context.role,
+          action: password.length >= 8 ? "admin_staff.updated_and_password_reset" : "admin_staff.updated",
+          entityType: "admin_user",
+          entityId: before.userId,
+          beforeJson: { status: before.user.status, level: before.level, dataScope: before.dataScope, permissions: before.permissions },
+          afterJson: { status, level, dataScope, permissions, wechat: text(formData.get("wechat")), inviteCode: inviteCodeInput || null, inviteActive },
+        },
+      });
     });
-    await tx.user.update({
-      where: { id: before.userId },
-      data: {
-        status: status || before.user.status,
-        passwordHash: password.length >= 8 ? await hashPassword(password) : undefined,
-      },
-    });
-    await tx.auditLog.create({
-      data: {
-        actorUserId: context.userId,
-        actorRole: context.role,
-        action: password.length >= 8 ? "admin_staff.updated_and_password_reset" : "admin_staff.updated",
-        entityType: "admin_user",
-        entityId: before.userId,
-        beforeJson: { status: before.user.status, level: before.level, dataScope: before.dataScope, permissions: before.permissions },
-        afterJson: { status, level, dataScope, permissions, wechat: text(formData.get("wechat")) },
-      },
-    });
-  });
+  } catch (error) {
+    if (error instanceof Error) redirect(`/admin/staff?error=${encodeURIComponent(error.message)}`);
+    throw error;
+  }
   revalidatePath("/admin/staff");
+  revalidatePath("/admin/invitations");
 }
 
 const adminCreatedBrandSchema = z.object({
@@ -647,7 +1006,7 @@ export async function createCreatorAccountAction(formData: FormData) {
           level: (text(formData.get("level")) as CreatorLevel) || CreatorLevel.NEW,
           responsibleAdminId,
           isDemo,
-          wallet: { create: { currency: text(formData.get("currency")) || "USD" } },
+          wallet: { create: { currency: text(formData.get("currency")) || "CNY" } },
         },
       },
     },
@@ -702,14 +1061,14 @@ export async function generateDemoDataAction() {
             displayName: `演示创作者 ${suffix}`,
             email: `demo-creator-${suffix}@test.com`,
             country: "新加坡",
-            languages: ["中文", "英语"],
+            languages: ["中文", "英文"],
             categories: ["AI", "SaaS"],
             contentTypes: ["短视频"],
             reviewStatus: ReviewStatus.APPROVED,
             level: CreatorLevel.PRO,
             responsibleAdminId: context.profile.id,
             isDemo: true,
-            wallet: { create: { currency: "USD" } },
+            wallet: { create: { currency: "CNY" } },
             socialAccounts: {
               create: {
                 platform: "TikTok",
@@ -737,17 +1096,17 @@ export async function generateDemoDataAction() {
         productName: "演示 AI 工具",
         industry: "AI 工具",
         description: "内部演示 Campaign，不计入真实运营统计。",
-        objective: "注册",
+        objective: "娉ㄥ唽",
         targetPlatforms: ["TikTok", "YouTube Shorts"],
         targetCountries: ["新加坡", "美国"],
-        targetLanguages: ["中文", "英语"],
+        targetLanguages: ["中文", "英文"],
         startDate: new Date(),
         endDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
         totalBudget: 12000,
         creatorBudget: 7800,
         platformFee: 4200,
         baseReward: 260,
-        brief: "展示演示 AI 工具如何帮助团队把创作者投放流程跑通，避免夸大承诺。",
+        brief: "展示演示 AI 工具如何帮助团队跑通创作者投放流程，避免夸大承诺。",
         mustInclude: ["AI 工具", "人工审核", "数据回传"],
         mustNotInclude: ["保证收益", "零风险收入"],
         hashtags: ["#AIWorkflow", "#CreatorCampaign"],
@@ -837,7 +1196,7 @@ export async function generateDemoDataAction() {
         creatorId: creatorUser.creatorProfile!.id,
         type: WalletTxType.EARNING,
         amount: 260,
-        currency: "USD",
+        currency: "CNY",
         status: WalletTxStatus.APPROVED,
         relatedSubmissionId: submission.id,
         isDemo: true,
@@ -853,11 +1212,11 @@ export async function generateDemoDataAction() {
 
 const campaignSchema = z.object({
   title: z.string().min(3),
-  productName: z.string().optional(),
+  productName: z.string().min(1),
   landingUrl: z.string().optional(),
   industry: z.string().min(2),
   objective: z.string().min(1),
-  targetPlatforms: z.array(z.string()).min(1),
+  targetPlatforms: z.array(z.string()).default([]),
   targetCountries: z.array(z.string()).min(1),
   targetLanguages: z.array(z.string()).min(1),
   startDate: z.coerce.date(),
@@ -873,11 +1232,56 @@ const campaignSchema = z.object({
   hashtags: z.array(z.string()),
   cta: z.string().min(3),
   slotsTotal: z.coerce.number().int().positive(),
+  escrowAmount: z.coerce.number().positive(),
+  requiresDraftReview: z.boolean(),
+  acceptanceSlaDays: z.coerce.number().int().positive(),
+  highValueReviewThreshold: z.coerce.number().positive(),
+  resubmissionGraceDays: z.coerce.number().int().min(0),
 });
+
+const campaignTaskInputSchema = z.object({
+  platform: z.string().min(1),
+  contentType: z.string().min(1),
+  slotsTotal: z.coerce.number().int().positive(),
+  rewardAmount: z.coerce.number().positive(),
+  minimumFollowers: z.coerce.number().int().min(0),
+  draftDeadline: z.string().optional(),
+  publishDeadline: z.string().min(1),
+  platformRequirement: z.string().optional(),
+});
+
+function parseCampaignTaskInputs(formData: FormData) {
+  const platforms = formData.getAll("taskPlatform").map((value) => text(value));
+  const contentTypes = formData.getAll("taskContentType").map((value) => text(value));
+  const slots = formData.getAll("taskSlotsTotal").map((value) => text(value));
+  const rewards = formData.getAll("taskRewardAmount").map((value) => text(value));
+  const followers = formData.getAll("taskMinimumFollowers").map((value) => text(value));
+  const draftDeadlines = formData.getAll("taskDraftDeadline").map((value) => text(value));
+  const publishDeadlines = formData.getAll("taskPublishDeadline").map((value) => text(value));
+  const requirements = formData.getAll("taskPlatformRequirement").map((value) => text(value));
+
+  return platforms
+    .map((platform, index) =>
+      campaignTaskInputSchema.parse({
+        platform,
+        contentType: contentTypes[index],
+        slotsTotal: slots[index],
+        rewardAmount: rewards[index],
+        minimumFollowers: followers[index] || 0,
+        draftDeadline: draftDeadlines[index],
+        publishDeadline: publishDeadlines[index],
+        platformRequirement: requirements[index],
+      }),
+    )
+    .filter((task) => task.platform);
+}
 
 export async function createCampaignAction(formData: FormData) {
   const session = await requireRole(UserRole.BRAND);
-  const brand = await prisma.brandProfile.findUnique({ where: { userId: session.userId }, include: { user: true } });
+  const [brand, settings] = await Promise.all([
+    prisma.brandProfile.findUnique({ where: { userId: session.userId }, include: { user: true } }),
+    prisma.platformSettings.upsert({ where: { id: "platform" }, update: {}, create: { id: "platform" } }),
+  ]);
   if (!brand) redirect("/brand/profile");
   if (brand.reviewStatus === ReviewStatus.FROZEN || brand.user.status === UserStatus.FROZEN) redirect("/403");
 
@@ -903,26 +1307,154 @@ export async function createCampaignAction(formData: FormData) {
     hashtags: csv(formData.get("hashtags")),
     cta: text(formData.get("cta")),
     slotsTotal: text(formData.get("slotsTotal")),
+    escrowAmount: text(formData.get("escrowAmount")),
+    requiresDraftReview: formData.get("requiresDraftReview") === "on",
+    acceptanceSlaDays: text(formData.get("acceptanceSlaDays")) || 3,
+    highValueReviewThreshold: text(formData.get("highValueReviewThreshold")) || 50,
+    resubmissionGraceDays: text(formData.get("resubmissionGraceDays")) || 2,
   });
-  if (!parsed.success) redirect("/brand/campaigns/new?error=Validation%20failed");
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    const field = issue?.path.join(".") || "表单";
+    redirect(`/brand/campaigns/new?error=${encodeURIComponent(`${field} 校验失败：${issue?.message ?? "请检查必填项"}`)}`);
+  }
+
+  let taskInputs: ReturnType<typeof parseCampaignTaskInputs>;
+  try {
+    taskInputs = parseCampaignTaskInputs(formData);
+  } catch {
+    redirect(`/brand/campaigns/new?error=${encodeURIComponent("平台任务配置不完整，请检查平台、人数、奖励和发布截止时间。")}`);
+  }
+  if (!taskInputs.length) redirect(`/brand/campaigns/new?error=${encodeURIComponent("至少需要配置一个平台任务。")}`);
+
+  const calculatedEscrow = taskInputs.reduce((sum, task) => sum + task.slotsTotal * task.rewardAmount, 0);
+  const platformFeeRate = Number(settings.platformFeeRate);
+  const platformFeeAmount = Math.round(calculatedEscrow * platformFeeRate * 100) / 100;
+  const totalCampaignBudget = calculatedEscrow + platformFeeAmount;
+  if (calculatedEscrow <= 0) redirect(`/brand/campaigns/new?error=${encodeURIComponent("托管金额必须大于 0。")}`);
 
   const intent = text(formData.get("intent"));
-  const campaign = await prisma.campaign.create({
-    data: {
-      ...parsed.data,
-      brandId: brand.id,
-      isDemo: brand.isDemo,
-      description: parsed.data.brief.slice(0, 240),
-      targetAudience: text(formData.get("targetAudience")),
-      disclosureRequired: formData.get("disclosureRequired") === "on",
-      maxPerCreator: Number(text(formData.get("maxPerCreator")) || 1),
-      status: intent === "submit" ? CampaignStatus.PENDING_REVIEW : CampaignStatus.DRAFT,
-      bonusRules: {
-        views: text(formData.get("viewsBonus")),
-        clicks: text(formData.get("clicksBonus")),
-        conversions: text(formData.get("conversionBonus")),
+  const shouldSubmit = intent === "submit";
+  const hasEnoughBalance = Number(brand.budgetBalance) >= totalCampaignBudget;
+  const campaignStatus = !shouldSubmit ? CampaignStatus.DRAFT : hasEnoughBalance ? CampaignStatus.PENDING_REVIEW : CampaignStatus.AWAITING_PAYMENT;
+  const paymentReference = text(formData.get("paymentReference"));
+  const paymentProof = formData.get("paymentProof");
+  const paymentProofFile = paymentProof instanceof File && paymentProof.size > 0 ? paymentProof : null;
+  if (shouldSubmit && !hasEnoughBalance && (!paymentReference || !paymentProofFile)) {
+    redirect(`/brand/campaigns/new?error=${encodeURIComponent("按单付款需要上传付款截图并填写交易订单号。")}`);
+  }
+  if (paymentProofFile && paymentProofFile.size > PAYMENT_PROOF_MAX_BYTES) {
+    redirect(`/brand/campaigns/new?error=${encodeURIComponent("付款截图不能超过 8MB，请压缩后重新上传。")}`);
+  }
+  const uploadedPaymentProof = paymentProofFile ? await saveUploadedFile(paymentProofFile, "campaign-payment-proofs") : null;
+
+  const campaign = await prisma.$transaction(async (tx) => {
+    const created = await tx.campaign.create({
+      data: {
+        ...parsed.data,
+        totalBudget: totalCampaignBudget,
+        creatorBudget: calculatedEscrow,
+        platformFee: platformFeeAmount,
+        platformFeeRate,
+        escrowAmount: totalCampaignBudget,
+        escrowFrozenAmount: shouldSubmit && hasEnoughBalance ? totalCampaignBudget : 0,
+        escrowReleasedAmount: 0,
+        currency: "CNY",
+        baseReward: taskInputs[0]?.rewardAmount ?? parsed.data.baseReward,
+        targetPlatforms: [...new Set(taskInputs.map((task) => task.platform))],
+        targetCountries: parsed.data.targetCountries,
+        targetLanguages: parsed.data.targetLanguages,
+        brandId: brand.id,
+        isDemo: brand.isDemo,
+        description: parsed.data.brief.slice(0, 240),
+        targetAudience: text(formData.get("targetAudience")),
+        disclosureRequired: true,
+        requiresDraftReview: parsed.data.requiresDraftReview,
+        revisionLimit: 2,
+        acceptanceSlaDays: parsed.data.acceptanceSlaDays,
+        highValueReviewThreshold: settings.highValueReviewThreshold,
+        resubmissionGraceDays: parsed.data.resubmissionGraceDays,
+        maxPerCreator: 1,
+        allowUnverifiedSocialAccounts: formData.get("allowUnverifiedSocialAccounts") === "on",
+        status: campaignStatus,
+        bonusRules: { v1: "fixed_reward_only" },
+        tasks: {
+          create: taskInputs.map((task) => ({
+            title: `${task.platform} ${task.contentType}`,
+            platform: task.platform,
+            contentType: task.contentType,
+            platformRequirement: task.platformRequirement || null,
+            minimumFollowers: task.minimumFollowers,
+            rewardAmount: task.rewardAmount,
+            slotsTotal: task.slotsTotal,
+            creatorLevelRequired: CreatorLevel.NEW,
+            deadline: new Date(task.publishDeadline),
+            draftDeadline: task.draftDeadline ? new Date(task.draftDeadline) : null,
+            publishDeadline: new Date(task.publishDeadline),
+            status: TaskStatus.ACTIVE,
+          })),
+        },
       },
-    },
+    });
+
+    if (shouldSubmit && hasEnoughBalance) {
+      await tx.brandProfile.update({
+        where: { id: brand.id },
+        data: {
+          budgetBalance: { decrement: totalCampaignBudget },
+          frozenEscrowBalance: { increment: totalCampaignBudget },
+        },
+      });
+      await tx.brandLedgerTransaction.create({
+        data: {
+          brandId: brand.id,
+          campaignId: created.id,
+          type: BrandLedgerTxType.ESCROW_FREEZE,
+          amount: totalCampaignBudget,
+          currency: "CNY",
+          status: BrandLedgerTxStatus.CONFIRMED,
+          beforeBalance: brand.budgetBalance,
+          afterBalance: Number(brand.budgetBalance) - totalCampaignBudget,
+          createdById: session.userId,
+          note: "Campaign submitted with sufficient merchant balance; reward budget and estimated platform fee frozen automatically.",
+        },
+      });
+    }
+
+    if (shouldSubmit && !hasEnoughBalance) {
+      const shortId = created.id.slice(-8).toUpperCase();
+      await tx.invoice.create({
+        data: {
+          brandId: brand.id,
+          campaignId: created.id,
+          invoiceNumber: `PAY-${shortId}`,
+          amount: Math.max(0, totalCampaignBudget - Number(brand.budgetBalance)),
+          currency: "CNY",
+          status: uploadedPaymentProof ? "PAYMENT_SUBMITTED" : "OPEN",
+          paymentMethod: "人工转账",
+          paymentProofUrl: uploadedPaymentProof,
+          paymentReference,
+          note: "V1 campaign escrow payment order. Admin confirmation required before activation.",
+          isDemo: brand.isDemo,
+        },
+      });
+      await tx.brandLedgerTransaction.create({
+        data: {
+          brandId: brand.id,
+          campaignId: created.id,
+          type: BrandLedgerTxType.PAYMENT,
+          amount: Math.max(0, totalCampaignBudget - Number(brand.budgetBalance)),
+          currency: "CNY",
+          status: BrandLedgerTxStatus.PENDING,
+          beforeBalance: brand.budgetBalance,
+          afterBalance: brand.budgetBalance,
+          createdById: session.userId,
+          note: paymentReference ? `Campaign payment submitted by merchant. Reference: ${paymentReference}` : "Campaign awaiting merchant payment proof.",
+        },
+      });
+    }
+
+    return created;
   });
 
   const files = formData.getAll("assetFiles").filter((file): file is File => file instanceof File && file.size > 0);
@@ -937,10 +1469,18 @@ export async function createCampaignAction(formData: FormData) {
   if (assetData.length) await prisma.campaignAsset.createMany({ data: assetData });
 
   await audit({
-    action: intent === "submit" ? "campaign.submitted" : "campaign.draft_created",
+    action: shouldSubmit ? "campaign.submitted" : "campaign.draft_created",
     entityType: "campaign",
     entityId: campaign.id,
-    afterJson: { status: campaign.status, title: campaign.title },
+    afterJson: {
+      status: campaign.status,
+      title: campaign.title,
+      escrowAmount: totalCampaignBudget,
+      creatorBudget: calculatedEscrow,
+      platformFeeAmount,
+      platformFeeRate,
+      tasks: taskInputs.length,
+    },
   });
   redirect(`/brand/campaigns/${campaign.id}`);
 }
@@ -950,13 +1490,79 @@ export async function submitExistingCampaignAction(campaignId: string) {
   const campaign = await prisma.campaign.findUnique({ where: { id: campaignId }, include: { brand: true } });
   if (!campaign || campaign.brand.userId !== session.userId) redirect("/403");
   if (campaign.status !== CampaignStatus.DRAFT) redirect(`/brand/campaigns/${campaignId}`);
-  await prisma.campaign.update({ where: { id: campaignId }, data: { status: CampaignStatus.PENDING_REVIEW } });
+  const requiredEscrow = Math.max(0, Number(campaign.escrowAmount) - Number(campaign.escrowFrozenAmount));
+  const hasEnoughBalance = Number(campaign.brand.budgetBalance) >= requiredEscrow;
+  await prisma.$transaction(async (tx) => {
+    if (hasEnoughBalance) {
+      if (requiredEscrow > 0) {
+        await tx.brandProfile.update({
+          where: { id: campaign.brandId },
+          data: {
+            budgetBalance: { decrement: requiredEscrow },
+            frozenEscrowBalance: { increment: requiredEscrow },
+          },
+        });
+        await tx.brandLedgerTransaction.create({
+          data: {
+            brandId: campaign.brandId,
+            campaignId,
+            type: BrandLedgerTxType.ESCROW_FREEZE,
+            amount: requiredEscrow,
+            currency: campaign.currency,
+            status: BrandLedgerTxStatus.CONFIRMED,
+            beforeBalance: campaign.brand.budgetBalance,
+            afterBalance: Number(campaign.brand.budgetBalance) - requiredEscrow,
+            createdById: session.userId,
+            note: "Draft campaign submitted; escrow frozen from merchant balance.",
+          },
+        });
+      }
+      await tx.campaign.update({
+        where: { id: campaignId },
+        data: {
+          status: CampaignStatus.PENDING_REVIEW,
+          escrowFrozenAmount: { increment: requiredEscrow },
+        },
+      });
+    } else {
+      await tx.campaign.update({
+        where: { id: campaignId },
+        data: { status: CampaignStatus.AWAITING_PAYMENT },
+      });
+      await tx.invoice.create({
+        data: {
+          brandId: campaign.brandId,
+          campaignId,
+          invoiceNumber: `PAY-${campaign.id.slice(-8).toUpperCase()}`,
+          amount: Math.max(0, requiredEscrow - Number(campaign.brand.budgetBalance)),
+          currency: campaign.currency,
+          status: "OPEN",
+          note: "Campaign escrow payment order generated from draft submission.",
+          isDemo: campaign.isDemo,
+        },
+      });
+      await tx.brandLedgerTransaction.create({
+        data: {
+          brandId: campaign.brandId,
+          campaignId,
+          type: BrandLedgerTxType.PAYMENT,
+          amount: Math.max(0, requiredEscrow - Number(campaign.brand.budgetBalance)),
+          currency: campaign.currency,
+          status: BrandLedgerTxStatus.PENDING,
+          beforeBalance: campaign.brand.budgetBalance,
+          afterBalance: campaign.brand.budgetBalance,
+          createdById: session.userId,
+          note: "Draft campaign submitted with insufficient balance; awaiting payment.",
+        },
+      });
+    }
+  });
   await audit({
     action: "campaign.submitted",
     entityType: "campaign",
     entityId: campaignId,
     beforeJson: { status: CampaignStatus.DRAFT },
-    afterJson: { status: CampaignStatus.PENDING_REVIEW },
+    afterJson: { status: hasEnoughBalance ? CampaignStatus.PENDING_REVIEW : CampaignStatus.AWAITING_PAYMENT, requiredEscrow },
   });
   redirect(`/brand/campaigns/${campaignId}`);
 }
@@ -968,6 +1574,12 @@ const brandInvoiceSchema = z.object({
   campaignId: z.string().optional(),
 });
 
+const brandRefundSchema = z.object({
+  amount: z.coerce.number().positive(),
+  payoutMethod: z.string().min(1),
+  payoutDetails: z.string().min(3),
+});
+
 export async function requestBrandInvoiceAction(formData: FormData) {
   const session = await requireRole(UserRole.BRAND);
   const brand = await prisma.brandProfile.findUnique({
@@ -977,7 +1589,7 @@ export async function requestBrandInvoiceAction(formData: FormData) {
   if (!brand) redirect("/brand/billing");
   const parsed = brandInvoiceSchema.safeParse({
     amount: text(formData.get("amount")),
-    currency: text(formData.get("currency")) || "USD",
+    currency: text(formData.get("currency")) || "CNY",
     note: text(formData.get("note")),
     campaignId: text(formData.get("campaignId")),
   });
@@ -1002,7 +1614,7 @@ export async function requestBrandInvoiceAction(formData: FormData) {
         data: {
           userId: brand.responsibleAdmin.userId,
           title: "品牌提交了发票/预算申请",
-          body: `${brand.brandName} 申请 ${parsed.data.currency} ${parsed.data.amount}`,
+          body: `${brand.brandName} 鐢宠 ${parsed.data.currency} ${parsed.data.amount}`,
           href: "/admin/payments",
         },
       });
@@ -1028,9 +1640,13 @@ export async function submitInvoicePaymentAction(invoiceId: string, formData: Fo
   if (!invoice || invoice.status === "PAID" || invoice.status === "VOID") redirect("/brand/billing");
 
   const proof = formData.get("paymentProof");
-  const uploadedProof = proof instanceof File && proof.size > 0 ? await saveUploadedFile(proof, `invoices/${invoice.id}`) : null;
+  const proofFile = proof instanceof File && proof.size > 0 ? proof : null;
+  if (proofFile && proofFile.size > PAYMENT_PROOF_MAX_BYTES) redirect("/brand/billing?error=付款截图不能超过 8MB，请压缩后重新上传");
+  const uploadedProof = proofFile ? await saveUploadedFile(proofFile, `invoices/${invoice.id}`) : null;
   const method = text(formData.get("paymentMethod")) || "Bank transfer";
+  const paymentReference = text(formData.get("paymentReference"));
   const paymentProofUrl = uploadedProof || text(formData.get("paymentProofUrl"));
+  if (!paymentReference || !paymentProofUrl) redirect("/brand/billing?error=请上传付款截图并填写交易订单号");
 
   await prisma.$transaction(async (tx) => {
     await tx.invoice.update({
@@ -1039,6 +1655,7 @@ export async function submitInvoicePaymentAction(invoiceId: string, formData: Fo
         status: "PAYMENT_SUBMITTED",
         paymentMethod: method,
         paymentProofUrl: paymentProofUrl || null,
+        paymentReference,
       },
     });
     await tx.auditLog.create({
@@ -1049,7 +1666,7 @@ export async function submitInvoicePaymentAction(invoiceId: string, formData: Fo
         entityType: "invoice",
         entityId: invoice.id,
         beforeJson: { status: invoice.status },
-        afterJson: { status: "PAYMENT_SUBMITTED", paymentMethod: method },
+        afterJson: { status: "PAYMENT_SUBMITTED", paymentMethod: method, paymentReference },
       },
     });
   });
@@ -1060,7 +1677,7 @@ export async function updateInvoiceStatusAction(invoiceId: string, formData: For
   const session = await requireAdminPermission("payment.manage");
   const action = text(formData.get("action"));
   const note = text(formData.get("note"));
-  const invoice = await prisma.invoice.findUnique({ where: { id: invoiceId }, include: { brand: true } });
+  const invoice = await prisma.invoice.findUnique({ where: { id: invoiceId }, include: { brand: true, campaign: true } });
   if (!invoice) redirect("/admin/payments");
 
   const invoiceNumber = invoice.invoiceNumber || `INV-${new Date().getFullYear()}-${invoice.id.slice(-6).toUpperCase()}`;
@@ -1084,10 +1701,71 @@ export async function updateInvoiceStatusAction(invoiceId: string, formData: For
       },
     });
     if (nextStatus === "PAID" && invoice.status !== "PAID") {
+      const beforeBalance = Number(invoice.brand.budgetBalance);
+      const afterPaymentBalance = beforeBalance + Number(invoice.amount);
       await tx.brandProfile.update({
         where: { id: invoice.brandId },
         data: { budgetBalance: { increment: invoice.amount } },
       });
+      await tx.brandLedgerTransaction.updateMany({
+        where: {
+          brandId: invoice.brandId,
+          campaignId: invoice.campaignId,
+          type: BrandLedgerTxType.PAYMENT,
+          status: BrandLedgerTxStatus.PENDING,
+        },
+        data: { status: BrandLedgerTxStatus.CONFIRMED, note: "Payment confirmed by Admin." },
+      });
+      await tx.brandLedgerTransaction.create({
+        data: {
+          brandId: invoice.brandId,
+          campaignId: invoice.campaignId,
+          type: BrandLedgerTxType.PAYMENT,
+          amount: invoice.amount,
+          currency: invoice.currency,
+          status: BrandLedgerTxStatus.CONFIRMED,
+          beforeBalance,
+          afterBalance: afterPaymentBalance,
+          relatedInvoiceId: invoice.id,
+          createdById: session.userId,
+          note: "Invoice payment confirmed and credited to merchant balance.",
+        },
+      });
+
+      if (invoice.campaign && invoice.campaign.status === CampaignStatus.AWAITING_PAYMENT) {
+        const requiredEscrow = Math.max(0, Number(invoice.campaign.escrowAmount) - Number(invoice.campaign.escrowFrozenAmount));
+        if (requiredEscrow > 0 && afterPaymentBalance >= requiredEscrow) {
+          await tx.brandProfile.update({
+            where: { id: invoice.brandId },
+            data: {
+              budgetBalance: { decrement: requiredEscrow },
+              frozenEscrowBalance: { increment: requiredEscrow },
+            },
+          });
+          await tx.campaign.update({
+            where: { id: invoice.campaign.id },
+            data: {
+              status: CampaignStatus.PENDING_REVIEW,
+              escrowFrozenAmount: { increment: requiredEscrow },
+            },
+          });
+          await tx.brandLedgerTransaction.create({
+            data: {
+              brandId: invoice.brandId,
+              campaignId: invoice.campaign.id,
+              type: BrandLedgerTxType.ESCROW_FREEZE,
+              amount: requiredEscrow,
+              currency: invoice.currency,
+              status: BrandLedgerTxStatus.CONFIRMED,
+              beforeBalance: afterPaymentBalance,
+              afterBalance: afterPaymentBalance - requiredEscrow,
+              relatedInvoiceId: invoice.id,
+              createdById: session.userId,
+              note: "Campaign escrow frozen after payment confirmation; campaign activated.",
+            },
+          });
+        }
+      }
     }
     await tx.auditLog.create({
       data: {
@@ -1103,15 +1781,140 @@ export async function updateInvoiceStatusAction(invoiceId: string, formData: For
   });
   revalidatePath("/admin/payments");
   revalidatePath(`/brand/billing`);
+  if (invoice.campaignId) revalidatePath(`/admin/campaigns/${invoice.campaignId}`);
+  revalidatePath("/admin/campaigns");
+}
+
+export async function requestBrandRefundAction(formData: FormData) {
+  const session = await requireRole(UserRole.BRAND);
+  const brand = await prisma.brandProfile.findUnique({ where: { userId: session.userId } });
+  if (!brand) redirect("/brand/billing");
+  const parsed = brandRefundSchema.safeParse({
+    amount: text(formData.get("amount")),
+    payoutMethod: text(formData.get("payoutMethod")),
+    payoutDetails: text(formData.get("payoutDetails")),
+  });
+  if (!parsed.success) redirect("/brand/billing?error=Invalid%20refund%20request");
+  if (parsed.data.amount > Number(brand.budgetBalance)) redirect("/brand/billing?error=Refund%20amount%20exceeds%20available%20balance");
+
+  await prisma.$transaction(async (tx) => {
+    const request = await tx.brandRefundRequest.create({
+      data: {
+        brandId: brand.id,
+        amount: parsed.data.amount,
+        currency: "CNY",
+        payoutMethod: parsed.data.payoutMethod,
+        payoutDetails: { value: parsed.data.payoutDetails },
+        isDemo: brand.isDemo,
+      },
+    });
+    await tx.brandLedgerTransaction.create({
+      data: {
+        brandId: brand.id,
+        type: BrandLedgerTxType.REFUND,
+        amount: parsed.data.amount,
+        currency: "CNY",
+        status: BrandLedgerTxStatus.PENDING,
+        beforeBalance: brand.budgetBalance,
+        afterBalance: brand.budgetBalance,
+        relatedRefundId: request.id,
+        createdById: session.userId,
+        note: "Merchant requested manual balance refund.",
+      },
+    });
+    await tx.auditLog.create({
+      data: {
+        actorUserId: session.userId,
+        actorRole: session.role,
+        action: "brand_refund.requested",
+        entityType: "brand_refund_request",
+        entityId: request.id,
+        afterJson: { amount: parsed.data.amount, currency: "CNY" },
+      },
+    });
+  });
+  redirect("/brand/billing?refund=1");
+}
+
+export async function updateBrandRefundAction(refundId: string, formData: FormData) {
+  const session = await requireAdminPermission("payment.manage");
+  const action = text(formData.get("action"));
+  const adminNote = text(formData.get("adminNote"));
+  const request = await prisma.brandRefundRequest.findUnique({ where: { id: refundId }, include: { brand: true } });
+  if (!request) redirect("/admin/payments");
+  if (request.status === BrandRefundStatus.PAID || request.status === BrandRefundStatus.REJECTED) redirect("/admin/payments");
+
+  await prisma.$transaction(async (tx) => {
+    if (action === "approve") {
+      await tx.brandRefundRequest.update({
+        where: { id: refundId },
+        data: { status: BrandRefundStatus.APPROVED, adminNote },
+      });
+    }
+    if (action === "paid") {
+      if (Number(request.amount) > Number(request.brand.budgetBalance)) redirect("/admin/payments");
+      await tx.brandRefundRequest.update({
+        where: { id: refundId },
+        data: { status: BrandRefundStatus.PAID, adminNote },
+      });
+      await tx.brandProfile.update({
+        where: { id: request.brandId },
+        data: { budgetBalance: { decrement: request.amount } },
+      });
+      await tx.brandLedgerTransaction.updateMany({
+        where: { relatedRefundId: refundId, type: BrandLedgerTxType.REFUND },
+        data: { status: BrandLedgerTxStatus.CONFIRMED, note: adminNote || "Merchant refund paid." },
+      });
+    }
+    if (action === "reject") {
+      await tx.brandRefundRequest.update({
+        where: { id: refundId },
+        data: { status: BrandRefundStatus.REJECTED, adminNote },
+      });
+      await tx.brandLedgerTransaction.updateMany({
+        where: { relatedRefundId: refundId, type: BrandLedgerTxType.REFUND },
+        data: { status: BrandLedgerTxStatus.REJECTED, note: adminNote || "Merchant refund rejected." },
+      });
+    }
+    await tx.auditLog.create({
+      data: {
+        actorUserId: session.userId,
+        actorRole: session.role,
+        action: `brand_refund.${action}`,
+        entityType: "brand_refund_request",
+        entityId: refundId,
+        beforeJson: { status: request.status, budgetBalance: String(request.brand.budgetBalance) },
+        afterJson: { action, adminNote },
+      },
+    });
+  });
+  revalidatePath("/admin/payments");
+  revalidatePath("/brand/billing");
 }
 
 export async function adminCampaignAction(campaignId: string, formData: FormData) {
-  await requireAdminPermission("campaign.manage");
+  const session = await requireAdminPermission("campaign.manage");
   const action = text(formData.get("action"));
   const reviewNote = text(formData.get("reviewNote"));
-  const before = await prisma.campaign.findUnique({ where: { id: campaignId } });
+  const before = await prisma.campaign.findUnique({
+    where: { id: campaignId },
+    include: {
+      brand: true,
+      tasks: { include: { applications: true } },
+      submissions: true,
+    },
+  });
   if (!before) redirect("/admin/campaigns");
-  if (action === "reject" && reviewNote.length < 3) redirect(`/admin/campaigns/${campaignId}?error=Reject%20reason%20required`);
+  if ((action === "reject" || action === "cancel") && reviewNote.length < 3) {
+    redirect(`/admin/campaigns/${campaignId}?error=${encodeURIComponent("拒绝或取消 Campaign 必须填写原因。")}`);
+  }
+  const fundingReady = Number(before.escrowFrozenAmount) >= Number(before.escrowAmount);
+  if (action === "approve" && !fundingReady) {
+    redirect(`/admin/campaigns/${campaignId}?error=${encodeURIComponent("请先确认资金到账并完成托管，再审核通过推广内容。")}`);
+  }
+  if (action === "approve" && before.status !== CampaignStatus.PENDING_REVIEW) {
+    redirect(`/admin/campaigns/${campaignId}?error=${encodeURIComponent("只有资金已确认且待审核的 Campaign 可以通过内容审核。")}`);
+  }
 
   const statusMap: Record<string, CampaignStatus> = {
     approve: CampaignStatus.ACTIVE,
@@ -1119,6 +1922,7 @@ export async function adminCampaignAction(campaignId: string, formData: FormData
     pause: CampaignStatus.PAUSED,
     resume: CampaignStatus.ACTIVE,
     complete: CampaignStatus.COMPLETED,
+    cancel: CampaignStatus.CANCELLED,
     archive: CampaignStatus.ARCHIVED,
   };
   const nextStatus = statusMap[action];
@@ -1126,12 +1930,41 @@ export async function adminCampaignAction(campaignId: string, formData: FormData
 
   await prisma.$transaction(async (tx) => {
     await tx.campaign.update({ where: { id: campaignId }, data: { status: nextStatus, reviewNote } });
+    if (action === "pause") {
+      await tx.campaignTask.updateMany({ where: { campaignId }, data: { status: TaskStatus.PAUSED } });
+    }
+    if (action === "resume") {
+      await tx.campaignTask.updateMany({ where: { campaignId }, data: { status: TaskStatus.ACTIVE } });
+    }
+    if (action === "complete") {
+      await tx.campaignTask.updateMany({ where: { campaignId }, data: { status: TaskStatus.CLOSED } });
+    }
+    if (action === "cancel") {
+      await tx.campaignTask.updateMany({ where: { campaignId }, data: { status: TaskStatus.CLOSED } });
+      await tx.taskApplication.updateMany({
+        where: {
+          task: { campaignId },
+          status: ApplicationStatus.APPLIED,
+        },
+        data: { status: ApplicationStatus.CANCELLED },
+      });
+    }
+    if (action === "complete" || action === "cancel" || action === "archive") {
+      await returnCampaignUnusedEscrow({
+        tx,
+        actorUserId: session.userId,
+        campaignId,
+        note: `Campaign ${action}; unused escrow returned to merchant available balance.`,
+      });
+    }
     await tx.auditLog.create({
       data: {
         action: "campaign.status_changed",
         entityType: "campaign",
         entityId: campaignId,
-        beforeJson: { status: before.status },
+        actorUserId: session.userId,
+        actorRole: session.role,
+        beforeJson: { status: before.status, escrowFrozenAmount: String(before.escrowFrozenAmount) },
         afterJson: { status: nextStatus, reviewNote },
       },
     });
@@ -1162,6 +1995,7 @@ export async function createCampaignTaskAction(campaignId: string, formData: For
 
 export async function applyTaskAction(taskId: string, formData: FormData) {
   const session = await requireRole(UserRole.CREATOR);
+  const selectedSocialAccountId = text(formData.get("selectedSocialAccountId"));
   const creator = await prisma.creatorProfile.findUnique({
     where: { userId: session.userId },
     include: { user: true, socialAccounts: true },
@@ -1175,6 +2009,19 @@ export async function applyTaskAction(taskId: string, formData: FormData) {
   if (!creator.displayName || !creator.country || creator.socialAccounts.length === 0) {
     redirect(`/creator/tasks/${taskId}?error=Complete%20profile%20and%20add%20a%20social%20account%20first`);
   }
+  const selectedAccount = creator.socialAccounts.find((account) => account.id === selectedSocialAccountId);
+  if (!selectedAccount) {
+    redirect(`/creator/tasks/${taskId}?error=${encodeURIComponent("请选择用于发布的社媒账号")}`);
+  }
+  if (!task.campaign.allowUnverifiedSocialAccounts && selectedAccount.verificationStatus !== SocialVerificationStatus.VERIFIED) {
+    redirect(`/creator/tasks/${taskId}?error=${encodeURIComponent("默认只有已验证社媒账号可以申请任务")}`);
+  }
+  if (selectedAccount.platform !== task.platform) {
+    redirect(`/creator/tasks/${taskId}?error=${encodeURIComponent("请选择与任务平台一致的已验证账号")}`);
+  }
+  if (selectedAccount.followers < task.minimumFollowers) {
+    redirect(`/creator/tasks/${taskId}?error=${encodeURIComponent("该账号粉丝数未达到任务最低要求")}`);
+  }
   if (!hasCreatorLevel(creator.level, task.creatorLevelRequired)) {
     redirect(`/creator/tasks/${taskId}?error=Creator%20level%20does%20not%20match`);
   }
@@ -1187,14 +2034,36 @@ export async function applyTaskAction(taskId: string, formData: FormData) {
     where: { taskId_creatorId: { taskId, creatorId: creator.id } },
   });
   if (existing) redirect(`/creator/my-tasks/${existing.id}`);
+  const existingCampaignApplication = await prisma.taskApplication.findFirst({
+    where: {
+      creatorId: creator.id,
+      task: { campaignId: task.campaignId },
+      status: { in: [ApplicationStatus.APPLIED, ApplicationStatus.APPROVED] },
+    },
+  });
+  if (existingCampaignApplication) {
+    redirect(`/creator/tasks/${taskId}?error=${encodeURIComponent("V1 默认同一 Campaign 每个 KOL 只能申请一个任务")}`);
+  }
 
   const application = await prisma.$transaction(async (tx) => {
     const app = await tx.taskApplication.create({
       data: {
         taskId,
         creatorId: creator.id,
+        selectedSocialAccountId: selectedAccount.id,
         status: ApplicationStatus.APPLIED,
         applicationNote: text(formData.get("applicationNote")) || "创作者已确认任务规则，等待品牌或平台审核。",
+        acceptedRequirementSnapshot: {
+          campaignId: task.campaignId,
+          taskId: task.id,
+          platform: task.platform,
+          contentType: task.contentType,
+          rewardAmount: String(task.rewardAmount),
+          minimumFollowers: task.minimumFollowers,
+          publishDeadline: task.publishDeadline?.toISOString() ?? task.deadline.toISOString(),
+          selectedSocialAccountId: selectedAccount.id,
+          selectedSocialAccountUrl: selectedAccount.accountUrl,
+        },
       },
     });
     await tx.auditLog.create({
@@ -1204,7 +2073,7 @@ export async function applyTaskAction(taskId: string, formData: FormData) {
         action: "task.applied",
         entityType: "task",
         entityId: taskId,
-        afterJson: { applicationId: app.id },
+        afterJson: { applicationId: app.id, selectedSocialAccountId: selectedAccount.id },
       },
     });
     return app;
@@ -1276,6 +2145,88 @@ export async function reviewTaskApplicationAction(applicationId: string, formDat
   revalidatePath(`/brand/campaigns/${application.task.campaignId}`);
 }
 
+export async function batchReviewTaskApplicationsAction(campaignId: string, formData: FormData) {
+  const session = await requireRole(UserRole.BRAND);
+  const decision = text(formData.get("decision")) as ApplicationStatus;
+  const note = text(formData.get("note")) || (decision === ApplicationStatus.APPROVED ? "商家批量通过申请。" : "商家批量拒绝申请。");
+  const applicationIds = formData.getAll("applicationIds").map((value) => text(value)).filter(Boolean);
+  if (!applicationIds.length) redirect(`/brand/campaigns/${campaignId}?error=${encodeURIComponent("请先勾选需要处理的申请")}`);
+  if (decision !== ApplicationStatus.APPROVED && decision !== ApplicationStatus.REJECTED) {
+    redirect(`/brand/campaigns/${campaignId}?error=${encodeURIComponent("批量审核决策无效")}`);
+  }
+
+  const campaign = await prisma.campaign.findFirst({
+    where: { id: campaignId, brand: { userId: session.userId } },
+    include: {
+      tasks: {
+        include: {
+          applications: {
+            where: { id: { in: applicationIds } },
+            include: { creator: { include: { user: true } } },
+          },
+        },
+      },
+    },
+  });
+  if (!campaign) redirect("/brand/campaigns");
+
+  const applications = campaign.tasks.flatMap((task) => task.applications.map((application) => ({ ...application, task })));
+  const actionable = applications.filter((application) => application.status === ApplicationStatus.APPLIED);
+  if (!actionable.length) redirect(`/brand/campaigns/${campaignId}?error=${encodeURIComponent("选中的申请没有可处理项")}`);
+
+  if (decision === ApplicationStatus.APPROVED) {
+    for (const task of campaign.tasks) {
+      const approvals = actionable.filter((application) => application.taskId === task.id).length;
+      const remaining = task.slotsTotal - task.slotsTaken;
+      if (approvals > remaining) {
+        redirect(`/brand/campaigns/${campaignId}?error=${encodeURIComponent(`${task.title} 剩余名额不足，无法批量通过`)}`);
+      }
+    }
+  }
+
+  await prisma.$transaction(async (tx) => {
+    for (const application of actionable) {
+      await tx.taskApplication.update({
+        where: { id: application.id },
+        data: {
+          status: decision,
+          approvedAt: decision === ApplicationStatus.APPROVED ? new Date() : null,
+          applicationNote: note,
+        },
+      });
+      await tx.notification.create({
+        data: {
+          userId: application.creator.userId,
+          title: `任务申请结果：${decision}`,
+          body: note,
+          href: `/creator/my-tasks/${application.id}`,
+        },
+      });
+      await tx.auditLog.create({
+        data: {
+          actorUserId: session.userId,
+          actorRole: session.role,
+          action: "task_application.batch_reviewed",
+          entityType: "task_application",
+          entityId: application.id,
+          beforeJson: { status: application.status },
+          afterJson: { status: decision, note, campaignId },
+        },
+      });
+    }
+    if (decision === ApplicationStatus.APPROVED) {
+      const counts = new Map<string, number>();
+      for (const application of actionable) counts.set(application.taskId, (counts.get(application.taskId) ?? 0) + 1);
+      for (const [taskId, count] of counts) {
+        await tx.campaignTask.update({ where: { id: taskId }, data: { slotsTaken: { increment: count } } });
+      }
+    }
+  });
+
+  revalidatePath(`/brand/campaigns/${campaignId}`);
+  redirect(`/brand/campaigns/${campaignId}?batch=${actionable.length}`);
+}
+
 async function getOwnedApplication(applicationId: string, userId: string) {
   return prisma.taskApplication.findFirst({
     where: { id: applicationId, creator: { userId } },
@@ -1283,20 +2234,35 @@ async function getOwnedApplication(applicationId: string, userId: string) {
       creator: { include: { user: true } },
       task: { include: { campaign: true } },
       drafts: { orderBy: { createdAt: "desc" }, take: 1 },
-      submissions: { orderBy: { createdAt: "desc" }, take: 1, include: { proofs: true, reviews: { orderBy: { createdAt: "desc" } } } },
+      submissions: { orderBy: { createdAt: "desc" }, take: 1, include: { draft: true, proofs: true, reviews: { orderBy: { createdAt: "desc" } } } },
     },
   });
 }
 
+function draftRedirect(applicationId: string, message: string) {
+  redirect(`/creator/content-studio/${applicationId}?error=${encodeURIComponent(message)}`);
+}
+
 export async function saveDraftAction(applicationId: string, formData: FormData) {
   const session = await requireRole(UserRole.CREATOR);
-  const application = await getOwnedApplication(applicationId, session.userId);
+  const [application, settings] = await Promise.all([
+    getOwnedApplication(applicationId, session.userId),
+    prisma.platformSettings.upsert({ where: { id: "platform" }, update: {}, create: { id: "platform" } }),
+  ]);
   if (!application || application.status !== ApplicationStatus.APPROVED) redirect("/creator/my-tasks");
+  const previewFile = formData.get("previewAttachment");
+  if (previewFile instanceof File && previewFile.size > settings.kolPreviewMaxMb * 1024 * 1024) {
+    draftRedirect(applicationId, `预览附件不能超过 ${settings.kolPreviewMaxMb}MB。`);
+  }
+  const previewAttachmentUrl = previewFile instanceof File && previewFile.size > 0
+    ? await saveUploadedFile(previewFile, "draft-previews")
+    : text(formData.get("previewAttachmentUrl")) || null;
   const risk = await checkSensitiveText([
     text(formData.get("title")),
     text(formData.get("script")),
     text(formData.get("caption")),
     text(formData.get("coverText")),
+    text(formData.get("disclosurePosition")),
   ]);
   const draft = await prisma.contentDraft.create({
     data: {
@@ -1309,10 +2275,13 @@ export async function saveDraftAction(applicationId: string, formData: FormData)
       caption: text(formData.get("caption")),
       hashtags: csv(formData.get("hashtags")),
       coverText: text(formData.get("coverText")),
+      disclosurePosition: text(formData.get("disclosurePosition")) || null,
+      previewAttachmentUrl,
       aiGeneratedRaw: { provider: text(formData.get("provider")) || "manual" },
       creatorEditedText: text(formData.get("script")),
       riskCheckResult: risk,
       status: risk.blocked ? DraftStatus.BLOCKED : DraftStatus.DRAFT,
+      reviewStatus: application.task.campaign.requiresDraftReview ? DraftReviewStatus.NOT_SUBMITTED : DraftReviewStatus.NOT_REQUIRED,
     },
   });
   await audit({ action: "content_draft.saved", entityType: "content_draft", entityId: draft.id, afterJson: { risk } });
@@ -1321,13 +2290,39 @@ export async function saveDraftAction(applicationId: string, formData: FormData)
 
 export async function submitContentAction(applicationId: string, formData: FormData) {
   const session = await requireRole(UserRole.CREATOR);
-  const application = await getOwnedApplication(applicationId, session.userId);
+  const [application, settings] = await Promise.all([
+    getOwnedApplication(applicationId, session.userId),
+    prisma.platformSettings.upsert({ where: { id: "platform" }, update: {}, create: { id: "platform" } }),
+  ]);
   if (!application || application.status !== ApplicationStatus.APPROVED) redirect("/creator/my-tasks");
+
+  const latestSubmission = application.submissions[0];
+  if (latestSubmission?.status === SubmissionStatus.SUBMITTED) draftRedirect(applicationId, "上一版草稿仍在审核中，请等待商家处理。");
+  if (latestSubmission?.status === SubmissionStatus.APPROVED) draftRedirect(applicationId, "草稿已通过，可以进入发布阶段。");
+  if (latestSubmission?.status === SubmissionStatus.REJECTED) draftRedirect(applicationId, "草稿已被拒绝，该任务需要平台或商家进一步处理。");
+
+  const revisionRound = latestSubmission?.status === SubmissionStatus.REVISION_REQUESTED ? latestSubmission.draft.revisionRound + 1 : 0;
+  if (revisionRound > application.task.campaign.revisionLimit) draftRedirect(applicationId, `已达到最多 ${application.task.campaign.revisionLimit} 轮修改限制。`);
+
+  const disclosurePosition = text(formData.get("disclosurePosition"));
+  if (application.task.campaign.disclosureRequired && disclosurePosition.length < 2) {
+    draftRedirect(applicationId, "请填写广告披露出现的位置和方式。");
+  }
+
+  const previewFile = formData.get("previewAttachment");
+  if (previewFile instanceof File && previewFile.size > settings.kolPreviewMaxMb * 1024 * 1024) {
+    draftRedirect(applicationId, `预览附件不能超过 ${settings.kolPreviewMaxMb}MB。`);
+  }
+  const previewAttachmentUrl = previewFile instanceof File && previewFile.size > 0
+    ? await saveUploadedFile(previewFile, "draft-previews")
+    : text(formData.get("previewAttachmentUrl")) || null;
+
   const risk = await checkSensitiveText([
     text(formData.get("title")),
     text(formData.get("script")),
     text(formData.get("caption")),
     text(formData.get("coverText")),
+    disclosurePosition,
   ]);
   if (risk.blocked) {
     const draft = await prisma.contentDraft.create({
@@ -1341,15 +2336,20 @@ export async function submitContentAction(applicationId: string, formData: FormD
         caption: text(formData.get("caption")),
         hashtags: csv(formData.get("hashtags")),
         coverText: text(formData.get("coverText")),
+        disclosurePosition: disclosurePosition || null,
+        previewAttachmentUrl,
+        revisionRound,
         riskCheckResult: risk,
         status: DraftStatus.BLOCKED,
+        reviewStatus: DraftReviewStatus.REJECTED,
       },
     });
     await audit({ action: "content_draft.blocked", entityType: "content_draft", entityId: draft.id, afterJson: { risk } });
-    redirect(`/creator/content-studio/${applicationId}?error=${encodeURIComponent(`Sensitive words: ${risk.hits.join(", ")}`)}`);
+    draftRedirect(applicationId, `命中敏感词：${risk.hits.join(", ")}`);
   }
 
   const submission = await prisma.$transaction(async (tx) => {
+    const requiresReview = application.task.campaign.requiresDraftReview;
     const draft = await tx.contentDraft.create({
       data: {
         applicationId,
@@ -1361,10 +2361,15 @@ export async function submitContentAction(applicationId: string, formData: FormD
         caption: text(formData.get("caption")),
         hashtags: csv(formData.get("hashtags")),
         coverText: text(formData.get("coverText")),
+        disclosurePosition: disclosurePosition || null,
+        previewAttachmentUrl,
+        revisionRound,
+        revisionReason: latestSubmission?.revisionNote ?? null,
         aiGeneratedRaw: { provider: text(formData.get("provider")) || "manual" },
         creatorEditedText: text(formData.get("script")),
         riskCheckResult: risk,
-        status: DraftStatus.SUBMITTED,
+        status: requiresReview ? DraftStatus.SUBMITTED : DraftStatus.APPROVED,
+        reviewStatus: requiresReview ? DraftReviewStatus.SUBMITTED : DraftReviewStatus.NOT_REQUIRED,
       },
     });
     const sub = await tx.submission.create({
@@ -1373,19 +2378,24 @@ export async function submitContentAction(applicationId: string, formData: FormD
         draftId: draft.id,
         creatorId: application.creatorId,
         campaignId: application.task.campaignId,
-        status: SubmissionStatus.SUBMITTED,
+        status: requiresReview ? SubmissionStatus.SUBMITTED : SubmissionStatus.APPROVED,
+        publicationStatus: PublicationStatus.PENDING_PUBLICATION,
+        approvedAt: requiresReview ? null : new Date(),
       },
     });
-    await tx.notification.create({
-      data: {
-        userId: application.task.campaign.brandId
-          ? (await tx.brandProfile.findUnique({ where: { id: application.task.campaign.brandId } }))!.userId
-          : session.userId,
-        title: "新内容待审核",
-        body: `${application.creator.displayName} 提交了 ${application.task.title} 内容。`,
-        href: `/brand/campaigns/${application.task.campaignId}/submissions`,
-      },
-    });
+    const brand = await tx.brandProfile.findUnique({ where: { id: application.task.campaign.brandId } });
+    if (brand) {
+      await tx.notification.create({
+        data: {
+          userId: brand.userId,
+          title: requiresReview ? "新内容草稿待审核" : "KOL 已提交免审草稿",
+          body: requiresReview
+            ? `${application.creator.displayName} 提交了 ${application.task.title} 的内容草稿。`
+            : `${application.creator.displayName} 提交了 ${application.task.title} 的内容草稿，当前 Campaign 不需要审稿，已进入发布阶段。`,
+          href: `/brand/campaigns/${application.task.campaignId}/submissions`,
+        },
+      });
+    }
     await tx.auditLog.create({
       data: {
         actorUserId: session.userId,
@@ -1393,26 +2403,41 @@ export async function submitContentAction(applicationId: string, formData: FormD
         action: "submission.created",
         entityType: "submission",
         entityId: sub.id,
-        afterJson: { status: sub.status },
+        afterJson: { status: sub.status, revisionRound, requiresReview },
       },
     });
     return sub;
   });
+  revalidatePath(`/brand/campaigns/${application.task.campaignId}/submissions`);
+  revalidatePath(`/creator/my-tasks/${applicationId}`);
   redirect(`/creator/my-tasks/${applicationId}?submitted=${submission.id}`);
 }
-
 export async function reviewSubmissionAction(submissionId: string, formData: FormData) {
   const session = await requireRole([UserRole.ADMIN, UserRole.BRAND]);
   const decision = text(formData.get("decision")) as ReviewDecision;
   const comment = text(formData.get("comment"));
-  if (comment.length < 2) redirect(session.role === UserRole.ADMIN ? `/admin/submissions?error=Review%20comment%20required` : `/brand?error=Review%20comment%20required`);
+  const riskPoints = csv(formData.get("riskPoints"));
+  if (comment.length < 2) {
+    redirect(session.role === UserRole.ADMIN ? `/admin/submissions?error=${encodeURIComponent("请填写审核说明")}` : `/brand?error=${encodeURIComponent("请填写审核说明")}`);
+  }
 
   const submission = await prisma.submission.findUnique({
     where: { id: submissionId },
-    include: { campaign: { include: { brand: true } }, creator: { include: { user: true } } },
+    include: {
+      campaign: { include: { brand: true } },
+      creator: { include: { user: true } },
+      draft: true,
+      application: true,
+    },
   });
   if (!submission) redirect("/admin/submissions");
   if (session.role === UserRole.BRAND && submission.campaign.brand.userId !== session.userId) redirect("/403");
+  if (submission.status !== SubmissionStatus.SUBMITTED) {
+    redirect(session.role === UserRole.ADMIN ? "/admin/submissions" : `/brand/campaigns/${submission.campaignId}/submissions`);
+  }
+  if (decision === ReviewDecision.REVISION_REQUESTED && submission.draft.revisionRound >= submission.campaign.revisionLimit) {
+    redirect(`/brand/campaigns/${submission.campaignId}/submissions?error=${encodeURIComponent("已达到最多修改轮次，请通过或拒绝该草稿。")}`);
+  }
 
   const next =
     decision === ReviewDecision.APPROVED
@@ -1420,6 +2445,18 @@ export async function reviewSubmissionAction(submissionId: string, formData: For
       : decision === ReviewDecision.REVISION_REQUESTED
         ? SubmissionStatus.REVISION_REQUESTED
         : SubmissionStatus.REJECTED;
+  const nextDraftStatus =
+    decision === ReviewDecision.APPROVED
+      ? DraftStatus.APPROVED
+      : decision === ReviewDecision.REVISION_REQUESTED
+        ? DraftStatus.REVISION_REQUESTED
+        : DraftStatus.REJECTED;
+  const nextDraftReviewStatus =
+    decision === ReviewDecision.APPROVED
+      ? DraftReviewStatus.APPROVED
+      : decision === ReviewDecision.REVISION_REQUESTED
+        ? DraftReviewStatus.REVISION_REQUESTED
+        : DraftReviewStatus.REJECTED;
 
   await prisma.$transaction(async (tx) => {
     await tx.submission.update({
@@ -1431,6 +2468,14 @@ export async function reviewSubmissionAction(submissionId: string, formData: For
         revisionNote: comment,
       },
     });
+    await tx.contentDraft.update({
+      where: { id: submission.draftId },
+      data: {
+        status: nextDraftStatus,
+        reviewStatus: nextDraftReviewStatus,
+        revisionReason: decision === ReviewDecision.REVISION_REQUESTED ? comment : submission.draft.revisionReason,
+      },
+    });
     await tx.submissionReview.create({
       data: {
         submissionId,
@@ -1438,13 +2483,13 @@ export async function reviewSubmissionAction(submissionId: string, formData: For
         reviewerRole: session.role,
         decision,
         comment,
-        riskPoints: csv(formData.get("riskPoints")),
+        riskPoints,
       },
     });
     await tx.notification.create({
       data: {
         userId: submission.creator.userId,
-        title: `内容审核结果：${next}`,
+        title: `内容草稿审核结果：${next}`,
         body: comment,
         href: `/creator/my-tasks/${submission.applicationId}`,
       },
@@ -1456,29 +2501,164 @@ export async function reviewSubmissionAction(submissionId: string, formData: For
         action: "submission.reviewed",
         entityType: "submission",
         entityId: submissionId,
-        beforeJson: { status: submission.status },
-        afterJson: { status: next, comment },
+        beforeJson: { status: submission.status, draftStatus: submission.draft.status },
+        afterJson: { status: next, draftStatus: nextDraftStatus, comment, riskPoints },
       },
     });
   });
 
   revalidatePath(session.role === UserRole.ADMIN ? "/admin/submissions" : `/brand/campaigns/${submission.campaignId}/submissions`);
+  revalidatePath(`/creator/my-tasks/${submission.applicationId}`);
+  revalidatePath(`/creator/content-studio/${submission.applicationId}`);
+}
+
+const platformPostDomains: Record<string, string[]> = {
+  小红书: ["xiaohongshu.com", "xhslink.com"],
+  抖音: ["douyin.com", "iesdouyin.com"],
+  视频号: ["weixin.qq.com", "channels.weixin.qq.com"],
+  B站: ["bilibili.com", "b23.tv"],
+  微博: ["weibo.com", "weibo.cn"],
+};
+
+function normalizeHostname(hostname: string) {
+  return hostname.toLowerCase().replace(/^www\./, "");
+}
+
+function hostMatches(host: string, domains: string[]) {
+  return domains.some((domain) => host === domain || host.endsWith(`.${domain}`));
+}
+
+function parseHttpUrl(rawUrl: string) {
+  try {
+    const url = new URL(rawUrl);
+    if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+    return url;
+  } catch {
+    return null;
+  }
+}
+
+function isValidPlatformPostUrl(platform: string, rawUrl: string) {
+  const url = parseHttpUrl(rawUrl);
+  if (!url) return false;
+  const allowedDomains = platformPostDomains[platform];
+  if (!allowedDomains) return true;
+  return hostMatches(normalizeHostname(url.hostname), allowedDomains);
+}
+
+async function resolvePlatformPostUrl(platform: string, rawUrl: string) {
+  const initialUrl = parseHttpUrl(rawUrl);
+  const allowedDomains = platformPostDomains[platform] ?? [];
+  if (!initialUrl) {
+    return {
+      ok: false,
+      rawUrl,
+      normalizedUrl: null,
+      resolvedUrl: null,
+      rawHost: null,
+      resolvedHost: null,
+      platform,
+      method: "parse",
+      error: "URL 格式无效",
+    };
+  }
+
+  const rawHost = normalizeHostname(initialUrl.hostname);
+  const rawHostMatched = allowedDomains.length === 0 || hostMatches(rawHost, allowedDomains);
+  if (!rawHostMatched) {
+    return {
+      ok: false,
+      rawUrl,
+      normalizedUrl: initialUrl.toString(),
+      resolvedUrl: null,
+      rawHost,
+      resolvedHost: null,
+      platform,
+      allowedDomains,
+      method: "domain",
+      error: "提交链接域名与任务平台不匹配",
+    };
+  }
+
+  let resolvedUrl = initialUrl.toString();
+  let resolvedHost = rawHost;
+  let method = "domain";
+  let reachable = false;
+  let status: number | null = null;
+  let error: string | null = null;
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    let response = await fetch(initialUrl, {
+      method: "HEAD",
+      redirect: "follow",
+      signal: controller.signal,
+    });
+    if (response.status === 405 || response.status === 403) {
+      response = await fetch(initialUrl, {
+        method: "GET",
+        redirect: "follow",
+        signal: controller.signal,
+      });
+    }
+    clearTimeout(timeout);
+    status = response.status;
+    resolvedUrl = response.url || initialUrl.toString();
+    const resolved = parseHttpUrl(resolvedUrl);
+    resolvedHost = resolved ? normalizeHostname(resolved.hostname) : rawHost;
+    reachable = response.ok || (response.status >= 300 && response.status < 500);
+    method = "fetch";
+  } catch (fetchError) {
+    error = fetchError instanceof Error ? fetchError.message : "无法自动访问链接";
+  }
+
+  const resolvedHostMatched = allowedDomains.length === 0 || hostMatches(resolvedHost, allowedDomains);
+
+  return {
+    ok: rawHostMatched && resolvedHostMatched,
+    rawUrl,
+    normalizedUrl: initialUrl.toString(),
+    resolvedUrl,
+    rawHost,
+    resolvedHost,
+    platform,
+    allowedDomains,
+    method,
+    reachable,
+    status,
+    error,
+  };
+}
+
+function creatorProofRedirect(applicationId: string, message: string) {
+  redirect(`/creator/my-tasks/${applicationId}?error=${encodeURIComponent(message)}`);
 }
 
 export async function submitProofAction(submissionId: string, formData: FormData) {
   const session = await requireRole(UserRole.CREATOR);
   const submission = await prisma.submission.findFirst({
     where: { id: submissionId, creator: { userId: session.userId } },
-    include: { campaign: true, creator: true, proofs: true, application: { include: { task: true } } },
+    include: { campaign: { include: { brand: true } }, creator: true, proofs: true, application: { include: { task: true } } },
   });
-  if (!submission || submission.status !== SubmissionStatus.APPROVED) redirect("/creator/my-tasks");
-  if (!submission.campaign.allowMultiPlatformProof) {
-    const activeProof = submission.proofs.find((proof) => proof.verificationStatus !== ProofStatus.REJECTED);
-    if (activeProof) redirect(`/creator/my-tasks/${submission.applicationId}?error=Proof%20already%20submitted`);
+  if (!submission) redirect("/creator/my-tasks");
+  if (submission.status !== SubmissionStatus.APPROVED) creatorProofRedirect(submission.applicationId, "当前任务还不能提交发布链接。");
+
+  const now = new Date();
+  const publishDeadline = submission.application.task.publishDeadline ?? submission.application.task.deadline;
+  if (now.getTime() > publishDeadline.getTime()) creatorProofRedirect(submission.applicationId, "发布截止时间已过，请等待商家或平台处理。");
+
+  const postUrl = text(formData.get("postUrl"));
+  const urlCheck = await resolvePlatformPostUrl(submission.application.task.platform, postUrl);
+  if (!urlCheck.ok || !isValidPlatformPostUrl(submission.application.task.platform, postUrl)) {
+    creatorProofRedirect(submission.applicationId, "发布链接格式或平台域名不符合任务要求。");
   }
 
-  const screenshot = formData.get("screenshot");
-  const screenshotUrl = screenshot instanceof File ? await saveUploadedFile(screenshot, `proofs/${submission.id}`) : null;
+  if (!submission.campaign.allowMultiPlatformProof) {
+    const activeProof = submission.proofs.find((proof) => proof.verificationStatus !== ProofStatus.REJECTED);
+    if (activeProof) creatorProofRedirect(submission.applicationId, "已有发布链接正在等待验收或已通过。");
+  }
+  const previousRejectedCount = submission.proofs.filter((proof) => proof.verificationStatus === ProofStatus.REJECTED).length;
 
   const proof = await prisma.$transaction(async (tx) => {
     const created = await tx.proof.create({
@@ -1487,41 +2667,535 @@ export async function submitProofAction(submissionId: string, formData: FormData
         creatorId: submission.creatorId,
         campaignId: submission.campaignId,
         platform: submission.application.task.platform,
-        postUrl: text(formData.get("postUrl")),
-        screenshotUrl: screenshotUrl || text(formData.get("screenshotUrl")) || null,
+        postUrl,
+        resolvedPostUrl: urlCheck.resolvedUrl,
+        urlCheckResult: urlCheck,
         publishedAt: new Date(text(formData.get("publishedAt")) || Date.now()),
-        views: Number(text(formData.get("views")) || 0),
-        likes: Number(text(formData.get("likes")) || 0),
-        comments: Number(text(formData.get("comments")) || 0),
-        shares: Number(text(formData.get("shares")) || 0),
-        saves: Number(text(formData.get("saves")) || 0),
-        clicks: Number(text(formData.get("clicks")) || 0),
-        conversions: Number(text(formData.get("conversions")) || 0),
         verificationStatus: ProofStatus.PENDING,
+        publicationStatus: previousRejectedCount > 0 ? PublicationStatus.RESUBMITTED : PublicationStatus.LINK_SUBMITTED,
+        resubmissionCount: previousRejectedCount,
       },
     });
-    await tx.submission.update({ where: { id: submissionId }, data: { status: SubmissionStatus.PROOF_SUBMITTED } });
+    await tx.submission.update({
+      where: { id: submissionId },
+      data: {
+        status: SubmissionStatus.PROOF_SUBMITTED,
+        publicationStatus: previousRejectedCount > 0 ? PublicationStatus.RESUBMITTED : PublicationStatus.LINK_SUBMITTED,
+      },
+    });
     await tx.notification.create({
       data: {
-        userId: session.userId,
-        title: "Proof 已提交",
-        body: "Admin 验证通过后会进入结算。",
-        href: `/creator/my-tasks/${submission.applicationId}`,
+        userId: submission.campaign.brand.userId,
+        title: "KOL 已提交发布链接",
+        body: `${submission.creator.displayName} 已提交 ${submission.application.task.title} 的发布链接，请在 SLA 内验收。`,
+        href: `/brand/campaigns/${submission.campaignId}/proofs`,
       },
     });
     await tx.auditLog.create({
       data: {
         actorUserId: session.userId,
         actorRole: session.role,
-        action: "proof.submitted",
+        action: "proof.link_submitted",
         entityType: "proof",
         entityId: created.id,
-        afterJson: { postUrl: created.postUrl },
+        afterJson: { postUrl: created.postUrl, resolvedPostUrl: created.resolvedPostUrl, urlCheck, publicationStatus: created.publicationStatus, resubmissionCount: created.resubmissionCount },
       },
     });
     return created;
   });
+  const crawlerPlatform = toCrawlerPlatform(proof.platform);
+  if (crawlerPlatform) {
+    await createCrawlerJob({
+      type: CrawlerJobType.FETCH_POST_METRICS,
+      platform: crawlerPlatform,
+      targetType: CrawlerTargetType.PROOF,
+      targetId: proof.id,
+      targetUrl: proof.resolvedPostUrl ?? proof.postUrl,
+      proofId: proof.id,
+      createdByUserId: session.userId,
+    });
+  }
+  revalidatePath(`/brand/campaigns/${submission.campaignId}/proofs`);
+  revalidatePath(`/creator/my-tasks/${submission.applicationId}`);
+  revalidatePath("/admin/crawler");
   redirect(`/creator/my-tasks/${submission.applicationId}?proof=${proof.id}`);
+}
+
+export async function reviewPublicationProofAction(proofId: string, formData: FormData) {
+  const session = await requireRole(UserRole.BRAND);
+  const decision = text(formData.get("decision"));
+  const rejectionReason = text(formData.get("rejectionReason"));
+  const rejectionNote = text(formData.get("rejectionNote"));
+  const proof = await prisma.proof.findFirst({
+    where: { id: proofId, campaign: { brand: { userId: session.userId } } },
+    include: {
+      campaign: { include: { brand: true } },
+      creator: { include: { user: true, wallet: true } },
+      submission: { include: { application: { include: { task: true } } } },
+    },
+  });
+  if (!proof) redirect("/brand/campaigns");
+  if (proof.verificationStatus !== ProofStatus.PENDING) redirect(`/brand/campaigns/${proof.campaignId}/proofs`);
+
+  if (decision === "reject" && (rejectionReason.length < 2 || rejectionNote.length < 5)) {
+    redirect(`/brand/campaigns/${proof.campaignId}/proofs?error=${encodeURIComponent("拒绝验收必须选择结构化原因，并填写文字说明。")}`);
+  }
+
+  if (decision === "accept") {
+    await prisma.$transaction(async (tx) => {
+      await tx.proof.update({
+        where: { id: proofId },
+        data: {
+          verificationStatus: ProofStatus.VERIFIED,
+          publicationStatus: PublicationStatus.ACCEPTED,
+          rejectionReason: null,
+          rejectionNote: null,
+        },
+      });
+      await tx.submission.update({
+        where: { id: proof.submissionId },
+        data: {
+          status: SubmissionStatus.VERIFIED,
+          publicationStatus: PublicationStatus.ACCEPTED,
+          settlementStatus: SettlementStatus.PAYABLE,
+          settlementAmount: proof.submission.application.task.rewardAmount,
+          acceptedAt: new Date(),
+        },
+      });
+      await creditAcceptedSubmissionEarning({
+        tx,
+        actorUserId: session.userId,
+        actorRole: session.role,
+        submissionId: proof.submissionId,
+        campaignId: proof.campaignId,
+        creatorId: proof.creatorId,
+        creatorUserId: proof.creator.userId,
+        rewardAmount: proof.submission.application.task.rewardAmount,
+        note: "商家验收通过后直接入账。",
+      });
+      await tx.auditLog.create({
+        data: {
+          actorUserId: session.userId,
+          actorRole: session.role,
+          action: "proof.brand_accepted",
+          entityType: "proof",
+          entityId: proofId,
+          beforeJson: { verificationStatus: proof.verificationStatus, publicationStatus: proof.publicationStatus },
+          afterJson: { verificationStatus: ProofStatus.VERIFIED, publicationStatus: PublicationStatus.ACCEPTED },
+        },
+      });
+    });
+  } else {
+    await prisma.$transaction(async (tx) => {
+      await tx.proof.update({
+        where: { id: proofId },
+        data: {
+          verificationStatus: ProofStatus.REJECTED,
+          publicationStatus: PublicationStatus.REJECTED,
+          rejectionReason,
+          rejectionNote,
+        },
+      });
+      await tx.submission.update({
+        where: { id: proof.submissionId },
+        data: {
+          status: SubmissionStatus.APPROVED,
+          publicationStatus: PublicationStatus.REJECTED,
+          revisionNote: `${rejectionReason}: ${rejectionNote}`,
+        },
+      });
+      await tx.notification.create({
+        data: {
+          userId: proof.creator.userId,
+          title: "发布链接未通过验收",
+          body: `${rejectionReason}: ${rejectionNote}`,
+          href: `/creator/my-tasks/${proof.submission.applicationId}`,
+        },
+      });
+      await tx.auditLog.create({
+        data: {
+          actorUserId: session.userId,
+          actorRole: session.role,
+          action: "proof.brand_rejected",
+          entityType: "proof",
+          entityId: proofId,
+          beforeJson: { verificationStatus: proof.verificationStatus, publicationStatus: proof.publicationStatus },
+          afterJson: { verificationStatus: ProofStatus.REJECTED, publicationStatus: PublicationStatus.REJECTED, rejectionReason, rejectionNote },
+        },
+      });
+    });
+  }
+
+  revalidatePath(`/brand/campaigns/${proof.campaignId}/proofs`);
+  revalidatePath(`/creator/my-tasks/${proof.submission.applicationId}`);
+}
+
+export async function runSlaAutomationAction() {
+  const session = await requireAdminPermission("proof.review");
+  const now = new Date();
+  const pendingProofs = await prisma.proof.findMany({
+    where: {
+      verificationStatus: ProofStatus.PENDING,
+      publicationStatus: { in: [PublicationStatus.LINK_SUBMITTED, PublicationStatus.RESUBMITTED] },
+    },
+    include: {
+      campaign: { include: { brand: true } },
+      creator: { include: { user: true, wallet: true } },
+      submission: {
+        include: {
+          application: { include: { task: true } },
+          disputes: true,
+        },
+      },
+    },
+  });
+
+  let accepted = 0;
+  let escalated = 0;
+
+  for (const proof of pendingProofs) {
+    const dueAt = new Date(proof.createdAt);
+    dueAt.setDate(dueAt.getDate() + proof.campaign.acceptanceSlaDays);
+    if (dueAt > now) continue;
+
+    const rewardAmount = Number(proof.submission.application.task.rewardAmount);
+    const threshold = Number(proof.campaign.highValueReviewThreshold);
+
+    if (rewardAmount <= threshold) {
+      await prisma.$transaction(async (tx) => {
+        await tx.proof.update({
+          where: { id: proof.id },
+          data: {
+            verificationStatus: ProofStatus.VERIFIED,
+            publicationStatus: PublicationStatus.ACCEPTED,
+            adminNote: "商家验收 SLA 已超时，低金额任务由系统自动通过。",
+          },
+        });
+        await tx.submission.update({
+          where: { id: proof.submissionId },
+          data: {
+            status: SubmissionStatus.VERIFIED,
+            publicationStatus: PublicationStatus.ACCEPTED,
+            settlementStatus: SettlementStatus.PAYABLE,
+            settlementAmount: proof.submission.application.task.rewardAmount,
+            acceptedAt: now,
+          },
+        });
+        await creditAcceptedSubmissionEarning({
+          tx,
+          actorUserId: session.userId,
+          actorRole: session.role,
+          submissionId: proof.submissionId,
+          campaignId: proof.campaignId,
+          creatorId: proof.creatorId,
+          creatorUserId: proof.creator.userId,
+          rewardAmount: proof.submission.application.task.rewardAmount,
+          note: "商家验收 SLA 超时，低金额任务自动通过后直接入账。",
+        });
+        await tx.notification.createMany({
+          data: [
+            {
+              userId: proof.campaign.brand.userId,
+              title: "发布验收已按 SLA 自动处理",
+              body: `${proof.creator.displayName} 的发布链接因超时未验收，系统已按低金额规则自动通过。`,
+              href: `/brand/campaigns/${proof.campaignId}/proofs`,
+            },
+          ],
+        });
+        await tx.auditLog.create({
+          data: {
+            actorUserId: session.userId,
+            actorRole: session.role,
+            action: "proof.sla_auto_accepted",
+            entityType: "proof",
+            entityId: proof.id,
+            beforeJson: { verificationStatus: proof.verificationStatus, publicationStatus: proof.publicationStatus },
+            afterJson: { verificationStatus: ProofStatus.VERIFIED, publicationStatus: PublicationStatus.ACCEPTED },
+          },
+        });
+      });
+      accepted += 1;
+    } else {
+      const activeDispute = proof.submission.disputes.find((dispute) => dispute.status === DisputeStatus.OPEN || dispute.status === DisputeStatus.NEEDS_INFO);
+      await prisma.$transaction(async (tx) => {
+        await tx.proof.update({
+          where: { id: proof.id },
+          data: {
+            publicationStatus: PublicationStatus.DISPUTED,
+            adminNote: "商家验收 SLA 已超时，高金额任务进入平台复核。",
+          },
+        });
+        await tx.submission.update({
+          where: { id: proof.submissionId },
+          data: {
+            publicationStatus: PublicationStatus.DISPUTED,
+            disputedAt: now,
+          },
+        });
+        const dispute =
+          activeDispute ??
+          (await tx.dispute.create({
+            data: {
+              submissionId: proof.submissionId,
+              campaignId: proof.campaignId,
+              creatorId: proof.creatorId,
+              brandId: proof.campaign.brandId,
+              status: DisputeStatus.OPEN,
+              reason: "商家验收 SLA 超时，高金额任务自动进入平台复核。",
+              merchantReasonCategory: "SLA_TIMEOUT",
+              merchantNote: "系统自动创建，等待 Admin 根据平台内记录处理。",
+            },
+          }));
+        await tx.notification.createMany({
+          data: [
+            {
+              userId: proof.creator.userId,
+              title: "发布验收进入平台复核",
+              body: `${proof.submission.application.task.title} 因商家验收超时且金额较高，已进入平台处理。`,
+              href: `/creator/my-tasks/${proof.submission.applicationId}`,
+            },
+            {
+              userId: proof.campaign.brand.userId,
+              title: "发布验收已进入平台复核",
+              body: `${proof.creator.displayName} 的发布链接因 SLA 超时进入平台处理。`,
+              href: `/brand/campaigns/${proof.campaignId}/proofs`,
+            },
+          ],
+        });
+        await tx.auditLog.create({
+          data: {
+            actorUserId: session.userId,
+            actorRole: session.role,
+            action: "proof.sla_escalated",
+            entityType: "proof",
+            entityId: proof.id,
+            beforeJson: { verificationStatus: proof.verificationStatus, publicationStatus: proof.publicationStatus },
+            afterJson: { publicationStatus: PublicationStatus.DISPUTED, disputeId: dispute.id },
+          },
+        });
+      });
+      escalated += 1;
+    }
+  }
+
+  revalidatePath("/admin/settings");
+  revalidatePath("/admin/disputes");
+  revalidatePath("/admin/payments");
+  redirect(`/admin/settings?sla=${accepted}-${escalated}`);
+}
+
+export async function createDisputeFromProofAction(proofId: string, formData: FormData) {
+  const session = await requireAdminPermission("proof.review");
+  const reason = text(formData.get("reason"));
+  const proof = await prisma.proof.findUnique({
+    where: { id: proofId },
+    include: {
+      campaign: { include: { brand: true } },
+      creator: true,
+      submission: { include: { disputes: true } },
+    },
+  });
+  if (!proof) redirect("/admin/disputes");
+  if (reason.length < 5) redirect(`/admin/disputes?error=${encodeURIComponent("请填写争议原因")}`);
+  const activeDispute = proof.submission.disputes.find((dispute) => dispute.status === DisputeStatus.OPEN || dispute.status === DisputeStatus.NEEDS_INFO);
+  if (activeDispute) redirect(`/admin/disputes?dispute=${activeDispute.id}`);
+
+  const dispute = await prisma.$transaction(async (tx) => {
+    const created = await tx.dispute.create({
+      data: {
+        submissionId: proof.submissionId,
+        campaignId: proof.campaignId,
+        creatorId: proof.creatorId,
+        brandId: proof.campaign.brandId,
+        status: DisputeStatus.OPEN,
+        reason,
+        merchantReasonCategory: proof.rejectionReason,
+        merchantNote: proof.rejectionNote,
+      },
+    });
+    await tx.submission.update({
+      where: { id: proof.submissionId },
+      data: { publicationStatus: PublicationStatus.DISPUTED, disputedAt: new Date() },
+    });
+    await tx.proof.update({
+      where: { id: proofId },
+      data: { publicationStatus: PublicationStatus.DISPUTED },
+    });
+    await tx.auditLog.create({
+      data: {
+        actorUserId: session.userId,
+        actorRole: session.role,
+        action: "dispute.created",
+        entityType: "dispute",
+        entityId: created.id,
+        afterJson: { proofId, submissionId: proof.submissionId, reason },
+      },
+    });
+    return created;
+  });
+
+  revalidatePath("/admin/disputes");
+  revalidatePath(`/creator/my-tasks/${proof.submission.applicationId}`);
+  redirect(`/admin/disputes?dispute=${dispute.id}`);
+}
+
+export async function decideDisputeAction(disputeId: string, formData: FormData) {
+  const session = await requireAdminPermission("payment.manage");
+  const decision = text(formData.get("decision")) as DisputeDecision;
+  const resolution = text(formData.get("resolution"));
+  const partialSettlementAmount = Number(text(formData.get("partialSettlementAmount")) || 0);
+  if (resolution.length < 5) redirect(`/admin/disputes?error=${encodeURIComponent("请填写裁决说明")}`);
+
+  const dispute = await prisma.dispute.findUnique({
+    where: { id: disputeId },
+    include: {
+      submission: {
+        include: {
+          campaign: { include: { brand: true } },
+          creator: { include: { user: true, wallet: true } },
+          application: { include: { task: true } },
+          proofs: { orderBy: { createdAt: "desc" }, take: 1 },
+        },
+      },
+    },
+  });
+  if (!dispute?.submission) redirect("/admin/disputes");
+  if (dispute.status === DisputeStatus.DECIDED || dispute.status === DisputeStatus.CLOSED) redirect("/admin/disputes");
+
+  const submission = dispute.submission;
+  const rewardAmount = Number(submission.application.task.rewardAmount);
+  const settlementAmount =
+    decision === DisputeDecision.FULL_SETTLEMENT
+      ? rewardAmount
+      : decision === DisputeDecision.PARTIAL_SETTLEMENT
+        ? partialSettlementAmount
+        : 0;
+  if (decision === DisputeDecision.PARTIAL_SETTLEMENT && (settlementAmount <= 0 || settlementAmount >= rewardAmount)) {
+    redirect(`/admin/disputes?error=${encodeURIComponent("部分结算金额必须大于 0 且小于任务奖励")}`);
+  }
+  const refundAmount = Math.max(0, rewardAmount - settlementAmount);
+
+  await prisma.$transaction(async (tx) => {
+    if (decision === DisputeDecision.FULL_SETTLEMENT || decision === DisputeDecision.PARTIAL_SETTLEMENT) {
+      await tx.submission.update({
+        where: { id: submission.id },
+        data: {
+          status: SubmissionStatus.VERIFIED,
+          publicationStatus: PublicationStatus.ACCEPTED,
+          settlementStatus: decision === DisputeDecision.PARTIAL_SETTLEMENT ? SettlementStatus.PARTIALLY_SETTLED : SettlementStatus.PAYABLE,
+          settlementAmount,
+          acceptedAt: new Date(),
+        },
+      });
+      await creditAcceptedSubmissionEarning({
+        tx,
+        actorUserId: session.userId,
+        actorRole: session.role,
+        submissionId: submission.id,
+        campaignId: submission.campaignId,
+        creatorId: submission.creatorId,
+        creatorUserId: submission.creator.userId,
+        rewardAmount: settlementAmount,
+        note: `争议裁决后直接入账：${decision}`,
+      });
+    }
+
+    if ((decision === DisputeDecision.FULL_REFUND || decision === DisputeDecision.PARTIAL_SETTLEMENT) && refundAmount > 0) {
+      const beforeBalance = Number(submission.campaign.brand.budgetBalance);
+      await tx.brandProfile.update({
+        where: { id: submission.campaign.brandId },
+        data: {
+          budgetBalance: { increment: refundAmount },
+          frozenEscrowBalance: { decrement: refundAmount },
+        },
+      });
+      await tx.campaign.update({
+        where: { id: submission.campaignId },
+        data: { escrowFrozenAmount: { decrement: refundAmount } },
+      });
+      await tx.brandLedgerTransaction.create({
+        data: {
+          brandId: submission.campaign.brandId,
+          campaignId: submission.campaignId,
+          type: BrandLedgerTxType.REFUND,
+          amount: refundAmount,
+          currency: submission.campaign.currency,
+          status: BrandLedgerTxStatus.CONFIRMED,
+          beforeBalance,
+          afterBalance: beforeBalance + refundAmount,
+          createdById: session.userId,
+          note: `争议裁决退回商家余额：${decision}`,
+        },
+      });
+      if (decision === DisputeDecision.FULL_REFUND) {
+        await tx.submission.update({
+          where: { id: submission.id },
+          data: {
+            status: SubmissionStatus.REJECTED,
+            publicationStatus: PublicationStatus.REJECTED,
+            settlementStatus: SettlementStatus.REFUNDED,
+            settlementAmount: 0,
+            rejectedAt: new Date(),
+          },
+        });
+      }
+    }
+
+    if (decision === DisputeDecision.ALLOW_RESUBMISSION) {
+      await tx.submission.update({
+        where: { id: submission.id },
+        data: {
+          status: SubmissionStatus.APPROVED,
+          publicationStatus: PublicationStatus.REJECTED,
+          revisionNote: resolution,
+        },
+      });
+    }
+
+    await tx.dispute.update({
+      where: { id: disputeId },
+      data: {
+        status: DisputeStatus.DECIDED,
+        decision,
+        partialSettlementAmount: decision === DisputeDecision.PARTIAL_SETTLEMENT ? settlementAmount : null,
+        resolution,
+        decidedById: session.userId,
+        decidedAt: new Date(),
+      },
+    });
+    await tx.notification.create({
+      data: {
+        userId: submission.creator.userId,
+        title: "任务争议已裁决",
+        body: resolution,
+        href: `/creator/my-tasks/${submission.applicationId}`,
+      },
+    });
+    await tx.notification.create({
+      data: {
+        userId: submission.campaign.brand.userId,
+        title: "任务争议已裁决",
+        body: resolution,
+        href: `/brand/campaigns/${submission.campaignId}/proofs`,
+      },
+    });
+    await tx.auditLog.create({
+      data: {
+        actorUserId: session.userId,
+        actorRole: session.role,
+        action: "dispute.decided",
+        entityType: "dispute",
+        entityId: disputeId,
+        beforeJson: { status: dispute.status },
+        afterJson: { decision, settlementAmount, refundAmount, resolution },
+      },
+    });
+  });
+
+  revalidatePath("/admin/disputes");
+  revalidatePath("/admin/payments");
+  revalidatePath(`/creator/my-tasks/${submission.applicationId}`);
+  revalidatePath(`/brand/campaigns/${submission.campaignId}/proofs`);
 }
 
 export async function verifyProofAction(proofId: string, formData: FormData) {
@@ -1554,38 +3228,16 @@ export async function verifyProofAction(proofId: string, formData: FormData) {
           conversions: proof.conversions,
         },
       });
-      const wallet = proof.submission.creator.wallet;
-      if (wallet) {
-        const exists = await tx.walletTransaction.findFirst({
-          where: {
-            relatedSubmissionId: proof.submissionId,
-            type: WalletTxType.EARNING,
-            status: { in: [WalletTxStatus.PENDING, WalletTxStatus.APPROVED, WalletTxStatus.PAID] },
-          },
-        });
-        if (!exists) {
-          await tx.walletTransaction.create({
-            data: {
-              walletId: wallet.id,
-              creatorId: proof.creatorId,
-              type: WalletTxType.EARNING,
-              amount: proof.submission.application.task.rewardAmount,
-              currency: wallet.currency,
-              status: WalletTxStatus.PENDING,
-              relatedSubmissionId: proof.submissionId,
-              isDemo: proof.campaign.isDemo,
-              note: "Auto-generated after proof verification.",
-            },
-          });
-        }
-      }
-      await tx.notification.create({
-        data: {
-          userId: proof.submission.creator.userId,
-          title: "Proof 已验证",
-          body: "任务已进入待结算。",
-          href: `/creator/my-tasks/${proof.submission.applicationId}`,
-        },
+      await creditAcceptedSubmissionEarning({
+        tx,
+        actorUserId: session.userId,
+        actorRole: session.role,
+        submissionId: proof.submissionId,
+        campaignId: proof.campaignId,
+        creatorId: proof.creatorId,
+        creatorUserId: proof.submission.creator.userId,
+        rewardAmount: proof.submission.application.task.rewardAmount,
+        note: "平台验证 proof 后直接入账。",
       });
       await tx.auditLog.create({
         data: {
@@ -1627,53 +3279,20 @@ export async function verifyProofAction(proofId: string, formData: FormData) {
   revalidatePath("/admin/proofs");
 }
 
-export async function approveEarningAction(transactionId: string) {
-  const session = await requireAdminPermission("payment.manage");
-  const txRecord = await prisma.walletTransaction.findUnique({
-    where: { id: transactionId },
-    include: { wallet: true },
-  });
-  if (!txRecord || txRecord.type !== WalletTxType.EARNING || txRecord.status !== WalletTxStatus.PENDING) {
-    redirect("/admin/payments");
-  }
-  await prisma.$transaction(async (tx) => {
-    await tx.walletTransaction.update({ where: { id: transactionId }, data: { status: WalletTxStatus.APPROVED } });
-    await tx.wallet.update({
-      where: { id: txRecord.walletId },
-      data: {
-        availableBalance: { increment: txRecord.amount },
-        cumulativeIncome: { increment: txRecord.amount },
-      },
-    });
-    await tx.creatorProfile.update({
-      where: { id: txRecord.creatorId },
-      data: { cumulativeIncome: { increment: txRecord.amount }, completedTasks: { increment: 1 } },
-    });
-    if (txRecord.relatedSubmissionId) {
-      await tx.submission.update({ where: { id: txRecord.relatedSubmissionId }, data: { status: SubmissionStatus.SETTLED } });
-    }
-    await tx.auditLog.create({
-      data: {
-        actorUserId: session.userId,
-        actorRole: session.role,
-        action: "wallet.earning_approved",
-        entityType: "wallet_transaction",
-        entityId: transactionId,
-        afterJson: { amount: String(txRecord.amount) },
-      },
-    });
-  });
-  revalidatePath("/admin/payments");
-}
-
 export async function requestWithdrawalAction(formData: FormData) {
   const session = await requireRole(UserRole.CREATOR);
-  const creator = await prisma.creatorProfile.findUnique({ where: { userId: session.userId }, include: { wallet: true } });
+  const [creator, settings] = await Promise.all([
+    prisma.creatorProfile.findUnique({ where: { userId: session.userId }, include: { wallet: true } }),
+    prisma.platformSettings.upsert({ where: { id: "platform" }, update: {}, create: { id: "platform" } }),
+  ]);
   if (!creator?.wallet) redirect("/creator/wallet");
   const amount = Number(text(formData.get("amount")) || 0);
-  if (amount <= 0 || amount > Number(creator.wallet.availableBalance)) redirect("/creator/wallet?error=Invalid%20withdrawal%20amount");
-  const method = text(formData.get("payoutMethod")) || "USDT";
+  const minimumWithdrawalAmount = Number(settings.minimumWithdrawalAmount);
+  if (amount < minimumWithdrawalAmount) redirect(`/creator/wallet?error=${encodeURIComponent(`最低提现金额为 ￥${minimumWithdrawalAmount}`)}`);
+  if (amount > Number(creator.wallet.availableBalance)) redirect(`/creator/wallet?error=${encodeURIComponent("可提现余额不足")}`);
+  const method = text(formData.get("payoutMethod")) || "银行卡";
   const details = text(formData.get("payoutDetails"));
+  if (details.length < 4) redirect(`/creator/wallet?error=${encodeURIComponent("请填写收款信息")}`);
 
   await prisma.$transaction(async (tx) => {
     const request = await tx.withdrawalRequest.create({
@@ -1704,7 +3323,7 @@ export async function requestWithdrawalAction(formData: FormData) {
         status: WalletTxStatus.PENDING,
         relatedWithdrawalId: request.id,
         isDemo: creator.isDemo,
-        note: "Withdrawal requested and balance frozen.",
+        note: "提现申请已提交，余额已冻结。",
       },
     });
     await tx.auditLog.create({
@@ -1794,6 +3413,83 @@ export async function addComplianceRuleAction(formData: FormData) {
   revalidatePath("/admin/compliance");
 }
 
+const platformSettingsSchema = z.object({
+  acceptanceSlaDays: z.coerce.number().int().min(1).max(30),
+  highValueReviewThreshold: z.coerce.number().min(1),
+  resubmissionGraceDays: z.coerce.number().int().min(0).max(14),
+  minimumWithdrawalAmount: z.coerce.number().min(1),
+  kolPreviewMaxMb: z.coerce.number().int().min(1).max(200),
+  platformFeeRatePercent: z.coerce.number().min(0).max(30),
+  platformContactEmail: z.string().email(),
+  riskIndustryKeywords: z.array(z.string()).default([]),
+  riskIndustryPrompt: z.string().min(10),
+});
+
+export async function updatePlatformSettingsAction(formData: FormData) {
+  await requireAdminPermission("compliance.manage");
+  const before = await prisma.platformSettings.upsert({
+    where: { id: "platform" },
+    update: {},
+    create: { id: "platform" },
+  });
+  const parsed = platformSettingsSchema.safeParse({
+    acceptanceSlaDays: text(formData.get("acceptanceSlaDays")),
+    highValueReviewThreshold: text(formData.get("highValueReviewThreshold")),
+    resubmissionGraceDays: text(formData.get("resubmissionGraceDays")),
+    minimumWithdrawalAmount: text(formData.get("minimumWithdrawalAmount")),
+    kolPreviewMaxMb: text(formData.get("kolPreviewMaxMb")),
+    platformFeeRatePercent: text(formData.get("platformFeeRatePercent")),
+    platformContactEmail: text(formData.get("platformContactEmail")),
+    riskIndustryKeywords: csv(formData.get("riskIndustryKeywords")),
+    riskIndustryPrompt: text(formData.get("riskIndustryPrompt")),
+  });
+  if (!parsed.success) redirect(`/admin/settings?error=${encodeURIComponent("配置项校验失败")}`);
+
+  const settings = await prisma.platformSettings.update({
+    where: { id: "platform" },
+    data: {
+      acceptanceSlaDays: parsed.data.acceptanceSlaDays,
+      highValueReviewThreshold: parsed.data.highValueReviewThreshold,
+      resubmissionGraceDays: parsed.data.resubmissionGraceDays,
+      minimumWithdrawalAmount: parsed.data.minimumWithdrawalAmount,
+      kolPreviewMaxMb: parsed.data.kolPreviewMaxMb,
+      platformFeeRate: parsed.data.platformFeeRatePercent / 100,
+      platformContactEmail: parsed.data.platformContactEmail,
+      riskIndustryKeywords: parsed.data.riskIndustryKeywords,
+      riskIndustryPrompt: parsed.data.riskIndustryPrompt,
+    },
+  });
+  await audit({
+    action: "platform_settings.updated",
+    entityType: "platform_settings",
+    entityId: settings.id,
+    beforeJson: {
+      acceptanceSlaDays: before.acceptanceSlaDays,
+      highValueReviewThreshold: String(before.highValueReviewThreshold),
+      resubmissionGraceDays: before.resubmissionGraceDays,
+      minimumWithdrawalAmount: String(before.minimumWithdrawalAmount),
+      kolPreviewMaxMb: before.kolPreviewMaxMb,
+      platformFeeRate: String(before.platformFeeRate),
+      platformContactEmail: before.platformContactEmail,
+      riskIndustryKeywords: before.riskIndustryKeywords,
+      riskIndustryPrompt: before.riskIndustryPrompt,
+    },
+    afterJson: {
+      acceptanceSlaDays: settings.acceptanceSlaDays,
+      highValueReviewThreshold: String(settings.highValueReviewThreshold),
+      resubmissionGraceDays: settings.resubmissionGraceDays,
+      minimumWithdrawalAmount: String(settings.minimumWithdrawalAmount),
+      kolPreviewMaxMb: settings.kolPreviewMaxMb,
+      platformFeeRate: String(settings.platformFeeRate),
+      platformContactEmail: settings.platformContactEmail,
+      riskIndustryKeywords: settings.riskIndustryKeywords,
+      riskIndustryPrompt: settings.riskIndustryPrompt,
+    },
+  });
+  revalidatePath("/admin/settings");
+  revalidatePath("/brand/campaigns/new");
+}
+
 export async function updateCreatorProfileAction(formData: FormData) {
   const session = await requireRole(UserRole.CREATOR);
   await prisma.creatorProfile.update({
@@ -1820,14 +3516,20 @@ export async function addSocialAccountAction(formData: FormData) {
   const session = await requireRole(UserRole.CREATOR);
   const creator = await prisma.creatorProfile.findUnique({ where: { userId: session.userId } });
   if (!creator) redirect("/creator/profile");
-  await prisma.socialAccount.create({
+  const followers = Number(text(formData.get("followers")) || 0);
+  const avgViews = Number(text(formData.get("avgViews")) || 0);
+  const platform = text(formData.get("platform"));
+  const accountUrl = text(formData.get("accountUrl"));
+  const account = await prisma.socialAccount.create({
     data: {
       creatorId: creator.id,
-      platform: text(formData.get("platform")),
+      platform,
       accountName: text(formData.get("accountName")),
-      accountUrl: text(formData.get("accountUrl")),
-      followers: Number(text(formData.get("followers")) || 0),
-      avgViews: Number(text(formData.get("avgViews")) || 0),
+      accountUrl,
+      followers,
+      avgViews,
+      submittedFollowers: followers,
+      submittedAvgViews: avgViews,
       contentType: text(formData.get("contentType")),
       country: text(formData.get("country")),
       language: text(formData.get("language")),
@@ -1836,8 +3538,22 @@ export async function addSocialAccountAction(formData: FormData) {
       verificationNote: "等待平台审核账号链接和基础数据。",
     },
   });
+  const crawlerPlatform = toCrawlerPlatform(platform);
+  if (crawlerPlatform) {
+    await createCrawlerJob({
+      type: CrawlerJobType.FETCH_SOCIAL_ACCOUNT,
+      platform: crawlerPlatform,
+      targetType: CrawlerTargetType.SOCIAL_ACCOUNT,
+      targetId: account.id,
+      targetUrl: accountUrl,
+      socialAccountId: account.id,
+      createdByUserId: session.userId,
+    });
+  }
   await audit({ action: "creator.social_account_added", entityType: "creator", entityId: creator.id });
   revalidatePath("/creator/profile");
+  revalidatePath("/admin/social-accounts");
+  revalidatePath("/admin/crawler");
 }
 
 export async function updateSocialAccountVerificationAction(socialAccountId: string, formData: FormData) {
@@ -1877,6 +3593,134 @@ export async function updateSocialAccountVerificationAction(socialAccountId: str
     });
   });
   revalidatePath(`/admin/creators/${account.creatorId}`);
+  revalidatePath("/admin/social-accounts");
+  revalidatePath("/creator/profile");
+}
+
+export async function retryCrawlerJobAction(jobId: string) {
+  await requireAdminPermission("account.freeze");
+  const job = await prisma.crawlerJob.findUnique({ where: { id: jobId } });
+  if (!job) redirect("/admin/crawler");
+  if (job.status !== CrawlerJobStatus.FAILED && job.status !== CrawlerJobStatus.CANCELLED) {
+    redirect("/admin/crawler");
+  }
+
+  const created = await prisma.crawlerJob.create({
+    data: {
+      type: job.type,
+      platform: job.platform,
+      targetType: job.targetType,
+      targetId: job.targetId,
+      targetUrl: job.targetUrl,
+      socialAccountId: job.socialAccountId,
+      proofId: job.proofId,
+      createdByUserId: job.createdByUserId,
+    },
+  });
+
+  await audit({
+    action: "crawler.job_retried",
+    entityType: "crawler_job",
+    entityId: job.id,
+    afterJson: { newJobId: created.id, type: created.type, platform: created.platform },
+  });
+  revalidatePath("/admin/crawler");
+}
+
+export async function refreshSocialAccountMetricsAction(socialAccountId: string) {
+  const session = await requireAdminPermission("account.freeze");
+  const account = await prisma.socialAccount.findUnique({ where: { id: socialAccountId } });
+  if (!account) redirect("/admin/social-accounts");
+
+  const platform = toCrawlerPlatform(account.platform);
+  if (!platform) redirect(`/admin/social-accounts?error=${encodeURIComponent("该平台暂不支持自动抓取。")}`);
+
+  const job = await createCrawlerJob({
+    type: CrawlerJobType.REFRESH_SOCIAL_ACCOUNT,
+    platform,
+    targetType: CrawlerTargetType.SOCIAL_ACCOUNT,
+    targetId: account.id,
+    targetUrl: account.accountUrl,
+    socialAccountId: account.id,
+    createdByUserId: session.userId,
+  });
+
+  await audit({
+    action: "crawler.social_account_refresh_requested",
+    entityType: "social_account",
+    entityId: account.id,
+    afterJson: { crawlerJobId: job.id, platform },
+  });
+  revalidatePath("/admin/social-accounts");
+  revalidatePath("/admin/crawler");
+}
+
+export async function refreshProofMetricsAction(proofId: string) {
+  const session = await requireRole([UserRole.ADMIN, UserRole.BRAND]);
+  if (session.role === UserRole.ADMIN) {
+    await requireAdminPermission("account.freeze");
+  }
+
+  const proof = await prisma.proof.findFirst({
+    where: {
+      id: proofId,
+      ...(session.role === UserRole.BRAND ? { campaign: { brand: { userId: session.userId } } } : {}),
+    },
+    include: { campaign: { include: { brand: true } } },
+  });
+  if (!proof) redirect(session.role === UserRole.ADMIN ? "/admin/crawler" : "/brand/campaigns");
+
+  const platform = toCrawlerPlatform(proof.platform);
+  const backTo = session.role === UserRole.BRAND ? `/brand/campaigns/${proof.campaignId}/proofs` : "/admin/crawler";
+  if (!platform) redirect(`${backTo}?error=${encodeURIComponent("该平台暂不支持自动抓取。")}`);
+
+  const now = new Date();
+  if (session.role === UserRole.BRAND) {
+    const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
+    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+    const [recentSameProof, hourlyBrandRefreshes] = await Promise.all([
+      prisma.crawlerJob.count({
+        where: {
+          proofId: proof.id,
+          type: { in: [CrawlerJobType.FETCH_POST_METRICS, CrawlerJobType.REFRESH_POST_METRICS] },
+          createdAt: { gte: tenMinutesAgo },
+        },
+      }),
+      prisma.crawlerJob.count({
+        where: {
+          createdByUserId: session.userId,
+          type: CrawlerJobType.REFRESH_POST_METRICS,
+          createdAt: { gte: oneHourAgo },
+        },
+      }),
+    ]);
+
+    if (recentSameProof > 0) {
+      redirect(`${backTo}?error=${encodeURIComponent("同一个作品链接 10 分钟内不能重复刷新。")}`);
+    }
+    if (hourlyBrandRefreshes >= 100) {
+      redirect(`${backTo}?error=${encodeURIComponent("当前商家账号每小时最多刷新 100 次作品数据。")}`);
+    }
+  }
+
+  const job = await createCrawlerJob({
+    type: CrawlerJobType.REFRESH_POST_METRICS,
+    platform,
+    targetType: CrawlerTargetType.PROOF,
+    targetId: proof.id,
+    targetUrl: proof.resolvedPostUrl ?? proof.postUrl,
+    proofId: proof.id,
+    createdByUserId: session.userId,
+  });
+
+  await audit({
+    action: "crawler.proof_metrics_refresh_requested",
+    entityType: "proof",
+    entityId: proof.id,
+    afterJson: { crawlerJobId: job.id, platform },
+  });
+  revalidatePath(backTo);
+  revalidatePath("/admin/crawler");
 }
 
 export async function markNotificationReadAction(notificationId: string) {

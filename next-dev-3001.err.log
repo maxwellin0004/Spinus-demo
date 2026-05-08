@@ -1,0 +1,237 @@
+⨯ TypeError: Cannot read properties of undefined (reading 'findUnique')
+    at RegisterPage (src\app\auth\register\page.tsx:15:35)
+  13 |   const inviteCode = normalizeInviteCode(invite ?? "");
+  14 |   const invitation = inviteCode
+> 15 |     ? await prisma.invitationCode.findUnique({
+     |                                   ^
+  16 |         where: { code: inviteCode },
+  17 |         include: { adminProfile: true },
+  18 |       }) {
+  digest: '2295425365'
+}
+[browser] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <LoadingBoundary name="/" loading={[...]}>
+      <Suspense name="/" fallback={<Fragment>}>
+        <HTTPAccessFallbackBoundary notFound={{...}} forbidden={undefined} unauthorized={undefined}>
+          <HTTPAccessFallbackErrorBoundary pathname="/" notFound={{...}} forbidden={undefined} unauthorized={undefined} ...>
+            <RedirectBoundary>
+              <RedirectErrorBoundary router={{...}}>
+                <InnerLayoutRouter url="/" tree={[...]} params={{}} cacheNode={{rsc:{...}, ...}} segmentPath={[...]} ...>
+                  <SegmentViewNode type="page" pagePath="page.tsx">
+                    <SegmentTrieNode>
+                    <Home>
+                      <main className="min-h-scre...">
+                        <nav className="mx-auto fl...">
+                          <LinkComponent>
+                            <LinkComponent href="/" className="group flex...">
+                              <a
+                                className="group flex items-center gap-3"
+                                ref={function}
+                                onClick={function onClick}
+                                onMouseEnter={function onMouseEnter}
+                                onTouchStart={function onTouchStart}
+                                href="/"
+-                               pcked="1"
+                              >
+                          <div className="flex gap-3">
+                            <LinkButton>
+                              <LinkComponent>
+                                <LinkComponent className="rounded-xl..." href="/brand">
+                                  <a
+                                    className="rounded-xl px-4 py-2.5 text-sm font-black transition active:translate-y..."
+                                    ref={function}
+                                    onClick={function onClick}
+                                    onMouseEnter={function onMouseEnter}
+                                    onTouchStart={function onTouchStart}
+                                    href="/brand"
+-                                   pcked="1"
+                                  >
++                                   进入工作台
+                            <LinkButton>
+                              <LinkComponent>
+                                <LinkComponent className="rounded-xl..." href="/auth/login">
+                                  <a
+                                    className="rounded-xl px-4 py-2.5 text-sm font-black transition active:translate-y..."
+                                    ref={function}
+                                    onClick={function onClick}
+                                    onMouseEnter={function onMouseEnter}
+                                    onTouchStart={function onTouchStart}
+                                    href="/auth/login"
+-                                   pcked="1"
+                                  >
++                                   登录
+                        <section className="mx-auto gr...">
+                          <div className="stitch-stage">
+                            <div>
+                            <h1>
+                            <p>
+                            <div className="mt-8 flex ...">
+                              <LinkButton>
+                                <LinkComponent>
+                                  <LinkComponent className="rounded-xl..." href="/auth/login">
+                                    <a
+                                      className="rounded-xl px-4 py-2.5 text-sm font-black transition active:translate..."
+                                      ref={function}
+                                      onClick={function onClick}
+                                      onMouseEnter={function onMouseEnter}
+                                      onTouchStart={function onTouchStart}
+                                      href="/auth/login"
+-                                     pcked="1"
+                                    >
++                                     使用测试账号
+                              <LinkButton>
+                                <LinkComponent>
+                                  <LinkComponent className="rounded-xl..." href="/auth/regi...">
+                                    <a
+                                      className="rounded-xl px-4 py-2.5 text-sm font-black transition active:translate..."
+                                      ref={function}
+                                      onClick={function onClick}
+                                      onMouseEnter={function onMouseEnter}
+                                      onTouchStart={function onTouchStart}
+                                      href="/auth/register"
+-                                     pcked="1"
+                                    >
++                                     注册工作台
+                            ...
+                          ...
+                        <section className="mx-auto gr...">
+                          <LinkComponent>
+                            <LinkComponent className="group roun..." href="/brand">
+                              <a
+                                className="group rounded-[2rem] border border-stone-200 bg-white/72 p-5 shadow-[0_20px..."
+                                ref={function}
+                                onClick={function onClick}
+                                onMouseEnter={function onMouseEnter}
+                                onTouchStart={function onTouchStart}
+                                href="/brand"
+-                               pcked="1"
+                              >
+                          <LinkComponent>
+                            <LinkComponent className="group roun..." href="/brand">
+                              <a
+                                className="group rounded-[2rem] border border-stone-200 bg-white/72 p-5 shadow-[0_20px..."
+                                ref={function}
+                                onClick={function onClick}
+                                onMouseEnter={function onMouseEnter}
+                                onTouchStart={function onTouchStart}
+                                href="/brand"
+-                               pcked="1"
+                              >
+                          <LinkComponent>
+                            <LinkComponent className="group roun..." href="/brand">
+                              <a
+                                className="group rounded-[2rem] border border-stone-200 bg-white/72 p-5 shadow-[0_20px..."
+                                ref={function}
+                                onClick={function onClick}
+                                onMouseEnter={function onMouseEnter}
+                                onTouchStart={function onTouchStart}
+                                href="/brand"
+-                               pcked="1"
+                              >
+                  ...
+                ...
+ 
+⨯ Error [PrismaClientValidationError]: 
+Invalid `{imported module ./src/lib/prisma.ts}["prisma"].adminProfile.findMany()` invocation in
+D:\program\ai_video\workflow\tanglin\.next\dev\server\chunks\ssr\[root-of-the-server]__0-hwk03._.js:112:166
+
+  109 async function AdminStaffPage({ searchParams }) {
+  110     await (0, {imported module ./src/lib/admin.ts}["requireAdminPermission"])("staff.manage");
+  111     const { error } = await searchParams;
+→ 112     const admins = await {imported module ./src/lib/prisma.ts}["prisma"].adminProfile.findMany({
+            include: {
+              user: true,
+              invitationCodes: {
+              ~~~~~~~~~~~~~~~
+                orderBy: {
+                  createdAt: "desc"
+                }
+              },
+              managedBrands: {
+                select: {
+                  id: true
+                }
+              },
+              managedCreators: {
+                select: {
+                  id: true
+                }
+              },
+          ?   brandRequests?: true
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          })
+
+Unknown field `invitationCodes` for include statement on model `AdminProfile`. Available options are marked with ?.
+    at <unknown> (src\app\admin\staff\page.tsx:28:44)
+    at async AdminStaffPage (src\app\admin\staff\page.tsx:28:18)
+  26 |   await requireAdminPermission("staff.manage");
+  27 |   const { error } = await searchParams;
+> 28 |   const admins = await prisma.adminProfile.findMany({
+     |                                            ^
+  29 |     include: {
+  30 |       user: true,
+  31 |       invitationCodes: { orderBy: { createdAt: "desc" } }, {
+  clientVersion: '7.8.0',
+  digest: '3452490222'
+}
+⨯ Error [PrismaClientValidationError]: 
+Invalid `{imported module ./src/lib/prisma.ts}["prisma"].adminProfile.findMany()` invocation in
+D:\program\ai_video\workflow\tanglin\.next\dev\server\chunks\ssr\[root-of-the-server]__0-hwk03._.js:112:166
+
+  109 async function AdminStaffPage({ searchParams }) {
+  110     await (0, {imported module ./src/lib/admin.ts}["requireAdminPermission"])("staff.manage");
+  111     const { error } = await searchParams;
+→ 112     const admins = await {imported module ./src/lib/prisma.ts}["prisma"].adminProfile.findMany({
+            include: {
+              user: true,
+              invitationCodes: {
+              ~~~~~~~~~~~~~~~
+                orderBy: {
+                  createdAt: "desc"
+                }
+              },
+              managedBrands: {
+                select: {
+                  id: true
+                }
+              },
+              managedCreators: {
+                select: {
+                  id: true
+                }
+              },
+          ?   brandRequests?: true
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          })
+
+Unknown field `invitationCodes` for include statement on model `AdminProfile`. Available options are marked with ?.
+    at <unknown> (src\app\admin\staff\page.tsx:28:44)
+    at async AdminStaffPage (src\app\admin\staff\page.tsx:28:18)
+  26 |   await requireAdminPermission("staff.manage");
+  27 |   const { error } = await searchParams;
+> 28 |   const admins = await prisma.adminProfile.findMany({
+     |                                            ^
+  29 |     include: {
+  30 |       user: true,
+  31 |       invitationCodes: { orderBy: { createdAt: "desc" } }, {
+  clientVersion: '7.8.0',
+  digest: '3452490222'
+}

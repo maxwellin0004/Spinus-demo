@@ -1,0 +1,145 @@
+- generic [active] [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e22] [cursor=pointer]:
+    - img [ref=e23]
+  - alert [ref=e26]
+  - generic [ref=e27]:
+    - complementary [ref=e28]:
+      - link "Tanglin KOL 投放平台 三方投放协作后台" [ref=e29] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e30]:
+          - paragraph [ref=e31]: Tanglin
+          - paragraph [ref=e32]: KOL 投放平台
+          - paragraph [ref=e33]: 三方投放协作后台
+      - navigation [ref=e34]:
+        - generic [ref=e35]:
+          - paragraph [ref=e36]: 创作者工作台
+          - generic [ref=e37]:
+            - link "仪表盘" [ref=e38] [cursor=pointer]:
+              - /url: /creator
+            - link "个人资料" [ref=e39] [cursor=pointer]:
+              - /url: /creator/profile
+        - generic [ref=e40]:
+          - paragraph [ref=e41]: 任务与收益
+          - generic [ref=e42]:
+            - link "任务大厅" [ref=e43] [cursor=pointer]:
+              - /url: /creator/marketplace
+            - link "我的任务" [ref=e44] [cursor=pointer]:
+              - /url: /creator/my-tasks
+            - link "钱包提现" [ref=e45] [cursor=pointer]:
+              - /url: /creator/wallet
+      - generic [ref=e46]:
+        - paragraph [ref=e47]: 协作流程
+        - paragraph [ref=e48]: 任务、审核、发布凭证、争议和钱包事件保持联动。
+    - generic [ref=e49]:
+      - banner [ref=e50]:
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - generic [ref=e53]: 创作者
+            - generic [ref=e55]: creator@test.com
+            - link "1 未读" [ref=e56] [cursor=pointer]:
+              - /url: /creator/notifications
+              - generic [ref=e57]: 1 未读
+          - button "退出登录" [ref=e60]
+      - main [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - generic [ref=e64]:
+              - paragraph [ref=e65]: 创作者
+              - heading "雀仔增长 仪表盘" [level=1] [ref=e66]
+            - link "浏览任务" [ref=e68] [cursor=pointer]:
+              - /url: /creator/marketplace
+          - generic [ref=e69]:
+            - generic [ref=e70]:
+              - generic [ref=e71]:
+                - generic [ref=e72]:
+                  - paragraph [ref=e73]: Creator Onboarding
+                  - heading "资料完成度 80%" [level=2] [ref=e74]
+                  - paragraph [ref=e75]: 当前可接任务等级：VERIFIED
+                - generic [ref=e76]: 4/5
+              - generic [ref=e78]:
+                - generic [ref=e79]:
+                  - paragraph [ref=e82]: 基础资料
+                  - paragraph [ref=e83]: 已填写昵称、国家、语言、领域和简介。
+                  - link "去处理" [ref=e84] [cursor=pointer]:
+                    - /url: /creator/profile
+                - generic [ref=e85]:
+                  - paragraph [ref=e88]: 社媒账号
+                  - paragraph [ref=e89]: 已添加 1 个账号。
+                  - link "去处理" [ref=e90] [cursor=pointer]:
+                    - /url: /creator/profile
+                - generic [ref=e91]:
+                  - paragraph [ref=e94]: 账号验证
+                  - paragraph [ref=e95]: 1 个账号已验证。
+                  - link "去处理" [ref=e96] [cursor=pointer]:
+                    - /url: /creator/profile
+                - generic [ref=e97]:
+                  - paragraph [ref=e100]: 创作者审核
+                  - paragraph [ref=e101]: 当前状态：APPROVED
+                - generic [ref=e102]:
+                  - paragraph [ref=e105]: 收款信息
+                  - paragraph [ref=e106]: 填写后才方便提现。
+                  - link "去处理" [ref=e107] [cursor=pointer]:
+                    - /url: /creator/profile
+              - link "完善资料" [ref=e109] [cursor=pointer]:
+                - /url: /creator/profile
+            - generic [ref=e110]:
+              - paragraph [ref=e111]: 你的平台运营联系人
+              - heading "平台创始人" [level=2] [ref=e112]
+              - generic [ref=e113]:
+                - paragraph [ref=e114]: 邮箱：admin@test.com
+                - paragraph [ref=e115]: 微信：xiaohuangque_ops
+          - generic [ref=e116]:
+            - generic [ref=e117]:
+              - paragraph [ref=e120]: 可接任务
+              - generic [ref=e121]: "13"
+            - generic [ref=e122]:
+              - paragraph [ref=e125]: 已申请任务
+              - generic [ref=e126]: "1"
+            - generic [ref=e127]:
+              - paragraph [ref=e130]: 待提交内容
+              - generic [ref=e131]: "0"
+            - generic [ref=e132]:
+              - paragraph [ref=e135]: 审核中
+              - generic [ref=e136]: "0"
+            - generic [ref=e137]:
+              - paragraph [ref=e140]: 待发布
+              - generic [ref=e141]: "1"
+            - generic [ref=e142]:
+              - paragraph [ref=e145]: 待回传证明
+              - generic [ref=e146]: "1"
+            - generic [ref=e147]:
+              - paragraph [ref=e150]: 可提现余额
+              - generic [ref=e151]: US$92
+            - generic [ref=e152]:
+              - paragraph [ref=e155]: 累计收入
+              - generic [ref=e156]: US$1,104
+            - generic [ref=e157]:
+              - paragraph [ref=e160]: 完成任务数
+              - generic [ref=e161]: "9"
+            - generic [ref=e162]:
+              - paragraph [ref=e165]: 等级
+              - generic [ref=e166]: VERIFIED
+            - generic [ref=e167]:
+              - paragraph [ref=e170]: 履约率
+              - generic [ref=e171]: 92.0%
+          - generic [ref=e172]:
+            - heading "最近任务" [level=2] [ref=e173]
+            - table [ref=e176]:
+              - rowgroup [ref=e177]:
+                - row "推广活动 任务 申请 最新提交 操作" [ref=e178]:
+                  - columnheader "推广活动" [ref=e179]
+                  - columnheader "任务" [ref=e180]
+                  - columnheader "申请" [ref=e181]
+                  - columnheader "最新提交" [ref=e182]
+                  - columnheader "操作" [ref=e183]
+              - rowgroup [ref=e184]:
+                - row "AI 研究助手创作者发布 TikTok 创始人视角 已通过 已通过 打开" [ref=e185]:
+                  - cell "AI 研究助手创作者发布" [ref=e186]
+                  - cell "TikTok 创始人视角" [ref=e187]
+                  - cell "已通过" [ref=e188]:
+                    - generic [ref=e189]: 已通过
+                  - cell "已通过" [ref=e191]:
+                    - generic [ref=e192]: 已通过
+                  - cell "打开" [ref=e194]:
+                    - link "打开" [ref=e195] [cursor=pointer]:
+                      - /url: /creator/my-tasks/cmotw0hjc0015rkjduuc5b3g2

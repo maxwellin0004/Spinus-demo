@@ -1,0 +1,146 @@
+- generic [active] [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e22] [cursor=pointer]:
+    - img [ref=e23]
+  - alert [ref=e26]
+  - generic [ref=e27]:
+    - complementary [ref=e28]:
+      - link "Tanglin KOL 投放平台 三方投放协作后台" [ref=e29] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e30]:
+          - paragraph [ref=e31]: Tanglin
+          - paragraph [ref=e32]: KOL 投放平台
+          - paragraph [ref=e33]: 三方投放协作后台
+      - navigation [ref=e34]:
+        - generic [ref=e35]:
+          - paragraph [ref=e36]: 品牌工作台
+          - generic [ref=e37]:
+            - link "仪表盘" [ref=e38] [cursor=pointer]:
+              - /url: /brand
+            - link "品牌资料" [ref=e39] [cursor=pointer]:
+              - /url: /brand/profile
+            - link "需求沟通" [ref=e40] [cursor=pointer]:
+              - /url: /brand/requests
+        - generic [ref=e41]:
+          - paragraph [ref=e42]: 投放
+          - generic [ref=e43]:
+            - link "推广活动" [ref=e44] [cursor=pointer]:
+              - /url: /brand/campaigns
+            - link "新建推广" [ref=e45] [cursor=pointer]:
+              - /url: /brand/campaigns/new
+            - link "账单" [ref=e46] [cursor=pointer]:
+              - /url: /brand/billing
+      - generic [ref=e47]:
+        - paragraph [ref=e48]: 协作流程
+        - paragraph [ref=e49]: 任务、审核、发布凭证、争议和钱包事件保持联动。
+    - generic [ref=e50]:
+      - banner [ref=e51]:
+        - generic [ref=e52]:
+          - generic [ref=e53]:
+            - generic [ref=e54]: 品牌方
+            - generic [ref=e56]: brand@test.com
+            - link "1 未读" [ref=e57] [cursor=pointer]:
+              - /url: /brand/notifications
+              - generic [ref=e58]: 1 未读
+          - button "退出登录" [ref=e61]
+      - main [ref=e62]:
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - generic [ref=e65]:
+              - paragraph [ref=e66]: 品牌方
+              - heading "小黄雀实验室 仪表盘" [level=1] [ref=e67]
+            - generic [ref=e68]:
+              - link "先提交需求" [ref=e69] [cursor=pointer]:
+                - /url: /brand/requests
+              - link "创建推广" [ref=e70] [cursor=pointer]:
+                - /url: /brand/campaigns/new
+          - generic [ref=e71]:
+            - paragraph [ref=e72]: 你的商务运营
+            - heading "平台创始人" [level=2] [ref=e73]
+            - generic [ref=e74]:
+              - paragraph [ref=e75]: 邮箱：admin@test.com
+              - paragraph [ref=e76]: 微信：xiaohuangque_ops
+          - generic [ref=e77]:
+            - generic [ref=e78]:
+              - paragraph [ref=e81]: 进行中推广
+              - generic [ref=e82]: "1"
+            - generic [ref=e83]:
+              - paragraph [ref=e86]: Pending reviews
+              - generic [ref=e87]: "1"
+            - generic [ref=e88]:
+              - paragraph [ref=e91]: Published content
+              - generic [ref=e92]: "1"
+            - generic [ref=e93]:
+              - paragraph [ref=e96]: 总播放
+              - generic [ref=e97]: 28,400
+            - generic [ref=e98]:
+              - paragraph [ref=e101]: Engagement
+              - generic [ref=e102]: 3,058
+            - generic [ref=e103]:
+              - paragraph [ref=e106]: 点击
+              - generic [ref=e107]: "360"
+            - generic [ref=e108]:
+              - paragraph [ref=e111]: 转化
+              - generic [ref=e112]: "41"
+            - generic [ref=e113]:
+              - paragraph [ref=e116]: Budget spent
+              - generic [ref=e117]: US$17,000
+            - generic [ref=e118]:
+              - paragraph [ref=e121]: Budget left
+              - generic [ref=e122]: US$7,300
+            - generic [ref=e123]:
+              - paragraph [ref=e126]: Best content
+              - generic [ref=e127]: 28,400
+          - generic [ref=e128]:
+            - heading "推广活动" [level=2] [ref=e129]
+            - table [ref=e132]:
+              - rowgroup [ref=e133]:
+                - row "推广活动 状态 预算 任务数 内容提交 报告" [ref=e134]:
+                  - columnheader "推广活动" [ref=e135]
+                  - columnheader "状态" [ref=e136]
+                  - columnheader "预算" [ref=e137]
+                  - columnheader "任务数" [ref=e138]
+                  - columnheader "内容提交" [ref=e139]
+                  - columnheader "报告" [ref=e140]
+              - rowgroup [ref=e141]:
+                - row "新品种草推广 草稿 US$300 2 0 报告" [ref=e142]:
+                  - cell "新品种草推广" [ref=e143]:
+                    - link "新品种草推广" [ref=e144] [cursor=pointer]:
+                      - /url: /brand/campaigns/cmou5us2m000wd8jdb3eh4mig
+                  - cell "草稿" [ref=e145]:
+                    - generic [ref=e146]: 草稿
+                  - cell "US$300" [ref=e148]
+                  - cell "2" [ref=e149]
+                  - cell "0" [ref=e150]
+                  - cell "报告" [ref=e151]:
+                    - link "报告" [ref=e152] [cursor=pointer]:
+                      - /url: /brand/campaigns/cmou5us2m000wd8jdb3eh4mig/reports
+                - row "B2B 演示周推广 待审核 US$9,000 2 0 报告" [ref=e153]:
+                  - cell "B2B 演示周推广" [ref=e154]:
+                    - link "B2B 演示周推广" [ref=e155] [cursor=pointer]:
+                      - /url: /brand/campaigns/cmotw0h7t000trkjd2l6q4u9p
+                  - cell "待审核" [ref=e156]:
+                    - generic [ref=e157]: 待审核
+                  - cell "US$9,000" [ref=e159]
+                  - cell "2" [ref=e160]
+                  - cell "0" [ref=e161]
+                  - cell "报告" [ref=e162]:
+                    - link "报告" [ref=e163] [cursor=pointer]:
+                      - /url: /brand/campaigns/cmotw0h7t000trkjd2l6q4u9p/reports
+                - row "AI 研究助手创作者发布 活跃 US$15,000 4 2 报告" [ref=e164]:
+                  - cell "AI 研究助手创作者发布" [ref=e165]:
+                    - link "AI 研究助手创作者发布" [ref=e166] [cursor=pointer]:
+                      - /url: /brand/campaigns/cmotw0h7n000qrkjd5vt3yj2m
+                  - cell "活跃" [ref=e167]:
+                    - generic [ref=e168]: 活跃
+                  - cell "US$15,000" [ref=e170]
+                  - cell "4" [ref=e171]
+                  - cell "2" [ref=e172]
+                  - cell "报告" [ref=e173]:
+                    - link "报告" [ref=e174] [cursor=pointer]:
+                      - /url: /brand/campaigns/cmotw0h7n000qrkjd5vt3yj2m/reports
+          - generic [ref=e175]:
+            - heading "最近需求" [level=2] [ref=e176]
+            - generic [ref=e177]:
+              - paragraph [ref=e178]: 暂无记录
+              - paragraph [ref=e179]: 流程开始后，记录会显示在这里。
+          - paragraph [ref=e180]: 最近推广更新时间：2026年5月6日

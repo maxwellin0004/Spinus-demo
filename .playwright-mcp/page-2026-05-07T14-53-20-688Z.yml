@@ -1,0 +1,18 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e5]:
+      - paragraph [ref=e6]: 小黄雀联盟
+      - heading "登录" [level=1] [ref=e7]
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - text: 邮箱
+          - textbox "邮箱" [ref=e11]: admin@test.com
+        - generic [ref=e12]:
+          - text: 密码
+          - textbox "密码" [ref=e13]: password123
+        - button "登录" [ref=e14]
+      - paragraph [ref=e15]:
+        - text: 还没有账号？
+        - link "注册" [ref=e16] [cursor=pointer]:
+          - /url: /auth/register
