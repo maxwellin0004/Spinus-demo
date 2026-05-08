@@ -7,10 +7,11 @@ import { prisma } from "@/lib/prisma";
 export default async function RegisterPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; invite?: string }>;
+  searchParams: Promise<{ error?: string; invite?: string; role?: string }>;
 }) {
-  const { error, invite } = await searchParams;
+  const { error, invite, role } = await searchParams;
   const inviteCode = normalizeInviteCode(invite ?? "");
+  const defaultRole = role === "CREATOR" ? "CREATOR" : "BRAND";
   const invitation = inviteCode
     ? await prisma.invitationCode.findUnique({
         where: { code: inviteCode },
@@ -37,7 +38,7 @@ export default async function RegisterPage({
             </div>
           ) : null}
           <form action={registerAction} className="grid gap-4">
-            <Select label="角色" name="role" defaultValue="BRAND">
+            <Select label="角色" name="role" defaultValue={defaultRole}>
               <option value="BRAND">品牌方</option>
               <option value="CREATOR">KOL / 创作者</option>
             </Select>
@@ -54,7 +55,7 @@ export default async function RegisterPage({
             </label>
             <Field label="工作台/显示名称" name="name" required placeholder="例如 Tanglin Test" />
             <Field label="国家/地区" name="country" required defaultValue="Singapore" />
-            <Field label="行业（品牌方必填）" name="industry" defaultValue="AI SaaS" />
+            <Field label="行业（品牌方填写）" name="industry" defaultValue="AI SaaS" />
             <Field label="邮箱" name="email" type="email" required placeholder="name@example.com" />
             <Field label="密码" name="password" type="password" required placeholder="至少 8 位" />
             <button className="rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white" type="submit">
@@ -62,7 +63,7 @@ export default async function RegisterPage({
             </button>
           </form>
           <p className="mt-5 text-sm text-stone-500">
-            已有账号？<Link className="font-semibold text-stone-950" href="/auth/login">登录</Link>
+            已有账号？ <Link className="font-semibold text-stone-950" href="/auth/login">登录</Link>
           </p>
         </Card>
       </div>
