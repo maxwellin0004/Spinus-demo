@@ -503,7 +503,7 @@ export async function updateBrandProfileAction(formData: FormData) {
     logoUrl: uploadedLogo || text(formData.get("logoUrl")),
     description: text(formData.get("description")),
   });
-  if (!parsed.success) redirect("/brand/profile?error=璇锋鏌ュ搧鐗岃祫鏂欏繀濉」");
+  if (!parsed.success) redirect("/brand/profile?error=请检查品牌资料必填项");
 
   await prisma.$transaction(async (tx) => {
     await tx.brandProfile.update({
@@ -1614,7 +1614,7 @@ export async function requestBrandInvoiceAction(formData: FormData) {
         data: {
           userId: brand.responsibleAdmin.userId,
           title: "品牌提交了发票/预算申请",
-          body: `${brand.brandName} 鐢宠 ${parsed.data.currency} ${parsed.data.amount}`,
+          body: `${brand.brandName} 申请 ${parsed.data.currency} ${parsed.data.amount}`,
           href: "/admin/payments",
         },
       });

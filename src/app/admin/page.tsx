@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { BrandLedgerTxStatus, BrandLedgerTxType, CampaignStatus, ProofStatus, SocialVerificationStatus, SubmissionStatus, WithdrawalStatus } from "@prisma/client";
 import { DataTable, MetricCard, PageHeader, StatusBadge } from "@/components/ui";
-import { prisma } from "@/lib/prisma";
-import { money, number, percent, shortDate } from "@/lib/format";
 import { getAdminContext } from "@/lib/admin";
+import { money, number, percent, shortDate } from "@/lib/format";
+import { prisma } from "@/lib/prisma";
 
 export default async function AdminDashboard() {
   await getAdminContext();
@@ -58,28 +58,28 @@ export default async function AdminDashboard() {
   const margin = gmv ? (estimatedPlatformRevenue / gmv) * 100 : 0;
 
   const todos = [
-    { title: "推广待审核", count: pendingCampaigns, href: "/admin/campaigns", tone: "amber" as const, detail: "新 Campaign 需要确认预算、规则和任务配置。" },
+    { title: "推广待审核", count: pendingCampaigns, href: "/admin/campaigns?status=PENDING_REVIEW", tone: "amber" as const, detail: "新 Campaign 需要确认预算、规则和任务配置。" },
     { title: "内容待审核", count: pendingSubmissions, href: "/admin/submissions", tone: "cyan" as const, detail: "创作者草稿等待平台或商家审核流转。" },
-    { title: "发布链接待验收", count: pendingProofs, href: "/admin/proofs", tone: "lime" as const, detail: "Proof 链接和抓取指标需要验收确认。" },
+    { title: "发布链接待验收", count: pendingProofs, href: "/admin/proofs?status=PENDING", tone: "lime" as const, detail: "Proof 链接和抓取指标需要验收确认。" },
     { title: "付款待确认", count: pendingInvoices, href: "/admin/payments", tone: "stone" as const, detail: "商家付款凭证需要财务处理。" },
     { title: "提现待处理", count: pendingWithdrawals, href: "/admin/payments", tone: "stone" as const, detail: "创作者提现申请等待审核或打款。" },
-    { title: "社媒账号待审核", count: pendingSocialAccounts, href: "/admin/social-accounts", tone: "amber" as const, detail: "KOL 社媒账号真实性和数据需要确认。" },
+    { title: "社媒账号待审核", count: pendingSocialAccounts, href: "/admin/social-accounts?status=PENDING", tone: "amber" as const, detail: "KOL 社媒账号真实性和数据需要确认。" },
   ];
 
   const operatingCards = [
-    ["进行中推广", activeCampaigns],
-    ["本月 GMV", money(gmv)],
-    ["已确认平台收入", money(platformRevenue)],
-    ["创作者支出预算", money(creatorSpend)],
-    ["平均毛利率", percent(margin)],
-    ["冻结托管余额", money(frozenEscrow._sum.frozenEscrowBalance)],
+    { label: "进行中推广", value: activeCampaigns, href: "/admin/campaigns?status=ACTIVE" },
+    { label: "本月 GMV", value: money(gmv), href: "/admin/reports" },
+    { label: "已确认平台收入", value: money(platformRevenue), href: "/admin/reports" },
+    { label: "创作者支出预算", value: money(creatorSpend), href: "/admin/reports" },
+    { label: "平均毛利率", value: percent(margin), href: "/admin/reports" },
+    { label: "冻结托管余额", value: money(frozenEscrow._sum.frozenEscrowBalance), href: "/admin/payments" },
   ];
 
   const capacityCards = [
-    ["品牌总数", totalBrands],
-    ["活跃品牌", activeBrands],
-    ["创作者总数", totalCreators],
-    ["活跃创作者", activeCreators],
+    { label: "品牌总数", value: totalBrands, href: "/admin/brands" },
+    { label: "活跃品牌", value: activeBrands, href: "/admin/brands?status=APPROVED" },
+    { label: "创作者总数", value: totalCreators, href: "/admin/creators" },
+    { label: "活跃创作者", value: activeCreators, href: "/admin/creators?status=APPROVED" },
   ];
 
   return (
@@ -90,7 +90,7 @@ export default async function AdminDashboard() {
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="text-xl font-black text-stone-950">需要处理</h2>
-            <p className="mt-1 text-sm text-stone-500">按履约和资金风险优先排列，进入后处理具体队列。</p>
+            <p className="mt-1 text-sm text-stone-500">按履约和资金风险优先排列，点击卡片进入对应队列。</p>
           </div>
           <StatusBadge>{todos.reduce((sum, item) => sum + item.count, 0)} 待办</StatusBadge>
         </div>
@@ -104,10 +104,10 @@ export default async function AdminDashboard() {
       <section className="grid gap-4">
         <h2 className="text-xl font-black text-stone-950">经营快照</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          {operatingCards.map(([label, value]) => <MetricCard compact key={label} label={String(label)} value={value} />)}
+          {operatingCards.map((card) => <MetricCard compact key={card.label} label={card.label} value={card.value} href={card.href} />)}
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {capacityCards.map(([label, value]) => <MetricCard compact key={label} label={String(label)} value={value} />)}
+          {capacityCards.map((card) => <MetricCard compact key={card.label} label={card.label} value={card.value} href={card.href} />)}
         </div>
       </section>
 

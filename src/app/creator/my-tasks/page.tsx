@@ -1,9 +1,19 @@
 import Link from "next/link";
 import { ApplicationStatus, SubmissionStatus, UserRole } from "@prisma/client";
-import { requireRole } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { DataTable, MetricCard, PageHeader, StatusBadge } from "@/components/ui";
+import { requireRole } from "@/lib/auth";
 import { money, shortDate } from "@/lib/format";
+import { prisma } from "@/lib/prisma";
+
+type MyTaskStage = "applied" | "content" | "review" | "publish" | "done";
+
+const stageLabels: Record<MyTaskStage, string> = {
+  applied: "申请待审核",
+  content: "待制作内容",
+  review: "内容待审核",
+  publish: "待发布/验收",
+  done: "已完成",
+};
 
 function taskStage(status: ApplicationStatus, latest?: { status: SubmissionStatus } | null) {
   if (status === ApplicationStatus.APPLIED) return { label: "申请待审核", next: "等待品牌或平台审核，通过后才能进入内容工作台。" };
@@ -13,44 +23,76 @@ function taskStage(status: ApplicationStatus, latest?: { status: SubmissionStatu
   if (latest.status === SubmissionStatus.SUBMITTED) return { label: "内容待审核", next: "等待品牌或平台审核内容。" };
   if (latest.status === SubmissionStatus.REVISION_REQUESTED) return { label: "需要修改", next: "查看审核意见后重新编辑提交。" };
   if (latest.status === SubmissionStatus.APPROVED) return { label: "待发布", next: "进入发布助手，复制文案并手动发布。" };
-  if (latest.status === SubmissionStatus.PUBLISHED || latest.status === SubmissionStatus.PROOF_SUBMITTED) return { label: "待 Proof 审核", next: "等待 Admin 验证发布链接和数据。" };
-  if (latest.status === SubmissionStatus.VERIFIED) return { label: "已验收", next: "Proof 已验证，收益会直接进入钱包。" };
+  if (latest.status === SubmissionStatus.PUBLISHED || latest.status === SubmissionStatus.PROOF_SUBMITTED) return { label: "发布链接待验收", next: "等待商家验收发布链接和数据。" };
+  if (latest.status === SubmissionStatus.VERIFIED) return { label: "已验收", next: "收益会直接进入钱包。" };
   if (latest.status === SubmissionStatus.SETTLED) return { label: "已入账", next: "收益已进入可提现余额。" };
   return { label: "已结束", next: "该任务当前无需操作。" };
 }
 
-export default async function CreatorMyTasksPage() {
+function matchesStage(application: { status: ApplicationStatus; submissions: { status: SubmissionStatus }[] }, stage: MyTaskStage | null) {
+  const latest = application.submissions[0];
+  if (!stage) return true;
+  if (stage === "applied") return application.status === ApplicationStatus.APPLIED;
+  if (stage === "content") return application.status === ApplicationStatus.APPROVED && !latest;
+  if (stage === "review") return latest?.status === SubmissionStatus.SUBMITTED || latest?.status === SubmissionStatus.REVISION_REQUESTED;
+  if (stage === "publish") return latest?.status === SubmissionStatus.APPROVED || latest?.status === SubmissionStatus.PUBLISHED || latest?.status === SubmissionStatus.PROOF_SUBMITTED;
+  if (stage === "done") return latest?.status === SubmissionStatus.VERIFIED || latest?.status === SubmissionStatus.SETTLED;
+  return true;
+}
+
+export default async function CreatorMyTasksPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ stage?: string }>;
+}) {
   const session = await requireRole(UserRole.CREATOR);
+  const { stage } = await searchParams;
+  const selectedStage = ["applied", "content", "review", "publish", "done"].includes(stage ?? "") ? (stage as MyTaskStage) : null;
   const applications = await prisma.taskApplication.findMany({
     where: { creator: { userId: session.userId } },
     include: { task: { include: { campaign: true } }, submissions: { orderBy: { createdAt: "desc" }, take: 1 } },
     orderBy: { createdAt: "desc" },
   });
-  const pendingApplications = applications.filter((application) => application.status === "APPLIED").length;
-  const approvedWithoutSubmission = applications.filter((application) => application.status === "APPROVED" && application.submissions.length === 0).length;
-  const pendingReview = applications.filter((application) => application.submissions[0]?.status === "SUBMITTED").length;
-  const needPublish = applications.filter((application) => application.submissions[0]?.status === "APPROVED").length;
+
+  const visibleApplications = applications.filter((application) => matchesStage(application, selectedStage));
+  const pendingApplications = applications.filter((application) => application.status === ApplicationStatus.APPLIED).length;
+  const approvedWithoutSubmission = applications.filter((application) => application.status === ApplicationStatus.APPROVED && application.submissions.length === 0).length;
+  const pendingReview = applications.filter((application) => {
+    const latest = application.submissions[0];
+    return latest?.status === SubmissionStatus.SUBMITTED || latest?.status === SubmissionStatus.REVISION_REQUESTED;
+  }).length;
+  const needPublish = applications.filter((application) => {
+    const latest = application.submissions[0];
+    return latest?.status === SubmissionStatus.APPROVED || latest?.status === SubmissionStatus.PUBLISHED || latest?.status === SubmissionStatus.PROOF_SUBMITTED;
+  }).length;
+
   return (
     <div className="grid gap-6">
       <PageHeader eyebrow="创作者" title="我的任务" />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricCard label="申请待审核" value={pendingApplications} />
-        <MetricCard label="待制作内容" value={approvedWithoutSubmission} />
-        <MetricCard label="内容待审核" value={pendingReview} />
-        <MetricCard label="待发布" value={needPublish} />
+        <MetricCard compact label="申请待审核" value={pendingApplications} href="/creator/my-tasks?stage=applied" />
+        <MetricCard compact label="待制作内容" value={approvedWithoutSubmission} href="/creator/my-tasks?stage=content" />
+        <MetricCard compact label="内容待审核" value={pendingReview} href="/creator/my-tasks?stage=review" />
+        <MetricCard compact label="待发布/验收" value={needPublish} href="/creator/my-tasks?stage=publish" />
       </div>
+      {selectedStage ? (
+        <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-stone-200 bg-white/80 p-4 text-sm font-semibold text-stone-600">
+          当前筛选：<StatusBadge>{stageLabels[selectedStage]}</StatusBadge>
+          <Link className="font-black text-stone-950" href="/creator/my-tasks">清空筛选</Link>
+        </div>
+      ) : null}
       <DataTable
         headers={["Campaign", "Task", "Stage", "Application", "Submission", "Next", "Reward", "Deadline", "Action"]}
-        rows={applications.map((application) => {
+        rows={visibleApplications.map((application) => {
           const latest = application.submissions[0];
-          const stage = taskStage(application.status, latest);
+          const stageInfo = taskStage(application.status, latest);
           return [
             application.task.campaign.title,
             application.task.title,
-            stage.label,
+            stageInfo.label,
             <StatusBadge key="a">{application.status}</StatusBadge>,
             latest?.status ? <StatusBadge key="s">{latest.status}</StatusBadge> : "尚未提交",
-            stage.next,
+            stageInfo.next,
             money(application.task.rewardAmount),
             shortDate(application.task.deadline),
             <Link className="font-semibold text-stone-950" href={`/creator/my-tasks/${application.id}`} key={application.id}>打开</Link>,

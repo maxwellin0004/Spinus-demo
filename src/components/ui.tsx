@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { MouseEventHandler, ReactNode } from "react";
-import { cn } from "@/lib/utils";
 import { zh, zhNode, zhText } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
 export function Card({
   children,
@@ -27,21 +27,29 @@ export function MetricCard({
   value,
   sub,
   compact = false,
+  href,
 }: {
   label: string;
   value: ReactNode;
   sub?: ReactNode;
   compact?: boolean;
+  href?: string;
 }) {
-  return (
+  const content = (
     <Card className={cn("relative overflow-hidden bg-white/88", compact ? "min-h-24 p-4" : "min-h-32")}>
       <div className="relative flex items-center gap-2">
         <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
         <p className="text-xs font-black uppercase tracking-[0.12em] text-stone-500">{zhText(label)}</p>
       </div>
       <div className={cn("relative font-black tracking-tight text-[var(--ink)]", compact ? "mt-3 text-2xl" : "mt-4 text-3xl")}>{value}</div>
-      {sub ? <div className="relative mt-2 text-sm text-stone-500">{sub}</div> : null}
+      {sub ? <div className="relative mt-2 text-sm text-stone-500">{zhNode(sub)}</div> : null}
     </Card>
+  );
+  if (!href) return content;
+  return (
+    <Link className="block transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-amber-100" href={href}>
+      {content}
+    </Link>
   );
 }
 
@@ -66,7 +74,7 @@ function metricNumber(value: number | null | undefined) {
 }
 
 function metricValue(label: string, value: number | null | undefined, provider?: string | null) {
-  if (label === "Views" && value === 0 && provider === "justoneapi") return zhText("接口未返回");
+  if (label === "Views" && value === 0 && provider === "justoneapi") return zhText("Provider did not return");
   return metricNumber(value);
 }
 
@@ -99,7 +107,7 @@ export function PostMetricsPanel({
         <div>
           <p className="font-black text-stone-950">{zhText("Post metrics")}</p>
           <p className="mt-1 text-xs text-stone-500">
-            {zhText("Provider")}: {source} · {zhText("Status")}: {status} · {zhText("Fetched")}: {metricDate(fetchedAt)}
+            {zhText("Provider")}: {source} · {zhText("Status")}: {zhText(status)} · {zhText("Fetched")}: {metricDate(fetchedAt)}
           </p>
         </div>
         {snapshot?.authorMatchStatus ? <StatusBadge>{snapshot.authorMatchStatus}</StatusBadge> : null}
@@ -195,7 +203,14 @@ function statusTone(value: ReactNode) {
   ) {
     return "danger";
   }
-  if (text.includes("PAUSED") || text.includes("ARCHIVED") || text.includes("UNKNOWN") || text.includes("未知") || text.includes("暂停") || text.includes("归档")) {
+  if (
+    text.includes("PAUSED") ||
+    text.includes("ARCHIVED") ||
+    text.includes("UNKNOWN") ||
+    text.includes("未知") ||
+    text.includes("暂停") ||
+    text.includes("归档")
+  ) {
     return "neutral";
   }
   return "default";
