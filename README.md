@@ -46,7 +46,6 @@ Tanglin 是一个面向品牌方、KOL 创作者和平台运营 Admin 的自助�
 - Tailwind CSS 4
 - JWT Cookie Session
 - Just One API，用于小红书/抖音数据核验
-- 独立 Python crawler worker
 
 ## 3. 目录结构
 
@@ -71,13 +70,7 @@ tanglin/
 - Node.js
 - npm
 - PostgreSQL
-- Python 3，用于 `tanglin-crawler`
-
-本地数据库示例：
-
-```env
-DATABASE_URL=postgresql://postgres:你的密码@localhost:5432/tanglin_rd?schema=public
-```
+- Python 3，仅用于 `tanglin-crawler`
 
 ## 5. 环境变量
 
@@ -93,50 +86,165 @@ CRAWLER_INTERNAL_TOKEN=your-internal-token
 CRAWLER_WORKER_HEALTH_URL=http://127.0.0.1:8787/health
 ```
 
-在 `../tanglin-crawler/.env` 中配置：
+`DATABASE_URL` 说明：
 
-```env
-TANGLIN_BASE_URL=http://127.0.0.1:3000
-CRAWLER_INTERNAL_TOKEN=your-internal-token
-CRAWLER_WORKER_ID=tanglin-crawler-local
-CRAWLER_WORKER_PORT=8787
-CRAWLER_POLL_INTERVAL_SECONDS=2
-CRAWLER_MOCK_MODE=false
-CRAWLER_PROVIDER=justone
+- `postgres`：数据库用户名。
+- `你的密码`：PostgreSQL 安装时设置的密码。
+- `localhost:5432`：本机 PostgreSQL 地址和端口。
+- `tanglin_rd`：本项目使用的数据库名。
+- `schema=public`：PostgreSQL 默认 schema。
 
-JUSTONE_BASE_URL=https://api.justoneapi.com
-JUSTONE_API_KEY=your-api-key
-JUSTONE_TIMEOUT_SECONDS=90
+## 6. 数据库配置与初始化
 
-MEDIACRAWLER_COMMAND=python D:\program\ai_video\workflow\tanglin-crawler\mediacrawler_adapter.py
-MEDIACRAWLER_TIMEOUT_SECONDS=120
-MEDIACRAWLER_ROOT=D:\program\ai_video\workflow\MediaCrawler
-MEDIACRAWLER_PYTHON=python
-MEDIACRAWLER_LOGIN_TYPE=qrcode
-MEDIACRAWLER_HEADLESS=false
-MEDIACRAWLER_ADAPTER_TIMEOUT_SECONDS=300
+### 6.1 确认 PostgreSQL 可用
+
+确认 PostgreSQL 服务已启动。Windows 上可以在“服务”里查看 `postgresql` 服务，也可以使用 pgAdmin 连接本机数据库。
+
+如果 `psql` 已加入 PATH，可以执行：
+
+```powershell
+psql --version
 ```
 
-`CRAWLER_INTERNAL_TOKEN` 必须和主站一致。
+如果没有 `psql`，也可以继续使用 pgAdmin 创建数据库，不影响项目运行。
 
-## 6. 安装与数据库初始化
+### 6.2 创建数据库
 
-进入主站目录：
+数据库名建议固定为：
+
+```text
+tanglin_rd
+```
+
+使用 pgAdmin 创建：
+
+1. 打开 pgAdmin。
+2. 连接本机 PostgreSQL。
+3. 右键 `Databases`。
+4. 选择 `Create` -> `Database`。
+5. Database 填写 `tanglin_rd`。
+6. Owner 选择 `postgres`。
+7. 保存。
+
+如果可以使用命令行，也可以执行：
+
+```powershell
+createdb -U postgres tanglin_rd
+```
+
+### 6.3 配置 `.env`
+
+在 `tanglin/.env` 写入真实数据库连接：
+
+```env
+DATABASE_URL=postgresql://postgres:你的密码@localhost:5432/tanglin_rd?schema=public
+```
+
+如果密码里包含特殊字符，例如 `@`、`#`、`%`、空格，需要 URL encode。常见例子：
+
+```text
+@  -> %40
+#  -> %23
+%  -> %25
+空格 -> %20
+```
+
+### 6.4 安装依赖
 
 ```powershell
 cd D:\program\ai_video\workflow\tanglin
 npm install
 ```
 
-创建数据库后执行：
+### 6.5 执行数据库迁移
+
+第一次部署或拉取已有 migration 后，推荐执行：
+
+```powershell
+npx prisma migrate deploy
+```
+
+本地开发新增 schema 变更时，使用：
+
+```powershell
+npx prisma migrate dev
+```
+
+生成 Prisma Client：
+
+```powershell
+npx prisma generate
+```
+
+### 6.6 写入测试数据
+
+```powershell
+npm run prisma:seed
+```
+
+Seed 会创建测试账号、品牌、KOL、Campaign、任务、钱包、报表等演示数据。
+
+测试账号：
+
+```text
+admin@test.com / password123
+brand@test.com / password123
+creator@test.com / password123
+```
+
+### 6.7 检查数据库结构
+
+验证 Prisma schema：
+
+```powershell
+npx prisma validate
+```
+
+打开 Prisma Studio 查看数据：
+
+```powershell
+npx prisma studio
+```
+
+### 6.8 重置本地数据库
+
+如果本地数据乱了，可以重置数据库并重新执行 seed：
+
+```powershell
+npm run db:reset
+```
+
+注意：这个命令会清空本地数据库数据，只适合开发环境。
+
+### 6.9 常见数据库问题
+
+**连接失败**
+
+检查：
+
+- PostgreSQL 服务是否启动。
+- `.env` 中 `DATABASE_URL` 密码是否正确。
+- 数据库 `tanglin_rd` 是否已经创建。
+- 端口是否为 `5432`。
+
+**Prisma 提示找不到表**
+
+执行：
 
 ```powershell
 npx prisma migrate deploy
 npx prisma generate
+```
+
+**Seed 失败**
+
+先确认 migration 已执行，再运行：
+
+```powershell
 npm run prisma:seed
 ```
 
-开发期间如果需要重置数据库：
+如果仍失败，通常是旧数据和唯一字段冲突。开发环境可以使用：
 
 ```powershell
 npm run db:reset
@@ -163,30 +271,9 @@ npm.cmd run dev -- --hostname 127.0.0.1 --port 3001
 http://127.0.0.1:3000
 ```
 
-## 8. 启动 Crawler Worker
+## 8. Just One API 数据核验
 
-进入 worker 目录：
-
-```powershell
-cd D:\program\ai_video\workflow\tanglin-crawler
-python .\worker.py
-```
-
-健康检查：
-
-```text
-http://127.0.0.1:8787/health
-```
-
-单次处理一个任务：
-
-```powershell
-python .\worker.py --once
-```
-
-## 9. Just One API 数据核验
-
-当前 worker 优先使用 Just One API：
+当前 crawler worker 优先使用 Just One API：
 
 ```env
 CRAWLER_PROVIDER=justone
@@ -212,19 +299,7 @@ CRAWLER_PROVIDER=justone
 - Admin：`/admin/proofs`
 - 抓取队列：`/admin/crawler`
 
-## 10. 测试账号
-
-Seed 后可使用：
-
-```text
-admin@test.com / password123
-brand@test.com / password123
-creator@test.com / password123
-```
-
-也可以通过注册页创建新账号。
-
-## 11. 主要页面入口
+## 9. 主要页面入口
 
 ### 品牌方
 
@@ -267,7 +342,7 @@ creator@test.com / password123
 /admin/settings
 ```
 
-## 12. 常用验证命令
+## 10. 常用验证命令
 
 ```powershell
 cd D:\program\ai_video\workflow\tanglin
@@ -289,7 +364,7 @@ cd D:\program\ai_video\workflow\tanglin-crawler
 python -m py_compile .\config.py .\providers.py .\worker.py .\mediacrawler_adapter.py
 ```
 
-## 13. Git 提交建议
+## 11. Git 提交建议
 
 查看当前分支：
 
@@ -304,7 +379,7 @@ git status
 git diff --cached --name-only
 ```
 
-提交主站和 worker：
+提交：
 
 ```powershell
 git add .
@@ -321,7 +396,7 @@ git restore --staged ../tanglin-crawler/.env
 
 `MediaCrawler/` 是第三方项目源码，通常不建议直接提交进本仓库。如果需要保留接入说明，提交 `tanglin-crawler/MEDIACRAWLER_ADAPTER.md` 即可。
 
-## 14. 项目文档
+## 12. 项目文档
 
 详细中文文档在 `docs/`：
 
