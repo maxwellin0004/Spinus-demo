@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { UserRole } from "@prisma/client";
+import { ApplicationStatus, UserRole } from "@prisma/client";
 import { addBrandMessageAction, batchReviewTaskApplicationsAction, reviewTaskApplicationAction, submitExistingCampaignAction } from "@/lib/actions";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -12,11 +12,14 @@ export default async function BrandCampaignDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string; batch?: string }>;
+  searchParams: Promise<{ error?: string; batch?: string; applicationStatus?: string }>;
 }) {
   const session = await requireRole(UserRole.BRAND);
   const { id } = await params;
-  const { error, batch } = await searchParams;
+  const { error, batch, applicationStatus } = await searchParams;
+  const selectedApplicationStatus = Object.values(ApplicationStatus).includes(applicationStatus as ApplicationStatus)
+    ? (applicationStatus as ApplicationStatus)
+    : null;
   const campaign = await prisma.campaign.findFirst({
     where: { id, brand: { userId: session.userId } },
     include: {
@@ -38,7 +41,10 @@ export default async function BrandCampaignDetailPage({
 
   const proofViews = campaign.proofs.reduce((sum, proof) => sum + proof.views, 0);
   const applications = campaign.tasks.flatMap((task) => task.applications.map((application) => ({ ...application, task })));
-  const pendingApplications = applications.filter((application) => application.status === "APPLIED");
+  const visibleApplications = selectedApplicationStatus
+    ? applications.filter((application) => application.status === selectedApplicationStatus)
+    : applications;
+  const visiblePendingApplications = visibleApplications.filter((application) => application.status === "APPLIED");
   const firstApplication = [...applications].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[0];
   const firstSubmission = [...campaign.submissions].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[0];
   const firstProof = [...campaign.proofs].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[0];
@@ -107,7 +113,31 @@ export default async function BrandCampaignDetailPage({
 
       <section>
         <h2 className="mb-3 text-xl font-black">KOL 申请审核</h2>
-        {applications.length === 0 ? (
+        <form className="mb-4 flex flex-wrap items-end gap-3">
+          <label className="grid gap-2 text-sm font-semibold text-stone-600">
+            申请状态
+            <select
+              className="min-h-12 rounded-2xl border border-stone-200 bg-white px-4 text-sm font-semibold text-stone-950 outline-none focus:border-amber-400"
+              defaultValue={selectedApplicationStatus ?? ""}
+              name="applicationStatus"
+            >
+              <option value="">全部申请状态</option>
+              {Object.values(ApplicationStatus).map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
+          </label>
+          <Button variant="ghost">筛选</Button>
+          {selectedApplicationStatus ? (
+            <Link className="rounded-full border border-stone-200 bg-white px-4 py-3 text-sm font-black text-stone-700" href={`/brand/campaigns/${campaign.id}`}>
+              清空
+            </Link>
+          ) : null}
+          <span className="text-sm font-semibold text-stone-500">当前显示 {visibleApplications.length} / 全部 {applications.length}</span>
+        </form>
+        {visibleApplications.length === 0 ? (
           <DataTable headers={["KOL", "任务", "状态"]} rows={[]} />
         ) : (
           <div className="grid gap-4">
@@ -115,17 +145,17 @@ export default async function BrandCampaignDetailPage({
               <form id="batch-review" action={batchReviewTaskApplicationsAction.bind(null, campaign.id)} className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
                 <Textarea label="批量审核备注" name="note" defaultValue="商家已批量处理申请。" rows={3} />
                 <div className="flex flex-wrap gap-2">
-                  <Button name="decision" value="APPROVED" variant="secondary" type={pendingApplications.length ? "submit" : "button"}>
+                  <Button name="decision" value="APPROVED" variant="secondary" type={visiblePendingApplications.length ? "submit" : "button"}>
                     批量通过
                   </Button>
-                  <Button name="decision" value="REJECTED" variant="danger" type={pendingApplications.length ? "submit" : "button"}>
+                  <Button name="decision" value="REJECTED" variant="danger" type={visiblePendingApplications.length ? "submit" : "button"}>
                     批量拒绝
                   </Button>
                 </div>
               </form>
             </Card>
 
-            {applications.map((application) => (
+            {visibleApplications.map((application) => (
               <Card key={application.id}>
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="flex items-start gap-3">

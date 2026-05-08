@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CrawlerJobStatus } from "@prisma/client";
+import { CrawlerJobStatus, CrawlerJobType, CrawlerPlatform } from "@prisma/client";
 import { refreshProofMetricsAction, refreshSocialAccountMetricsAction, retryCrawlerJobAction } from "@/lib/actions";
 import { requireAdminPermission } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
@@ -63,8 +63,12 @@ function providerStatus(health: Awaited<ReturnType<typeof getWorkerHealth>>, key
   return health.data.providers?.[key]?.loginStatus ?? "UNKNOWN";
 }
 
-export default async function AdminCrawlerPage() {
+export default async function AdminCrawlerPage({ searchParams }: { searchParams: Promise<{ status?: string; platform?: string; type?: string }> }) {
   await requireAdminPermission("account.freeze");
+  const { status, platform, type } = await searchParams;
+  const selectedStatus = Object.values(CrawlerJobStatus).includes(status as CrawlerJobStatus) ? (status as CrawlerJobStatus) : undefined;
+  const selectedPlatform = Object.values(CrawlerPlatform).includes(platform as CrawlerPlatform) ? (platform as CrawlerPlatform) : undefined;
+  const selectedType = Object.values(CrawlerJobType).includes(type as CrawlerJobType) ? (type as CrawlerJobType) : undefined;
 
   const [health, counts, jobs] = await Promise.all([
     getWorkerHealth(),
@@ -73,6 +77,11 @@ export default async function AdminCrawlerPage() {
       _count: { _all: true },
     }),
     prisma.crawlerJob.findMany({
+      where: {
+        ...(selectedStatus ? { status: selectedStatus } : {}),
+        ...(selectedPlatform ? { platform: selectedPlatform } : {}),
+        ...(selectedType ? { type: selectedType } : {}),
+      },
       include: {
         socialAccount: { include: { creator: true } },
         proof: { include: { creator: true, campaign: true } },
@@ -118,6 +127,23 @@ export default async function AdminCrawlerPage() {
           </div>
         </div>
       </Card>
+
+      <form className="flex flex-wrap gap-3">
+        <select className="rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm font-semibold text-stone-700" name="status" defaultValue={selectedStatus ?? ""}>
+          <option value="">全部状态</option>
+          {Object.values(CrawlerJobStatus).map((item) => <option key={item} value={item}>{item}</option>)}
+        </select>
+        <select className="rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm font-semibold text-stone-700" name="platform" defaultValue={selectedPlatform ?? ""}>
+          <option value="">全部平台</option>
+          {Object.values(CrawlerPlatform).map((item) => <option key={item} value={item}>{item}</option>)}
+        </select>
+        <select className="rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm font-semibold text-stone-700" name="type" defaultValue={selectedType ?? ""}>
+          <option value="">全部任务</option>
+          {Object.values(CrawlerJobType).map((item) => <option key={item} value={item}>{item}</option>)}
+        </select>
+        <button className="rounded-xl bg-stone-950 px-4 py-2.5 text-sm font-black text-white">筛选</button>
+        {(selectedStatus || selectedPlatform || selectedType) ? <Link className="rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm font-black text-stone-700" href="/admin/crawler">清空</Link> : null}
+      </form>
 
       <DataTable
         headers={["任务", "平台", "状态", "尝试", "关联对象", "锁定", "错误", "操作"]}

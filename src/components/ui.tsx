@@ -65,6 +65,11 @@ function metricNumber(value: number | null | undefined) {
   return new Intl.NumberFormat("zh-CN").format(value);
 }
 
+function metricValue(label: string, value: number | null | undefined, provider?: string | null) {
+  if (label === "Views" && value === 0 && provider === "justoneapi") return zhText("接口未返回");
+  return metricNumber(value);
+}
+
 function metricDate(value: Date | string | null | undefined) {
   if (!value) return "-";
   return new Intl.DateTimeFormat("zh-CN", {
@@ -109,7 +114,7 @@ export function PostMetricsPanel({
         ].map(([label, value]) => (
           <div className="rounded-2xl bg-stone-50 p-3" key={String(label)}>
             <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-stone-500">{zhText(String(label))}</p>
-            <p className="mt-1 text-lg font-black text-stone-950">{metricNumber(value as number | null | undefined)}</p>
+            <p className="mt-1 text-lg font-black text-stone-950">{metricValue(String(label), value as number | null | undefined, snapshot?.rawProvider)}</p>
           </div>
         ))}
       </div>
@@ -133,10 +138,88 @@ export function EmptyState({ title, body }: { title: string; body?: string }) {
   );
 }
 
+function statusText(value: ReactNode) {
+  if (typeof value === "string" || typeof value === "number") return String(value);
+  return "";
+}
+
+function statusTone(value: ReactNode) {
+  const text = statusText(value).toUpperCase();
+  if (
+    text.includes("APPROVED") ||
+    text.includes("VERIFIED") ||
+    text.includes("SETTLED") ||
+    text.includes("SUCCESS") ||
+    text.includes("PAID") ||
+    text.includes("ACTIVE") ||
+    text.includes("VALID") ||
+    text.includes("MATCHED") ||
+    text.includes("通过") ||
+    text.includes("成功") ||
+    text.includes("已验收") ||
+    text.includes("已结算") ||
+    text.includes("已入账") ||
+    text.includes("在线") ||
+    text.includes("启用")
+  ) {
+    return "success";
+  }
+  if (
+    text.includes("PENDING") ||
+    text.includes("APPLIED") ||
+    text.includes("SUBMITTED") ||
+    text.includes("AWAITING") ||
+    text.includes("PROCESSING") ||
+    text.includes("DRAFT") ||
+    text.includes("待") ||
+    text.includes("审核") ||
+    text.includes("处理中") ||
+    text.includes("未读")
+  ) {
+    return "warning";
+  }
+  if (
+    text.includes("REJECTED") ||
+    text.includes("FAILED") ||
+    text.includes("FROZEN") ||
+    text.includes("EXPIRED") ||
+    text.includes("MISMATCHED") ||
+    text.includes("CANCELLED") ||
+    text.includes("拒绝") ||
+    text.includes("失败") ||
+    text.includes("冻结") ||
+    text.includes("异常") ||
+    text.includes("超") ||
+    text.includes("离线") ||
+    text.includes("停用")
+  ) {
+    return "danger";
+  }
+  if (text.includes("PAUSED") || text.includes("ARCHIVED") || text.includes("UNKNOWN") || text.includes("未知") || text.includes("暂停") || text.includes("归档")) {
+    return "neutral";
+  }
+  return "default";
+}
+
 export function StatusBadge({ children }: { children: ReactNode }) {
+  const tone = statusTone(children);
+  const styles = {
+    success: "border-emerald-200 bg-emerald-50 text-emerald-800",
+    warning: "border-amber-200 bg-amber-50 text-amber-800",
+    danger: "border-red-200 bg-red-50 text-red-700",
+    neutral: "border-stone-200 bg-stone-100 text-stone-600",
+    default: "border-stone-200 bg-white/80 text-stone-700",
+  };
+  const dotStyles = {
+    success: "bg-emerald-500",
+    warning: "bg-amber-500",
+    danger: "bg-red-500",
+    neutral: "bg-stone-400",
+    default: "bg-[var(--accent)]",
+  };
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white/80 px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.14em] text-stone-700 shadow-sm">
-      <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+    <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.14em] shadow-sm", styles[tone])}>
+      <span className={cn("h-1.5 w-1.5 rounded-full", dotStyles[tone])} />
       {zh(children)}
     </span>
   );

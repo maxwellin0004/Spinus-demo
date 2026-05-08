@@ -1,15 +1,22 @@
 import { verifyProofAction } from "@/lib/actions";
+import { CrawlerJobStatus, ProofStatus } from "@prisma/client";
 import { brandScopeWhere, demoWhere, getAdminContext, hasAdminPermission, scopeOptions } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { Button, Card, DataTable, PageHeader, PostMetricsPanel, StatusBadge, Textarea } from "@/components/ui";
-import { number, shortDate } from "@/lib/format";
+import { crawlerMetric, number, shortDate } from "@/lib/format";
 
-export default async function AdminProofsPage({ searchParams }: { searchParams: Promise<{ scope?: string; demo?: string }> }) {
+export default async function AdminProofsPage({ searchParams }: { searchParams: Promise<{ scope?: string; demo?: string; status?: string; crawler?: string }> }) {
   const context = await getAdminContext();
-  const { scope, demo } = await searchParams;
+  const { scope, demo, status, crawler } = await searchParams;
   const canSeeDemo = hasAdminPermission(context.profile, "demo.manage");
+  const selectedStatus = Object.values(ProofStatus).includes(status as ProofStatus) ? (status as ProofStatus) : undefined;
+  const selectedCrawler = Object.values(CrawlerJobStatus).includes(crawler as CrawlerJobStatus) ? (crawler as CrawlerJobStatus) : undefined;
   const proofs = await prisma.proof.findMany({
-    where: { campaign: { ...demoWhere(demo, canSeeDemo), brand: brandScopeWhere(context.profile, scope) } },
+    where: {
+      campaign: { ...demoWhere(demo, canSeeDemo), brand: brandScopeWhere(context.profile, scope) },
+      ...(selectedStatus ? { verificationStatus: selectedStatus } : {}),
+      ...(selectedCrawler ? { crawlerJobs: { some: { status: selectedCrawler } } } : {}),
+    },
     include: {
       campaign: true,
       creator: true,
@@ -32,7 +39,16 @@ export default async function AdminProofsPage({ searchParams }: { searchParams: 
           {canSeeDemo ? <option value="include">Include demo data</option> : null}
           {canSeeDemo ? <option value="only">Demo data only</option> : null}
         </select>
+        <select className="rounded-full border border-stone-200 px-4 py-3" name="status" defaultValue={selectedStatus ?? ""}>
+          <option value="">全部验收状态</option>
+          {Object.values(ProofStatus).map((item) => <option key={item} value={item}>{item}</option>)}
+        </select>
+        <select className="rounded-full border border-stone-200 px-4 py-3" name="crawler" defaultValue={selectedCrawler ?? ""}>
+          <option value="">全部抓取状态</option>
+          {Object.values(CrawlerJobStatus).map((item) => <option key={item} value={item}>{item}</option>)}
+        </select>
         <button className="rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white">Filter</button>
+        {(selectedStatus || selectedCrawler) ? <a className="rounded-full border border-stone-200 bg-white px-5 py-3 text-sm font-semibold text-stone-700" href="/admin/proofs">Clear</a> : null}
       </form>
 
       <DataTable
@@ -44,7 +60,7 @@ export default async function AdminProofsPage({ searchParams }: { searchParams: 
             proof.campaign.title,
             <a className="font-semibold text-stone-950" href={proof.postUrl} target="_blank" rel="noreferrer" key={proof.id}>Open post</a>,
             latestSuccess
-              ? `Views ${number(latestSuccess.viewCount)} / Likes ${number(latestSuccess.likeCount)} / Saves ${number(latestSuccess.favoriteCount)} / Comments ${number(latestSuccess.commentCount)} / Shares ${number(latestSuccess.shareCount)}`
+              ? `Views ${crawlerMetric(latestSuccess.viewCount, "views", latestSuccess.rawProvider)} / Likes ${crawlerMetric(latestSuccess.likeCount, "likes", latestSuccess.rawProvider)} / Saves ${crawlerMetric(latestSuccess.favoriteCount, "saves", latestSuccess.rawProvider)} / Comments ${crawlerMetric(latestSuccess.commentCount, "comments", latestSuccess.rawProvider)} / Shares ${crawlerMetric(latestSuccess.shareCount, "shares", latestSuccess.rawProvider)}`
               : `${number(proof.views)} views / ${number(proof.clicks)} clicks / ${number(proof.conversions)} conv.`,
             <StatusBadge key="s">{proof.verificationStatus}</StatusBadge>,
             shortDate(proof.createdAt),

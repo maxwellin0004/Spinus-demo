@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { CopyButton } from "@/components/copy-button";
 import { CreatorOperatorCard, CreatorTaskTimeline } from "@/components/creator-ops";
 import { Button, Card, Field, PageHeader, PostMetricsPanel, StatusBadge } from "@/components/ui";
-import { money, shortDate } from "@/lib/format";
+import { crawlerMetric, money, shortDate } from "@/lib/format";
 
 export default async function CreatorTaskRunPage({
   params,
@@ -227,11 +227,11 @@ export default async function CreatorTaskRunPage({
                   <p><strong>状态：</strong>{latestCrawlerJob ? latestCrawlerJob.status : latestCrawlerSnapshot ? latestCrawlerSnapshot.status : "等待核验"}</p>
                   <p><strong>最近抓取：</strong>{latestCrawlerSnapshot ? shortDate(latestCrawlerSnapshot.fetchedAt) : "-"}</p>
                   <p><strong>作者匹配：</strong>{latestPostSnapshot?.authorMatchStatus ?? "未核验"}</p>
-                  <p><strong>浏览：</strong>{latestPostSnapshot?.viewCount == null ? "未获取" : latestPostSnapshot.viewCount.toLocaleString("zh-CN")}</p>
-                  <p><strong>点赞：</strong>{latestPostSnapshot?.likeCount == null ? "未获取" : latestPostSnapshot.likeCount.toLocaleString("zh-CN")}</p>
-                  <p><strong>收藏：</strong>{latestPostSnapshot?.favoriteCount == null ? "未获取" : latestPostSnapshot.favoriteCount.toLocaleString("zh-CN")}</p>
-                  <p><strong>评论：</strong>{latestPostSnapshot?.commentCount == null ? "未获取" : latestPostSnapshot.commentCount.toLocaleString("zh-CN")}</p>
-                  <p><strong>分享：</strong>{latestPostSnapshot?.shareCount == null ? "未获取" : latestPostSnapshot.shareCount.toLocaleString("zh-CN")}</p>
+                  <p><strong>浏览：</strong>{crawlerMetric(latestPostSnapshot?.viewCount, "views", latestPostSnapshot?.rawProvider)}</p>
+                  <p><strong>点赞：</strong>{crawlerMetric(latestPostSnapshot?.likeCount, "likes", latestPostSnapshot?.rawProvider)}</p>
+                  <p><strong>收藏：</strong>{crawlerMetric(latestPostSnapshot?.favoriteCount, "saves", latestPostSnapshot?.rawProvider)}</p>
+                  <p><strong>评论：</strong>{crawlerMetric(latestPostSnapshot?.commentCount, "comments", latestPostSnapshot?.rawProvider)}</p>
+                  <p><strong>分享：</strong>{crawlerMetric(latestPostSnapshot?.shareCount, "shares", latestPostSnapshot?.rawProvider)}</p>
                   <p><strong>提示：</strong>{latestCrawlerSnapshot?.failureReason ? "自动核验失败，请等待商家人工验收。" : "-"}</p>
                 </div>
                 <div className="mt-4">

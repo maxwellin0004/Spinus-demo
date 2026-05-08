@@ -4,7 +4,7 @@ import { createDisputeFromProofAction, decideDisputeAction } from "@/lib/actions
 import { requireAdminPermission } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { Button, Card, DataTable, Field, PageHeader, Select, StatusBadge, Textarea } from "@/components/ui";
-import { money, shortDate } from "@/lib/format";
+import { crawlerMetric, money, shortDate } from "@/lib/format";
 
 const decisionLabels: Record<DisputeDecision, string> = {
   FULL_SETTLEMENT: "支持 KOL，全额结算",
@@ -142,7 +142,7 @@ export default async function AdminDisputesPage({
                     <p><strong>Proof 状态：</strong>{latestProof ? `${latestProof.verificationStatus} / ${latestProof.publicationStatus}` : "-"}</p>
                     <p><strong>账号抓取粉丝：</strong>{latestAccountSnapshot?.followerCount == null ? "未获取" : latestAccountSnapshot.followerCount.toLocaleString("zh-CN")}</p>
                     <p><strong>作品作者匹配：</strong>{latestPostSnapshot?.authorMatchStatus ?? "未核验"}</p>
-                    <p><strong>作品数据：</strong>{latestPostSnapshot ? `浏览 ${latestPostSnapshot.viewCount ?? "未获取"} / 点赞 ${latestPostSnapshot.likeCount ?? "未获取"} / 收藏 ${latestPostSnapshot.favoriteCount ?? "未获取"} / 评论 ${latestPostSnapshot.commentCount ?? "未获取"} / 分享 ${latestPostSnapshot.shareCount ?? "未获取"}` : "未获取"}</p>
+                    <p><strong>作品数据：</strong>{latestPostSnapshot ? `浏览 ${crawlerMetric(latestPostSnapshot.viewCount, "views", latestPostSnapshot.rawProvider)} / 点赞 ${crawlerMetric(latestPostSnapshot.likeCount, "likes", latestPostSnapshot.rawProvider)} / 收藏 ${crawlerMetric(latestPostSnapshot.favoriteCount, "saves", latestPostSnapshot.rawProvider)} / 评论 ${crawlerMetric(latestPostSnapshot.commentCount, "comments", latestPostSnapshot.rawProvider)} / 分享 ${crawlerMetric(latestPostSnapshot.shareCount, "shares", latestPostSnapshot.rawProvider)}` : "未获取"}</p>
                     <p><strong>自动抓取提示：</strong>{latestPostAttempt?.failureReason ?? "-"}</p>
                     <p><strong>广告披露：</strong>{submission.draft.disclosurePosition ?? "未填写"}</p>
                     <p><strong>已通过草稿：</strong>{submission.draft.title}</p>

@@ -2,7 +2,7 @@ import { ReviewDecision, SubmissionStatus, UserRole } from "@prisma/client";
 import { reviewSubmissionAction } from "@/lib/actions";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Button, Card, EmptyState, PageHeader, StatusBadge, Textarea } from "@/components/ui";
+import { Button, Card, EmptyState, PageHeader, Select, StatusBadge, Textarea } from "@/components/ui";
 import { shortDate } from "@/lib/format";
 
 function changed(before?: string, after?: string) {
@@ -15,16 +15,22 @@ export default async function BrandSubmissionsPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; status?: string }>;
 }) {
   const session = await requireRole(UserRole.BRAND);
   const { id } = await params;
-  const { error } = await searchParams;
+  const { error, status } = await searchParams;
+  const selectedStatus = Object.values(SubmissionStatus).includes(status as SubmissionStatus)
+    ? (status as SubmissionStatus)
+    : null;
   const campaign = await prisma.campaign.findFirst({ where: { id, brand: { userId: session.userId } } });
   if (!campaign) return <PageHeader title="未找到推广活动" />;
 
   const submissions = await prisma.submission.findMany({
-    where: { campaignId: id },
+    where: {
+      campaignId: id,
+      ...(selectedStatus ? { status: selectedStatus } : {}),
+    },
     include: {
       creator: true,
       draft: true,
@@ -47,6 +53,23 @@ export default async function BrandSubmissionsPage({
         <StatusBadge>最多 {campaign.revisionLimit} 轮修改</StatusBadge>
       </PageHeader>
       {error ? <div className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</div> : null}
+      <form className="flex flex-wrap items-end gap-3">
+        <Select label="草稿状态" name="status" defaultValue={selectedStatus ?? ""}>
+          <option value="">全部草稿状态</option>
+          {Object.values(SubmissionStatus).map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </Select>
+        <Button variant="ghost">筛选</Button>
+        {selectedStatus ? (
+          <a className="rounded-full border border-stone-200 bg-white px-4 py-3 text-sm font-black text-stone-700" href={`/brand/campaigns/${id}/submissions`}>
+            清空
+          </a>
+        ) : null}
+        <span className="text-sm font-semibold text-stone-500">当前显示 {submissions.length} 条</span>
+      </form>
       {submissions.length === 0 ? <EmptyState title="暂无内容提交" body="KOL 提交结构化草稿后，会在这里显示版本对比、广告披露说明和审核记录。" /> : null}
 
       {submissions.map((submission) => {

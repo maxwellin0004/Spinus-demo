@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { ProofStatus, UserRole } from "@prisma/client";
+import { CrawlerJobStatus, ProofStatus, UserRole } from "@prisma/client";
 import { refreshProofMetricsAction, reviewPublicationProofAction } from "@/lib/actions";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Button, Card, EmptyState, PageHeader, PostMetricsPanel, Select, StatusBadge, Textarea } from "@/components/ui";
-import { shortDate } from "@/lib/format";
+import { crawlerMetric, shortDate } from "@/lib/format";
 
 const rejectionReasons = ["链接不可访问", "平台账号不匹配", "未按已通过草稿发布", "未包含广告披露", "发布时间或内容不符合要求", "其他"];
 
@@ -33,15 +33,21 @@ export default async function BrandProofsPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; crawler?: string; status?: string }>;
 }) {
   const session = await requireRole(UserRole.BRAND);
   const { id } = await params;
-  const { error } = await searchParams;
+  const { error, crawler, status } = await searchParams;
+  const selectedStatus = Object.values(ProofStatus).includes(status as ProofStatus) ? (status as ProofStatus) : null;
+  const selectedCrawler = Object.values(CrawlerJobStatus).includes(crawler as CrawlerJobStatus) ? (crawler as CrawlerJobStatus) : null;
   const campaign = await prisma.campaign.findFirst({
     where: { id, brand: { userId: session.userId } },
     include: {
       proofs: {
+        where: {
+          ...(selectedStatus ? { verificationStatus: selectedStatus } : {}),
+          ...(selectedCrawler ? { crawlerJobs: { some: { status: selectedCrawler } } } : {}),
+        },
         include: {
           creator: true,
           submission: { include: { draft: true, application: { include: { task: true, selectedSocialAccount: true } } } },
@@ -65,6 +71,31 @@ export default async function BrandProofsPage({
         <StatusBadge>SLA {campaign.acceptanceSlaDays} 天</StatusBadge>
       </PageHeader>
       {error ? <div className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</div> : null}
+      <form className="flex flex-wrap items-end gap-3">
+        <Select label="验收状态" name="status" defaultValue={selectedStatus ?? ""}>
+          <option value="">全部验收状态</option>
+          {Object.values(ProofStatus).map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </Select>
+        <Select label="抓取状态" name="crawler" defaultValue={selectedCrawler ?? ""}>
+          <option value="">全部抓取状态</option>
+          {Object.values(CrawlerJobStatus).map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </Select>
+        <Button variant="ghost">筛选</Button>
+        {selectedStatus || selectedCrawler ? (
+          <Link className="rounded-full border border-stone-200 bg-white px-4 py-3 text-sm font-black text-stone-700" href={`/brand/campaigns/${id}/proofs`}>
+            清空
+          </Link>
+        ) : null}
+        <span className="text-sm font-semibold text-stone-500">当前显示 {campaign.proofs.length} 条</span>
+      </form>
       {campaign.proofs.length === 0 ? <EmptyState title="暂无发布链接" body="KOL 发布后只需要提交链接。商家验收通过后，收益会直接进入可提现余额。" /> : null}
 
       <div className="grid gap-4">
@@ -154,11 +185,11 @@ export default async function BrandProofsPage({
                   <p><strong>最近任务：</strong>{latestJob ? `${latestJob.type} / ${latestJob.status} / ${shortDate(latestJob.createdAt)}` : "暂无"}</p>
                   <p><strong>作者匹配：</strong>{latestSuccess?.authorMatchStatus ?? "未核验"}</p>
                   <p><strong>最近抓取：</strong>{latestSnapshot ? `${latestSnapshot.status} / ${shortDate(latestSnapshot.fetchedAt)}` : "暂无快照"}</p>
-                  <p><strong>浏览量：</strong>{latestSuccess?.viewCount == null ? "未获取" : latestSuccess.viewCount.toLocaleString("zh-CN")}</p>
-                  <p><strong>点赞：</strong>{latestSuccess?.likeCount == null ? "未获取" : latestSuccess.likeCount.toLocaleString("zh-CN")}</p>
-                  <p><strong>收藏：</strong>{latestSuccess?.favoriteCount == null ? "未获取" : latestSuccess.favoriteCount.toLocaleString("zh-CN")}</p>
-                  <p><strong>评论：</strong>{latestSuccess?.commentCount == null ? "未获取" : latestSuccess.commentCount.toLocaleString("zh-CN")}</p>
-                  <p><strong>分享：</strong>{latestSuccess?.shareCount == null ? "未获取" : latestSuccess.shareCount.toLocaleString("zh-CN")}</p>
+                  <p><strong>浏览量：</strong>{crawlerMetric(latestSuccess?.viewCount, "views", latestSuccess?.rawProvider)}</p>
+                  <p><strong>点赞：</strong>{crawlerMetric(latestSuccess?.likeCount, "likes", latestSuccess?.rawProvider)}</p>
+                  <p><strong>收藏：</strong>{crawlerMetric(latestSuccess?.favoriteCount, "saves", latestSuccess?.rawProvider)}</p>
+                  <p><strong>评论：</strong>{crawlerMetric(latestSuccess?.commentCount, "comments", latestSuccess?.rawProvider)}</p>
+                  <p><strong>分享：</strong>{crawlerMetric(latestSuccess?.shareCount, "shares", latestSuccess?.rawProvider)}</p>
                   <p><strong>失败提示：</strong>{latestSnapshot?.failureReason ?? "-"}</p>
                 </div>
                 <div className="mt-4">

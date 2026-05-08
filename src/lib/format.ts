@@ -11,6 +11,12 @@ export function number(value: number | null | undefined) {
   return new Intl.NumberFormat("zh-CN").format(value ?? 0);
 }
 
+export function crawlerMetric(value: number | null | undefined, metric: "views" | "likes" | "saves" | "comments" | "shares", provider?: string | null) {
+  if (metric === "views" && value === 0 && provider === "justoneapi") return "接口未返回";
+  if (value == null) return "未获取";
+  return number(value);
+}
+
 export function percent(value: number | string | { toString(): string } | null | undefined) {
   return `${Number(value ?? 0).toFixed(1)}%`;
 }
