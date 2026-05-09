@@ -1755,9 +1755,12 @@ export async function updateInvoiceStatusAction(invoiceId: string, formData: For
   const session = await requireAdminPermission("payment.manage");
   const action = text(formData.get("action"));
   const note = text(formData.get("note"));
+  const returnTo = text(formData.get("returnTo"));
+  const fallbackPath = returnTo.startsWith("/admin/") ? returnTo : "/admin/payments";
+  const redirectWithError = (message: string): never => redirect(`${fallbackPath}?error=${encodeURIComponent(message)}`);
   const confirmed = text(formData.get("confirmAction")) === "yes";
   const invoice = await prisma.invoice.findUnique({ where: { id: invoiceId }, include: { brand: true, campaign: true } });
-  if (!invoice) redirect("/admin/payments");
+  if (!invoice) redirect(fallbackPath);
 
   const invoiceNumber = invoice.invoiceNumber || `INV-${new Date().getFullYear()}-${invoice.id.slice(-6).toUpperCase()}`;
   const statusMap: Record<string, string> = {
@@ -1767,9 +1770,9 @@ export async function updateInvoiceStatusAction(invoiceId: string, formData: For
     void: "VOID",
   };
   const nextStatus = statusMap[action];
-  if (!nextStatus) redirect("/admin/payments");
-  if (!confirmed) redirect("/admin/payments?error=资金操作必须先勾选确认。");
-  if ((action === "reject" || action === "void") && note.length < 3) redirect("/admin/payments?error=拒绝或作废付款单必须填写备注。");
+  if (!nextStatus) redirect(fallbackPath);
+  if (!confirmed) redirectWithError("资金操作必须先勾选确认。");
+  if ((action === "reject" || action === "void") && note.length < 3) redirectWithError("拒绝或作废付款单必须填写备注。");
 
   await prisma.$transaction(async (tx) => {
     await tx.invoice.update({
@@ -1864,6 +1867,7 @@ export async function updateInvoiceStatusAction(invoiceId: string, formData: For
   revalidatePath(`/brand/billing`);
   if (invoice.campaignId) revalidatePath(`/admin/campaigns/${invoice.campaignId}`);
   revalidatePath("/admin/campaigns");
+  redirect(fallbackPath);
 }
 
 export async function requestBrandRefundAction(formData: FormData) {

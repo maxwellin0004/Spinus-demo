@@ -130,7 +130,12 @@ export default async function AdminCampaignDetailPage({
           </div>
           {latestInvoice && !["PAID", "VOID", "REJECTED"].includes(latestInvoice.status) ? (
             <form action={updateInvoiceStatusAction.bind(null, latestInvoice.id)} className="mt-5 grid gap-3">
+              <input name="returnTo" type="hidden" value={`/admin/campaigns/${campaign.id}`} />
               <Textarea label="资金审核备注" name="note" defaultValue={latestInvoice.note ?? ""} rows={2} />
+              <label className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800">
+                <input className="mt-0.5" name="confirmAction" required type="checkbox" value="yes" />
+                我已核对付款状态、金额、订单号和凭证，确认执行该操作。
+              </label>
               <div className="flex flex-wrap gap-2">
                 <SubmitButton name="action" pendingLabel="正在确认..." value="paid" variant="secondary">确认资金到账</SubmitButton>
                 <SubmitButton name="action" pendingLabel="正在处理..." value="reject" variant="danger">拒绝付款</SubmitButton>
