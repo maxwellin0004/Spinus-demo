@@ -632,6 +632,7 @@ model Proof {
   platform            String
   postUrl             String
   resolvedPostUrl     String?
+  normalizedPostUrl   String
   urlCheckResult      Json?
   screenshotUrl       String?
   publishedAt         DateTime
@@ -653,6 +654,8 @@ model Proof {
   postMetricSnapshots PostMetricSnapshot[]
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
+
+  @@unique([platform, normalizedPostUrl])
 }
 
 model MetricsSnapshot {
@@ -838,7 +841,7 @@ model Invoice {
   paidAt           DateTime?
   paymentMethod    String?
   paymentProofUrl  String?
-  paymentReference String?
+  paymentReference String?      @unique
   note             String?
   isDemo           Boolean      @default(false)
   createdAt        DateTime     @default(now())

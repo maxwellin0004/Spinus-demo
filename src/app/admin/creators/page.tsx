@@ -4,6 +4,12 @@ import { prisma } from "@/lib/prisma";
 import { money, percent, shortDate } from "@/lib/format";
 import { creatorScopeWhere, demoWhere, getAdminContext, hasAdminPermission, scopeOptions } from "@/lib/admin";
 
+function reviewTone(status: string) {
+  if (status === "APPROVED") return "success" as const;
+  if (status === "REJECTED" || status === "FROZEN") return "danger" as const;
+  return "warning" as const;
+}
+
 export default async function AdminCreatorsPage({
   searchParams,
 }: {
@@ -54,7 +60,7 @@ export default async function AdminCreatorsPage({
           creator.socialAccounts.map((account) => account.platform).join(", ") || "-",
           creator.responsibleAdmin?.displayName ?? "-",
           creator.level,
-          <StatusBadge key="s">{creator.reviewStatus}</StatusBadge>,
+          <StatusBadge key="s" tone={reviewTone(creator.reviewStatus)}>{creator.reviewStatus}</StatusBadge>,
           creator.isDemo ? "是" : "否",
           money(creator.wallet?.cumulativeIncome ?? creator.cumulativeIncome),
           percent(creator.completionRate),

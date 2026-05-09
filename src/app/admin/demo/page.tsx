@@ -2,7 +2,8 @@ import Link from "next/link";
 import { generateDemoDataAction } from "@/lib/actions";
 import { requireAdminPermission } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
-import { Button, Card, DataTable, MetricCard, PageHeader, StatusBadge } from "@/components/ui";
+import { Card, DataTable, MetricCard, PageHeader, StatusBadge } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
 import { money, number, shortDate } from "@/lib/format";
 
 export default async function AdminDemoPage() {
@@ -27,7 +28,7 @@ export default async function AdminDemoPage() {
             </p>
           </div>
           <form action={generateDemoDataAction}>
-            <Button variant="secondary">生成一组演示数据</Button>
+            <SubmitButton pendingLabel="正在生成..." variant="secondary">生成一组演示数据</SubmitButton>
           </form>
         </div>
       </Card>

@@ -9,9 +9,27 @@ import {
   updateInvoiceStatusAction,
 } from "@/lib/actions";
 import { MessageThread } from "@/components/brand-ops";
-import { Button, Card, DataTable, Field, MetricCard, PageHeader, Select, StatusBadge, Textarea } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
+import { Card, DataTable, Field, MetricCard, PageHeader, Select, StatusBadge, Textarea } from "@/components/ui";
 import { money, number, shortDate } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
+
+function adminCampaignFocus({
+  status,
+  fundingReady,
+  pendingApplications,
+}: {
+  status: CampaignStatus;
+  fundingReady: boolean;
+  pendingApplications: number;
+}) {
+  if (!fundingReady) return { title: "先确认资金", body: "资金未托管前不能上架，先处理付款单或等待品牌提交凭证。" };
+  if (status === CampaignStatus.PENDING_REVIEW) return { title: "审核内容并上架", body: "资金已就绪，可以完成内容审核并对 KOL 开放申请。" };
+  if (status === CampaignStatus.ACTIVE && pendingApplications > 0) return { title: "跟进 KOL 申请", body: `当前有 ${pendingApplications} 个 KOL 申请待审核。` };
+  if (status === CampaignStatus.ACTIVE) return { title: "运行中", body: "暂无必须处理项，继续跟进内容提交、发布验收和报表数据。" };
+  if (status === CampaignStatus.PAUSED) return { title: "已暂停", body: "确认是否恢复新申请，或结束 Campaign 并退回未用托管。" };
+  return { title: "查看状态", body: "核对资金、任务和沟通记录后决定下一步。" };
+}
 
 export default async function AdminCampaignDetailPage({
   params,
@@ -53,6 +71,8 @@ export default async function AdminCampaignDetailPage({
   const latestInvoice = campaign.invoices[0];
   const fundingReady = Number(campaign.escrowFrozenAmount) >= Number(campaign.escrowAmount);
   const canApproveContent = fundingReady && campaign.status === CampaignStatus.PENDING_REVIEW;
+  const pendingApplications = applications.filter((application) => application.status === "APPLIED").length;
+  const focus = adminCampaignFocus({ status: campaign.status, fundingReady, pendingApplications });
 
   return (
     <div className="grid gap-6">
@@ -64,6 +84,12 @@ export default async function AdminCampaignDetailPage({
       </PageHeader>
 
       {error ? <div className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</div> : null}
+
+      <Card className="border-amber-200 bg-amber-50/70">
+        <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-700">当前要处理</p>
+        <h2 className="mt-2 text-xl font-black text-stone-950">{focus.title}</h2>
+        <p className="mt-1 text-sm text-stone-600">{focus.body}</p>
+      </Card>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <MetricCard label="总预算" value={money(campaign.totalBudget, campaign.currency)} />
@@ -106,8 +132,8 @@ export default async function AdminCampaignDetailPage({
             <form action={updateInvoiceStatusAction.bind(null, latestInvoice.id)} className="mt-5 grid gap-3">
               <Textarea label="资金审核备注" name="note" defaultValue={latestInvoice.note ?? ""} rows={2} />
               <div className="flex flex-wrap gap-2">
-                <Button name="action" value="paid" variant="secondary">确认资金到账</Button>
-                <Button name="action" value="reject" variant="danger">拒绝付款</Button>
+                <SubmitButton name="action" pendingLabel="正在确认..." value="paid" variant="secondary">确认资金到账</SubmitButton>
+                <SubmitButton name="action" pendingLabel="正在处理..." value="reject" variant="danger">拒绝付款</SubmitButton>
               </div>
             </form>
           ) : null}
@@ -133,17 +159,17 @@ export default async function AdminCampaignDetailPage({
                   已上线
                 </span>
               ) : canApproveContent ? (
-                <Button name="action" value="approve" variant="secondary">通过内容并上线</Button>
+                <SubmitButton name="action" pendingLabel="正在上架..." value="approve" variant="secondary">通过内容并上线</SubmitButton>
               ) : (
                 <span className="inline-flex items-center rounded-full border border-stone-200 bg-stone-50 px-5 py-3 text-sm font-semibold text-stone-600">
                   等待资金确认
                 </span>
               )}
-              <Button name="action" value="reject" variant="danger">拒绝内容</Button>
-              <Button name="action" value="pause" variant="ghost">暂停新申请</Button>
-              <Button name="action" value="resume" variant="ghost">恢复</Button>
-              <Button name="action" value="complete" variant="ghost">标记完成</Button>
-              <Button name="action" value="cancel" variant="danger">取消并退回未用托管</Button>
+              <SubmitButton name="action" pendingLabel="正在处理..." value="reject" variant="danger">拒绝内容</SubmitButton>
+              <SubmitButton name="action" pendingLabel="正在处理..." value="pause" variant="ghost">暂停新申请</SubmitButton>
+              <SubmitButton name="action" pendingLabel="正在处理..." value="resume" variant="ghost">恢复</SubmitButton>
+              <SubmitButton name="action" pendingLabel="正在处理..." value="complete" variant="ghost">标记完成</SubmitButton>
+              <SubmitButton name="action" pendingLabel="正在处理..." value="cancel" variant="danger">取消并退回未用托管</SubmitButton>
             </div>
           </form>
           <p className="mt-4 text-sm leading-6 text-stone-500">
@@ -181,7 +207,7 @@ export default async function AdminCampaignDetailPage({
               <option value="ELITE">精英</option>
             </Select>
             <Field label="截止时间" name="deadline" type="date" defaultValue={campaign.endDate.toISOString().slice(0, 10)} />
-            <div className="flex items-end"><Button>创建任务</Button></div>
+            <div className="flex items-end"><SubmitButton pendingLabel="正在创建...">创建任务</SubmitButton></div>
           </form>
         </Card>
       </section>
@@ -207,40 +233,49 @@ export default async function AdminCampaignDetailPage({
         {applications.length === 0 ? (
           <DataTable headers={["KOL", "任务", "状态"]} rows={[]} />
         ) : (
-          <div className="grid gap-4">
-            {campaign.tasks.flatMap((task) =>
-              task.applications.map((application) => (
-                <Card key={application.id}>
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-lg font-black text-stone-950">{application.creator.displayName}</h3>
-                      <p className="mt-1 text-sm text-stone-500">{task.title} · {task.platform} · 申请于 {shortDate(application.createdAt)}</p>
-                      <p className="mt-1 text-sm text-stone-500">
-                        账号：{application.selectedSocialAccount?.accountName ?? "未选择"} · {application.selectedSocialAccount?.verificationStatus ?? "UNKNOWN"}
-                      </p>
+          <DataTable
+            headers={["KOL", "任务", "账号", "粉丝", "状态", "申请说明", "操作"]}
+            rows={campaign.tasks.flatMap((task) =>
+              task.applications.map((application) => [
+                <div key={`kol-${application.id}`}>
+                  <p className="font-black text-stone-950">{application.creator.displayName}</p>
+                  <p className="mt-1 text-xs text-stone-500">申请于 {shortDate(application.createdAt)}</p>
+                </div>,
+                <div key={`task-${application.id}`}>
+                  <p>{task.title}</p>
+                  <p className="mt-1 text-xs text-stone-500">{task.platform}</p>
+                </div>,
+                <div key={`account-${application.id}`}>
+                  <p>{application.selectedSocialAccount?.accountName ?? "未选择"}</p>
+                  <p className="mt-1 text-xs text-stone-500">{application.selectedSocialAccount?.verificationStatus ?? "UNKNOWN"}</p>
+                  {application.selectedSocialAccount?.accountUrl ? (
+                    <Link className="mt-1 inline-block font-black text-stone-950" href={application.selectedSocialAccount.accountUrl}>
+                      查看账号
+                    </Link>
+                  ) : null}
+                </div>,
+                `${application.selectedSocialAccount?.followers ?? 0} / 手填 ${application.selectedSocialAccount?.submittedFollowers ?? 0}`,
+                <StatusBadge key={`status-${application.id}`}>{application.status}</StatusBadge>,
+                application.applicationNote ?? "KOL 未填写申请备注。",
+                application.status === "APPLIED" ? (
+                  <form action={reviewTaskApplicationAction.bind(null, application.id)} className="grid min-w-72 gap-2" key={`action-${application.id}`}>
+                    <textarea
+                      className="min-h-20 rounded-xl border border-stone-200 bg-white/90 px-3 py-2 text-sm text-stone-950 shadow-inner outline-none focus:border-amber-400"
+                      defaultValue={application.applicationNote ?? ""}
+                      name="note"
+                      placeholder="审核备注"
+                    />
+                    <div className="flex flex-wrap gap-2">
+                      <SubmitButton name="decision" pendingLabel="正在通过..." value="APPROVED" variant="secondary">通过</SubmitButton>
+                      <SubmitButton name="decision" pendingLabel="正在拒绝..." value="REJECTED" variant="danger">拒绝</SubmitButton>
                     </div>
-                    <StatusBadge>{application.status}</StatusBadge>
-                  </div>
-                  <div className="mt-4 rounded-2xl border border-stone-200 bg-white/70 p-4 text-sm text-stone-700">
-                    {application.applicationNote ?? "KOL 未填写申请备注。"}
-                  </div>
-                  {application.status === "APPLIED" ? (
-                    <form action={reviewTaskApplicationAction.bind(null, application.id)} className="mt-5 grid gap-3">
-                      <Textarea label="审核备注" name="note" defaultValue={application.applicationNote ?? ""} rows={3} />
-                      <div className="flex flex-wrap gap-2">
-                        <Button name="decision" value="APPROVED" variant="secondary">通过申请</Button>
-                        <Button name="decision" value="REJECTED" variant="danger">拒绝申请</Button>
-                      </div>
-                    </form>
-                  ) : (
-                    <div className="mt-5 rounded-2xl border border-stone-200 bg-stone-50 p-4 text-sm font-semibold text-stone-600">
-                      {application.status}
-                    </div>
-                  )}
-                </Card>
-              )),
+                  </form>
+                ) : (
+                  <span className="text-sm font-semibold text-stone-600" key={`done-${application.id}`}>{application.status}</span>
+                ),
+              ]),
             )}
-          </div>
+          />
         )}
       </section>
 
@@ -255,7 +290,7 @@ export default async function AdminCampaignDetailPage({
             <input className="mr-2" name="visibleToBrand" type="checkbox" defaultChecked />
             品牌方可见
           </label>
-          <div><Button variant="secondary">发送留言</Button></div>
+          <div><SubmitButton pendingLabel="正在发送..." variant="secondary">发送留言</SubmitButton></div>
         </form>
       </Card>
 

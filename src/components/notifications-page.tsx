@@ -3,7 +3,8 @@ import { UserRole } from "@prisma/client";
 import { markNotificationReadAction } from "@/lib/actions";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Button, Card, EmptyState, PageHeader, StatusBadge } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
+import { Card, EmptyState, PageHeader, StatusBadge } from "@/components/ui";
 import { shortDate } from "@/lib/format";
 import { zhText } from "@/lib/i18n";
 
@@ -36,7 +37,7 @@ export async function NotificationsPage({ role }: { role: UserRole }) {
               ) : null}
               {notification.unread ? (
                 <form action={markNotificationReadAction.bind(null, notification.id)}>
-                  <Button variant="ghost">Mark read</Button>
+                  <SubmitButton pendingLabel="Marking..." variant="ghost">Mark read</SubmitButton>
                 </form>
               ) : null}
             </div>

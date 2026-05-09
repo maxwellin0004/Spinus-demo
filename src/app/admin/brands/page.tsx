@@ -4,6 +4,12 @@ import { prisma } from "@/lib/prisma";
 import { money, shortDate } from "@/lib/format";
 import { brandScopeWhere, demoWhere, getAdminContext, hasAdminPermission, scopeOptions } from "@/lib/admin";
 
+function reviewTone(status: string) {
+  if (status === "APPROVED") return "success" as const;
+  if (status === "REJECTED" || status === "FROZEN") return "danger" as const;
+  return "warning" as const;
+}
+
 export default async function AdminBrandsPage({
   searchParams,
 }: {
@@ -55,7 +61,7 @@ export default async function AdminBrandsPage({
           brand.companyName,
           brand.country,
           brand.responsibleAdmin?.displayName ?? "-",
-          <StatusBadge key="s">{brand.reviewStatus}</StatusBadge>,
+          <StatusBadge key="s" tone={reviewTone(brand.reviewStatus)}>{brand.reviewStatus}</StatusBadge>,
           brand.isDemo ? "是" : "否",
           brand.riskLevel,
           money(brand.campaigns.reduce((sum, campaign) => sum + Number(campaign.totalBudget), 0)),

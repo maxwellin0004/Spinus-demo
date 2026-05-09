@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { MouseEventHandler, ReactNode } from "react";
 import { zh, zhNode, zhText } from "@/lib/i18n";
+import { statusLabel } from "@/lib/status-labels";
 import { cn } from "@/lib/utils";
 
 export function Card({
@@ -151,8 +152,135 @@ function statusText(value: ReactNode) {
   return "";
 }
 
+function hasAnyStatus(text: string, values: string[]) {
+  return values.some((value) => text.includes(value));
+}
+
 function statusTone(value: ReactNode) {
   const text = statusText(value).toUpperCase();
+  if (hasAnyStatus(text, ["CREATOR", "创作者"])) return "purple";
+  if (hasAnyStatus(text, ["BRAND", "品牌方"])) return "info";
+  if (hasAnyStatus(text, ["ADMIN", "管理员"])) return "neutral";
+  if (
+    hasAnyStatus(text, [
+      "REJECTED",
+      "FAILED",
+      "FROZEN",
+      "EXPIRED",
+      "MISMATCHED",
+      "CANCELLED",
+      "VOID",
+      "HIGH",
+      "ERROR",
+      "OFFLINE",
+      "拒绝",
+      "失败",
+      "冻结",
+      "异常",
+      "离线",
+      "停用",
+      "作废",
+      "高",
+    ])
+  ) {
+    return "danger";
+  }
+  if (
+    hasAnyStatus(text, [
+      "APPROVED",
+      "VERIFIED",
+      "SETTLED",
+      "SUCCESS",
+      "PAID",
+      "CONFIRMED",
+      "ACCEPTED",
+      "ACTIVE",
+      "VALID",
+      "MATCHED",
+      "ONLINE",
+      "启用",
+      "通过",
+      "成功",
+      "已验收",
+      "已结算",
+      "已入账",
+      "已付款",
+      "已打款",
+      "在线",
+    ])
+  ) {
+    return "success";
+  }
+  if (
+    hasAnyStatus(text, [
+      "PROCESSING",
+      "SUBMITTED",
+      "PAYMENT_SUBMITTED",
+      "LINK_SUBMITTED",
+      "RESUBMITTED",
+      "IN_REVIEW",
+      "OPEN",
+      "APPLIED",
+      "REVISION_REQUESTED",
+      "DISPUTED",
+      "NEEDS_INFO",
+      "进行",
+      "处理中",
+      "已提交",
+      "已上传",
+      "补交",
+      "复审",
+      "争议",
+      "修改",
+    ])
+  ) {
+    return "info";
+  }
+  if (
+    hasAnyStatus(text, [
+      "PENDING",
+      "AWAITING",
+      "REQUESTED",
+      "NOT_SUBMITTED",
+      "NOT_REQUIRED",
+      "PAYABLE",
+      "待",
+      "等待",
+      "待办",
+      "审核",
+      "未读",
+      "未提交",
+      "待验收",
+      "待确认",
+    ])
+  ) {
+    return "warning";
+  }
+  if (
+    hasAnyStatus(text, [
+      "DRAFT",
+      "PAUSED",
+      "ARCHIVED",
+      "UNKNOWN",
+      "LOW",
+      "NEW",
+      "STAFF",
+      "ADMIN",
+      "BRAND",
+      "CREATOR",
+      "CNY",
+      "草稿",
+      "暂停",
+      "归档",
+      "未知",
+      "低",
+      "中",
+      "无需",
+      "演示",
+    ])
+  ) {
+    return "neutral";
+  }
   if (
     text.includes("APPROVED") ||
     text.includes("VERIFIED") ||
@@ -216,11 +344,16 @@ function statusTone(value: ReactNode) {
   return "default";
 }
 
-export function StatusBadge({ children }: { children: ReactNode }) {
-  const tone = statusTone(children);
+export type StatusTone = "success" | "warning" | "info" | "purple" | "danger" | "neutral" | "default";
+
+export function StatusBadge({ children, tone }: { children: ReactNode; tone?: StatusTone }) {
+  const resolvedTone = tone ?? statusTone(children);
+  const displayChildren = typeof children === "string" || typeof children === "number" ? statusLabel(children) : children;
   const styles = {
     success: "border-emerald-200 bg-emerald-50 text-emerald-800",
     warning: "border-amber-200 bg-amber-50 text-amber-800",
+    info: "border-sky-200 bg-sky-50 text-sky-800",
+    purple: "border-violet-200 bg-violet-50 text-violet-800",
     danger: "border-red-200 bg-red-50 text-red-700",
     neutral: "border-stone-200 bg-stone-100 text-stone-600",
     default: "border-stone-200 bg-white/80 text-stone-700",
@@ -228,15 +361,40 @@ export function StatusBadge({ children }: { children: ReactNode }) {
   const dotStyles = {
     success: "bg-emerald-500",
     warning: "bg-amber-500",
+    info: "bg-sky-500",
+    purple: "bg-violet-500",
     danger: "bg-red-500",
     neutral: "bg-stone-400",
     default: "bg-[var(--accent)]",
   };
   return (
-    <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.14em] shadow-sm", styles[tone])}>
-      <span className={cn("h-1.5 w-1.5 rounded-full", dotStyles[tone])} />
-      {zh(children)}
+    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.14em] shadow-sm", styles[resolvedTone])}>
+      <span className={cn("h-1.5 w-1.5 rounded-full", dotStyles[resolvedTone])} />
+      {zh(displayChildren)}
     </span>
+  );
+}
+
+export function WorkflowHint({
+  title,
+  body,
+  tone = "default",
+}: {
+  title: ReactNode;
+  body?: ReactNode;
+  tone?: "default" | "warning" | "danger" | "success";
+}) {
+  const styles = {
+    default: "border-stone-200 bg-stone-50 text-stone-700",
+    warning: "border-amber-200 bg-amber-50 text-amber-800",
+    danger: "border-red-200 bg-red-50 text-red-700",
+    success: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  };
+  return (
+    <div className={cn("min-w-[11rem] rounded-xl border px-3 py-2 text-xs", styles[tone])}>
+      <p className="font-black">{zh(title)}</p>
+      {body ? <p className="mt-1 leading-relaxed">{zh(body)}</p> : null}
+    </div>
   );
 }
 
@@ -405,15 +563,19 @@ export function PageHeader({
 export function DataTable({
   headers,
   rows,
+  emptyTitle = "No records yet",
+  emptyBody = "Records will appear here when the workflow starts.",
 }: {
   headers: string[];
   rows: ReactNode[][];
+  emptyTitle?: string;
+  emptyBody?: string;
 }) {
   if (rows.length === 0) {
-    return <EmptyState title="No records yet" body="Records will appear here when the workflow starts." />;
+    return <EmptyState title={emptyTitle} body={emptyBody} />;
   }
   return (
-    <div>
+    <div className="min-w-0">
       <div className="grid gap-3 md:hidden">
         {rows.map((row, rowIndex) => (
           <article className="rounded-2xl border border-[var(--line)] bg-white/86 p-4 shadow-sm" key={rowIndex}>
@@ -428,12 +590,12 @@ export function DataTable({
           </article>
         ))}
       </div>
-      <div className="hidden overflow-x-auto rounded-2xl border border-[var(--line)] bg-white/86 shadow-sm backdrop-blur-sm md:block">
-        <table className="w-full min-w-[760px] text-left text-sm">
+      <div className="hidden max-w-full overflow-x-auto rounded-2xl border border-[var(--line)] bg-white/86 shadow-sm backdrop-blur-sm md:block">
+        <table className="w-full min-w-[1120px] text-left text-sm">
           <thead className="bg-stone-50 text-xs uppercase tracking-[0.1em] text-stone-500">
             <tr>
               {headers.map((header) => (
-                <th className="px-4 py-3 font-semibold" key={header}>
+                <th className="whitespace-nowrap px-4 py-3 font-semibold" key={header}>
                   {zhText(header)}
                 </th>
               ))}

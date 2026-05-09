@@ -3,7 +3,8 @@ import { updateBrandProfileAction } from "@/lib/actions";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { OperatorCard } from "@/components/brand-ops";
-import { Button, Card, EmptyState, Field, PageHeader, StatusBadge, Textarea } from "@/components/ui";
+import { Card, EmptyState, Field, PageHeader, StatusBadge, Textarea } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
 
 export default async function BrandProfilePage({
   searchParams,
@@ -56,7 +57,7 @@ export default async function BrandProfilePage({
             <Textarea label="公司介绍" name="description" required rows={6} defaultValue={brand.description} />
           </div>
           <div className="md:col-span-2">
-            <Button variant="secondary">保存并重新提交审核</Button>
+            <SubmitButton pendingLabel="正在保存..." variant="secondary">保存并重新提交审核</SubmitButton>
           </div>
         </form>
       </Card>

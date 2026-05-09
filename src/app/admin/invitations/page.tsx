@@ -20,6 +20,20 @@ function dateEnd(value?: string) {
   return parsed;
 }
 
+function roleTone(role: UserRole) {
+  if (role === UserRole.CREATOR) return "purple" as const;
+  if (role === UserRole.BRAND) return "info" as const;
+  if (role === UserRole.ADMIN) return "neutral" as const;
+  return "default" as const;
+}
+
+function reviewTone(status?: string | null) {
+  if (status === "APPROVED") return "success" as const;
+  if (status === "REJECTED" || status === "FROZEN") return "danger" as const;
+  if (status === "PENDING") return "warning" as const;
+  return "neutral" as const;
+}
+
 export default async function AdminInvitationsPage({
   searchParams,
 }: {
@@ -106,7 +120,7 @@ export default async function AdminInvitationsPage({
           {ownLatestInvite ? (
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <StatusBadge>{ownLatestInvite.code}</StatusBadge>
-              <StatusBadge>{ownLatestInvite.active ? "启用" : "已停用"}</StatusBadge>
+              <StatusBadge tone={ownLatestInvite.active ? "success" : "danger"}>{ownLatestInvite.active ? "启用" : "已停用"}</StatusBadge>
               {ownLatestInvite.active ? (
                 <>
                   <code className="rounded-xl bg-stone-50 px-3 py-2 text-sm text-stone-800">{registerInviteUrl(ownLatestInvite.code)}</code>
@@ -167,7 +181,7 @@ export default async function AdminInvitationsPage({
             item.admin.displayName,
             item.admin.user.email,
             item.invite?.code ?? "未配置",
-            item.invite ? <StatusBadge key="status">{item.invite.active ? "启用" : "停用"}</StatusBadge> : "-",
+            item.invite ? <StatusBadge key="status" tone={item.invite.active ? "success" : "danger"}>{item.invite.active ? "启用" : "停用"}</StatusBadge> : "-",
             number(item.brandCount),
             number(item.creatorCount),
             number(item.totalCount),
@@ -187,8 +201,8 @@ export default async function AdminInvitationsPage({
             return [
               displayName ?? item.user.email,
               item.user.email,
-              <StatusBadge key="role">{item.user.role}</StatusBadge>,
-              profile?.reviewStatus ?? "-",
+              <StatusBadge key="role" tone={roleTone(item.user.role)}>{item.user.role}</StatusBadge>,
+              profile?.reviewStatus ? <StatusBadge key="review" tone={reviewTone(profile.reviewStatus)}>{profile.reviewStatus}</StatusBadge> : "-",
               item.invitedByAdmin.displayName,
               currentAdmin?.displayName ?? "-",
               item.codeSnapshot,

@@ -68,6 +68,12 @@ function roundMoney(value: number) {
   return Math.round(value * 100) / 100;
 }
 
+function isUniqueConstraintError(error: unknown, fields: string[]) {
+  if (!(error instanceof Prisma.PrismaClientKnownRequestError) || error.code !== "P2002") return false;
+  const target = Array.isArray(error.meta?.target) ? error.meta.target.map(String) : [];
+  return fields.every((field) => target.includes(field));
+}
+
 async function creditAcceptedSubmissionEarning({
   tx,
   actorUserId,
@@ -1165,6 +1171,7 @@ export async function generateDemoDataAction() {
         campaignId: campaign.id,
         platform: "TikTok",
         postUrl: "https://tiktok.com/@demo/video/demo",
+        normalizedPostUrl: normalizePostUrlForDedupe("https://tiktok.com/@demo/video/demo"),
         publishedAt: new Date(),
         views: 48600,
         likes: 3200,
@@ -1343,6 +1350,23 @@ export async function createCampaignAction(formData: FormData) {
   if (shouldSubmit && !hasEnoughBalance && (!paymentReference || !paymentProofFile)) {
     redirect(`/brand/campaigns/new?error=${encodeURIComponent("按单付款需要上传付款截图并填写交易订单号。")}`);
   }
+  if (shouldSubmit && !hasEnoughBalance && paymentReference) {
+    const duplicatePayment = await prisma.invoice.findUnique({
+      where: { paymentReference },
+      select: { id: true, brandId: true },
+    });
+    if (duplicatePayment) {
+      await recordDuplicatePaymentReferenceAttempt({
+        actorUserId: session.userId,
+        actorRole: session.role,
+        duplicateInvoiceId: duplicatePayment.id,
+        duplicateBrandId: duplicatePayment.brandId,
+        attemptedInvoiceId: null,
+        paymentReference,
+      });
+      redirect(`/brand/campaigns/new?error=${encodeURIComponent("该交易订单号已经提交过，请确认付款凭证或更换订单号。")}`);
+    }
+  }
   if (paymentProofFile && paymentProofFile.size > PAYMENT_PROOF_MAX_BYTES) {
     redirect(`/brand/campaigns/new?error=${encodeURIComponent("付款截图不能超过 8MB，请压缩后重新上传。")}`);
   }
@@ -1455,6 +1479,25 @@ export async function createCampaignAction(formData: FormData) {
     }
 
     return created;
+  }).catch(async (error: unknown) => {
+    if (isUniqueConstraintError(error, ["paymentReference"])) {
+      const duplicatePayment = await prisma.invoice.findUnique({
+        where: { paymentReference },
+        select: { id: true, brandId: true },
+      });
+      if (duplicatePayment) {
+        await recordDuplicatePaymentReferenceAttempt({
+          actorUserId: session.userId,
+          actorRole: session.role,
+          duplicateInvoiceId: duplicatePayment.id,
+          duplicateBrandId: duplicatePayment.brandId,
+          attemptedInvoiceId: null,
+          paymentReference,
+        });
+      }
+      redirect(`/brand/campaigns/new?error=${encodeURIComponent("该交易订单号已经提交过，请确认付款凭证或更换订单号。")}`);
+    }
+    throw error;
   });
 
   const files = formData.getAll("assetFiles").filter((file): file is File => file instanceof File && file.size > 0);
@@ -1642,11 +1685,27 @@ export async function submitInvoicePaymentAction(invoiceId: string, formData: Fo
   const proof = formData.get("paymentProof");
   const proofFile = proof instanceof File && proof.size > 0 ? proof : null;
   if (proofFile && proofFile.size > PAYMENT_PROOF_MAX_BYTES) redirect("/brand/billing?error=付款截图不能超过 8MB，请压缩后重新上传");
-  const uploadedProof = proofFile ? await saveUploadedFile(proofFile, `invoices/${invoice.id}`) : null;
   const method = text(formData.get("paymentMethod")) || "Bank transfer";
   const paymentReference = text(formData.get("paymentReference"));
-  const paymentProofUrl = uploadedProof || text(formData.get("paymentProofUrl"));
-  if (!paymentReference || !paymentProofUrl) redirect("/brand/billing?error=请上传付款截图并填写交易订单号");
+  const submittedPaymentProofUrl = text(formData.get("paymentProofUrl"));
+  if (!paymentReference || (!proofFile && !submittedPaymentProofUrl)) redirect("/brand/billing?error=请上传付款截图并填写交易订单号");
+  const duplicatePayment = await prisma.invoice.findUnique({
+    where: { paymentReference },
+    select: { id: true, brandId: true },
+  });
+  if (duplicatePayment && duplicatePayment.id !== invoice.id) {
+    await recordDuplicatePaymentReferenceAttempt({
+      actorUserId: session.userId,
+      actorRole: session.role,
+      duplicateInvoiceId: duplicatePayment.id,
+      duplicateBrandId: duplicatePayment.brandId,
+      attemptedInvoiceId: invoice.id,
+      paymentReference,
+    });
+    redirect("/brand/billing?error=该交易订单号已经提交过，请确认付款凭证或更换订单号");
+  }
+  const uploadedProof = proofFile ? await saveUploadedFile(proofFile, `invoices/${invoice.id}`) : null;
+  const paymentProofUrl = uploadedProof || submittedPaymentProofUrl;
 
   await prisma.$transaction(async (tx) => {
     await tx.invoice.update({
@@ -1669,6 +1728,25 @@ export async function submitInvoicePaymentAction(invoiceId: string, formData: Fo
         afterJson: { status: "PAYMENT_SUBMITTED", paymentMethod: method, paymentReference },
       },
     });
+  }).catch(async (error: unknown) => {
+    if (isUniqueConstraintError(error, ["paymentReference"])) {
+      const duplicatePayment = await prisma.invoice.findUnique({
+        where: { paymentReference },
+        select: { id: true, brandId: true },
+      });
+      if (duplicatePayment && duplicatePayment.id !== invoice.id) {
+        await recordDuplicatePaymentReferenceAttempt({
+          actorUserId: session.userId,
+          actorRole: session.role,
+          duplicateInvoiceId: duplicatePayment.id,
+          duplicateBrandId: duplicatePayment.brandId,
+          attemptedInvoiceId: invoice.id,
+          paymentReference,
+        });
+      }
+      redirect("/brand/billing?error=该交易订单号已经提交过，请确认付款凭证或更换订单号");
+    }
+    throw error;
   });
   redirect("/brand/billing?payment=1");
 }
@@ -1677,6 +1755,7 @@ export async function updateInvoiceStatusAction(invoiceId: string, formData: For
   const session = await requireAdminPermission("payment.manage");
   const action = text(formData.get("action"));
   const note = text(formData.get("note"));
+  const confirmed = text(formData.get("confirmAction")) === "yes";
   const invoice = await prisma.invoice.findUnique({ where: { id: invoiceId }, include: { brand: true, campaign: true } });
   if (!invoice) redirect("/admin/payments");
 
@@ -1689,6 +1768,8 @@ export async function updateInvoiceStatusAction(invoiceId: string, formData: For
   };
   const nextStatus = statusMap[action];
   if (!nextStatus) redirect("/admin/payments");
+  if (!confirmed) redirect("/admin/payments?error=资金操作必须先勾选确认。");
+  if ((action === "reject" || action === "void") && note.length < 3) redirect("/admin/payments?error=拒绝或作废付款单必须填写备注。");
 
   await prisma.$transaction(async (tx) => {
     await tx.invoice.update({
@@ -1840,9 +1921,12 @@ export async function updateBrandRefundAction(refundId: string, formData: FormDa
   const session = await requireAdminPermission("payment.manage");
   const action = text(formData.get("action"));
   const adminNote = text(formData.get("adminNote"));
+  const confirmed = text(formData.get("confirmAction")) === "yes";
   const request = await prisma.brandRefundRequest.findUnique({ where: { id: refundId }, include: { brand: true } });
   if (!request) redirect("/admin/payments");
   if (request.status === BrandRefundStatus.PAID || request.status === BrandRefundStatus.REJECTED) redirect("/admin/payments");
+  if (!confirmed) redirect("/admin/payments?error=资金操作必须先勾选确认。");
+  if ((action === "paid" || action === "reject") && adminNote.length < 3) redirect("/admin/payments?error=退款打款或拒绝必须填写处理备注。");
 
   await prisma.$transaction(async (tx) => {
     if (action === "approve") {
@@ -2546,6 +2630,47 @@ function isValidPlatformPostUrl(platform: string, rawUrl: string) {
   return hostMatches(normalizeHostname(url.hostname), allowedDomains);
 }
 
+const ignoredUrlParams = new Set([
+  "from",
+  "share_from_user_hidden",
+  "share_id",
+  "share_sign",
+  "share_source",
+  "timestamp",
+  "utm_campaign",
+  "utm_content",
+  "utm_medium",
+  "utm_source",
+  "utm_term",
+]);
+
+function normalizePostUrlForDedupe(rawUrl: string) {
+  const url = parseHttpUrl(rawUrl);
+  if (!url) return rawUrl.trim().toLowerCase();
+
+  url.protocol = "https:";
+  url.hostname = normalizeHostname(url.hostname);
+  url.hash = "";
+  for (const key of [...url.searchParams.keys()]) {
+    const normalizedKey = key.toLowerCase();
+    if (normalizedKey.startsWith("utm_") || ignoredUrlParams.has(normalizedKey)) {
+      url.searchParams.delete(key);
+    }
+  }
+
+  const sortedParams = [...url.searchParams.entries()].sort(([leftKey, leftValue], [rightKey, rightValue]) => {
+    const keyOrder = leftKey.localeCompare(rightKey);
+    return keyOrder || leftValue.localeCompare(rightValue);
+  });
+  url.search = "";
+  for (const [key, value] of sortedParams) {
+    url.searchParams.append(key, value);
+  }
+
+  url.pathname = url.pathname.replace(/\/+$/, "") || "/";
+  return url.toString().replace(/\/$/, "").toLowerCase();
+}
+
 async function resolvePlatformPostUrl(platform: string, rawUrl: string) {
   const initialUrl = parseHttpUrl(rawUrl);
   const allowedDomains = platformPostDomains[platform] ?? [];
@@ -2635,6 +2760,123 @@ function creatorProofRedirect(applicationId: string, message: string) {
   redirect(`/creator/my-tasks/${applicationId}?error=${encodeURIComponent(message)}`);
 }
 
+async function recordDuplicateProofAttempt({
+  actorUserId,
+  actorRole,
+  duplicateProofId,
+  duplicateCampaignId,
+  duplicateCreatorId,
+  attemptedSubmissionId,
+  submittedUrl,
+  normalizedPostUrl,
+  platform,
+}: {
+  actorUserId: string;
+  actorRole: UserRole;
+  duplicateProofId: string;
+  duplicateCampaignId: string;
+  duplicateCreatorId: string;
+  attemptedSubmissionId: string;
+  submittedUrl: string;
+  normalizedPostUrl: string;
+  platform: string;
+}) {
+  await prisma.$transaction(async (tx) => {
+    const recentDuplicateLog = await tx.auditLog.findFirst({
+      where: {
+        actorUserId,
+        action: "proof.duplicate_blocked",
+        entityType: "proof",
+        entityId: duplicateProofId,
+        createdAt: { gte: new Date(Date.now() - 10 * 60 * 1000) },
+      },
+      select: { id: true },
+    });
+    if (!recentDuplicateLog) {
+      await tx.riskFlag.create({
+        data: {
+          entityType: "proof",
+          entityId: duplicateProofId,
+          level: RiskLevel.MEDIUM,
+          reason: `重复作品链接提交被拦截：${platform} / ${normalizedPostUrl}`,
+        },
+      });
+    }
+    await tx.auditLog.create({
+      data: {
+        actorUserId,
+        actorRole,
+        action: "proof.duplicate_blocked",
+        entityType: "proof",
+        entityId: duplicateProofId,
+        afterJson: {
+          submittedUrl,
+          normalizedPostUrl,
+          platform,
+          duplicateProofId,
+          duplicateCampaignId,
+          duplicateCreatorId,
+          attemptedSubmissionId,
+        },
+      },
+    });
+  });
+}
+
+async function recordDuplicatePaymentReferenceAttempt({
+  actorUserId,
+  actorRole,
+  duplicateInvoiceId,
+  duplicateBrandId,
+  attemptedInvoiceId,
+  paymentReference,
+}: {
+  actorUserId: string;
+  actorRole: UserRole;
+  duplicateInvoiceId: string;
+  duplicateBrandId: string;
+  attemptedInvoiceId?: string | null;
+  paymentReference: string;
+}) {
+  await prisma.$transaction(async (tx) => {
+    const recentDuplicateLog = await tx.auditLog.findFirst({
+      where: {
+        actorUserId,
+        action: "invoice.payment_reference_duplicate_blocked",
+        entityType: "invoice",
+        entityId: duplicateInvoiceId,
+        createdAt: { gte: new Date(Date.now() - 10 * 60 * 1000) },
+      },
+      select: { id: true },
+    });
+    if (!recentDuplicateLog) {
+      await tx.riskFlag.create({
+        data: {
+          entityType: "invoice",
+          entityId: duplicateInvoiceId,
+          level: RiskLevel.HIGH,
+          reason: `重复交易订单号提交被拦截：${paymentReference}`,
+        },
+      });
+    }
+    await tx.auditLog.create({
+      data: {
+        actorUserId,
+        actorRole,
+        action: "invoice.payment_reference_duplicate_blocked",
+        entityType: "invoice",
+        entityId: duplicateInvoiceId,
+        afterJson: {
+          paymentReference,
+          duplicateInvoiceId,
+          duplicateBrandId,
+          attemptedInvoiceId: attemptedInvoiceId ?? null,
+        },
+      },
+    });
+  });
+}
+
 export async function submitProofAction(submissionId: string, formData: FormData) {
   const session = await requireRole(UserRole.CREATOR);
   const submission = await prisma.submission.findFirst({
@@ -2653,6 +2895,28 @@ export async function submitProofAction(submissionId: string, formData: FormData
   if (!urlCheck.ok || !isValidPlatformPostUrl(submission.application.task.platform, postUrl)) {
     creatorProofRedirect(submission.applicationId, "发布链接格式或平台域名不符合任务要求。");
   }
+  const normalizedPostUrl = normalizePostUrlForDedupe(urlCheck.resolvedUrl ?? urlCheck.normalizedUrl ?? postUrl);
+  const duplicateProof = await prisma.proof.findFirst({
+    where: {
+      platform: submission.application.task.platform,
+      normalizedPostUrl,
+    },
+    select: { id: true, campaignId: true, creatorId: true },
+  });
+  if (duplicateProof) {
+    await recordDuplicateProofAttempt({
+      actorUserId: session.userId,
+      actorRole: session.role,
+      duplicateProofId: duplicateProof.id,
+      duplicateCampaignId: duplicateProof.campaignId,
+      duplicateCreatorId: duplicateProof.creatorId,
+      attemptedSubmissionId: submissionId,
+      submittedUrl: postUrl,
+      normalizedPostUrl,
+      platform: submission.application.task.platform,
+    });
+    creatorProofRedirect(submission.applicationId, "该作品链接已经提交过，请更换未使用过的发布链接。");
+  }
 
   if (!submission.campaign.allowMultiPlatformProof) {
     const activeProof = submission.proofs.find((proof) => proof.verificationStatus !== ProofStatus.REJECTED);
@@ -2669,6 +2933,7 @@ export async function submitProofAction(submissionId: string, formData: FormData
         platform: submission.application.task.platform,
         postUrl,
         resolvedPostUrl: urlCheck.resolvedUrl,
+        normalizedPostUrl,
         urlCheckResult: urlCheck,
         publishedAt: new Date(text(formData.get("publishedAt")) || Date.now()),
         verificationStatus: ProofStatus.PENDING,
@@ -2702,6 +2967,31 @@ export async function submitProofAction(submissionId: string, formData: FormData
       },
     });
     return created;
+  }).catch(async (error: unknown) => {
+    if (isUniqueConstraintError(error, ["platform", "normalizedPostUrl"])) {
+      const duplicateProof = await prisma.proof.findFirst({
+        where: {
+          platform: submission.application.task.platform,
+          normalizedPostUrl,
+        },
+        select: { id: true, campaignId: true, creatorId: true },
+      });
+      if (duplicateProof) {
+        await recordDuplicateProofAttempt({
+          actorUserId: session.userId,
+          actorRole: session.role,
+          duplicateProofId: duplicateProof.id,
+          duplicateCampaignId: duplicateProof.campaignId,
+          duplicateCreatorId: duplicateProof.creatorId,
+          attemptedSubmissionId: submissionId,
+          submittedUrl: postUrl,
+          normalizedPostUrl,
+          platform: submission.application.task.platform,
+        });
+      }
+      creatorProofRedirect(submission.applicationId, "该作品链接已经提交过，请更换未使用过的发布链接。");
+    }
+    throw error;
   });
   const crawlerPlatform = toCrawlerPlatform(proof.platform);
   if (crawlerPlatform) {
@@ -3344,11 +3634,14 @@ export async function updateWithdrawalAction(withdrawalId: string, formData: For
   const session = await requireAdminPermission("payment.manage");
   const action = text(formData.get("action"));
   const note = text(formData.get("adminNote"));
+  const confirmed = text(formData.get("confirmAction")) === "yes";
   const request = await prisma.withdrawalRequest.findUnique({
     where: { id: withdrawalId },
     include: { wallet: true, transactions: true },
   });
   if (!request) redirect("/admin/payments");
+  if (!confirmed) redirect("/admin/payments?error=资金操作必须先勾选确认。");
+  if ((action === "paid" || action === "reject") && note.length < 3) redirect("/admin/payments?error=提现打款或拒绝必须填写处理备注。");
 
   await prisma.$transaction(async (tx) => {
     if (action === "approve") {
@@ -3492,6 +3785,8 @@ export async function updatePlatformSettingsAction(formData: FormData) {
 
 export async function updateCreatorProfileAction(formData: FormData) {
   const session = await requireRole(UserRole.CREATOR);
+  const payoutWalletAddress = text(formData.get("payoutWalletAddress")) || null;
+  const returnTo = text(formData.get("returnTo"));
   await prisma.creatorProfile.update({
     where: { userId: session.userId },
     data: {
@@ -3502,14 +3797,21 @@ export async function updateCreatorProfileAction(formData: FormData) {
       contentTypes: csv(formData.get("contentTypes")),
       bio: text(formData.get("bio")),
       wallet: {
-        update: {
-          payoutWalletAddress: text(formData.get("payoutWalletAddress")) || null,
+        upsert: {
+          update: {
+            payoutWalletAddress,
+          },
+          create: {
+            currency: "CNY",
+            payoutWalletAddress,
+          },
         },
       },
     },
   });
   await audit({ action: "creator.profile_updated", entityType: "creator", entityId: session.userId });
   revalidatePath("/creator/profile");
+  if (returnTo.startsWith("/creator/profile")) redirect(returnTo);
 }
 
 export async function addSocialAccountAction(formData: FormData) {
@@ -3554,6 +3856,90 @@ export async function addSocialAccountAction(formData: FormData) {
   revalidatePath("/creator/profile");
   revalidatePath("/admin/social-accounts");
   revalidatePath("/admin/crawler");
+}
+
+export async function updateSocialAccountAction(socialAccountId: string, formData: FormData) {
+  const session = await requireRole(UserRole.CREATOR);
+  const creator = await prisma.creatorProfile.findUnique({ where: { userId: session.userId } });
+  if (!creator) redirect("/creator/profile");
+  const account = await prisma.socialAccount.findFirst({
+    where: { id: socialAccountId, creatorId: creator.id },
+  });
+  if (!account) redirect("/creator/profile?tab=social");
+
+  const followers = Number(text(formData.get("followers")) || 0);
+  const avgViews = Number(text(formData.get("avgViews")) || 0);
+  const platform = text(formData.get("platform"));
+  const accountUrl = text(formData.get("accountUrl"));
+  const updated = await prisma.socialAccount.update({
+    where: { id: socialAccountId },
+    data: {
+      platform,
+      accountName: text(formData.get("accountName")),
+      accountUrl,
+      followers,
+      avgViews,
+      submittedFollowers: followers,
+      submittedAvgViews: avgViews,
+      contentType: text(formData.get("contentType")),
+      country: text(formData.get("country")),
+      language: text(formData.get("language")),
+      verified: false,
+      verificationStatus: SocialVerificationStatus.PENDING,
+      verificationNote: "账号资料已修改，等待平台重新审核。",
+      verifiedAt: null,
+    },
+  });
+  const crawlerPlatform = toCrawlerPlatform(platform);
+  if (crawlerPlatform) {
+    await createCrawlerJob({
+      type: CrawlerJobType.FETCH_SOCIAL_ACCOUNT,
+      platform: crawlerPlatform,
+      targetType: CrawlerTargetType.SOCIAL_ACCOUNT,
+      targetId: updated.id,
+      targetUrl: accountUrl,
+      socialAccountId: updated.id,
+      createdByUserId: session.userId,
+    });
+  }
+  await audit({
+    action: "creator.social_account_updated",
+    entityType: "social_account",
+    entityId: socialAccountId,
+    beforeJson: { platform: account.platform, accountName: account.accountName, accountUrl: account.accountUrl, verificationStatus: account.verificationStatus },
+    afterJson: { platform, accountName: updated.accountName, accountUrl, verificationStatus: SocialVerificationStatus.PENDING },
+  });
+  revalidatePath("/creator/profile");
+  revalidatePath("/admin/social-accounts");
+  revalidatePath("/admin/crawler");
+  redirect("/creator/profile?tab=social");
+}
+
+export async function deleteSocialAccountAction(socialAccountId: string) {
+  const session = await requireRole(UserRole.CREATOR);
+  const creator = await prisma.creatorProfile.findUnique({ where: { userId: session.userId } });
+  if (!creator) redirect("/creator/profile");
+  const account = await prisma.socialAccount.findFirst({
+    where: { id: socialAccountId, creatorId: creator.id },
+    include: { selectedApplications: { select: { id: true, status: true } } },
+  });
+  if (!account) redirect("/creator/profile?tab=social");
+  const activeBindings = account.selectedApplications.filter((application) => application.status === ApplicationStatus.APPLIED || application.status === ApplicationStatus.APPROVED);
+  if (activeBindings.length) {
+    redirect(`/creator/profile?tab=social&error=${encodeURIComponent("该社媒账号已绑定进行中的任务申请，不能删除。")}`);
+  }
+
+  await prisma.socialAccount.delete({ where: { id: socialAccountId } });
+  await audit({
+    action: "creator.social_account_deleted",
+    entityType: "social_account",
+    entityId: socialAccountId,
+    beforeJson: { platform: account.platform, accountName: account.accountName, accountUrl: account.accountUrl, verificationStatus: account.verificationStatus },
+  });
+  revalidatePath("/creator/profile");
+  revalidatePath("/admin/social-accounts");
+  revalidatePath("/admin/crawler");
+  redirect("/creator/profile?tab=social");
 }
 
 export async function updateSocialAccountVerificationAction(socialAccountId: string, formData: FormData) {

@@ -4,7 +4,8 @@ import { addBrandMessageAction, submitBrandRequirementAction } from "@/lib/actio
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { MessageThread, OperatorCard } from "@/components/brand-ops";
-import { Button, Card, DataTable, EmptyState, Field, PageHeader, StatusBadge, Textarea } from "@/components/ui";
+import { Card, DataTable, EmptyState, Field, PageHeader, StatusBadge, Textarea } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
 import { money, shortDate } from "@/lib/format";
 
 export default async function BrandRequestsPage({
@@ -48,7 +49,7 @@ export default async function BrandRequestsPage({
             <Textarea label="需求描述" name="description" required rows={6} placeholder="说明产品、目标人群、平台、内容风格、合规限制和你希望运营协助判断的问题。" />
           </div>
           <div className="md:col-span-2">
-            <Button variant="secondary">提交给运营</Button>
+            <SubmitButton pendingLabel="正在提交..." variant="secondary">提交给运营</SubmitButton>
           </div>
         </form>
       </Card>
@@ -59,7 +60,7 @@ export default async function BrandRequestsPage({
         </div>
         <form action={addBrandMessageAction.bind(null, "brand", brand.id)} className="mt-5 grid gap-3">
           <Textarea label="留言给运营" name="body" required rows={4} />
-          <div><Button variant="secondary">发送留言</Button></div>
+          <div><SubmitButton pendingLabel="正在发送..." variant="secondary">发送留言</SubmitButton></div>
         </form>
       </Card>
       <section>

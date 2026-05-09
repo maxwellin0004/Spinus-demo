@@ -3,7 +3,8 @@ import { addBrandMessageAction } from "@/lib/actions";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { MessageThread, OperatorCard } from "@/components/brand-ops";
-import { Button, Card, EmptyState, PageHeader, StatusBadge, Textarea } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
+import { Card, EmptyState, PageHeader, StatusBadge, Textarea } from "@/components/ui";
 import { money, shortDate } from "@/lib/format";
 
 export default async function BrandRequestDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -44,7 +45,7 @@ export default async function BrandRequestDetailPage({ params }: { params: Promi
         <form action={addBrandMessageAction.bind(null, "request", request.id)} className="mt-5 grid gap-3">
           <Textarea label="补充留言" name="body" required rows={4} />
           <div>
-            <Button variant="secondary">发送留言</Button>
+            <SubmitButton pendingLabel="正在发送..." variant="secondary">发送留言</SubmitButton>
           </div>
         </form>
       </Card>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { registerAction } from "@/lib/actions";
 import { Card, Field, PageHeader, Select } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
 import { normalizeInviteCode } from "@/lib/invitations";
 import { prisma } from "@/lib/prisma";
 
@@ -58,9 +59,7 @@ export default async function RegisterPage({
             <Field label="行业（品牌方填写）" name="industry" defaultValue="AI SaaS" />
             <Field label="邮箱" name="email" type="email" required placeholder="name@example.com" />
             <Field label="密码" name="password" type="password" required placeholder="至少 8 位" />
-            <button className="rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white" type="submit">
-              注册
-            </button>
+            <SubmitButton className="rounded-full py-3" pendingLabel="正在注册...">注册</SubmitButton>
           </form>
           <p className="mt-5 text-sm text-stone-500">
             已有账号？ <Link className="font-semibold text-stone-950" href="/auth/login">登录</Link>

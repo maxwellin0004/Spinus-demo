@@ -3,7 +3,8 @@ import { CrawlerJobStatus, ProofStatus, UserRole } from "@prisma/client";
 import { refreshProofMetricsAction, reviewPublicationProofAction } from "@/lib/actions";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Button, Card, EmptyState, PageHeader, PostMetricsPanel, Select, StatusBadge, Textarea } from "@/components/ui";
+import { CopyButton, SubmitButton } from "@/components/form-controls";
+import { Button, DataTable, EmptyState, PageHeader, Select, StatusBadge, WorkflowHint } from "@/components/ui";
 import { crawlerMetric, shortDate } from "@/lib/format";
 
 const rejectionReasons = ["链接不可访问", "平台账号不匹配", "未按已通过草稿发布", "未包含广告披露", "发布时间或内容不符合要求", "其他"];
@@ -26,6 +27,24 @@ function addDays(date: Date, days: number) {
 function asUrlCheck(value: unknown): UrlCheckResult | null {
   if (!value || typeof value !== "object") return null;
   return value as UrlCheckResult;
+}
+
+function shortUrl(value: string) {
+  try {
+    const url = new URL(value);
+    const path = url.pathname.length > 24 ? `${url.pathname.slice(0, 24)}...` : url.pathname;
+    return `${url.hostname}${path}`;
+  } catch {
+    return value.length > 36 ? `${value.slice(0, 36)}...` : value;
+  }
+}
+
+function proofNextStep(status: ProofStatus, overdue: boolean, hasRisk: boolean) {
+  if (status === ProofStatus.VERIFIED) return { title: "已验收", body: "KOL 收益会按任务入账。", tone: "success" as const };
+  if (status === ProofStatus.REJECTED) return { title: "已拒绝", body: "等待 KOL 按原因重新处理。", tone: "danger" as const };
+  if (hasRisk) return { title: "先核对风险", body: "链接存在重复提交提示，确认是否同一作品。", tone: "warning" as const };
+  if (overdue) return { title: "已超 SLA", body: "请尽快验收，避免进入平台自动处理。", tone: "danger" as const };
+  return { title: "待验收", body: "检查链接、数据和内容后通过或拒绝。", tone: "warning" as const };
 }
 
 export default async function BrandProofsPage({
@@ -60,6 +79,34 @@ export default async function BrandProofsPage({
   });
 
   if (!campaign) return <PageHeader title="未找到推广活动" />;
+  const proofRiskFlags = campaign.proofs.length
+    ? await prisma.riskFlag.findMany({
+        where: {
+          entityType: "proof",
+          entityId: { in: campaign.proofs.map((proof) => proof.id) },
+          reason: { startsWith: "重复作品链接提交被拦截" },
+        },
+        orderBy: { createdAt: "desc" },
+      })
+    : [];
+  const proofRiskById = new Map<string, typeof proofRiskFlags>();
+  for (const flag of proofRiskFlags) {
+    proofRiskById.set(flag.entityId, [...(proofRiskById.get(flag.entityId) ?? []), flag]);
+  }
+  const proofDuplicateLogs = campaign.proofs.length
+    ? await prisma.auditLog.findMany({
+        where: {
+          entityType: "proof",
+          entityId: { in: campaign.proofs.map((proof) => proof.id) },
+          action: "proof.duplicate_blocked",
+        },
+        orderBy: { createdAt: "desc" },
+      })
+    : [];
+  const proofDuplicateLogsById = new Map<string, typeof proofDuplicateLogs>();
+  for (const log of proofDuplicateLogs) {
+    proofDuplicateLogsById.set(log.entityId, [...(proofDuplicateLogsById.get(log.entityId) ?? []), log]);
+  }
   const pendingCount = campaign.proofs.filter((proof) => proof.verificationStatus === ProofStatus.PENDING).length;
   // eslint-disable-next-line react-hooks/purity
   const now = Date.now();
@@ -98,125 +145,128 @@ export default async function BrandProofsPage({
       </form>
       {campaign.proofs.length === 0 ? <EmptyState title="暂无发布链接" body="KOL 发布后只需要提交链接。商家验收通过后，收益会直接进入可提现余额。" /> : null}
 
-      <div className="grid gap-4">
-        {campaign.proofs.map((proof) => {
-          const action = reviewPublicationProofAction.bind(null, proof.id);
-          const refreshAction = refreshProofMetricsAction.bind(null, proof.id);
-          const dueAt = addDays(proof.createdAt, campaign.acceptanceSlaDays);
-          const overdue = proof.verificationStatus === ProofStatus.PENDING && dueAt.getTime() < now;
-          const task = proof.submission.application.task;
-          const account = proof.submission.application.selectedSocialAccount;
-          const urlCheck = asUrlCheck(proof.urlCheckResult);
-          const latestSuccess = proof.postMetricSnapshots.find((snapshot) => snapshot.status === "SUCCESS");
-          const latestSnapshot = proof.postMetricSnapshots[0];
-          const latestJob = proof.crawlerJobs[0];
+      {campaign.proofs.length ? (
+        <DataTable
+          headers={["KOL / 任务", "状态", "发布链接", "自动核验", "内容摘要", "下一步", "操作"]}
+          emptyTitle="暂无发布链接"
+          emptyBody="KOL 发布后只需要提交链接。商家验收通过后，收益会直接进入可提现余额。"
+          rows={campaign.proofs.map((proof) => {
+            const action = reviewPublicationProofAction.bind(null, proof.id);
+            const refreshAction = refreshProofMetricsAction.bind(null, proof.id);
+            const dueAt = addDays(proof.createdAt, campaign.acceptanceSlaDays);
+            const overdue = proof.verificationStatus === ProofStatus.PENDING && dueAt.getTime() < now;
+            const task = proof.submission.application.task;
+            const account = proof.submission.application.selectedSocialAccount;
+            const urlCheck = asUrlCheck(proof.urlCheckResult);
+            const latestSuccess = proof.postMetricSnapshots.find((snapshot) => snapshot.status === "SUCCESS");
+            const latestSnapshot = proof.postMetricSnapshots[0];
+            const latestJob = proof.crawlerJobs[0];
+            const duplicateFlags = proofRiskById.get(proof.id) ?? [];
+            const latestDuplicateFlag = duplicateFlags[0];
+            const duplicateLogs = proofDuplicateLogsById.get(proof.id) ?? [];
+            const nextStep = proofNextStep(proof.verificationStatus, overdue, Boolean(latestDuplicateFlag));
 
-          return (
-            <Card key={proof.id}>
-              <div className="flex flex-wrap items-start justify-between gap-3">
+            return [
+              <div key={`meta-${proof.id}`}>
+                <p className="font-black text-stone-950">{proof.creator.displayName}</p>
+                <p className="mt-1 text-xs text-stone-500">{task.platform} · {task.contentType}</p>
+                <p className="mt-1 text-xs text-stone-500">提交 {shortDate(proof.createdAt)} · SLA {shortDate(dueAt)}</p>
+                <p className="mt-1 text-xs text-stone-500">账号：{account ? `${account.platform} / ${account.accountName}` : "未绑定"}</p>
+              </div>,
+              <div className="grid gap-2" key={`status-${proof.id}`}>
+                <StatusBadge>{proof.verificationStatus}</StatusBadge>
+                <StatusBadge>{proof.publicationStatus}</StatusBadge>
+                {urlCheck ? <StatusBadge>{urlCheck.ok ? "域名匹配" : "域名异常"}</StatusBadge> : null}
+                {overdue ? <StatusBadge>已超 SLA</StatusBadge> : null}
+                {latestDuplicateFlag ? <StatusBadge>重复尝试 {duplicateFlags.length}</StatusBadge> : null}
+              </div>,
+              <div className="grid gap-1 text-sm" key={`link-${proof.id}`}>
+                <Link className="font-black text-stone-950" href={proof.postUrl} target="_blank">
+                  打开链接
+                </Link>
+                <p className="break-all text-xs text-stone-500" title={proof.postUrl}>{shortUrl(proof.postUrl)}</p>
                 <div>
-                  <h2 className="text-xl font-black text-stone-950">{proof.creator.displayName}</h2>
-                  <p className="mt-1 text-sm text-stone-500">
-                    {task.platform} · {task.contentType} · 提交 {shortDate(proof.createdAt)} · SLA 截止 {shortDate(dueAt)}
-                  </p>
+                  <CopyButton value={proof.postUrl}>复制链接</CopyButton>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  <StatusBadge>{proof.verificationStatus}</StatusBadge>
-                  <StatusBadge>{proof.publicationStatus}</StatusBadge>
-                  {urlCheck ? <StatusBadge>{urlCheck.ok ? "域名匹配" : "域名异常"}</StatusBadge> : null}
-                  {overdue ? <StatusBadge>已超 SLA</StatusBadge> : null}
-                </div>
-              </div>
-
-              <section className="mt-5 grid gap-4 lg:grid-cols-[0.85fr_1.15fr]">
-                <div className="rounded-2xl border border-stone-200 bg-stone-50 p-4 text-sm text-stone-700">
-                  <h3 className="font-black text-stone-950">发布信息</h3>
-                  <div className="mt-3 grid gap-2">
-                    <p><strong>发布账号：</strong>{account ? `${account.platform} / ${account.accountName}` : "未绑定"}</p>
-                    <p><strong>账号链接：</strong>{account?.accountUrl ?? "-"}</p>
-                    <p><strong>发布时间：</strong>{shortDate(proof.publishedAt)}</p>
-                    <p><strong>补交次数：</strong>{proof.resubmissionCount}</p>
-                    <p>
-                      <strong>发布链接：</strong>
-                      <Link className="font-semibold text-stone-950" href={proof.postUrl} target="_blank">
-                        打开链接
-                      </Link>
-                    </p>
-                    {proof.resolvedPostUrl && proof.resolvedPostUrl !== proof.postUrl ? (
-                      <p>
-                        <strong>最终链接：</strong>
-                        <Link className="font-semibold text-stone-950" href={proof.resolvedPostUrl} target="_blank">
-                          打开最终链接
-                        </Link>
-                      </p>
+                {proof.resolvedPostUrl && proof.resolvedPostUrl !== proof.postUrl ? (
+                  <Link className="font-semibold text-stone-950" href={proof.resolvedPostUrl} target="_blank">
+                    打开最终链接
+                  </Link>
+                ) : null}
+                <p className="text-xs text-stone-500">发布 {shortDate(proof.publishedAt)} · 补交 {proof.resubmissionCount} 次</p>
+                {latestDuplicateFlag ? (
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 p-2 text-xs font-semibold text-amber-800">
+                    重复提示：该链接有 {duplicateFlags.length} 次重复提交尝试。最近一次：{shortDate(latestDuplicateFlag.createdAt)}
+                    {duplicateLogs.length ? (
+                      <details className="mt-2 text-amber-900">
+                        <summary className="cursor-pointer">查看重复尝试详情</summary>
+                        <div className="mt-2 grid gap-1">
+                          {duplicateLogs.slice(0, 5).map((log) => (
+                            <p key={log.id}>
+                              {shortDate(log.createdAt)} / {log.actorRole ?? "-"} / {log.actorUserId?.slice(0, 8) ?? "-"}
+                            </p>
+                          ))}
+                        </div>
+                      </details>
                     ) : null}
                   </div>
-                  {urlCheck ? (
-                    <div className="mt-4 rounded-2xl bg-white/80 p-3 text-xs leading-5 text-stone-600">
-                      <p className="font-black text-stone-950">系统链接校验</p>
-                      <p>提交域名：{urlCheck.rawHost ?? "-"}</p>
-                      <p>最终域名：{urlCheck.resolvedHost ?? "-"}</p>
-                      <p>校验方式：{urlCheck.method === "fetch" ? "已尝试展开短链" : "域名校验"}</p>
-                      <p>访问状态：{urlCheck.status ?? "未取得"} {urlCheck.reachable ? "可访问/有响应" : ""}</p>
-                      {urlCheck.error ? <p className="text-amber-700">自动访问提示：{urlCheck.error}</p> : null}
-                    </div>
-                  ) : null}
-                </div>
-                <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4 text-sm text-stone-700">
-                  <h3 className="font-black text-stone-950">已提交内容</h3>
-                  <p className="mt-3 font-semibold">{proof.submission.draft.title}</p>
-                  <p className="mt-2 whitespace-pre-wrap">{proof.submission.draft.caption}</p>
-                  <p className="mt-2">{proof.submission.draft.hashtags.join(" ")}</p>
-                  <p className="mt-3"><strong>广告披露：</strong>{proof.submission.draft.disclosurePosition || "未填写"}</p>
-                </div>
-              </section>
-
-              <section className="mt-5 rounded-2xl border border-stone-200 bg-white/80 p-4 text-sm text-stone-700">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <h3 className="font-black text-stone-950">自动数据核验</h3>
-                    <p className="mt-1 text-stone-500">抓取结果只作为辅助核验，不自动决定放款。</p>
-                  </div>
-                  <form action={refreshAction}>
-                    <Button variant="ghost">刷新作品数据</Button>
-                  </form>
-                </div>
-                <div className="mt-4 grid gap-3 md:grid-cols-3">
-                  <p><strong>最近任务：</strong>{latestJob ? `${latestJob.type} / ${latestJob.status} / ${shortDate(latestJob.createdAt)}` : "暂无"}</p>
-                  <p><strong>作者匹配：</strong>{latestSuccess?.authorMatchStatus ?? "未核验"}</p>
-                  <p><strong>最近抓取：</strong>{latestSnapshot ? `${latestSnapshot.status} / ${shortDate(latestSnapshot.fetchedAt)}` : "暂无快照"}</p>
-                  <p><strong>浏览量：</strong>{crawlerMetric(latestSuccess?.viewCount, "views", latestSuccess?.rawProvider)}</p>
-                  <p><strong>点赞：</strong>{crawlerMetric(latestSuccess?.likeCount, "likes", latestSuccess?.rawProvider)}</p>
-                  <p><strong>收藏：</strong>{crawlerMetric(latestSuccess?.favoriteCount, "saves", latestSuccess?.rawProvider)}</p>
-                  <p><strong>评论：</strong>{crawlerMetric(latestSuccess?.commentCount, "comments", latestSuccess?.rawProvider)}</p>
-                  <p><strong>分享：</strong>{crawlerMetric(latestSuccess?.shareCount, "shares", latestSuccess?.rawProvider)}</p>
-                  <p><strong>失败提示：</strong>{latestSnapshot?.failureReason ?? "-"}</p>
-                </div>
-                <div className="mt-4">
-                  <PostMetricsPanel snapshot={latestSuccess} latestAttempt={latestSnapshot} />
-                </div>
-              </section>
-
-              {proof.verificationStatus === ProofStatus.PENDING ? (
-                <form action={action} className="mt-5 grid gap-3">
-                  <Select label="拒绝原因" name="rejectionReason" defaultValue={rejectionReasons[0]}>
-                    {rejectionReasons.map((reason) => <option key={reason}>{reason}</option>)}
-                  </Select>
-                  <Textarea label="拒绝说明，拒绝时必填" name="rejectionNote" rows={3} />
-                  <div className="flex flex-wrap gap-2">
-                    <Button name="decision" value="accept" variant="secondary">验收通过，收益入账</Button>
-                    <Button name="decision" value="reject" variant="danger">拒绝，要求补交链接</Button>
-                  </div>
+                ) : null}
+                {urlCheck ? (
+                  <details className="text-xs text-stone-600">
+                    <summary className="cursor-pointer font-semibold text-stone-950">链接校验</summary>
+                    <p>提交域名：{urlCheck.rawHost ?? "-"}</p>
+                    <p>最终域名：{urlCheck.resolvedHost ?? "-"}</p>
+                    <p>访问状态：{urlCheck.status ?? "未取得"} {urlCheck.reachable ? "可访问/有响应" : ""}</p>
+                    {urlCheck.error ? <p className="text-amber-700">{urlCheck.error}</p> : null}
+                  </details>
+                ) : null}
+              </div>,
+              <div className="grid gap-1 text-sm" key={`metrics-${proof.id}`}>
+                <p>任务：{latestJob ? `${latestJob.status} / ${shortDate(latestJob.createdAt)}` : "暂无"}</p>
+                <p>作者：{latestSuccess?.authorMatchStatus ?? "未核验"}</p>
+                <p>抓取：{latestSnapshot ? `${latestSnapshot.status} / ${shortDate(latestSnapshot.fetchedAt)}` : "暂无快照"}</p>
+                <p>浏览：{crawlerMetric(latestSuccess?.viewCount, "views", latestSuccess?.rawProvider)}</p>
+                <p>点赞：{crawlerMetric(latestSuccess?.likeCount, "likes", latestSuccess?.rawProvider)}</p>
+                <p>收藏：{crawlerMetric(latestSuccess?.favoriteCount, "saves", latestSuccess?.rawProvider)}</p>
+                {latestSnapshot?.failureReason ? <p className="text-amber-700">提示：{latestSnapshot.failureReason}</p> : null}
+                <form action={refreshAction} className="mt-2">
+                  <SubmitButton pendingLabel="正在刷新..." variant="ghost">刷新数据</SubmitButton>
                 </form>
+              </div>,
+              <details className="max-w-sm text-sm" key={`content-${proof.id}`}>
+                <summary className="cursor-pointer font-black text-stone-950">{proof.submission.draft.title}</summary>
+                <p className="mt-2 whitespace-pre-wrap">{proof.submission.draft.caption}</p>
+                <p className="mt-2">{proof.submission.draft.hashtags.join(" ")}</p>
+                <p className="mt-2">广告披露：{proof.submission.draft.disclosurePosition || "未填写"}</p>
+              </details>,
+              <WorkflowHint key={`next-${proof.id}`} title={nextStep.title} body={nextStep.body} tone={nextStep.tone} />,
+              proof.verificationStatus === ProofStatus.PENDING ? (
+                <details className="min-w-72" key={`action-${proof.id}`}>
+                  <summary className="cursor-pointer font-black text-stone-950">处理验收</summary>
+                  <form action={action} className="mt-3 grid gap-2">
+                    <select className="rounded-xl border border-stone-200 bg-white/90 px-3 py-2 text-sm text-stone-950" name="rejectionReason" defaultValue={rejectionReasons[0]}>
+                      {rejectionReasons.map((reason) => <option key={reason}>{reason}</option>)}
+                    </select>
+                    <textarea
+                      className="min-h-20 rounded-xl border border-stone-200 bg-white/90 px-3 py-2 text-sm text-stone-950 shadow-inner outline-none focus:border-amber-400"
+                      name="rejectionNote"
+                      placeholder="拒绝说明，拒绝时必填"
+                    />
+                    <div className="flex flex-wrap gap-2">
+                      <SubmitButton name="decision" pendingLabel="正在验收..." value="accept" variant="secondary">通过</SubmitButton>
+                      <SubmitButton name="decision" pendingLabel="正在拒绝..." value="reject" variant="danger">拒绝</SubmitButton>
+                    </div>
+                  </form>
+                </details>
               ) : (
-                <div className="mt-5 rounded-2xl bg-stone-100 p-4 text-sm text-stone-600">
-                  {proof.verificationStatus === ProofStatus.VERIFIED ? "该链接已通过验收。" : `该链接已拒绝：${proof.rejectionReason ?? ""} ${proof.rejectionNote ?? ""}`}
-                </div>
-              )}
-            </Card>
-          );
-        })}
-      </div>
+                <span className="text-sm font-semibold text-stone-600" key={`done-${proof.id}`}>
+                  {proof.verificationStatus === ProofStatus.VERIFIED ? "已通过验收" : `已拒绝：${proof.rejectionReason ?? ""} ${proof.rejectionNote ?? ""}`}
+                </span>
+              ),
+            ];
+          })}
+        />
+      ) : null}
     </div>
   );
 }

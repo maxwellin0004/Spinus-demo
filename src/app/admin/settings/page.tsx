@@ -1,6 +1,7 @@
 import { runSlaAutomationAction, updatePlatformSettingsAction } from "@/lib/actions";
 import { prisma } from "@/lib/prisma";
-import { Button, Card, Field, PageHeader, Textarea } from "@/components/ui";
+import { Card, Field, PageHeader, Textarea } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
 
 export default async function AdminSettingsPage({
   searchParams,
@@ -41,7 +42,7 @@ export default async function AdminSettingsPage({
             <Textarea label="风险行业软提示" name="riskIndustryPrompt" defaultValue={settings.riskIndustryPrompt} rows={4} />
           </div>
           <div className="md:col-span-2">
-            <Button>保存配置</Button>
+            <SubmitButton pendingLabel="正在保存...">保存配置</SubmitButton>
           </div>
         </form>
       </Card>
@@ -64,7 +65,7 @@ export default async function AdminSettingsPage({
             </p>
           </div>
           <form action={runSlaAutomationAction}>
-            <Button variant="secondary">运行 SLA 处理</Button>
+            <SubmitButton pendingLabel="正在运行..." variant="secondary">运行 SLA 处理</SubmitButton>
           </form>
         </div>
       </Card>

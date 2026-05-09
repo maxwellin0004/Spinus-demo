@@ -9,6 +9,13 @@ function compactJson(value: unknown) {
   return serialized.length > 140 ? `${serialized.slice(0, 140)}...` : serialized;
 }
 
+function roleTone(role?: string | null) {
+  if (role === "CREATOR") return "purple" as const;
+  if (role === "BRAND") return "info" as const;
+  if (role === "ADMIN") return "neutral" as const;
+  return "default" as const;
+}
+
 export default async function AdminAuditPage({
   searchParams,
 }: {
@@ -44,14 +51,16 @@ export default async function AdminAuditPage({
       <DataTable
         headers={["时间", "操作人", "角色", "动作", "对象", "对象 ID", "变更前", "变更后"]}
         rows={logs.map((log) => [
-          shortDate(log.createdAt),
-          log.actorUserId ? actorMap.get(log.actorUserId) ?? log.actorUserId.slice(0, 8) : "系统",
-          log.actorRole ? <StatusBadge key="role">{log.actorRole}</StatusBadge> : "-",
-          log.action,
-          log.entityType,
-          log.entityId.slice(0, 12),
-          <code className="text-xs" key="before">{compactJson(log.beforeJson)}</code>,
-          <code className="text-xs" key="after">{compactJson(log.afterJson)}</code>,
+          <span className="inline-block min-w-[7rem] whitespace-nowrap" key={`time-${log.id}`}>{shortDate(log.createdAt)}</span>,
+          <span className="inline-block min-w-[10rem] whitespace-nowrap" key={`actor-${log.id}`}>
+            {log.actorUserId ? actorMap.get(log.actorUserId) ?? log.actorUserId.slice(0, 8) : "系统"}
+          </span>,
+          log.actorRole ? <StatusBadge key="role" tone={roleTone(log.actorRole)}>{log.actorRole}</StatusBadge> : "-",
+          <span className="inline-block min-w-[14rem] whitespace-nowrap font-semibold text-stone-800" key={`action-${log.id}`}>{log.action}</span>,
+          <span className="inline-block min-w-[9rem] whitespace-nowrap" key={`entity-${log.id}`}>{log.entityType}</span>,
+          <code className="inline-block min-w-[10rem] whitespace-nowrap text-xs" key={`entity-id-${log.id}`}>{log.entityId.slice(0, 12)}</code>,
+          <code className="inline-block min-w-[18rem] whitespace-nowrap text-xs" key="before">{compactJson(log.beforeJson)}</code>,
+          <code className="inline-block min-w-[18rem] whitespace-nowrap text-xs" key="after">{compactJson(log.afterJson)}</code>,
         ])}
       />
     </div>

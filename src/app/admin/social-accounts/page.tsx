@@ -3,7 +3,8 @@ import { SocialVerificationStatus } from "@prisma/client";
 import { refreshSocialAccountMetricsAction, updateSocialAccountVerificationAction } from "@/lib/actions";
 import { requireAdminPermission } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
-import { Button, Card, DataTable, PageHeader, StatusBadge, Textarea } from "@/components/ui";
+import { Card, DataTable, PageHeader, StatusBadge, Textarea } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
 import { number, shortDate } from "@/lib/format";
 import { V1_PLATFORMS } from "@/lib/v1Options";
 
@@ -122,19 +123,19 @@ export default async function AdminSocialAccountsPage({
                 <form action={action} className="grid gap-3">
                   <Textarea label="审核说明" name="verificationNote" defaultValue={account.verificationNote ?? ""} rows={3} />
                   <div className="flex flex-wrap gap-2">
-                    <Button name="verificationStatus" value="VERIFIED" variant="secondary">
+                    <SubmitButton name="verificationStatus" pendingLabel="正在通过..." value="VERIFIED" variant="secondary">
                       通过验证
-                    </Button>
-                    <Button name="verificationStatus" value="REJECTED" variant="danger">
+                    </SubmitButton>
+                    <SubmitButton name="verificationStatus" pendingLabel="正在拒绝..." value="REJECTED" variant="danger">
                       拒绝
-                    </Button>
-                    <Button name="verificationStatus" value="PENDING" variant="ghost">
+                    </SubmitButton>
+                    <SubmitButton name="verificationStatus" pendingLabel="正在退回..." value="PENDING" variant="ghost">
                       退回待审
-                    </Button>
+                    </SubmitButton>
                   </div>
                 </form>
                 <form action={refreshAction} className="lg:col-span-2">
-                  <Button variant="ghost">刷新账号数据</Button>
+                  <SubmitButton pendingLabel="正在刷新..." variant="ghost">刷新账号数据</SubmitButton>
                 </form>
               </div>
             </Card>

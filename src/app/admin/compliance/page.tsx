@@ -1,6 +1,7 @@
 import { addComplianceRuleAction } from "@/lib/actions";
 import { prisma } from "@/lib/prisma";
-import { Button, Card, DataTable, Field, PageHeader, Select, StatusBadge, Textarea } from "@/components/ui";
+import { Card, DataTable, Field, PageHeader, Select, StatusBadge, Textarea } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
 import { shortDate } from "@/lib/format";
 
 const ruleTypeText = {
@@ -53,7 +54,7 @@ export default async function AdminCompliancePage() {
           <Field label="关键词/表达" name="keyword" required />
           <Textarea label="说明" name="description" />
           <div className="md:col-span-2">
-            <Button>新增规则</Button>
+            <SubmitButton pendingLabel="正在新增...">新增规则</SubmitButton>
           </div>
         </form>
       </Card>

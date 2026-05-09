@@ -3,7 +3,8 @@ import { DisputeDecision, DisputeStatus, ProofStatus } from "@prisma/client";
 import { createDisputeFromProofAction, decideDisputeAction } from "@/lib/actions";
 import { requireAdminPermission } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
-import { Button, Card, DataTable, Field, PageHeader, Select, StatusBadge, Textarea } from "@/components/ui";
+import { Card, DataTable, Field, PageHeader, Select, StatusBadge, Textarea } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
 import { crawlerMetric, money, shortDate } from "@/lib/format";
 
 const decisionLabels: Record<DisputeDecision, string> = {
@@ -87,7 +88,7 @@ export default async function AdminDisputesPage({
             shortDate(proof.updatedAt),
             <form action={createDisputeFromProofAction.bind(null, proof.id)} className="grid gap-2" key={`form-${proof.id}`}>
               <input name="reason" type="hidden" value={`商家拒绝发布链接：${proof.rejectionReason ?? "未说明"}. ${proof.rejectionNote ?? ""}`} />
-              <Button variant="ghost">创建争议</Button>
+              <SubmitButton pendingLabel="正在创建..." variant="ghost">创建争议</SubmitButton>
             </form>,
           ])}
         />
@@ -173,7 +174,7 @@ export default async function AdminDisputesPage({
                   <Field label="部分结算金额，仅部分结算时填写" name="partialSettlementAmount" type="number" defaultValue={Math.floor(rewardAmount / 2)} />
                   <Textarea label="裁决说明" name="resolution" required rows={4} />
                   <div className="flex flex-wrap gap-2">
-                    <Button variant="secondary">提交裁决</Button>
+                    <SubmitButton pendingLabel="正在提交..." variant="secondary">提交裁决</SubmitButton>
                   </div>
                 </form>
               ) : (

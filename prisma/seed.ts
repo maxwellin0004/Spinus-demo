@@ -450,6 +450,7 @@ async function main() {
       campaignId: campaign1.id,
       platform: "TikTok",
       postUrl: "https://tiktok.com/@creator/video/seed",
+      normalizedPostUrl: "https://tiktok.com/@creator/video/seed",
       screenshotUrl: "/sample-assets/proof.png",
       publishedAt: new Date("2026-04-25T10:30:00Z"),
       views: 28400,

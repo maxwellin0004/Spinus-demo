@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { loginAction } from "@/lib/actions";
 import { Card, Field, PageHeader } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
 
 export default async function LoginPage({
   searchParams,
@@ -17,9 +18,7 @@ export default async function LoginPage({
           <form action={loginAction} className="grid gap-4">
             <Field label="邮箱" name="email" type="email" required defaultValue="admin@test.com" />
             <Field label="密码" name="password" type="password" required defaultValue="password123" />
-            <button className="rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white" type="submit">
-              登录
-            </button>
+            <SubmitButton className="rounded-full py-3" pendingLabel="正在登录...">登录</SubmitButton>
           </form>
           <p className="mt-5 text-sm text-stone-500">
             还没有账号？ <Link className="font-semibold text-stone-950" href="/auth/register">注册</Link>

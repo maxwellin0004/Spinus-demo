@@ -4,6 +4,7 @@ import { saveDraftAction, submitContentAction } from "@/lib/actions";
 import { generateCreatorContent } from "@/lib/ai";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { SubmitButton } from "@/components/form-controls";
 import { Card, EmptyState, Field, PageHeader, StatusBadge, Textarea } from "@/components/ui";
 import { shortDate } from "@/lib/format";
 
@@ -150,13 +151,13 @@ export default async function ContentStudioPage({
             </div>
             <div className="flex flex-wrap gap-3">
               {requiresDraftReview ? (
-                <button formAction={save} className="rounded-full border border-stone-200 bg-white px-5 py-3 text-sm font-semibold text-stone-700">
+                <SubmitButton formAction={save} className="rounded-full px-5 py-3" pendingLabel="正在保存..." variant="ghost">
                   保存草稿
-                </button>
+                </SubmitButton>
               ) : null}
-              <button formAction={submit} disabled={!canSubmit} className="rounded-full bg-amber-400 px-5 py-3 text-sm font-semibold text-stone-950 disabled:cursor-not-allowed disabled:opacity-50">
+              <SubmitButton formAction={submit} disabled={!canSubmit} className="rounded-full px-5 py-3" pendingLabel={requiresDraftReview ? "正在提交审稿..." : "正在提交..."} variant="secondary">
                 {requiresDraftReview ? "提交商家审稿" : "提交内容并进入发布"}
-              </button>
+              </SubmitButton>
             </div>
             {!canSubmit ? <p className="text-sm text-stone-500">当前状态不能继续提交，请回到任务详情查看下一步。</p> : null}
           </form>

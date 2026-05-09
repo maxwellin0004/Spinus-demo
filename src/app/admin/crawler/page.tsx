@@ -3,7 +3,8 @@ import { CrawlerJobStatus, CrawlerJobType, CrawlerPlatform } from "@prisma/clien
 import { refreshProofMetricsAction, refreshSocialAccountMetricsAction, retryCrawlerJobAction } from "@/lib/actions";
 import { requireAdminPermission } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
-import { Button, Card, DataTable, MetricCard, PageHeader, StatusBadge } from "@/components/ui";
+import { Card, DataTable, MetricCard, PageHeader, StatusBadge } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
 import { shortDate } from "@/lib/format";
 
 type WorkerHealth = {
@@ -176,17 +177,17 @@ export default async function AdminCrawlerPage({ searchParams }: { searchParams:
             <div className="flex flex-wrap gap-2" key="actions">
               {job.status === CrawlerJobStatus.FAILED || job.status === CrawlerJobStatus.CANCELLED ? (
                 <form action={retry}>
-                  <Button variant="ghost">重试</Button>
+                  <SubmitButton pendingLabel="正在重试..." variant="ghost">重试</SubmitButton>
                 </form>
               ) : null}
               {refreshProof ? (
                 <form action={refreshProof}>
-                  <Button variant="ghost">刷新作品</Button>
+                  <SubmitButton pendingLabel="正在刷新..." variant="ghost">刷新作品</SubmitButton>
                 </form>
               ) : null}
               {refreshAccount ? (
                 <form action={refreshAccount}>
-                  <Button variant="ghost">刷新账号</Button>
+                  <SubmitButton pendingLabel="正在刷新..." variant="ghost">刷新账号</SubmitButton>
                 </form>
               ) : null}
               {job.status !== CrawlerJobStatus.FAILED && job.status !== CrawlerJobStatus.CANCELLED && !refreshProof && !refreshAccount ? "-" : null}

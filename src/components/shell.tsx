@@ -4,6 +4,7 @@ import { UserRole } from "@prisma/client";
 import { destroySession, requireRole } from "@/lib/auth";
 import { getAdminContext, hasAdminPermission, type AdminPermission } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { SubmitButton } from "@/components/form-controls";
 import { StatusBadge } from "@/components/ui";
 
 type NavItem = [href: string, label: string];
@@ -158,9 +159,7 @@ export async function AppShell({ role, children }: { role: UserRole; children: R
               </details>
             </div>
             <form action={logout}>
-              <button className="rounded-full border border-stone-200 bg-white/80 px-4 py-2 text-sm font-black text-stone-700 shadow-sm transition hover:bg-white" type="submit">
-                退出登录
-              </button>
+              <SubmitButton className="rounded-full px-4 py-2" pendingLabel="正在退出..." variant="ghost">退出登录</SubmitButton>
             </form>
           </div>
         </header>

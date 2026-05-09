@@ -2,7 +2,8 @@ import { CreatorLevel } from "@prisma/client";
 import { createBrandAccountAction, createCreatorAccountAction } from "@/lib/actions";
 import { demoWhere, getAdminContext, hasAdminPermission } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
-import { Button, Card, DataTable, Field, PageHeader, Select, StatusBadge, Textarea } from "@/components/ui";
+import { Card, DataTable, Field, PageHeader, Select, StatusBadge, Textarea } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
 import { shortDate } from "@/lib/format";
 
 export default async function AdminAccountsPage({
@@ -70,7 +71,7 @@ export default async function AdminAccountsPage({
                 创建为内部演示账号，不计入真实运营统计
               </label>
             ) : null}
-            <div className="md:col-span-2"><Button variant="secondary">开通品牌号</Button></div>
+            <div className="md:col-span-2"><SubmitButton pendingLabel="正在开通..." variant="secondary">开通品牌号</SubmitButton></div>
           </form>
         </Card>
 
@@ -102,7 +103,7 @@ export default async function AdminAccountsPage({
                 创建为内部演示账号，不计入真实运营统计
               </label>
             ) : null}
-            <div className="md:col-span-2"><Button variant="secondary">开通创作者号</Button></div>
+            <div className="md:col-span-2"><SubmitButton pendingLabel="正在开通..." variant="secondary">开通创作者号</SubmitButton></div>
           </form>
         </Card>
       </section>

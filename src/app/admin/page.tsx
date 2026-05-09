@@ -5,6 +5,28 @@ import { getAdminContext } from "@/lib/admin";
 import { money, number, percent, shortDate } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
+function campaignTone(status: CampaignStatus) {
+  if (status === CampaignStatus.ACTIVE) return "info" as const;
+  if (status === CampaignStatus.COMPLETED) return "success" as const;
+  if (status === CampaignStatus.REJECTED || status === CampaignStatus.CANCELLED) return "danger" as const;
+  if (status === CampaignStatus.PAUSED || status === CampaignStatus.ARCHIVED || status === CampaignStatus.DRAFT) return "neutral" as const;
+  return "warning" as const;
+}
+
+function submissionTone(status: SubmissionStatus) {
+  if (status === SubmissionStatus.APPROVED || status === SubmissionStatus.VERIFIED || status === SubmissionStatus.SETTLED) return "success" as const;
+  if (status === SubmissionStatus.REJECTED) return "danger" as const;
+  if (status === SubmissionStatus.PROOF_SUBMITTED || status === SubmissionStatus.PUBLISHED || status === SubmissionStatus.SUBMITTED) return "info" as const;
+  return "warning" as const;
+}
+
+function walletTxTone(status: string) {
+  if (status === "APPROVED" || status === "PAID" || status === "CONFIRMED") return "success" as const;
+  if (status === "REJECTED" || status === "FAILED" || status === "VOID") return "danger" as const;
+  if (status === "PENDING" || status === "REQUESTED") return "warning" as const;
+  return "neutral" as const;
+}
+
 export default async function AdminDashboard() {
   await getAdminContext();
   const [
@@ -119,7 +141,7 @@ export default async function AdminDashboard() {
             rows={recentCampaigns.map((campaign) => [
               <Link className="font-semibold text-stone-950" href={`/admin/campaigns/${campaign.id}`} key={campaign.id}>{campaign.title}</Link>,
               campaign.brand.brandName,
-              <StatusBadge key="s">{campaign.status}</StatusBadge>,
+              <StatusBadge key="s" tone={campaignTone(campaign.status)}>{campaign.status}</StatusBadge>,
               money(campaign.totalBudget),
               shortDate(campaign.createdAt),
             ])}
@@ -132,7 +154,7 @@ export default async function AdminDashboard() {
             rows={recentSubmissions.map((submission) => [
               submission.creator.displayName,
               submission.campaign.title,
-              <StatusBadge key="s">{submission.status}</StatusBadge>,
+              <StatusBadge key="s" tone={submissionTone(submission.status)}>{submission.status}</StatusBadge>,
               shortDate(submission.createdAt),
             ])}
           />
@@ -147,7 +169,7 @@ export default async function AdminDashboard() {
             tx.creator.displayName,
             tx.type,
             money(tx.amount, tx.currency),
-            <StatusBadge key="s">{tx.status}</StatusBadge>,
+            <StatusBadge key="s" tone={walletTxTone(tx.status)}>{tx.status}</StatusBadge>,
             shortDate(tx.createdAt),
           ])}
         />

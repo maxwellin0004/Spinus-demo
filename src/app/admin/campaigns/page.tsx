@@ -1,8 +1,38 @@
 import Link from "next/link";
+import { CampaignStatus } from "@prisma/client";
 import { DataTable, PageHeader, StatusBadge } from "@/components/ui";
 import { brandScopeWhere, demoWhere, getAdminContext, hasAdminPermission, scopeOptions } from "@/lib/admin";
 import { money, shortDate } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
+
+function campaignTone(status: CampaignStatus) {
+  if (status === CampaignStatus.ACTIVE) return "info" as const;
+  if (status === CampaignStatus.COMPLETED) return "success" as const;
+  if (status === CampaignStatus.REJECTED || status === CampaignStatus.CANCELLED) return "danger" as const;
+  if (status === CampaignStatus.PAUSED || status === CampaignStatus.ARCHIVED || status === CampaignStatus.DRAFT) return "neutral" as const;
+  return "warning" as const;
+}
+
+function campaignNextStep({
+  status,
+  fundingReady,
+  invoiceStatus,
+}: {
+  status: CampaignStatus;
+  fundingReady: boolean;
+  invoiceStatus?: string | null;
+}) {
+  if (status === CampaignStatus.AWAITING_PAYMENT) {
+    if (invoiceStatus === "PAYMENT_SUBMITTED") return "确认付款并托管";
+    return "等待品牌提交付款凭证";
+  }
+  if (status === CampaignStatus.PENDING_REVIEW) return fundingReady ? "审核内容并上架" : "先确认资金到账";
+  if (status === CampaignStatus.ACTIVE) return "跟进申请、内容和验收";
+  if (status === CampaignStatus.PAUSED) return "确认是否恢复或结束";
+  if (status === CampaignStatus.COMPLETED) return "归档并核对未用托管";
+  if (status === CampaignStatus.REJECTED) return "等待品牌调整后重提";
+  return "查看详情";
+}
 
 export default async function AdminCampaignsPage({
   searchParams,
@@ -52,7 +82,7 @@ export default async function AdminCampaignsPage({
         <button className="rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white">筛选</button>
       </form>
       <DataTable
-        headers={["Campaign", "Brand", "负责运营", "状态", "资金状态", "订单号", "付款截图", "预算", "任务", "结束时间"]}
+        headers={["Campaign", "Brand", "负责人", "状态", "下一步", "资金状态", "订单号", "付款截图", "预算", "任务", "结束时间"]}
         rows={campaigns.map((campaign) => {
           const invoice = campaign.invoices[0];
           const fundingReady = Number(campaign.escrowFrozenAmount) >= Number(campaign.escrowAmount);
@@ -60,7 +90,8 @@ export default async function AdminCampaignsPage({
             <Link className="font-semibold text-stone-950" href={`/admin/campaigns/${campaign.id}`} key={campaign.id}>{campaign.title}</Link>,
             campaign.brand.brandName,
             campaign.brand.responsibleAdmin?.displayName ?? "-",
-            <StatusBadge key="s">{campaign.status}</StatusBadge>,
+            <StatusBadge key="s" tone={campaignTone(campaign.status)}>{campaign.status}</StatusBadge>,
+            campaignNextStep({ status: campaign.status, fundingReady, invoiceStatus: invoice?.status }),
             fundingReady ? "已托管" : invoice?.status ?? "待确认",
             invoice?.paymentReference ?? "-",
             invoice?.paymentProofUrl ? <Link className="font-semibold text-stone-950" href={invoice.paymentProofUrl} key="proof" target="_blank">查看</Link> : "-",

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ApplicationStatus, SubmissionStatus, UserRole } from "@prisma/client";
-import { DataTable, MetricCard, PageHeader, StatusBadge } from "@/components/ui";
+import { DataTable, MetricCard, PageHeader, StatusBadge, WorkflowHint } from "@/components/ui";
 import { requireRole } from "@/lib/auth";
 import { money, shortDate } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
@@ -16,17 +16,17 @@ const stageLabels: Record<MyTaskStage, string> = {
 };
 
 function taskStage(status: ApplicationStatus, latest?: { status: SubmissionStatus } | null) {
-  if (status === ApplicationStatus.APPLIED) return { label: "申请待审核", next: "等待品牌或平台审核，通过后才能进入内容工作台。" };
-  if (status === ApplicationStatus.REJECTED) return { label: "申请已拒绝", next: "如有疑问，请联系你的平台运营。" };
-  if (status === ApplicationStatus.CANCELLED) return { label: "申请已取消", next: "该任务当前不能继续推进。" };
-  if (!latest) return { label: "内容制作中", next: "进入 Content Studio 生成并提交内容。" };
-  if (latest.status === SubmissionStatus.SUBMITTED) return { label: "内容待审核", next: "等待品牌或平台审核内容。" };
-  if (latest.status === SubmissionStatus.REVISION_REQUESTED) return { label: "需要修改", next: "查看审核意见后重新编辑提交。" };
-  if (latest.status === SubmissionStatus.APPROVED) return { label: "待发布", next: "进入发布助手，复制文案并手动发布。" };
-  if (latest.status === SubmissionStatus.PUBLISHED || latest.status === SubmissionStatus.PROOF_SUBMITTED) return { label: "发布链接待验收", next: "等待商家验收发布链接和数据。" };
-  if (latest.status === SubmissionStatus.VERIFIED) return { label: "已验收", next: "收益会直接进入钱包。" };
-  if (latest.status === SubmissionStatus.SETTLED) return { label: "已入账", next: "收益已进入可提现余额。" };
-  return { label: "已结束", next: "该任务当前无需操作。" };
+  if (status === ApplicationStatus.APPLIED) return { label: "申请待审核", next: "等待审核", body: "通过后才能进入内容工作台。", tone: "warning" as const };
+  if (status === ApplicationStatus.REJECTED) return { label: "申请已拒绝", next: "联系运营", body: "如有疑问，请联系你的平台运营。", tone: "danger" as const };
+  if (status === ApplicationStatus.CANCELLED) return { label: "申请已取消", next: "无需操作", body: "该任务当前不能继续推进。", tone: "default" as const };
+  if (!latest) return { label: "内容制作中", next: "制作内容", body: "进入 Content Studio 生成并提交内容。", tone: "warning" as const };
+  if (latest.status === SubmissionStatus.SUBMITTED) return { label: "内容待审核", next: "等待审稿", body: "等待品牌或平台审核内容。", tone: "warning" as const };
+  if (latest.status === SubmissionStatus.REVISION_REQUESTED) return { label: "需要修改", next: "修改重交", body: "查看审核意见后重新编辑提交。", tone: "danger" as const };
+  if (latest.status === SubmissionStatus.APPROVED) return { label: "待发布", next: "发布内容", body: "复制文案并手动发布，然后提交链接。", tone: "warning" as const };
+  if (latest.status === SubmissionStatus.PUBLISHED || latest.status === SubmissionStatus.PROOF_SUBMITTED) return { label: "发布链接待验收", next: "等待验收", body: "等待商家验收发布链接和数据。", tone: "warning" as const };
+  if (latest.status === SubmissionStatus.VERIFIED) return { label: "已验收", next: "查看钱包", body: "收益会直接进入钱包。", tone: "success" as const };
+  if (latest.status === SubmissionStatus.SETTLED) return { label: "已入账", next: "可提现", body: "收益已进入可提现余额。", tone: "success" as const };
+  return { label: "已结束", next: "无需操作", body: "该任务当前无需操作。", tone: "default" as const };
 }
 
 function matchesStage(application: { status: ApplicationStatus; submissions: { status: SubmissionStatus }[] }, stage: MyTaskStage | null) {
@@ -92,7 +92,7 @@ export default async function CreatorMyTasksPage({
             stageInfo.label,
             <StatusBadge key="a">{application.status}</StatusBadge>,
             latest?.status ? <StatusBadge key="s">{latest.status}</StatusBadge> : "尚未提交",
-            stageInfo.next,
+            <WorkflowHint key={`next-${application.id}`} title={stageInfo.next} body={stageInfo.body} tone={stageInfo.tone} />,
             money(application.task.rewardAmount),
             shortDate(application.task.deadline),
             <Link className="font-semibold text-stone-950" href={`/creator/my-tasks/${application.id}`} key={application.id}>打开</Link>,

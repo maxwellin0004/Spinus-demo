@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import { createCampaignAction } from "@/lib/actions";
 import { V1_CAMPAIGN_TEMPLATES, V1_CATEGORIES, V1_CONTENT_TYPES, V1_COUNTRIES, V1_LANGUAGES, V1_PLATFORMS } from "@/lib/v1Options";
+import { FileInput, SubmitButton } from "@/components/form-controls";
 import { Button, Card, Field, Select, Textarea } from "@/components/ui";
 
 const steps = ["推广目标", "目标 KOL", "平台任务", "内容要求", "素材验收", "预算发布"];
@@ -69,18 +70,24 @@ function todayPlus(days: number) {
   return date.toISOString().slice(0, 10);
 }
 
-function firstInvalidControl(form: HTMLFormElement, step: number) {
-  const controls = Array.from(
-    form.querySelectorAll<HTMLElement>(
-      `[data-step="${step}"] input[required], [data-step="${step}"] textarea[required], [data-step="${step}"] select[required]`,
-    ),
+type WizardControl = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+
+function stepControls(form: HTMLFormElement, step: number) {
+  return Array.from(form.querySelectorAll<WizardControl>(`[data-step="${step}"] input, [data-step="${step}"] textarea, [data-step="${step}"] select`)).filter(
+    (control) => !control.disabled && control.type !== "hidden",
   );
-  return controls.find((control) => {
-    const value =
-      control instanceof HTMLInputElement || control instanceof HTMLTextAreaElement || control instanceof HTMLSelectElement
-        ? control.value.trim()
-        : "";
-    return value.length === 0;
+}
+
+function controlLabel(control: WizardControl) {
+  const label = control.closest("label");
+  const rawText = label?.childNodes[0]?.textContent?.trim() || control.name || "该字段";
+  return rawText.replace(/\s+/g, " ");
+}
+
+function firstInvalidControl(form: HTMLFormElement, step: number) {
+  return stepControls(form, step).find((control) => {
+    const value = control.value.trim();
+    return (control.required && value.length === 0) || !control.checkValidity();
   });
 }
 
@@ -165,8 +172,14 @@ export function CampaignWizard({ error, settings, brandBalance = 0 }: { error?: 
     const missing = firstInvalidControl(form, targetStep);
     if (missing) {
       setStep(targetStep);
-      setLocalError(`请先完成第 ${targetStep + 1} 步的必填项。`);
-      setTimeout(() => missing.focus(), 0);
+      const label = controlLabel(missing);
+      const message = missing.validationMessage || "请填写有效内容。";
+      setLocalError(`请先检查第 ${targetStep + 1} 步的「${label}」：${message}`);
+      setTimeout(() => {
+        missing.scrollIntoView({ block: "center", behavior: "smooth" });
+        missing.focus();
+        missing.reportValidity();
+      }, 0);
       return false;
     }
     if (targetStep === 2) {
@@ -196,6 +209,12 @@ export function CampaignWizard({ error, settings, brandBalance = 0 }: { error?: 
     if (!validateStep(step)) return;
     setLocalError("");
     setStep((current) => Math.min(steps.length - 1, current + 1));
+    formRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+  }
+
+  function goPrevious() {
+    setLocalError("");
+    setStep((current) => Math.max(0, current - 1));
     formRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
   }
 
@@ -431,31 +450,45 @@ export function CampaignWizard({ error, settings, brandBalance = 0 }: { error?: 
                 </p>
               </div>
               <Field label="交易订单号" name="paymentReference" required={needsPaymentProof} placeholder="银行流水号 / 支付平台订单号" />
-              <label className="grid gap-2 text-sm font-medium text-stone-700">
-                付款截图
-                <input className="rounded-2xl border border-stone-200 bg-white px-4 py-3" name="paymentProof" type="file" accept="image/*" required={needsPaymentProof} />
-              </label>
+              <FileInput
+                accept="image/*"
+                helper="支持图片截图，单个文件最大 8MB。"
+                label="付款截图"
+                name="paymentProof"
+                required={needsPaymentProof}
+              />
             </div>
           </Card>
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <Button className={step === 0 ? "opacity-40" : ""} type="button" variant="ghost" onClick={() => setStep(Math.max(0, step - 1))}>
+          <button
+            className={`rounded-xl border border-stone-200 bg-white/80 px-4 py-2.5 text-sm font-black text-stone-800 transition active:translate-y-px ${
+              step === 0 ? "cursor-not-allowed opacity-40" : "hover:bg-white"
+            }`}
+            disabled={step === 0}
+            type="button"
+            onClick={goPrevious}
+          >
             上一步
-          </Button>
+          </button>
           <div className="flex flex-wrap gap-3">
             {step < steps.length - 1 ? (
-              <Button type="button" variant="secondary" onClick={goNext}>
+              <button
+                className="rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-black text-stone-950 shadow-sm transition hover:bg-amber-300 active:translate-y-px"
+                type="button"
+                onClick={goNext}
+              >
                 下一步
-              </Button>
+              </button>
             ) : (
               <>
-                <Button name="intent" value="draft" variant="ghost">
+                <SubmitButton name="intent" pendingLabel="正在保存..." value="draft" variant="ghost">
                   保存草稿
-                </Button>
-                <Button name="intent" value="submit" variant="secondary">
+                </SubmitButton>
+                <SubmitButton name="intent" pendingLabel="正在提交..." value="submit" variant="secondary">
                   提交发布
-                </Button>
+                </SubmitButton>
               </>
             )}
           </div>

@@ -1,7 +1,8 @@
 import { applyTaskAction } from "@/lib/actions";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Button, Card, PageHeader, StatusBadge, Textarea } from "@/components/ui";
+import { Card, PageHeader, StatusBadge, Textarea } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
 import { money, shortDate } from "@/lib/format";
 import { UserRole } from "@prisma/client";
 
@@ -134,7 +135,7 @@ export default async function CreatorTaskDetailPage({
                 </select>
               </label>
               <Textarea label="申请说明" name="applicationNote" rows={3} placeholder="说明你为什么适合这个任务，以及计划如何完成。" required />
-              <Button variant="secondary">确认规则并提交申请</Button>
+              <SubmitButton pendingLabel="正在提交..." variant="secondary">确认规则并提交申请</SubmitButton>
               <p className="text-xs text-stone-500">申请不会自动通过，需要商家审核后才能进入创作或发布流程。</p>
             </form>
           )}

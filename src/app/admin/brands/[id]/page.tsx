@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { addBrandMessageAction, updateBrandRequestStatusAction, updateBrandStatusAction } from "@/lib/actions";
 import { prisma } from "@/lib/prisma";
-import { DataTable, Field, PageHeader, Select, StatusBadge, Textarea, Button, Card } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
+import { DataTable, Field, PageHeader, Select, StatusBadge, Textarea, Card } from "@/components/ui";
 import { money, shortDate } from "@/lib/format";
 import { getAdminContext } from "@/lib/admin";
 import { MessageThread } from "@/components/brand-ops";
@@ -43,7 +44,7 @@ export default async function AdminBrandDetailPage({ params }: { params: Promise
               {admins.map((admin) => <option key={admin.id} value={admin.id}>{admin.displayName} · {admin.user.email}</option>)}
             </Select>
             <Textarea label="Internal note" name="internalNote" defaultValue={brand.internalNote ?? ""} />
-            <Button>保存状态</Button>
+            <SubmitButton pendingLabel="正在保存...">保存状态</SubmitButton>
           </form>
         </Card>
         <Card>
@@ -86,7 +87,7 @@ export default async function AdminBrandDetailPage({ params }: { params: Promise
             </div>
             <form action={addBrandMessageAction.bind(null, "request", request.id)} className="mt-4 grid gap-3">
               <Textarea label="回复该需求" name="body" required rows={3} />
-              <div><Button variant="secondary">发送需求回复</Button></div>
+              <div><SubmitButton pendingLabel="正在发送..." variant="secondary">发送需求回复</SubmitButton></div>
             </form>
             <form action={updateBrandRequestStatusAction.bind(null, request.id)} className="mt-4 flex flex-wrap items-end gap-3">
               <Select label="需求状态" name="status" defaultValue={request.status}>
@@ -96,7 +97,7 @@ export default async function AdminBrandDetailPage({ params }: { params: Promise
                 <option value="CONVERTED">已转推广</option>
                 <option value="CLOSED">已关闭</option>
               </Select>
-              <Button variant="ghost">更新需求状态</Button>
+              <SubmitButton pendingLabel="正在更新..." variant="ghost">更新需求状态</SubmitButton>
             </form>
           </Card>
         ))}
@@ -112,7 +113,7 @@ export default async function AdminBrandDetailPage({ params }: { params: Promise
             <input className="mr-2" name="visibleToBrand" type="checkbox" defaultChecked />
             品牌方可见
           </label>
-          <div><Button variant="secondary">发送留言</Button></div>
+          <div><SubmitButton pendingLabel="正在发送..." variant="secondary">发送留言</SubmitButton></div>
         </form>
       </Card>
       <section>

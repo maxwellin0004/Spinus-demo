@@ -1,6 +1,7 @@
 import { updateCreatorAction, updateSocialAccountVerificationAction } from "@/lib/actions";
 import { prisma } from "@/lib/prisma";
-import { Button, Card, DataTable, PageHeader, Select, StatusBadge, Textarea } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
+import { Card, DataTable, PageHeader, Select, StatusBadge, Textarea } from "@/components/ui";
 import { money, percent, shortDate } from "@/lib/format";
 import { getAdminContext } from "@/lib/admin";
 
@@ -49,7 +50,7 @@ export default async function AdminCreatorDetailPage({ params }: { params: Promi
               {admins.map((admin) => <option key={admin.id} value={admin.id}>{admin.displayName} · {admin.user.email}</option>)}
             </Select>
             <input className="rounded-2xl border border-stone-200 px-4 py-3" name="violationDelta" type="number" defaultValue={0} />
-            <Button>保存创作者</Button>
+            <SubmitButton pendingLabel="正在保存...">保存创作者</SubmitButton>
           </form>
         </Card>
         <Card>
@@ -98,7 +99,7 @@ export default async function AdminCreatorDetailPage({ params }: { params: Promi
                   </Select>
                   <Textarea label="审核备注" name="verificationNote" defaultValue={account.verificationNote ?? ""} rows={3} />
                   <div className="flex flex-wrap gap-2">
-                    <Button variant="secondary">保存社媒审核</Button>
+                    <SubmitButton pendingLabel="正在保存..." variant="secondary">保存社媒审核</SubmitButton>
                   </div>
                 </form>
               </Card>

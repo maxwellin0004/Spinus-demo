@@ -5,8 +5,17 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { CopyButton } from "@/components/copy-button";
 import { CreatorOperatorCard, CreatorTaskTimeline } from "@/components/creator-ops";
-import { Button, Card, Field, PageHeader, PostMetricsPanel, StatusBadge } from "@/components/ui";
+import { SubmitButton } from "@/components/form-controls";
+import { Card, Field, PageHeader, PostMetricsPanel, StatusBadge, WorkflowHint } from "@/components/ui";
 import { crawlerMetric, money, shortDate } from "@/lib/format";
+
+function proofNextStep(proofStatus?: ProofStatus | null, publishExpired?: boolean) {
+  if (proofStatus === ProofStatus.VERIFIED) return { title: "已验收", body: "收益会进入可提现余额。", tone: "success" as const };
+  if (proofStatus === ProofStatus.REJECTED) return { title: "需要补交", body: "查看拒绝原因后重新提交链接。", tone: "danger" as const };
+  if (proofStatus === ProofStatus.PENDING) return { title: "等待验收", body: "商家会检查链接、数据和内容。", tone: "warning" as const };
+  if (publishExpired) return { title: "已过截止", body: "请联系运营确认是否还能补交。", tone: "danger" as const };
+  return { title: "提交链接", body: "发布后提交公开可访问的作品链接。", tone: "warning" as const };
+}
 
 export default async function CreatorTaskRunPage({
   params,
@@ -46,11 +55,19 @@ export default async function CreatorTaskRunPage({
   // eslint-disable-next-line react-hooks/purity
   const now = Date.now();
   const publishExpired = now > publishDeadline.getTime();
+  const latestProofStep = proofNextStep(latestProof?.verificationStatus, publishExpired);
   const canCreate = application.status === ApplicationStatus.APPROVED;
   const canOpenStudio = canCreate && (!submission || submission.status === SubmissionStatus.REVISION_REQUESTED);
   const canSubmitLink = submission?.status === SubmissionStatus.APPROVED && !publishExpired;
   const hasPendingOrAcceptedProof = submission?.proofs.some((item) => item.verificationStatus !== ProofStatus.REJECTED) ?? false;
   const canSubmitProof = canSubmitLink && !hasPendingOrAcceptedProof;
+  const currentAction = canOpenStudio
+    ? { title: requiresDraftReview ? "提交内容草稿" : "填写发布内容", body: "进入内容工作台完成当前任务的下一步。", href: `/creator/content-studio/${application.id}` }
+    : canSubmitProof
+      ? { title: "提交发布链接", body: "复制文案发布后，把公开可访问的作品链接提交给品牌验收。", href: null }
+      : application.status === ApplicationStatus.APPLIED
+        ? { title: "等待申请审核", body: "品牌或平台通过申请后，任务会进入内容制作阶段。", href: null }
+        : { title: "当前无可提交动作", body: "继续查看审核意见、验收状态或等待品牌处理。", href: null };
   const finalCopy = submission
     ? [
         submission.draft.title,
@@ -130,6 +147,21 @@ export default async function CreatorTaskRunPage({
       {applied ? <div className="rounded-2xl bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">申请已提交，等待商家审核。</div> : null}
       {submitted ? <div className="rounded-2xl bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">{requiresDraftReview ? "内容草稿已提交。" : "内容已提交，可以进入发布阶段。"}</div> : null}
       {proofSubmitted ? <div className="rounded-2xl bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">发布链接已提交，等待商家验收。</div> : null}
+
+      <Card className="border-amber-200 bg-amber-50/70">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-700">当前要处理</p>
+            <h2 className="mt-2 text-xl font-black text-stone-950">{currentAction.title}</h2>
+            <p className="mt-1 text-sm text-stone-600">{currentAction.body}</p>
+          </div>
+          {currentAction.href ? (
+            <Link className="rounded-xl bg-amber-400 px-4 py-2.5 text-sm font-black text-stone-950" href={currentAction.href}>
+              去处理
+            </Link>
+          ) : null}
+        </div>
+      </Card>
 
       <section className="grid gap-5 xl:grid-cols-[1.35fr_0.65fr]">
         <Card>
@@ -215,11 +247,19 @@ export default async function CreatorTaskRunPage({
           </section>
           {latestProof ? (
             <div className="mt-4 rounded-2xl border border-stone-200 bg-white/70 p-4 text-sm">
-              <p className="font-black text-stone-950">最近提交</p>
-              <p className="mt-2">
-                <Link className="font-semibold text-stone-950" href={latestProof.postUrl} target="_blank">打开链接</Link>
-                <span className="ml-3">{latestProof.verificationStatus} / {latestProof.publicationStatus}</span>
-              </p>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="font-black text-stone-950">最近提交</p>
+                  <p className="mt-2">
+                    <Link className="font-semibold text-stone-950" href={latestProof.postUrl} target="_blank">打开链接</Link>
+                    <span className="ml-3">{latestProof.verificationStatus} / {latestProof.publicationStatus}</span>
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <CopyButton text={latestProof.postUrl} label="复制链接" />
+                  </div>
+                </div>
+                <WorkflowHint title={latestProofStep.title} body={latestProofStep.body} tone={latestProofStep.tone} />
+              </div>
               {latestProof.rejectionReason ? <p className="mt-2 text-red-700">{latestProof.rejectionReason}: {latestProof.rejectionNote}</p> : null}
               <div className="mt-4 rounded-2xl bg-stone-50 p-3">
                 <p className="font-black text-stone-950">自动核验</p>
@@ -240,11 +280,16 @@ export default async function CreatorTaskRunPage({
               </div>
             </div>
           ) : null}
+          {!latestProof ? (
+            <div className="mt-4">
+              <WorkflowHint title={latestProofStep.title} body={latestProofStep.body} tone={latestProofStep.tone} />
+            </div>
+          ) : null}
           {canSubmitProof ? (
             <form action={submitProofAction.bind(null, submission.id)} className="mt-5 grid gap-4 md:grid-cols-2">
               <Field label="发布链接" name="postUrl" required placeholder="https://..." />
               <Field label="发布时间" name="publishedAt" type="datetime-local" required />
-              <div className="flex items-end"><Button variant="secondary">提交发布链接</Button></div>
+              <div className="flex items-end"><SubmitButton pendingLabel="正在提交..." variant="secondary">提交发布链接</SubmitButton></div>
             </form>
           ) : (
             <div className="mt-5 rounded-2xl bg-stone-100 p-4 text-sm text-stone-600">

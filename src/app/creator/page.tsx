@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ApplicationStatus, SubmissionStatus, UserRole } from "@prisma/client";
-import { CreatorOnboardingCard, CreatorOperatorCard } from "@/components/creator-ops";
 import { DataTable, LinkButton, MetricCard, PageHeader, StatusBadge } from "@/components/ui";
 import { requireRole } from "@/lib/auth";
 import { money } from "@/lib/format";
@@ -35,6 +34,10 @@ export default async function CreatorDashboard() {
     { label: "创作者审核", done: creator.reviewStatus === "APPROVED", detail: `当前状态：${creator.reviewStatus}`, href: "/creator/profile" },
     { label: "收款信息", done: walletReady, detail: walletReady ? "已填写收款钱包/银行信息。" : "填写后才方便提现。", href: "/creator/profile" },
   ];
+  const onboardingCompleted = onboarding.filter((item) => item.done).length;
+  const onboardingPercent = Math.round((onboardingCompleted / onboarding.length) * 100);
+  const operatorName = creator.responsibleAdmin?.displayName ?? "暂未分配";
+  const operatorContact = creator.responsibleAdmin?.user.email || creator.responsibleAdmin?.wechat || "暂未填写";
 
   const cards = [
     { label: "可申请任务", value: activeTasks, href: "/creator/marketplace" },
@@ -56,9 +59,47 @@ export default async function CreatorDashboard() {
         <LinkButton href="/creator/marketplace" variant="secondary">浏览任务</LinkButton>
       </PageHeader>
 
-      <section className="grid gap-5 xl:grid-cols-[1.35fr_0.65fr]">
-        <CreatorOnboardingCard items={onboarding} level={creator.level} />
-        <CreatorOperatorCard name={creator.responsibleAdmin?.displayName} email={creator.responsibleAdmin?.user.email} wechat={creator.responsibleAdmin?.wechat} />
+      <section>
+        <details className="group rounded-2xl border border-[var(--line)] bg-white/82 p-4 shadow-sm backdrop-blur-sm">
+          <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3">
+            <div className="min-w-0">
+              <h2 className="text-lg font-black text-stone-950">今日接单准备</h2>
+              <p className="mt-1 text-sm text-stone-500">
+                完成度 {onboardingPercent}% · {onboardingCompleted}/{onboarding.length} 项已完成 · 运营联系人：{operatorName}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              {onboardingCompleted < onboarding.length ? (
+                <Link className="rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-black text-stone-950 shadow-sm" href="/creator/profile">
+                  完善资料
+                </Link>
+              ) : null}
+              <span className="rounded-full border border-stone-200 bg-white px-4 py-2 text-sm font-black text-stone-700 shadow-sm group-open:hidden">展开</span>
+              <span className="hidden rounded-full border border-stone-200 bg-white px-4 py-2 text-sm font-black text-stone-700 shadow-sm group-open:inline-flex">隐藏</span>
+            </div>
+          </summary>
+          <div className="mt-4">
+            <DataTable
+              headers={["项目", "状态", "当前记录", "下一步", "操作"]}
+              rows={[
+                ...onboarding.map((item) => [
+                  item.label,
+                  <StatusBadge key={`${item.label}-status`} tone={item.done ? "success" : "warning"}>{item.done ? "已完成" : "待处理"}</StatusBadge>,
+                  item.detail,
+                  item.done ? "保持资料可核对" : "补齐后再申请任务",
+                  <Link className="font-black text-stone-950" href={item.href ?? "/creator/profile"} key={`${item.label}-action`}>查看</Link>,
+                ]),
+                [
+                  "运营联系人",
+                  <StatusBadge key="operator-status" tone={creator.responsibleAdmin ? "success" : "neutral"}>{operatorName}</StatusBadge>,
+                  operatorContact,
+                  creator.responsibleAdmin ? "需要协助时联系运营" : "等待平台分配运营联系人",
+                  <span className="text-stone-400" key="operator-action">-</span>,
+                ],
+              ]}
+            />
+          </div>
+        </details>
       </section>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
