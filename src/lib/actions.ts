@@ -3775,6 +3775,10 @@ const platformSettingsSchema = z.object({
   platformContactEmail: z.string().email(),
   riskIndustryKeywords: z.array(z.string()).default([]),
   riskIndustryPrompt: z.string().min(10),
+  creatorTrendRefreshEnabled: z.boolean(),
+  creatorTrendRefreshHourUtc: z.coerce.number().int().min(0).max(23),
+  creatorTrendRefreshDirections: z.array(z.enum(INSIGHT_DIRECTION_SLUGS)).min(1),
+  creatorTrendRefreshBatchCount: z.coerce.number().int().min(1).max(8),
 });
 
 export async function updatePlatformSettingsAction(formData: FormData) {
@@ -3794,6 +3798,10 @@ export async function updatePlatformSettingsAction(formData: FormData) {
     platformContactEmail: text(formData.get("platformContactEmail")),
     riskIndustryKeywords: csv(formData.get("riskIndustryKeywords")),
     riskIndustryPrompt: text(formData.get("riskIndustryPrompt")),
+    creatorTrendRefreshEnabled: formData.get("creatorTrendRefreshEnabled") === "on",
+    creatorTrendRefreshHourUtc: text(formData.get("creatorTrendRefreshHourUtc")),
+    creatorTrendRefreshDirections: formData.getAll("creatorTrendRefreshDirections").map((value) => text(value)),
+    creatorTrendRefreshBatchCount: text(formData.get("creatorTrendRefreshBatchCount")),
   });
   if (!parsed.success) redirect(`/admin/settings?error=${encodeURIComponent("配置项校验失败")}`);
 
@@ -3809,6 +3817,10 @@ export async function updatePlatformSettingsAction(formData: FormData) {
       platformContactEmail: parsed.data.platformContactEmail,
       riskIndustryKeywords: parsed.data.riskIndustryKeywords,
       riskIndustryPrompt: parsed.data.riskIndustryPrompt,
+      creatorTrendRefreshEnabled: parsed.data.creatorTrendRefreshEnabled,
+      creatorTrendRefreshHourUtc: parsed.data.creatorTrendRefreshHourUtc,
+      creatorTrendRefreshDirections: parsed.data.creatorTrendRefreshDirections,
+      creatorTrendRefreshBatchCount: parsed.data.creatorTrendRefreshBatchCount,
     },
   });
   await audit({
@@ -3825,6 +3837,10 @@ export async function updatePlatformSettingsAction(formData: FormData) {
       platformContactEmail: before.platformContactEmail,
       riskIndustryKeywords: before.riskIndustryKeywords,
       riskIndustryPrompt: before.riskIndustryPrompt,
+      creatorTrendRefreshEnabled: before.creatorTrendRefreshEnabled,
+      creatorTrendRefreshHourUtc: before.creatorTrendRefreshHourUtc,
+      creatorTrendRefreshDirections: before.creatorTrendRefreshDirections,
+      creatorTrendRefreshBatchCount: before.creatorTrendRefreshBatchCount,
     },
     afterJson: {
       acceptanceSlaDays: settings.acceptanceSlaDays,
@@ -3836,6 +3852,10 @@ export async function updatePlatformSettingsAction(formData: FormData) {
       platformContactEmail: settings.platformContactEmail,
       riskIndustryKeywords: settings.riskIndustryKeywords,
       riskIndustryPrompt: settings.riskIndustryPrompt,
+      creatorTrendRefreshEnabled: settings.creatorTrendRefreshEnabled,
+      creatorTrendRefreshHourUtc: settings.creatorTrendRefreshHourUtc,
+      creatorTrendRefreshDirections: settings.creatorTrendRefreshDirections,
+      creatorTrendRefreshBatchCount: settings.creatorTrendRefreshBatchCount,
     },
   });
   revalidatePath("/admin/settings");

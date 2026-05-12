@@ -1,7 +1,18 @@
 import { runSlaAutomationAction, updatePlatformSettingsAction } from "@/lib/actions";
 import { prisma } from "@/lib/prisma";
-import { Card, Field, PageHeader, Textarea } from "@/components/ui";
+import { INSIGHT_DIRECTIONS } from "@/lib/insights/directions";
+import { Card, Field, PageHeader, StatusBadge, Textarea } from "@/components/ui";
 import { SubmitButton } from "@/components/form-controls";
+
+function formatDateTime(value: Date | null) {
+  if (!value) return "尚未运行";
+  return new Intl.DateTimeFormat("zh-CN", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(value);
+}
 
 export default async function AdminSettingsPage({
   searchParams,
@@ -40,6 +51,43 @@ export default async function AdminSettingsPage({
           <Field label="风险行业关键词（逗号分隔）" name="riskIndustryKeywords" defaultValue={settings.riskIndustryKeywords.join(", ")} />
           <div className="md:col-span-2">
             <Textarea label="风险行业软提示" name="riskIndustryPrompt" defaultValue={settings.riskIndustryPrompt} rows={4} />
+          </div>
+          <div className="md:col-span-2 rounded-2xl border border-stone-200 bg-stone-50/70 p-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-black text-stone-950">达人洞察每日刷新</h2>
+                <p className="mt-1 text-sm text-stone-600">Render Cron 每天触发后，会按这里的配置生成达人页每日快照。</p>
+              </div>
+              <StatusBadge tone={settings.creatorTrendRefreshLastStatus === "FAILED" ? "danger" : settings.creatorTrendRefreshLastStatus === "SUCCESS" ? "success" : "neutral"}>
+                {settings.creatorTrendRefreshLastStatus ?? "未运行"}
+              </StatusBadge>
+            </div>
+            <div className="mt-4 grid gap-4 md:grid-cols-3">
+              <label className="flex items-center gap-3 rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm font-black text-stone-700">
+                <input name="creatorTrendRefreshEnabled" type="checkbox" defaultChecked={settings.creatorTrendRefreshEnabled} />
+                启用每日刷新
+              </label>
+              <Field label="刷新小时（UTC 0-23）" name="creatorTrendRefreshHourUtc" type="number" defaultValue={settings.creatorTrendRefreshHourUtc} />
+              <Field label="每日推荐批次数" name="creatorTrendRefreshBatchCount" type="number" defaultValue={settings.creatorTrendRefreshBatchCount} />
+            </div>
+            <div className="mt-4">
+              <p className="text-sm font-black text-stone-700">刷新方向</p>
+              <div className="mt-2 grid gap-2 md:grid-cols-3">
+                {INSIGHT_DIRECTIONS.map((direction) => (
+                  <label className="flex items-center gap-3 rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700" key={direction.slug}>
+                    <input name="creatorTrendRefreshDirections" type="checkbox" value={direction.slug} defaultChecked={settings.creatorTrendRefreshDirections.includes(direction.slug)} />
+                    <span>
+                      <span className="block font-black text-stone-900">{direction.label}</span>
+                      <span className="block text-xs text-stone-500">{direction.slug}</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="mt-4 grid gap-2 text-sm text-stone-600">
+              <p>上次运行：{formatDateTime(settings.creatorTrendRefreshLastRunAt)}</p>
+              {settings.creatorTrendRefreshLastError ? <p className="text-red-700">上次错误：{settings.creatorTrendRefreshLastError}</p> : null}
+            </div>
           </div>
           <div className="md:col-span-2">
             <SubmitButton pendingLabel="正在保存...">保存配置</SubmitButton>

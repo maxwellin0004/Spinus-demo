@@ -33,6 +33,20 @@ type TopicCard = {
   tone: string;
 };
 
+type CreatorTrendOverview = {
+  trackableTopics: number;
+  matchOpportunities: number;
+  highPotential: number;
+  overheated: number;
+};
+
+type CaseStudySnapshot = {
+  title: string;
+  likes: string;
+  stats: string[];
+  rows: [string, string][];
+};
+
 const trendData: CreatorTrendPoint[] = [
   { date: "05-17", skincare: 24, makeup: 18, ingredients: 8, tools: 4 },
   { date: "05-18", skincare: 44, makeup: 34, ingredients: 22, tools: 14 },
@@ -155,10 +169,27 @@ function SourceBadge({ kind }: { kind: SourceKind }) {
   return <span className={cn("rounded-full border px-2.5 py-1 text-xs font-black", style)}>{kind}</span>;
 }
 
-export default async function CreatorTrendsPage() {
+function readSnapshotValue<T>(value: unknown): T | null {
+  if (value == null) return null;
+  return value as T;
+}
+
+function positiveBatchIndex(value: string | undefined, size: number) {
+  if (size <= 0) return 0;
+  const parsed = Number.parseInt(value ?? "0", 10);
+  if (!Number.isFinite(parsed)) return 0;
+  return Math.abs(parsed) % size;
+}
+
+export default async function CreatorTrendsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ batch?: string }>;
+}) {
   const session = await requireRole(UserRole.CREATOR);
 
-  const [creatorPreference, overview, topTopics, topContents, realTrendData, analysis] = await Promise.all([
+  const [{ batch }, creatorPreference, overview, topTopics, topContents, realTrendData, analysis] = await Promise.all([
+    searchParams,
     prisma.creatorProfile.findUnique({
       where: { userId: session.userId },
       select: { insightDirection: true },
@@ -173,24 +204,38 @@ export default async function CreatorTrendsPage() {
     getCreatorInsightAnalysis(),
   ]);
   const currentDirection = getInsightDirection(creatorPreference?.insightDirection);
+  const dailySnapshot = await prisma.creatorTrendDailySnapshot.findFirst({
+    where: { direction: currentDirection.slug },
+    orderBy: [{ date: "desc" }, { generatedAt: "desc" }],
+  });
+  const snapshotOverview = readSnapshotValue<CreatorTrendOverview>(dailySnapshot?.overview);
+  const snapshotTrendData = readSnapshotValue<CreatorTrendPoint[]>(dailySnapshot?.trendSeries);
+  const snapshotTopicRows = readSnapshotValue<TopicRow[]>(dailySnapshot?.topicRows);
+  const snapshotRecommendationBatches = readSnapshotValue<TopicCard[][]>(dailySnapshot?.recommendationBatches) ?? [];
+  const snapshotCaseStudy = readSnapshotValue<CaseStudySnapshot>(dailySnapshot?.caseStudy);
+  const selectedBatchIndex = positiveBatchIndex(batch, snapshotRecommendationBatches.length);
+  const nextBatchIndex = snapshotRecommendationBatches.length > 1 ? (selectedBatchIndex + 1) % snapshotRecommendationBatches.length : 0;
   const chips = currentDirection.chips.length > 0 ? currentDirection.chips : fallbackChips;
 
-  const displayTrendData = realTrendData.length >= 2 ? realTrendData : trendData;
+  const displayTrendData = snapshotTrendData && snapshotTrendData.length >= 2 ? snapshotTrendData : realTrendData.length >= 2 ? realTrendData : trendData;
   const hasRealData = topTopics.length > 0 || topContents.length > 0 || analysis.topics.length > 0;
   const topCase = topContents[0];
-  const trendSource: SourceKind = realTrendData.length >= 2 ? "真实采集" : "示例兜底";
-  const topicSource: SourceKind = topTopics.length > 0 ? "规则计算" : "示例兜底";
-  const recommendationSource: SourceKind = analysis.recommendations.length > 0 ? "规则计算" : "示例兜底";
-  const caseSource: SourceKind = topCase ? "真实采集" : "示例兜底";
+  const trendSource: SourceKind = snapshotTrendData && snapshotTrendData.length >= 2 ? "规则计算" : realTrendData.length >= 2 ? "真实采集" : "示例兜底";
+  const topicSource: SourceKind = snapshotTopicRows && snapshotTopicRows.length > 0 ? "规则计算" : topTopics.length > 0 ? "规则计算" : "示例兜底";
+  const recommendationSource: SourceKind = snapshotRecommendationBatches.length > 0 ? "规则计算" : analysis.recommendations.length > 0 ? "规则计算" : "示例兜底";
+  const caseSource: SourceKind = snapshotCaseStudy ? "规则计算" : topCase ? "真实采集" : "示例兜底";
+  const metricSource = snapshotOverview ?? overview;
   const displayMetrics = metricCards.map((card) => {
-    if (card.label === "今日可追热点") return { ...card, value: String(overview.trackableTopics || analysis.overview.trackableTopics), delta: hasRealData ? "+真实" : "待采集" };
-    if (card.label === "账号匹配机会") return { ...card, value: String(Math.min(99, 70 + (overview.matchOpportunities || analysis.overview.matchOpportunities))), delta: hasRealData ? "+计算" : "待采集" };
-    if (card.label === "高潜选题") return { ...card, value: String(overview.highPotential || analysis.overview.highPotential), delta: hasRealData ? "+采集" : "待采集" };
-    return { ...card, value: String(overview.overheated || analysis.overview.overheated), delta: hasRealData ? "+监控" : "待采集" };
+    if (card.label === "今日可追热点") return { ...card, value: String(metricSource.trackableTopics || analysis.overview.trackableTopics), delta: hasRealData || snapshotOverview ? "+真实" : "待采集" };
+    if (card.label === "账号匹配机会") return { ...card, value: String(Math.min(99, 70 + (metricSource.matchOpportunities || analysis.overview.matchOpportunities))), delta: hasRealData || snapshotOverview ? "+计算" : "待采集" };
+    if (card.label === "高潜选题") return { ...card, value: String(metricSource.highPotential || analysis.overview.highPotential), delta: hasRealData || snapshotOverview ? "+采集" : "待采集" };
+    return { ...card, value: String(metricSource.overheated || analysis.overview.overheated), delta: hasRealData || snapshotOverview ? "+监控" : "待采集" };
   });
 
   const displayTopicRows: TopicRow[] =
-    topTopics.length > 0
+    snapshotTopicRows && snapshotTopicRows.length > 0
+      ? snapshotTopicRows
+      : topTopics.length > 0
       ? topTopics.slice(0, 5).map((row) => {
           const stage = toTopicStage(row.stage, row.heatScore);
           return {
@@ -208,7 +253,9 @@ export default async function CreatorTrendsPage() {
       : fallbackTopicRows;
 
   const displayRecommendations: TopicCard[] =
-    analysis.recommendations.length > 0
+    snapshotRecommendationBatches[selectedBatchIndex]?.length > 0
+      ? snapshotRecommendationBatches[selectedBatchIndex]
+      : analysis.recommendations.length > 0
       ? analysis.recommendations.slice(0, 4).map((item) => ({
           title: item.title,
           stage: item.heat.includes("分") && Number.parseInt(item.heat, 10) >= 60 ? "爆发中" : "长尾可做",
@@ -219,12 +266,12 @@ export default async function CreatorTrendsPage() {
         }))
       : fallbackRecommendations;
 
-  const displayCaseTitle = topCase?.title ?? "油皮夏季持妆底妆实测";
-  const displayCaseLikes = topCase ? `${topCase.likeCount.toLocaleString()}赞` : "1.2万赞";
-  const displayCaseStats = topCase
+  const displayCaseTitle = snapshotCaseStudy?.title ?? topCase?.title ?? "油皮夏季持妆底妆实测";
+  const displayCaseLikes = snapshotCaseStudy?.likes ?? (topCase ? `${topCase.likeCount.toLocaleString()}赞` : "1.2万赞");
+  const displayCaseStats = snapshotCaseStudy?.stats ?? (topCase
     ? [topCase.likeCount, topCase.commentCount, topCase.collectCount, topCase.shareCount].map((value) => value.toLocaleString())
-    : ["1.2万", "892", "1,045", "2,354"];
-  const displayCaseRows = topCase
+    : ["1.2万", "892", "1,045", "2,354"]);
+  const displayCaseRows = snapshotCaseStudy?.rows ?? (topCase
     ? [
         ["平台", platformLabel(topCase.platform)],
         ["关键词", topCase.keyword ?? "未标注"],
@@ -232,7 +279,7 @@ export default async function CreatorTrendsPage() {
         ["互动结构", `赞 ${topCase.likeCount.toLocaleString()} / 评 ${topCase.commentCount.toLocaleString()} / 藏 ${topCase.collectCount.toLocaleString()}`],
         ["可复用模板", "热点内容拆解模板"],
       ]
-    : fallbackCaseRows;
+    : fallbackCaseRows);
 
   return (
     <>
@@ -365,7 +412,9 @@ export default async function CreatorTrendsPage() {
                   <h2 className="text-xl font-black">AI 选题推荐</h2>
                   <SourceBadge kind={recommendationSource} />
                 </div>
-                <span className="flex items-center gap-1 text-sm font-black text-teal-700"><RefreshCw size={15} />换一批</span>
+                <Link href={`/creator/trends?batch=${nextBatchIndex}#topic-recommendations`} className="flex items-center gap-1 text-sm font-black text-teal-700">
+                  <RefreshCw size={15} />换一批
+                </Link>
               </div>
               <div className="-mx-1 overflow-x-auto px-1 pb-2">
                 <div className="flex min-w-max gap-4">

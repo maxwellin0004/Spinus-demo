@@ -970,17 +970,42 @@ model Dispute {
 }
 
 model PlatformSettings {
-  id                       String   @id @default("platform")
-  acceptanceSlaDays        Int      @default(3)
-  highValueReviewThreshold Decimal  @default(50) @db.Decimal(12, 2)
-  resubmissionGraceDays    Int      @default(2)
-  minimumWithdrawalAmount  Decimal  @default(20) @db.Decimal(12, 2)
-  kolPreviewMaxMb          Int      @default(50)
-  platformFeeRate          Decimal  @default(0) @db.Decimal(6, 4)
-  platformContactEmail     String   @default("support@example.com")
-  riskIndustryKeywords     String[] @default(["金融", "医疗", "医美", "保健", "投资", "教育", "减肥", "母婴"])
-  riskIndustryPrompt       String   @default("该行业容易涉及效果承诺、资质证明或监管要求。请确认 brief 不包含夸大承诺，并准备必要资质。")
-  updatedAt                DateTime @updatedAt
+  id                            String    @id @default("platform")
+  acceptanceSlaDays             Int       @default(3)
+  highValueReviewThreshold      Decimal   @default(50) @db.Decimal(12, 2)
+  resubmissionGraceDays         Int       @default(2)
+  minimumWithdrawalAmount       Decimal   @default(20) @db.Decimal(12, 2)
+  kolPreviewMaxMb               Int       @default(50)
+  platformFeeRate               Decimal   @default(0) @db.Decimal(6, 4)
+  platformContactEmail          String    @default("support@example.com")
+  riskIndustryKeywords          String[]  @default(["金融", "医疗", "医美", "保健", "投资", "教育", "减肥", "母婴"])
+  riskIndustryPrompt            String    @default("该行业容易涉及效果承诺、资质证明或监管要求。请确认 brief 不包含夸大承诺，并准备必要资质。")
+  creatorTrendRefreshEnabled    Boolean   @default(true)
+  creatorTrendRefreshHourUtc    Int       @default(19)
+  creatorTrendRefreshDirections String[]  @default(["beauty"])
+  creatorTrendRefreshBatchCount Int       @default(3)
+  creatorTrendRefreshLastRunAt  DateTime?
+  creatorTrendRefreshLastStatus String?
+  creatorTrendRefreshLastError  String?
+  updatedAt                     DateTime  @updatedAt
+}
+
+model CreatorTrendDailySnapshot {
+  id                    String   @id @default(cuid())
+  date                  DateTime
+  direction             String
+  overview              Json
+  trendSeries           Json
+  topicRows             Json
+  recommendationBatches Json
+  caseStudy             Json?
+  source                String   @default("daily_refresh")
+  generatedAt           DateTime @default(now())
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@unique([date, direction])
+  @@index([direction, generatedAt])
 }
 
 model InsightTopic {
