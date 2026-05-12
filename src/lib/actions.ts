@@ -46,6 +46,10 @@ import { hasCreatorLevel } from "@/lib/levels";
 import { saveUploadedFile } from "@/lib/storage";
 import { ADMIN_PERMISSIONS, hasAdminPermission, isFounder, requireAdminPermission } from "@/lib/admin";
 import { createCrawlerJob, toCrawlerPlatform } from "@/lib/crawler";
+import { collectConfiguredKeywords } from "@/lib/insights/collector";
+import { INSIGHT_DIRECTION_SLUGS } from "@/lib/insights/directions";
+import { seedDefaultInsightKeywords } from "@/lib/insights/keywords";
+import { TIKHUB_ENDPOINTS } from "@/lib/tikhub/endpoints";
 import {
   applyAdminLevelInviteRules,
   applyInviteCodeChange,
@@ -64,8 +68,36 @@ const loginSchema = z.object({
 
 const PAYMENT_PROOF_MAX_BYTES = 8 * 1024 * 1024;
 
+const insightKeywordConfigSchema = z.object({
+  keyword: z.string().trim().min(1).max(80),
+  keywordType: z.string().trim().min(1).max(40),
+  platform: z.string().trim().min(1).max(40),
+  endpoint: z.enum(Object.keys(TIKHUB_ENDPOINTS) as [keyof typeof TIKHUB_ENDPOINTS, ...(keyof typeof TIKHUB_ENDPOINTS)[]]),
+  priority: z.coerce.number().int().min(1).max(9999),
+  perRunLimit: z.coerce.number().int().min(1).max(50),
+  collectIntervalHours: z.coerce.number().int().min(1).max(720),
+  active: z.boolean(),
+});
+
+const insightDirectionSchema = z.object({
+  insightDirection: z.enum(INSIGHT_DIRECTION_SLUGS),
+});
+
 function roundMoney(value: number) {
   return Math.round(value * 100) / 100;
+}
+
+function insightKeywordConfigForm(formData: FormData) {
+  return insightKeywordConfigSchema.parse({
+    keyword: formData.get("keyword"),
+    keywordType: formData.get("keywordType"),
+    platform: formData.get("platform"),
+    endpoint: formData.get("endpoint"),
+    priority: formData.get("priority"),
+    perRunLimit: formData.get("perRunLimit"),
+    collectIntervalHours: formData.get("collectIntervalHours"),
+    active: formData.get("active") === "on",
+  });
 }
 
 function isUniqueConstraintError(error: unknown, fields: string[]) {
@@ -546,6 +578,29 @@ export async function updateBrandProfileAction(formData: FormData) {
     });
   });
   redirect("/brand/profile?updated=1");
+}
+
+export async function updateBrandInsightDirectionAction(formData: FormData) {
+  const session = await requireRole(UserRole.BRAND);
+  const parsed = insightDirectionSchema.safeParse({
+    insightDirection: text(formData.get("insightDirection")),
+  });
+  if (!parsed.success) redirect("/brand/profile?error=请选择有效的洞察方向");
+
+  const brand = await prisma.brandProfile.update({
+    where: { userId: session.userId },
+    data: { insightDirection: parsed.data.insightDirection },
+  });
+
+  await audit({
+    action: "brand.insight_direction_updated",
+    entityType: "brand",
+    entityId: brand.id,
+    afterJson: { insightDirection: parsed.data.insightDirection },
+  });
+  revalidatePath("/brand/profile");
+  revalidatePath("/brand/insights");
+  redirect("/brand/profile?directionUpdated=1");
 }
 
 const brandRequestSchema = z.object({
@@ -3818,6 +3873,29 @@ export async function updateCreatorProfileAction(formData: FormData) {
   if (returnTo.startsWith("/creator/profile")) redirect(returnTo);
 }
 
+export async function updateCreatorInsightDirectionAction(formData: FormData) {
+  const session = await requireRole(UserRole.CREATOR);
+  const parsed = insightDirectionSchema.safeParse({
+    insightDirection: text(formData.get("insightDirection")),
+  });
+  if (!parsed.success) redirect("/creator/profile?tab=preferences&error=请选择有效的创作方向");
+
+  const creator = await prisma.creatorProfile.update({
+    where: { userId: session.userId },
+    data: { insightDirection: parsed.data.insightDirection },
+  });
+
+  await audit({
+    action: "creator.insight_direction_updated",
+    entityType: "creator",
+    entityId: creator.id,
+    afterJson: { insightDirection: parsed.data.insightDirection },
+  });
+  revalidatePath("/creator/profile");
+  revalidatePath("/creator/trends");
+  redirect("/creator/profile?tab=preferences&directionUpdated=1");
+}
+
 export async function addSocialAccountAction(formData: FormData) {
   const session = await requireRole(UserRole.CREATOR);
   const creator = await prisma.creatorProfile.findUnique({ where: { userId: session.userId } });
@@ -4111,6 +4189,119 @@ export async function refreshProofMetricsAction(proofId: string) {
   });
   revalidatePath(backTo);
   revalidatePath("/admin/crawler");
+}
+
+export async function createInsightKeywordConfigAction(formData: FormData) {
+  await requireAdminPermission("compliance.manage");
+  const data = insightKeywordConfigForm(formData);
+
+  await prisma.insightKeywordConfig.upsert({
+    where: {
+      platform_keyword_keywordType: {
+        platform: data.platform,
+        keyword: data.keyword,
+        keywordType: data.keywordType,
+      },
+    },
+    update: {
+      endpoint: data.endpoint,
+      active: data.active,
+      priority: data.priority,
+      perRunLimit: data.perRunLimit,
+      collectIntervalHours: data.collectIntervalHours,
+    },
+    create: data,
+  });
+
+  await audit({
+    action: "insights.keyword_config_saved",
+    entityType: "insight_keyword_config",
+    entityId: `${data.platform}:${data.keyword}:${data.keywordType}`,
+    afterJson: data,
+  });
+  revalidatePath("/admin/insights");
+}
+
+export async function updateInsightKeywordConfigAction(configId: string, formData: FormData) {
+  await requireAdminPermission("compliance.manage");
+  const existing = await prisma.insightKeywordConfig.findUnique({ where: { id: configId } });
+  if (!existing) redirect("/admin/insights");
+  const intent = text(formData.get("intent"));
+
+  if (intent === "toggle") {
+    const updated = await prisma.insightKeywordConfig.update({
+      where: { id: configId },
+      data: { active: !existing.active },
+    });
+    await audit({
+      action: "insights.keyword_config_toggled",
+      entityType: "insight_keyword_config",
+      entityId: configId,
+      beforeJson: { active: existing.active },
+      afterJson: { active: updated.active },
+    });
+    revalidatePath("/admin/insights");
+    return;
+  }
+
+  const data = insightKeywordConfigForm(formData);
+  const updated = await prisma.insightKeywordConfig.update({
+    where: { id: configId },
+    data,
+  });
+  await audit({
+    action: "insights.keyword_config_updated",
+    entityType: "insight_keyword_config",
+    entityId: configId,
+    beforeJson: {
+      keyword: existing.keyword,
+      keywordType: existing.keywordType,
+      platform: existing.platform,
+      endpoint: existing.endpoint,
+      active: existing.active,
+      priority: existing.priority,
+      perRunLimit: existing.perRunLimit,
+      collectIntervalHours: existing.collectIntervalHours,
+    },
+    afterJson: {
+      keyword: updated.keyword,
+      keywordType: updated.keywordType,
+      platform: updated.platform,
+      endpoint: updated.endpoint,
+      active: updated.active,
+      priority: updated.priority,
+      perRunLimit: updated.perRunLimit,
+      collectIntervalHours: updated.collectIntervalHours,
+    },
+  });
+  revalidatePath("/admin/insights");
+}
+
+export async function seedInsightKeywordsAction() {
+  await requireAdminPermission("compliance.manage");
+  const result = await seedDefaultInsightKeywords();
+  await audit({
+    action: "insights.keyword_config_seeded",
+    entityType: "insight_keyword_config",
+    entityId: "default",
+    afterJson: result,
+  });
+  revalidatePath("/admin/insights");
+}
+
+export async function collectConfiguredInsightKeywordsAction(formData: FormData) {
+  await requireAdminPermission("compliance.manage");
+  const limit = Math.max(1, Math.min(Number(text(formData.get("limit")) || 5), 20));
+  const result = await collectConfiguredKeywords(limit);
+  await audit({
+    action: "insights.configured_keywords_collected",
+    entityType: "insight_keyword_config",
+    entityId: "configured",
+    afterJson: result,
+  });
+  revalidatePath("/admin/insights");
+  revalidatePath("/creator/trends");
+  revalidatePath("/brand/insights");
 }
 
 export async function markNotificationReadAction(notificationId: string) {

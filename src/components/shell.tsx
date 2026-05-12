@@ -34,14 +34,14 @@ const navGroups: Record<UserRole, NavGroup[]> = {
       ],
     },
     { title: "财务与规则", items: [["/admin/payments", "资金运营"], ["/admin/compliance", "规则中心"], ["/admin/settings", "平台配置"]] },
-    { title: "系统工具", items: [["/admin/crawler", "抓取队列"], ["/admin/demo", "演示数据"]] },
+    { title: "系统工具", items: [["/admin/crawler", "抓取队列"], ["/admin/insights", "洞察关键词"], ["/admin/insights/runs", "采集日志"], ["/admin/demo", "演示数据"]] },
   ],
   [UserRole.BRAND]: [
-    { title: "品牌工作台", items: [["/brand", "仪表盘"], ["/brand/profile", "品牌资料"], ["/brand/requests", "需求沟通"]] },
+    { title: "品牌工作台", items: [["/brand", "仪表盘"], ["/brand/insights", "品牌洞察"], ["/brand/profile", "品牌资料"], ["/brand/requests", "需求沟通"]] },
     { title: "投放", items: [["/brand/campaigns", "推广活动"], ["/brand/campaigns/new", "新建推广"], ["/brand/billing", "账单"]] },
   ],
   [UserRole.CREATOR]: [
-    { title: "创作者工作台", items: [["/creator", "仪表盘"], ["/creator/profile", "个人资料"]] },
+    { title: "创作者工作台", items: [["/creator", "仪表盘"], ["/creator/trends", "热点选题"], ["/creator/profile", "个人资料"]] },
     { title: "任务与收益", items: [["/creator/marketplace", "任务大厅"], ["/creator/my-tasks", "我的任务"], ["/creator/wallet", "钱包提现"]] },
   ],
 };
@@ -55,6 +55,7 @@ const adminNavPermissions: Record<string, AdminPermission | null> = {
   "/admin/creators": "account.create",
   "/admin/social-accounts": "account.freeze",
   "/admin/crawler": "account.freeze",
+  "/admin/insights": "compliance.manage",
   "/admin/campaigns": "campaign.manage",
   "/admin/submissions": "content.review",
   "/admin/proofs": "proof.review",

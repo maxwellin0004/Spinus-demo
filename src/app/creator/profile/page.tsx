@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { UserRole } from "@prisma/client";
-import { addSocialAccountAction, deleteSocialAccountAction, updateCreatorProfileAction, updateSocialAccountAction } from "@/lib/actions";
+import { addSocialAccountAction, deleteSocialAccountAction, updateCreatorInsightDirectionAction, updateCreatorProfileAction, updateSocialAccountAction } from "@/lib/actions";
 import { requireRole } from "@/lib/auth";
+import { getInsightDirection, INSIGHT_DIRECTIONS } from "@/lib/insights/directions";
 import { prisma } from "@/lib/prisma";
 import { Card, DataTable, Field, PageHeader, Select, StatusBadge, Textarea } from "@/components/ui";
 import { SubmitButton } from "@/components/form-controls";
@@ -65,10 +66,10 @@ function HiddenProfileFields({
 export default async function CreatorProfilePage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string; edit?: string; editAccount?: string; error?: string }>;
+  searchParams: Promise<{ tab?: string; edit?: string; editAccount?: string; directionUpdated?: string; error?: string }>;
 }) {
   const session = await requireRole(UserRole.CREATOR);
-  const { tab, edit, editAccount, error } = await searchParams;
+  const { tab, edit, editAccount, directionUpdated, error } = await searchParams;
   const activeTab: ProfileTab = isProfileTab(tab) ? tab : "basic";
   const creator = await prisma.creatorProfile.findUnique({
     where: { userId: session.userId },
@@ -102,6 +103,7 @@ export default async function CreatorProfilePage({
   const onboardingPercent = Math.round((onboardingCompleted / onboarding.length) * 100);
   const operatorName = creator.responsibleAdmin?.displayName ?? "暂未分配";
   const operatorContact = creator.responsibleAdmin?.user.email || creator.responsibleAdmin?.wechat || "暂未填写";
+  const currentDirection = getInsightDirection(creator.insightDirection);
 
   return (
     <div className="grid gap-6">
@@ -110,6 +112,7 @@ export default async function CreatorProfilePage({
         <StatusBadge>{creator.level}</StatusBadge>
       </PageHeader>
 
+      {directionUpdated ? <div className="rounded-2xl bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">创作方向已保存，热点选题页会按该方向展示趋势、推荐和风险口径。</div> : null}
       <section>
         <details className="group rounded-2xl border border-[var(--line)] bg-white/82 p-4 shadow-sm backdrop-blur-sm">
           <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3">
@@ -344,15 +347,38 @@ export default async function CreatorProfilePage({
       {activeTab === "preferences" ? (
         <Card>
           <h2 className="mb-5 text-xl font-black">偏好设置</h2>
-          <div className="grid gap-4 text-sm text-stone-700 md:grid-cols-2">
-            <p>可接平台：{creator.socialAccounts.map((account) => account.platform).join(", ") || "待添加社媒账号"}</p>
-            <p>内容类型：{creator.contentTypes.join(", ") || V1_CONTENT_TYPES.join(", ")}</p>
-            <p>内容领域：{creator.categories.join(", ") || V1_CATEGORIES.slice(0, 6).join(", ")}</p>
-            <p>语言：{creator.languages.join(", ") || V1_LANGUAGES.join(", ")}</p>
+          <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+            <div className="rounded-2xl border border-stone-200 bg-stone-50/70 p-4">
+              <p className="text-sm font-black text-stone-500">当前创作方向</p>
+              <p className="mt-2 text-2xl font-black text-stone-950">{currentDirection.label}</p>
+              <p className="mt-2 text-sm leading-6 text-stone-600">{currentDirection.description}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {currentDirection.painKeywords.map((keyword) => (
+                  <span className="rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-black text-teal-700" key={keyword}>{keyword}</span>
+                ))}
+              </div>
+            </div>
+            <form action={updateCreatorInsightDirectionAction} className="grid gap-4 rounded-2xl border border-stone-200 bg-white p-4">
+              <Select label="达人主要创作方向" name="insightDirection" defaultValue={currentDirection.slug}>
+                {INSIGHT_DIRECTIONS.map((direction) => (
+                  <option key={direction.slug} value={direction.slug}>{direction.label}</option>
+                ))}
+              </Select>
+              <p className="text-sm leading-6 text-stone-600">保存后，热点选题页会按该方向切换趋势图例、选题推荐标签、痛点词和风险识别规则。</p>
+              <div>
+                <SubmitButton pendingLabel="正在保存..." variant="secondary">保存创作方向</SubmitButton>
+              </div>
+            </form>
           </div>
-          <p className="mt-4 text-sm text-stone-500">V1 暂不单独保存偏好字段，当前偏好来自基础资料和社媒账号。</p>
+          <div className="mt-5 grid gap-4 text-sm text-stone-700 md:grid-cols-2">
+            <p>可接平台：{creator!.socialAccounts.map((account) => account.platform).join(", ") || "待添加社媒账号"}</p>
+            <p>内容类型：{creator!.contentTypes.join(", ") || V1_CONTENT_TYPES.join(", ")}</p>
+            <p>内容领域：{creator!.categories.join(", ") || V1_CATEGORIES.slice(0, 6).join(", ")}</p>
+            <p>语言：{creator!.languages.join(", ") || V1_LANGUAGES.join(", ")}</p>
+          </div>
         </Card>
       ) : null}
+
     </div>
   );
 }

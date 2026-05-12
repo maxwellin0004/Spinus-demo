@@ -338,6 +338,7 @@ model BrandProfile {
   whatsapp            String?
   website             String?
   industry            String
+  insightDirection    String                   @default("beauty")
   country             String
   logoUrl             String?
   description         String
@@ -388,6 +389,7 @@ model CreatorProfile {
   languages          String[]            @default([])
   categories         String[]            @default([])
   contentTypes       String[]            @default([])
+  insightDirection   String              @default("beauty")
   bio                String?
   avatarUrl          String?
   level              CreatorLevel        @default(NEW)
@@ -979,4 +981,158 @@ model PlatformSettings {
   riskIndustryKeywords     String[] @default(["金融", "医疗", "医美", "保健", "投资", "教育", "减肥", "母婴"])
   riskIndustryPrompt       String   @default("该行业容易涉及效果承诺、资质证明或监管要求。请确认 brief 不包含夸大承诺，并准备必要资质。")
   updatedAt                DateTime @updatedAt
+}
+
+model InsightTopic {
+  id         String           @id @default(cuid())
+  topic      String
+  category   String?
+  platforms  String[]         @default([])
+  source     String
+  sourceKey  String?
+  heatValue  Float            @default(0)
+  heatScore  Float            @default(0)
+  growthRate Float?
+  stage      String?
+  date       DateTime
+  rawPayload Json?
+  contents   InsightContent[]
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  @@unique([source, topic, date])
+  @@index([topic, date])
+  @@index([source, date])
+  @@index([heatScore])
+}
+
+model InsightContent {
+  id              String           @id @default(cuid())
+  platform        String
+  sourceContentId String
+  title           String
+  description     String?
+  authorId        String?
+  authorName      String?
+  publishTime     DateTime?
+  contentUrl      String?
+  likeCount       Int              @default(0)
+  commentCount    Int              @default(0)
+  shareCount      Int              @default(0)
+  collectCount    Int              @default(0)
+  viewCount       Int              @default(0)
+  keyword         String?
+  topicId         String?
+  topic           InsightTopic?    @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  heatScore       Float            @default(0)
+  rawPayload      Json?
+  comments        InsightComment[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@unique([platform, sourceContentId])
+  @@index([platform, keyword])
+  @@index([topicId])
+  @@index([heatScore])
+  @@index([publishTime])
+}
+
+model InsightComment {
+  id              String         @id @default(cuid())
+  platform        String
+  sourceCommentId String?
+  contentId       String
+  content         InsightContent @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  text            String
+  likeCount       Int            @default(0)
+  sentiment       String?
+  painPoint       String?
+  riskTag         String?
+  rawPayload      Json?
+  createdAt       DateTime       @default(now())
+
+  @@unique([platform, sourceCommentId, contentId])
+  @@index([contentId])
+  @@index([sentiment])
+  @@index([painPoint])
+}
+
+model InsightTrendSnapshot {
+  id               String   @id @default(cuid())
+  source           String   @default("tikhub")
+  platform         String
+  keyword          String
+  keywordType      String?
+  date             DateTime
+  contentCount     Int      @default(0)
+  interactionCount Int      @default(0)
+  likeCount        Int      @default(0)
+  commentCount     Int      @default(0)
+  shareCount       Int      @default(0)
+  collectCount     Int      @default(0)
+  viewCount        Int      @default(0)
+  heatScore        Float    @default(0)
+  rawPayload       Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([source, platform, keyword, date])
+  @@index([platform, keyword, date])
+  @@index([date])
+  @@index([heatScore])
+}
+
+model InsightKeywordConfig {
+  id                   String    @id @default(cuid())
+  keyword              String
+  keywordType          String
+  platform             String
+  endpoint             String
+  active               Boolean   @default(true)
+  priority             Int       @default(100)
+  perRunLimit          Int       @default(10)
+  collectIntervalHours Int       @default(24)
+  lastCollectedAt      DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@unique([platform, keyword, keywordType])
+  @@index([active, priority])
+  @@index([platform, endpoint])
+  @@index([lastCollectedAt])
+}
+
+model InsightCreator {
+  id             String   @id @default(cuid())
+  platform       String
+  sourceAuthorId String
+  authorName     String
+  followerCount  Int      @default(0)
+  category       String?
+  contentTags    String[] @default([])
+  avgEngagement  Float    @default(0)
+  bestTopics     String[] @default([])
+  rawPayload     Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([platform, sourceAuthorId])
+  @@index([platform, category])
+}
+
+model InsightCollectionRun {
+  id             String    @id @default(cuid())
+  source         String
+  platform       String?
+  jobType        String
+  status         String    @default("PENDING")
+  keyword        String?
+  requestPayload Json?
+  resultCount    Int       @default(0)
+  errorMessage   String?
+  startedAt      DateTime  @default(now())
+  completedAt    DateTime?
+
+  @@index([status, startedAt])
+  @@index([source, jobType])
 }
