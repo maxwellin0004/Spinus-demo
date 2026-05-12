@@ -1,6 +1,6 @@
 import { UserRole } from "@prisma/client";
 import Link from "next/link";
-import { AlertTriangle, CalendarDays, Check, ChevronDown, Copy, Flame, Lightbulb, RefreshCw, Search, Target } from "lucide-react";
+import { AlertTriangle, CalendarDays, ChevronDown, Copy, Flame, Lightbulb, RefreshCw, Search, Target } from "lucide-react";
 import { CreatorTrendChart, type CreatorTrendPoint } from "@/components/creator-trend-chart";
 import { requireRole } from "@/lib/auth";
 import { getCreatorInsightAnalysis } from "@/lib/insights/analysis-queries";
@@ -359,7 +359,7 @@ export default async function CreatorTrendsPage() {
           </section>
 
           <section id="topic-recommendations" className="scroll-mt-28 grid grid-cols-1 gap-5 xl:grid-cols-[1fr_0.9fr_0.75fr]">
-            <div className={cn(cardClass, "p-5")}>
+            <div className={cn(cardClass, "overflow-hidden p-5")}>
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <h2 className="text-xl font-black">AI 选题推荐</h2>
@@ -367,24 +367,26 @@ export default async function CreatorTrendsPage() {
                 </div>
                 <span className="flex items-center gap-1 text-sm font-black text-teal-700"><RefreshCw size={15} />换一批</span>
               </div>
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                {displayRecommendations.map((item) => (
-                  <div key={item.title} className="min-w-0 rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
-                    <div className={cn("mb-3 h-24 rounded-lg bg-gradient-to-br", item.tone)} />
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="line-clamp-2 font-black">{item.title}</p>
-                      <span className={cn("shrink-0 rounded-md border px-2 py-1 text-xs font-black", stageClass(item.stage))}>{item.stage}</span>
+              <div className="-mx-1 overflow-x-auto px-1 pb-2">
+                <div className="flex min-w-max gap-4">
+                  {displayRecommendations.map((item) => (
+                    <div key={item.title} className="w-40 shrink-0 rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
+                      <div className={cn("mb-3 h-24 rounded-lg bg-gradient-to-br", item.tone)} />
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="line-clamp-2 font-black">{item.title}</p>
+                        <span className={cn("shrink-0 rounded-md border px-2 py-1 text-xs font-black", stageClass(item.stage))}>{item.stage}</span>
+                      </div>
+                      <p className="mt-3 text-xs font-black text-slate-500">推荐理由</p>
+                      <p className="mt-1 line-clamp-3 text-sm text-slate-600">{item.reason}</p>
+                      <div className="mt-3 flex flex-wrap gap-2">{item.tags.slice(0, 3).map((tag) => <span key={tag} className="whitespace-nowrap rounded-md border border-teal-200 bg-teal-50 px-2 py-1 text-xs font-black text-teal-700">{tag}</span>)}</div>
+                      <p className="mt-3 text-sm font-black text-red-500">预计热度 {item.heat}</p>
+                      <div className="mt-3 grid grid-cols-2 gap-2">
+                        <Link href="#task-flow" className="whitespace-nowrap rounded-lg border border-teal-600 px-2 py-2 text-center text-xs font-black text-teal-700 transition hover:bg-teal-50">生成脚本</Link>
+                        <Link href="#task-flow" className="whitespace-nowrap rounded-lg border border-slate-200 px-2 py-2 text-center text-xs font-black text-slate-700 transition hover:bg-slate-50">加入日历</Link>
+                      </div>
                     </div>
-                    <p className="mt-3 text-xs font-black text-slate-500">推荐理由</p>
-                    <p className="mt-1 line-clamp-3 text-sm text-slate-600">{item.reason}</p>
-                    <div className="mt-3 flex flex-wrap gap-2">{item.tags.slice(0, 3).map((tag) => <span key={tag} className="rounded-md border border-teal-200 bg-teal-50 px-2 py-1 text-xs font-black text-teal-700">{tag}</span>)}</div>
-                    <p className="mt-3 text-sm font-black text-red-500">预计热度 {item.heat}</p>
-                    <div className="mt-3 grid grid-cols-2 gap-2">
-                      <Link href="#task-flow" className="rounded-lg border border-teal-600 px-3 py-2 text-center text-xs font-black text-teal-700 transition hover:bg-teal-50">生成脚本</Link>
-                      <Link href="#task-flow" className="rounded-lg border border-slate-200 px-3 py-2 text-center text-xs font-black text-slate-700 transition hover:bg-slate-50">加入日历</Link>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -424,28 +426,10 @@ export default async function CreatorTrendsPage() {
             <div id="task-flow" className={cn(cardClass, "scroll-mt-28 p-5")}>
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl font-black">创作任务流</h2>
-                <Link href="/creator/my-tasks" className="text-sm font-black text-blue-600 hover:text-blue-700">任务草稿 (3)</Link>
+                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-black text-slate-500">开发中</span>
               </div>
-              <div className="flex items-center justify-between gap-2">
-                {["选题确认", "标题优化", "脚本生成", "分镜规划", "发布文案"].map((item, index) => (
-                  <div key={item} className="text-center">
-                    <div className={cn("mx-auto flex size-10 items-center justify-center rounded-full text-sm font-black", index < 2 ? "bg-teal-600 text-white" : index === 2 ? "bg-teal-600 text-white" : "bg-slate-100 text-slate-500")}>{index < 2 ? <Check size={18} /> : index + 1}</div>
-                    <p className={cn("mt-2 text-xs font-black", index === 2 ? "text-teal-700" : "text-slate-500")}>{item}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-6 rounded-xl border border-slate-100 p-4">
-                <div className="flex items-center justify-between">
-                  <p className="font-black">夏日持妆不卡粉底妆</p>
-                  <span className="rounded-md border border-red-100 bg-red-50 px-2 py-1 text-xs font-black text-red-600">爆发中</span>
-                </div>
-                <p className="mt-3 text-sm font-semibold text-slate-500">脚本生成中... (2/3)</p>
-                <div className="mt-3 h-2 rounded-full bg-slate-100"><div className="h-2 w-2/3 rounded-full bg-teal-600" /></div>
-                <p className="mt-2 text-right text-xs font-black text-slate-500">66%</p>
-              </div>
-              <div className="mt-5 grid grid-cols-2 gap-3">
-                <Link href="/creator/my-tasks" className="rounded-xl bg-teal-600 px-4 py-3 text-center text-sm font-black text-white transition hover:bg-teal-700">开始创作</Link>
-                <Link href="/creator/my-tasks" className="rounded-xl border border-teal-600 px-4 py-3 text-center text-sm font-black text-teal-700 transition hover:bg-teal-50">保存草稿</Link>
+              <div className="flex min-h-64 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50">
+                <p className="text-lg font-black text-slate-400">开发中</p>
               </div>
             </div>
           </section>
