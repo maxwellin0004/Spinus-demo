@@ -47,8 +47,10 @@ import { saveUploadedFile } from "@/lib/storage";
 import { ADMIN_PERMISSIONS, hasAdminPermission, isFounder, requireAdminPermission } from "@/lib/admin";
 import { createCrawlerJob, toCrawlerPlatform } from "@/lib/crawler";
 import { collectConfiguredKeywords } from "@/lib/insights/collector";
+import { refreshCreatorTrendDailySnapshots } from "@/lib/insights/creator-daily-snapshots";
 import { INSIGHT_DIRECTION_SLUGS } from "@/lib/insights/directions";
 import { seedDefaultInsightKeywords } from "@/lib/insights/keywords";
+import { rebuildTrendSnapshotsFromContents } from "@/lib/insights/snapshots";
 import { TIKHUB_ENDPOINTS } from "@/lib/tikhub/endpoints";
 import {
   applyAdminLevelInviteRules,
@@ -3860,6 +3862,59 @@ export async function updatePlatformSettingsAction(formData: FormData) {
   });
   revalidatePath("/admin/settings");
   revalidatePath("/brand/campaigns/new");
+}
+
+export async function runCreatorTrendRefreshAction() {
+  await requireAdminPermission("compliance.manage");
+  let snapshots = 0;
+  try {
+    const result = await refreshCreatorTrendDailySnapshots({ force: true });
+    snapshots = result.snapshots;
+    await audit({
+      action: "creator_trends.daily_refresh_forced",
+      entityType: "platform_settings",
+      entityId: "platform",
+      afterJson: result,
+    });
+    revalidatePath("/admin/settings");
+    revalidatePath("/creator/trends");
+  } catch (error) {
+    redirect(`/admin/settings?error=${encodeURIComponent(error instanceof Error ? error.message : "达人洞察刷新失败")}`);
+  }
+  redirect(`/admin/settings?trendRefresh=${snapshots}`);
+}
+
+export async function collectAndRefreshCreatorTrendsAction(formData: FormData) {
+  await requireAdminPermission("compliance.manage");
+  const limit = Math.min(50, Math.max(1, Number.parseInt(text(formData.get("limit")) || "10", 10)));
+  let collected = 0;
+  let snapshots = 0;
+  try {
+    const collection = await collectConfiguredKeywords(limit);
+    const rebuilt = await rebuildTrendSnapshotsFromContents();
+    const refresh = await refreshCreatorTrendDailySnapshots({ force: true });
+    collected = collection.resultCount;
+    snapshots = refresh.snapshots;
+    await audit({
+      action: "creator_trends.collect_and_refresh",
+      entityType: "platform_settings",
+      entityId: "platform",
+      afterJson: {
+        limit,
+        collected: collection.resultCount,
+        collectedKeywords: collection.keywordCount,
+        rebuiltTrendSnapshots: rebuilt.resultCount,
+        creatorTrendSnapshots: refresh.snapshots,
+        directions: refresh.directions,
+      },
+    });
+    revalidatePath("/admin/settings");
+    revalidatePath("/admin/insights");
+    revalidatePath("/creator/trends");
+  } catch (error) {
+    redirect(`/admin/settings?error=${encodeURIComponent(error instanceof Error ? error.message : "采集并刷新达人洞察失败")}`);
+  }
+  redirect(`/admin/settings?trendCollect=${collected}&trendRefresh=${snapshots}`);
 }
 
 export async function updateCreatorProfileAction(formData: FormData) {

@@ -99,7 +99,7 @@ export async function AppShell({ role, children }: { role: UserRole; children: R
       <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col border-r border-stone-200/80 bg-white/72 p-5 backdrop-blur-xl xl:flex">
         <Link href="/" className="block">
           <div className="rounded-2xl border border-stone-200 bg-[linear-gradient(135deg,#17211c,#334138)] p-4 text-white shadow-sm">
-            <p className="text-xs font-black uppercase tracking-[0.22em] text-amber-200">Tanglin</p>
+            <p className="text-xs font-black text-amber-200">小黄雀</p>
             <p className="mt-2 text-2xl font-black tracking-tight">KOL 投放平台</p>
             <p className="mt-2 text-xs leading-5 text-white/70">三方投放协作后台</p>
           </div>

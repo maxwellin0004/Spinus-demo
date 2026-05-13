@@ -169,6 +169,16 @@ function SourceBadge({ kind }: { kind: SourceKind }) {
   return <span className={cn("rounded-full border px-2.5 py-1 text-xs font-black", style)}>{kind}</span>;
 }
 
+function formatDateTime(value: Date | null | undefined) {
+  if (!value) return "暂无";
+  return new Intl.DateTimeFormat("zh-CN", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(value);
+}
+
 function readSnapshotValue<T>(value: unknown): T | null {
   if (value == null) return null;
   return value as T;
@@ -224,6 +234,13 @@ export default async function CreatorTrendsPage({
   const topicSource: SourceKind = snapshotTopicRows && snapshotTopicRows.length > 0 ? "规则计算" : topTopics.length > 0 ? "规则计算" : "示例兜底";
   const recommendationSource: SourceKind = snapshotRecommendationBatches.length > 0 ? "规则计算" : analysis.recommendations.length > 0 ? "规则计算" : "示例兜底";
   const caseSource: SourceKind = snapshotCaseStudy ? "规则计算" : topCase ? "真实采集" : "示例兜底";
+  const hasExampleFallback = [trendSource, topicSource, recommendationSource, caseSource].includes("示例兜底");
+  const dataSourceLabel = dailySnapshot ? "每日快照" : hasRealData ? "实时计算" : "示例兜底";
+  const dataSourceDetail = dailySnapshot
+    ? `更新于 ${formatDateTime(dailySnapshot.generatedAt)}，批次 ${selectedBatchIndex + 1}/${Math.max(1, snapshotRecommendationBatches.length)}`
+    : hasRealData
+      ? "当前方向暂无每日快照，页面正在使用已采集数据实时计算。"
+      : "当前方向暂无足够真实采集数据，页面正在显示示例内容。";
   const metricSource = snapshotOverview ?? overview;
   const displayMetrics = metricCards.map((card) => {
     if (card.label === "今日可追热点") return { ...card, value: String(metricSource.trackableTopics || analysis.overview.trackableTopics), delta: hasRealData || snapshotOverview ? "+真实" : "待采集" };
@@ -327,6 +344,20 @@ export default async function CreatorTrendsPage({
                 <Link key={chip} href={`/creator/trends?keyword=${encodeURIComponent(chip)}`} className={cn("rounded-xl border px-4 py-2 text-sm font-black shadow-sm transition hover:border-teal-200 hover:text-teal-700", index === 0 ? "border-teal-600 bg-teal-600 text-white hover:text-white" : "border-slate-200 bg-white text-slate-700")}>{chip}</Link>
               ))}
             </div>
+          </section>
+
+          <section className={cn(cardClass, "flex flex-col gap-3 px-5 py-4 md:flex-row md:items-center md:justify-between")}>
+            <div>
+              <p className="text-sm font-black text-slate-950">数据来源：{dataSourceLabel}</p>
+              <p className="mt-1 text-sm font-semibold text-slate-500">当前方向：{currentDirection.label} · {dataSourceDetail}</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <SourceBadge kind={trendSource} />
+              <SourceBadge kind={topicSource} />
+              <SourceBadge kind={recommendationSource} />
+              <SourceBadge kind={caseSource} />
+            </div>
+            {hasExampleFallback ? <p className="text-xs font-semibold text-amber-700">部分模块暂无真实数据，已使用示例兜底。</p> : null}
           </section>
 
           <section id="overview" className="scroll-mt-28 grid grid-cols-1 gap-5 xl:grid-cols-4">

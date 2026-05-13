@@ -7,9 +7,9 @@ export default function ProofPage() {
       <section className="bg-[#fbfaf7]">
         <div className="mx-auto max-w-7xl px-6 py-20">
           <SectionHeading
-            eyebrow="WHY TANGLIN"
+            eyebrow="为什么选择小黄雀"
             title="平台优势"
-            copy="Tanglin 不做复杂的泛营销平台，第一阶段聚焦小商家和种子 KOL 的高频履约问题。"
+            copy="小黄雀不做复杂的泛营销平台，第一阶段聚焦小商家和种子 KOL 的高频履约问题。"
           />
           <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {proofItems.map((item) => (

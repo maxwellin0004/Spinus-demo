@@ -18,16 +18,16 @@ export default async function AboutPage() {
         <div className="mx-auto max-w-7xl px-6 py-20">
           <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
             <div>
-              <p className="text-sm font-black tracking-[0.22em] text-[#d99000]">ABOUT TANGLIN</p>
+              <p className="text-sm font-black text-[#d99000]">关于小黄雀</p>
               <h1 className="mt-4 text-4xl font-black leading-tight tracking-tight text-stone-950 md:text-5xl">
                 我们把 KOL 投放做成可履约、可验收、可结算的协作系统
               </h1>
               <p className="mt-6 max-w-2xl text-base leading-8 text-stone-600">
-                Tanglin 面向自助型小商家、品牌运营团队和创作者，帮助双方把推广合作从聊天记录和表格里搬到系统里。平台不替代商业判断，而是把任务要求、申请审核、交付凭证、资金流转和争议证据沉淀为结构化记录。
+                小黄雀面向自助型小商家、品牌运营团队和创作者，帮助双方把推广合作从聊天记录和表格里搬到系统里。平台不替代商业判断，而是把任务要求、申请审核、交付凭证、资金流转和争议证据沉淀为结构化记录。
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <ButtonLink href={workspaceHref}>进入工作台</ButtonLink>
-                <ButtonLink href="mailto:support@tanglin.local" variant="secondary">
+                <ButtonLink href="mailto:support@xiaohuangque.local" variant="secondary">
                   联系平台
                 </ButtonLink>
               </div>
@@ -60,7 +60,7 @@ export default async function AboutPage() {
             </p>
             <p>
               <span className="block font-black text-stone-950">联系方式</span>
-              support@tanglin.local
+              support@xiaohuangque.local
             </p>
           </div>
         </div>

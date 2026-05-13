@@ -25,7 +25,7 @@ export default async function RegisterPage({
   return (
     <main className="grid min-h-screen place-items-center bg-[radial-gradient(circle_at_top_left,#fbbf24,transparent_24rem),#fafaf9] p-6">
       <div className="w-full max-w-xl">
-        <PageHeader eyebrow="Tanglin" title="创建工作账号" />
+        <PageHeader eyebrow="小黄雀" title="创建工作账号" />
         <Card className="mt-8">
           {error ? <div className="mb-5 rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</div> : null}
           {lockedInvite ? (
@@ -54,7 +54,7 @@ export default async function RegisterPage({
               />
               {lockedInvite ? <input name="inviteLocked" type="hidden" value="1" /> : null}
             </label>
-            <Field label="工作台/显示名称" name="name" required placeholder="例如 Tanglin Test" />
+            <Field label="工作台/显示名称" name="name" required placeholder="例如 小黄雀测试" />
             <Field label="国家/地区" name="country" required defaultValue="Singapore" />
             <Field label="行业（品牌方填写）" name="industry" defaultValue="AI SaaS" />
             <Field label="邮箱" name="email" type="email" required placeholder="name@example.com" />

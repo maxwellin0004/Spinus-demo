@@ -5,7 +5,6 @@ import {
   Bell,
   Box,
   CalendarDays,
-  CheckCircle2,
   CircleDollarSign,
   Clock3,
   FileCheck2,
@@ -95,7 +94,7 @@ export default async function Home() {
               让推广合作更清晰
             </h1>
             <p className="mt-7 max-w-[610px] text-lg leading-9 text-stone-600">
-              Tanglin 连接品牌方与创作者，把任务发布、申请筛选、内容确认、发布验收和资金结算放进同一套可信流程。
+              小黄雀连接品牌方与创作者，把任务发布、申请筛选、内容确认、发布验收和资金结算放进同一套可信流程。
             </p>
 
             <RoleAccessPanel />
@@ -235,7 +234,7 @@ function DashboardMockup() {
     <div className="rounded-[1.5rem] border border-stone-200 bg-white p-3 shadow-[0_28px_90px_rgba(68,64,60,0.10)]">
       <div className="grid overflow-hidden rounded-[1.25rem] border border-stone-200 bg-white lg:grid-cols-[170px_minmax(0,1fr)]">
         <aside className="hidden border-r border-stone-200 bg-[#fffdfa] p-5 lg:block">
-          <p className="text-sm font-black tracking-[0.18em]">TANGLIN</p>
+          <p className="text-sm font-black">小黄雀</p>
           <div className="mt-7 grid gap-2 text-sm font-semibold text-stone-600">
             {[
               { icon: HomeIcon, label: "概览", active: true },
@@ -281,7 +280,7 @@ function DashboardMockup() {
               <span className="text-xs font-black text-[#c98200]">查看全部 ›</span>
             </div>
             <div className="mt-4 grid gap-1">
-              {campaigns.map((item, index) => (
+              {campaigns.map((item) => (
                 <div className="grid items-center gap-3 rounded-xl py-3 text-xs md:grid-cols-[1.3fr_0.8fr_0.8fr_0.9fr_0.7fr]" key={item.name}>
                   <div className="flex min-w-0 items-center gap-3">
                     <img

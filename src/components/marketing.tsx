@@ -2,7 +2,6 @@ import Link from "next/link";
 import {
   BarChart3,
   Building2,
-  CheckCircle2,
   ClipboardList,
   FileCheck2,
   Handshake,
@@ -128,7 +127,7 @@ export function Logo() {
         <span className="absolute left-1 top-1 h-7 w-7 skew-x-[-18deg] bg-[#f5a900]" />
         <span className="absolute bottom-1 left-3 h-6 w-2 bg-[#f5a900]" />
       </span>
-      <span className="text-2xl font-black tracking-[0.16em] text-stone-950">TANGLIN</span>
+      <span className="text-2xl font-black text-stone-950">小黄雀</span>
     </Link>
   );
 }
@@ -173,7 +172,7 @@ export function MarketingFooter() {
     <footer className="border-t border-stone-200 bg-white">
       <div className="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-8 text-sm text-stone-500 md:flex-row md:items-center md:justify-between">
         <Logo />
-        <p>Tanglin KOL 投放协作平台</p>
+        <p>小黄雀 KOL 投放协作平台</p>
       </div>
     </footer>
   );
@@ -188,7 +187,7 @@ export function DashboardPreview() {
     <div className="rounded-3xl border border-stone-200 bg-white p-3 shadow-[0_30px_80px_rgba(68,64,60,0.12)]">
       <div className="grid min-h-[520px] overflow-hidden rounded-2xl border border-stone-200 bg-white lg:grid-cols-[180px_minmax(0,1fr)]">
         <aside className="hidden border-r border-stone-200 bg-white px-4 py-6 sm:block">
-          <p className="text-sm font-black tracking-[0.18em]">TANGLIN</p>
+          <p className="text-sm font-black">小黄雀</p>
           <div className="mt-6 grid gap-2 text-sm font-semibold text-stone-600">
             {["概览", "活动管理", "KOL 管理", "内容管理", "数据分析", "财务结算", "消息中心", "设置"].map((item, index) => (
               <div className={`rounded-xl px-3 py-3 ${index === 0 ? "bg-[#fff4d8] text-[#d99000]" : ""}`} key={item}>
