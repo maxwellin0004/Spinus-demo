@@ -64,7 +64,7 @@ function firstNumber(record: JsonRecord, keys: string[]) {
 function firstArray(payload: unknown): unknown[] {
   if (Array.isArray(payload)) return payload;
   const record = asRecord(payload);
-  for (const key of ["data", "items", "list", "aweme_list", "notes", "result", "results"]) {
+  for (const key of ["data", "items", "list", "aweme_list", "notes", "result", "results", "feeds", "feed", "keywords", "word_list", "hot_list", "inspiration_list"]) {
     const value = record[key];
     if (Array.isArray(value)) return value;
     const nested = asRecord(value);
@@ -73,7 +73,7 @@ function firstArray(payload: unknown): unknown[] {
       return Array.isArray(nestedValue) ? nestedValue : [];
     });
     if (combined.length) return combined;
-    for (const nestedKey of ["data", "items", "list", "aweme_list", "notes", "result", "results"]) {
+    for (const nestedKey of ["data", "items", "list", "aweme_list", "notes", "result", "results", "feeds", "feed", "keywords", "word_list", "hot_list", "inspiration_list"]) {
       const nestedValue = nested[nestedKey];
       if (Array.isArray(nestedValue)) return nestedValue;
     }
@@ -97,17 +97,94 @@ function textFromRecord(record: JsonRecord, keys: string[]) {
   return firstString(record, keys) ?? "";
 }
 
+function isHttpUrl(value: string) {
+  return /^https?:\/\//i.test(value);
+}
+
+function extractImageUrlFromValue(value: unknown, depth = 0, hinted = false): string | undefined {
+  if (depth > 4 || value == null) return undefined;
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return hinted && isHttpUrl(trimmed) ? trimmed : undefined;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const matched = extractImageUrlFromValue(item, depth + 1, hinted);
+      if (matched) return matched;
+    }
+    return undefined;
+  }
+  if (typeof value !== "object") return undefined;
+
+  const record = asRecord(value);
+  for (const key of [
+    "url_default",
+    "url_pre",
+    "urlDefault",
+    "urlPre",
+    "origin_image_url",
+    "originImageUrl",
+    "image_url",
+    "imageUrl",
+    "thumbnail_url",
+    "thumbnailUrl",
+    "cover_image_url",
+    "coverImageUrl",
+    "url",
+  ]) {
+    const candidate = record[key];
+    if (typeof candidate === "string" && isHttpUrl(candidate)) return candidate;
+  }
+
+  for (const [key, nested] of Object.entries(record)) {
+    const nextHinted = hinted || /image|img|cover|thumb|poster|photo|pic/i.test(key);
+    const matched = extractImageUrlFromValue(nested, depth + 1, nextHinted);
+    if (matched) return matched;
+  }
+  return undefined;
+}
+
+export function extractCoverImageUrl(payload: unknown) {
+  const record = asRecord(payload);
+  for (const key of [
+    "cover",
+    "image",
+    "images",
+    "image_list",
+    "imageList",
+    "images_list",
+    "note_image_list",
+    "noteCard",
+    "photo_list",
+    "thumbnails",
+    "thumbnail_pic",
+    "cover_image",
+    "cover_image_url",
+    "cover_url",
+    "image_url",
+    "video",
+  ]) {
+    const matched = extractImageUrlFromValue(record[key], 0, true);
+    if (matched) return matched;
+  }
+  return extractImageUrlFromValue(payload, 0, false);
+}
+
 export function mapHotTopics(payload: unknown, platform: string): MappedTopic[] {
   const topics: MappedTopic[] = [];
   for (const item of firstArray(payload)) {
     const record = asRecord(item);
-    const topic = firstString(record, ["word", "sentence", "title", "keyword", "topic_name", "topic", "name", "desc"]);
+    const nested = asRecord(record.noteCard ?? record.note_card ?? record.topic ?? record.hot_search_word ?? record.inspiration ?? record.item);
+    const source = Object.keys(nested).length ? nested : record;
+    const topic = firstString(source, ["word", "sentence", "title", "keyword", "topic_name", "topic", "name", "desc", "display_title", "displayTitle"]) ?? firstString(record, ["word", "sentence", "title", "keyword", "topic_name", "topic", "name", "desc"]);
     if (!topic) continue;
-    const sourceKey = firstString(record, ["id", "group_id", "sentence_id", "event_id", "hot_id"]);
+    const sourceKey = firstString(source, ["id", "group_id", "sentence_id", "event_id", "hot_id", "note_id", "topic_id"]) ?? firstString(record, ["id", "group_id", "sentence_id", "event_id", "hot_id", "note_id", "topic_id"]);
     topics.push({
       topic,
       ...(sourceKey ? { sourceKey } : {}),
-      heatValue: firstNumber(record, ["hot_value", "hotValue", "hot_score", "topic_index", "score", "vv", "view_count", "views"]),
+      heatValue:
+        firstNumber(source, ["hot_value", "hotValue", "hot_score", "topic_index", "score", "vv", "view_count", "views", "heat", "rank_score", "rankScore", "trend_score", "trendScore"]) ||
+        firstNumber(record, ["hot_value", "hotValue", "hot_score", "topic_index", "score", "vv", "view_count", "views", "heat", "rank_score", "rankScore", "trend_score", "trendScore"]),
       platforms: [platform],
       rawPayload: item,
     });

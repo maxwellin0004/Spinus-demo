@@ -1,4 +1,5 @@
 import type { InsightComment, InsightContent, InsightTopic } from "@prisma/client";
+import { extractCoverImageUrl } from "@/lib/tikhub/mappers";
 
 export type CommentSentiment = "正面" | "中性" | "负面";
 
@@ -6,23 +7,23 @@ const POSITIVE_TERMS = ["好用", "喜欢", "推荐", "有效", "提升", "舒�
 const NEGATIVE_TERMS = ["搓泥", "卡粉", "浮粉", "泛白", "脱妆", "闷痘", "刺激", "踩雷", "翻车", "鸡肋", "失望", "起皮", "厚重", "拔干"];
 
 const PAIN_POINT_RULES = [
-  { label: "搓泥", terms: ["搓泥", "起屑", "结块", "卡粉", "起皮"] },
-  { label: "泛白", terms: ["泛白", "假白", "死白", "发灰"] },
-  { label: "持妆", terms: ["脱妆", "持妆", "出油", "暗沉", "斑驳"] },
+  { label: "卡粉", terms: ["卡粉", "起皮", "搓泥", "结块", "不服帖"] },
+  { label: "泛白", terms: ["泛白", "假白", "发灰", "死白"] },
+  { label: "持妆", terms: ["脱妆", "暗沉", "出油", "斑驳", "不持久"] },
   { label: "成分安全", terms: ["敏感", "刺激", "成分", "酒精", "香精", "致痘"] },
   { label: "性价比", terms: ["贵", "平替", "性价比", "价格", "划算"] },
   { label: "使用体验", terms: ["厚重", "油腻", "清爽", "吸收", "肤感"] },
-];
+] as const;
 
 const RISK_RULES = [
-  { label: "夸大宣传", terms: ["100%", "绝对", "立刻", "秒", "神效", "包治", "最有效", "永久"] },
-  { label: "功效争议", terms: ["刷酸", "美白", "修复", "祛痘", "防晒", "美白效果"] },
+  { label: "夸大宣传", terms: ["100%", "绝对", "立刻", "秒", "神效", "永久"] },
+  { label: "功效争议", terms: ["美白", "修复", "祛痘", "防晒", "刷酸"] },
   { label: "成分争议", terms: ["敏感", "过敏", "酒精", "香精", "激素", "防腐"] },
-  { label: "价格争议", terms: ["太贵", "溢价", "不值", "割韭菜", "智商税"] },
+  { label: "价格争议", terms: ["太贵", "溢价", "不值", "智商税"] },
   { label: "场景风险", terms: ["夏天", "通勤", "运动", "暴晒", "熬夜"] },
-];
+] as const;
 
-function countTerms(text: string, terms: string[]) {
+function countTerms(text: string, terms: readonly string[]) {
   const lower = text.toLowerCase();
   return terms.reduce((sum, term) => sum + (lower.includes(term.toLowerCase()) ? 1 : 0), 0);
 }
@@ -30,19 +31,19 @@ function countTerms(text: string, terms: string[]) {
 function scoreSentiment(text: string): CommentSentiment {
   const positive = countTerms(text, POSITIVE_TERMS);
   const negative = countTerms(text, NEGATIVE_TERMS);
-  if (negative - positive >= 1) return "负面";
-  if (positive - negative >= 1) return "正面";
+  if (negative > positive) return "负面";
+  if (positive > negative) return "正面";
   return "中性";
 }
 
-function firstMatch(text: string, rules: { label: string; terms: string[] }[]) {
+function firstMatch(text: string, rules: readonly { label: string; terms: readonly string[] }[]) {
   let winner: { label: string; score: number } | null = null;
   for (const rule of rules) {
     const score = countTerms(text, rule.terms);
     if (score <= 0) continue;
     if (!winner || score > winner.score) winner = { label: rule.label, score };
   }
-  return winner?.label;
+  return winner?.label ?? null;
 }
 
 export function analyzeCommentText(text: string) {
@@ -73,13 +74,26 @@ export type RiskSummary = {
 };
 
 export type RecommendationSummary = {
+  id: string;
   title: string;
   platform: string;
   creator: string;
+  keyword: string;
+  sampleTitle: string;
+  sampleContentUrl?: string;
+  sampleSourceContentId: string;
   reason: string;
   tags: string[];
   heat: string;
   tone: string;
+  metrics: {
+    likes: number;
+    comments: number;
+    collects: number;
+    shares: number;
+  };
+  angles: string[];
+  coverImageUrl?: string;
 };
 
 export function summarizeCommentSignals(comments: InsightComment[]) {
@@ -89,7 +103,8 @@ export function summarizeCommentSignals(comments: InsightComment[]) {
   const riskMap = new Map<string, { mentions: number; sample: string }>();
 
   for (const comment of enriched) {
-    totals[comment.sentiment === "正面" ? "positive" : comment.sentiment === "负面" ? "negative" : "neutral"] += 1;
+    const bucket = comment.sentiment === "正面" ? "positive" : comment.sentiment === "负面" ? "negative" : "neutral";
+    totals[bucket] += 1;
 
     if (comment.painPoint) {
       const current = painMap.get(comment.painPoint) ?? { mentions: 0, negative: 0, sample: comment.text };
@@ -108,7 +123,7 @@ export function summarizeCommentSignals(comments: InsightComment[]) {
   }
 
   const painPoints: PainPointSummary[] = Array.from(painMap.entries())
-    .sort(([, a], [, b]) => b.mentions - a.mentions)
+    .sort(([, left], [, right]) => right.mentions - left.mentions)
     .slice(0, 6)
     .map(([keyword, item]) => ({
       keyword,
@@ -118,7 +133,7 @@ export function summarizeCommentSignals(comments: InsightComment[]) {
     }));
 
   const risks: RiskSummary[] = Array.from(riskMap.entries())
-    .sort(([, a], [, b]) => b.mentions - a.mentions)
+    .sort(([, left], [, right]) => right.mentions - left.mentions)
     .slice(0, 4)
     .map(([title, item]) => ({
       title,
@@ -136,7 +151,132 @@ export function summarizeCommentSignals(comments: InsightComment[]) {
   };
 }
 
-export function deriveContentRecommendations(contents: InsightContent[], commentCountByContentId: Map<string, number>) {
+function sanitizeSeed(value: string) {
+  return value
+    .replace(/[#@]/g, " ")
+    .replace(/[!！?？,，。、“”"'`~·/\\|()[\]{}<>《》]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function topicSeed(content: InsightContent) {
+  const keyword = sanitizeSeed(content.keyword ?? "");
+  if (keyword) return keyword;
+
+  const title = sanitizeSeed(content.title);
+  if (!title) return "这个话题";
+
+  if (title.length <= 12) return title;
+
+  const chunks = title
+    .split(/\s+/)
+    .filter(Boolean)
+    .flatMap((chunk) => chunk.split(/[:：-]/))
+    .map((chunk) => chunk.trim())
+    .filter(Boolean);
+
+  return chunks.find((chunk) => chunk.length >= 2 && chunk.length <= 10) ?? title.slice(0, 10);
+}
+
+function detectContentPattern(content: InsightContent) {
+  const text = `${content.title} ${content.keyword ?? ""}`;
+  if (/教程|步骤|手把手|教学|怎么|如何/.test(text)) return "tutorial";
+  if (/测评|评测|实测|对比|空瓶|回购/.test(text)) return "review";
+  if (/避雷|踩雷|翻车|千万别|雷品/.test(text)) return "warning";
+  if (/平替|替代|同款/.test(text)) return "alternative";
+  return "general";
+}
+
+function dominantPainPoint(commentTexts: string[]) {
+  const scoreByLabel = new Map<string, number>();
+  for (const text of commentTexts) {
+    const match = firstMatch(text, PAIN_POINT_RULES);
+    if (!match) continue;
+    scoreByLabel.set(match, (scoreByLabel.get(match) ?? 0) + 1);
+  }
+
+  return Array.from(scoreByLabel.entries()).sort((left, right) => right[1] - left[1])[0]?.[0] ?? null;
+}
+
+function recommendationAngles(content: InsightContent, commentTexts: string[]) {
+  const seed = topicSeed(content);
+  const painPoint = dominantPainPoint(commentTexts);
+  const pattern = detectContentPattern(content);
+
+  const titles =
+    painPoint && pattern === "tutorial"
+      ? [
+          `新手做${seed}，最容易卡在这一步`,
+          `${seed}${painPoint}一直反复，多半不是产品的问题`,
+          `${seed}想做干净，先把${painPoint}这件事解决`,
+        ]
+      : painPoint && pattern === "review"
+        ? [
+            `${seed}${painPoint}到底是手法问题还是产品问题`,
+            `${seed}实测后，最容易被忽略的是${painPoint}`,
+            `同样做${seed}，为什么别人不容易${painPoint}`,
+          ]
+        : painPoint && pattern === "warning"
+          ? [
+              `${seed}最容易翻车的，不是产品而是${painPoint}`,
+              `做${seed}一旦出现${painPoint}，先别急着换全套`,
+              `${seed}${painPoint}反复出现，问题通常不在价格`,
+            ]
+          : painPoint && pattern === "alternative"
+            ? [
+                `${seed}想找平替，先别忽略${painPoint}`,
+                `${seed}${painPoint}没解决，再便宜也很难好看`,
+                `${seed}做平替内容，最容易引发讨论的是${painPoint}`,
+              ]
+            : painPoint
+              ? [
+                  `${seed}${painPoint}到底该先改手法还是先换产品`,
+                  `新手做${seed}，最容易踩中的就是${painPoint}`,
+                  `${seed}为什么总是被说${painPoint}`,
+                ]
+              : pattern === "tutorial"
+                ? [
+                    `新手做${seed}，先改这一步就够了`,
+                    `${seed}为什么总是做不干净`,
+                    `${seed}想做得更稳，先别急着堆产品`,
+                  ]
+                : pattern === "review"
+                  ? [
+                      `${seed}值不值得跟风，先看这3个结果`,
+                      `${seed}实测后，差距最大的不是价格`,
+                      `${seed}为什么同样做法，效果差这么多`,
+                    ]
+                  : pattern === "warning"
+                    ? [
+                        `${seed}最容易翻车的，其实不是选错产品`,
+                        `${seed}一旦出现问题，先别急着怪肤质`,
+                        `${seed}最常见的踩雷点，很多人都忽略了`,
+                      ]
+                    : pattern === "alternative"
+                      ? [
+                          `${seed}想找平替，先别只看价格`,
+                          `${seed}平替内容为什么总是容易翻车`,
+                          `${seed}做平替对比，最该先讲哪一步`,
+                        ]
+                      : [
+                          `${seed}为什么总是做不好`,
+                          `新手做${seed}最容易踩的3个坑`,
+                          `${seed}到底该先改手法还是先换产品`,
+                        ];
+
+  return Array.from(new Set(titles));
+}
+
+function recommendationReason(keyword: string, comments: number, engagement: number, painPoint: string | null) {
+  const focus = painPoint ? `讨论集中在“${painPoint}”这个具体痛点` : "讨论集中在新手上手和实际效果";
+  return `${keyword}已有 ${comments} 条评论和 ${engagement.toLocaleString()} 次互动，${focus}，适合继续往问题拆解和可执行建议延展。`;
+}
+
+export function deriveContentRecommendations(
+  contents: InsightContent[],
+  commentCountByContentId: Map<string, number>,
+  commentTextsByContentId: Map<string, string[]> = new Map(),
+) {
   return contents.slice(0, 4).map((content, index) => {
     const comments = commentCountByContentId.get(content.id) ?? 0;
     const engagement = content.likeCount + content.commentCount + content.shareCount + content.collectCount;
@@ -149,15 +289,32 @@ export function deriveContentRecommendations(contents: InsightContent[], comment
           : index % 4 === 2
             ? "from-orange-100 to-amber-50"
             : "from-rose-100 to-pink-50";
+    const keyword = topicSeed(content);
+    const commentTexts = commentTextsByContentId.get(content.id) ?? [];
+    const painPoint = dominantPainPoint(commentTexts);
+    const angles = recommendationAngles(content, commentTexts);
 
     return {
-      title: content.title,
+      id: content.id,
+      title: angles[index % angles.length] ?? `${keyword}为什么总是做不好`,
       platform: content.platform,
       creator: content.authorName ?? "未知作者",
-      reason: `${content.keyword ?? "内容样本"} 已有 ${comments} 条评论和 ${engagement.toLocaleString()} 次互动，可继续做同题材扩展。`,
-      tags: [content.keyword ?? "内容样本", content.platform, content.authorName ? "达人样本" : "内容样本"],
+      keyword,
+      sampleTitle: content.title,
+      sampleContentUrl: content.contentUrl ?? undefined,
+      sampleSourceContentId: content.sourceContentId,
+      reason: recommendationReason(keyword, comments, engagement, painPoint),
+      tags: [keyword, content.platform, content.authorName ? "达人样本" : "内容样本"],
       heat: `${heat}分`,
       tone,
+      metrics: {
+        likes: content.likeCount,
+        comments: content.commentCount,
+        collects: content.collectCount,
+        shares: content.shareCount,
+      },
+      angles,
+      coverImageUrl: extractCoverImageUrl(content.rawPayload),
     };
   });
 }

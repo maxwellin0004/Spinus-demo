@@ -50,7 +50,15 @@ export async function tikhubRequest<T>(path: string, options: TikHubRequestOptio
   });
 
   const text = await response.text();
-  const payload = text ? JSON.parse(text) : null;
+  const payload = text
+    ? (() => {
+        try {
+          return JSON.parse(text);
+        } catch {
+          return text;
+        }
+      })()
+    : null;
 
   if (!response.ok) {
     throw new TikHubError(`TikHub request failed: ${response.status}`, response.status, payload);

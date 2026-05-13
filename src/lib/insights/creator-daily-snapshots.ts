@@ -1,14 +1,21 @@
 import { Prisma } from "@prisma/client";
-import { deriveContentRecommendations } from "@/lib/insights/analysis";
-import { DEFAULT_INSIGHT_DIRECTION, INSIGHT_DIRECTIONS, isInsightDirectionSlug } from "@/lib/insights/directions";
+import { deriveContentRecommendations, type RecommendationSummary } from "@/lib/insights/analysis";
+import { DEFAULT_INSIGHT_DIRECTION, INSIGHT_DIRECTIONS, getInsightDirectionTerms, isInsightDirectionSlug } from "@/lib/insights/directions";
 import { getCreatorInsightAnalysis } from "@/lib/insights/analysis-queries";
+import { rewriteRecommendationsWithAi } from "@/lib/insights/recommendation-ai";
 import { getCreatorTopTopics, getCreatorTrendSeries, getCreatorTrendsOverview } from "@/lib/insights/queries";
 import { prisma } from "@/lib/prisma";
+import { extractCoverImageUrl } from "@/lib/tikhub/mappers";
 
 function since(days: number) {
   const date = new Date();
   date.setDate(date.getDate() - days);
   return date;
+}
+
+function matchesDirectionText(text: string, terms: string[]) {
+  if (terms.length === 0) return true;
+  return terms.some((term) => text.includes(term));
 }
 
 export function creatorTrendSnapshotDate(date = new Date()) {
@@ -52,11 +59,31 @@ function topicRows(topTopics: Awaited<ReturnType<typeof getCreatorTopTopics>>) {
   });
 }
 
+function watchPool(rows: ReturnType<typeof topicRows>) {
+  return rows.slice(0, 4).map((row) => ({
+    topic: row.topic,
+    status: row.stage === "爆发中" ? "升温中" : row.stage === "谨慎追" ? "已过热" : "观察中",
+    action: row.stage === "爆发中" ? "可转草稿" : row.stage === "谨慎追" ? "暂缓" : "继续观察",
+    signal: `${row.heat} / 匹配 ${row.match}`,
+  }));
+}
+
+function draftPool(recommendations: RecommendationSummary[]) {
+  return recommendations.slice(0, 3).map((item) => ({
+    title: item.title,
+    angle: item.tags[0] ? `${item.tags[0]}切入` : "热点切入",
+    platforms: item.platform ? [platformLabel(item.platform)] : item.tags.slice(1, 3).map(platformLabel),
+    reason: item.reason,
+    status: Number.parseInt(item.heat, 10) >= 60 ? "可创作" : "待完善",
+  }));
+}
+
 function caseStudy(contents: Awaited<ReturnType<typeof prisma.insightContent.findMany>>) {
   const topCase = contents[0];
   if (!topCase) return null;
   return {
     title: topCase.title,
+    coverImageUrl: extractCoverImageUrl(topCase.rawPayload),
     likes: `${topCase.likeCount.toLocaleString()}赞`,
     stats: [topCase.likeCount, topCase.commentCount, topCase.collectCount, topCase.shareCount].map((value) => value.toLocaleString()),
     rows: [
@@ -69,40 +96,66 @@ function caseStudy(contents: Awaited<ReturnType<typeof prisma.insightContent.fin
   };
 }
 
-export async function generateCreatorTrendDailySnapshotPayload(batchCount: number) {
-  const [overview, topTopics, trendSeries, analysis, contents, comments] = await Promise.all([
-    getCreatorTrendsOverview(),
-    getCreatorTopTopics(),
-    getCreatorTrendSeries(7),
-    getCreatorInsightAnalysis(),
+export async function generateCreatorTrendDailySnapshotPayload(batchCount: number, direction: string) {
+  const terms = getInsightDirectionTerms(direction);
+  const [overview, topTopics, trendSeries, analysis, contents, comments, settings] = await Promise.all([
+    getCreatorTrendsOverview(direction),
+    getCreatorTopTopics(direction),
+    getCreatorTrendSeries(7, direction),
+    getCreatorInsightAnalysis(direction),
     prisma.insightContent.findMany({
       where: { createdAt: { gte: since(7) } },
       orderBy: [{ heatScore: "desc" }, { updatedAt: "desc" }],
-      take: Math.max(batchCount * 4, 12),
+      take: Math.max(batchCount * 8, 24),
     }),
     prisma.insightComment.findMany({
       where: { createdAt: { gte: since(7) } },
       orderBy: [{ likeCount: "desc" }, { createdAt: "desc" }],
-      take: 200,
+      take: 400,
+    }),
+    prisma.platformSettings.upsert({
+      where: { id: "platform" },
+      update: {},
+      create: { id: "platform" },
     }),
   ]);
+  const scopedContents = contents.filter((content) =>
+    matchesDirectionText(
+      `${content.title} ${content.description ?? ""} ${content.keyword ?? ""} ${JSON.stringify(content.rawPayload ?? {})}`,
+      terms,
+    ),
+  );
 
   const commentCountByContentId = new Map<string, number>();
+  const commentTextsByContentId = new Map<string, string[]>();
+  const scopedContentIds = new Set(scopedContents.map((content) => content.id));
   for (const comment of comments) {
+    if (!scopedContentIds.has(comment.contentId) && !matchesDirectionText(comment.text, terms)) continue;
     commentCountByContentId.set(comment.contentId, (commentCountByContentId.get(comment.contentId) ?? 0) + 1);
+    const texts = commentTextsByContentId.get(comment.contentId) ?? [];
+    texts.push(comment.text);
+    commentTextsByContentId.set(comment.contentId, texts);
   }
 
-  const recommendationBatches = Array.from({ length: batchCount }, (_, index) => {
-    const batchContents = cycleWindow(contents, index * 4, 4);
-    return deriveContentRecommendations(batchContents, commentCountByContentId);
-  }).filter((batch) => batch.length > 0);
+  const recommendationSourceContents = scopedContents.length > 3 ? scopedContents.slice(1) : scopedContents;
+  const recommendationBatches = await Promise.all(Array.from({ length: batchCount }, async (_, index) => {
+    const batchContents = cycleWindow(recommendationSourceContents, index * 4, 4);
+    const baseBatch = deriveContentRecommendations(batchContents, commentCountByContentId, commentTextsByContentId);
+    return rewriteRecommendationsWithAi(baseBatch, commentTextsByContentId, settings);
+  }));
+  const nonEmptyRecommendationBatches = recommendationBatches.filter((batch) => batch.length > 0);
+  const rows = topicRows(topTopics);
 
   return {
     overview: overview.trackableTopics > 0 ? overview : analysis.overview,
     trendSeries,
-    topicRows: topicRows(topTopics),
-    recommendationBatches,
-    caseStudy: caseStudy(contents),
+    topicRows: rows,
+    recommendationBatches: nonEmptyRecommendationBatches,
+    caseStudy: {
+      ...(caseStudy(scopedContents) ?? {}),
+      watchPool: watchPool(rows),
+      draftPool: draftPool(nonEmptyRecommendationBatches[0] ?? []),
+    },
   };
 }
 
@@ -141,7 +194,7 @@ export async function refreshCreatorTrendDailySnapshots(options: { now?: Date; f
 
   try {
     for (const direction of directions) {
-      const payload = await generateCreatorTrendDailySnapshotPayload(batchCount);
+      const payload = await generateCreatorTrendDailySnapshotPayload(batchCount, direction);
       await prisma.creatorTrendDailySnapshot.upsert({
         where: { date_direction: { date, direction } },
         update: {

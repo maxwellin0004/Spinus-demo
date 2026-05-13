@@ -9,6 +9,7 @@ export const INSIGHT_DIRECTIONS = [
     brandTrendLabels: ["本品牌被提及", "防晒/底妆讨论", "竞品对比内容", "痛点/卖点反馈"],
     creatorTrendLabels: ["美妆护肤", "彩妆", "成分党", "工具好物"],
     painKeywords: ["搓泥", "泛白", "持妆", "敏感肌", "成分安全", "平价替代"],
+    keywordAnchors: ["防晒", "底妆", "敏感肌", "油皮", "持妆"],
   },
   {
     slug: "mother-baby",
@@ -18,6 +19,7 @@ export const INSIGHT_DIRECTIONS = [
     brandTrendLabels: ["本品牌被提及", "适龄阶段讨论", "竞品对比内容", "安全顾虑反馈"],
     creatorTrendLabels: ["宝宝用品", "育儿经验", "安全测评", "亲子场景"],
     painKeywords: ["安全性", "适龄", "材质", "过敏", "价格", "实用性"],
+    keywordAnchors: ["纸尿裤", "奶粉", "宝宝辅食", "亲子出行"],
   },
   {
     slug: "food",
@@ -27,6 +29,7 @@ export const INSIGHT_DIRECTIONS = [
     brandTrendLabels: ["本品牌被提及", "口味/配料讨论", "竞品对比内容", "复购/价格反馈"],
     creatorTrendLabels: ["口味测评", "配料分析", "新品试吃", "健康低卡"],
     painKeywords: ["太甜", "热量", "配料表", "口感", "性价比", "复购"],
+    keywordAnchors: ["低卡零食", "配料表", "饮料测评", "早餐", "复购"],
   },
   {
     slug: "fashion",
@@ -36,6 +39,7 @@ export const INSIGHT_DIRECTIONS = [
     brandTrendLabels: ["本品牌被提及", "风格场景讨论", "竞品对比内容", "版型/质感反馈"],
     creatorTrendLabels: ["通勤穿搭", "显瘦技巧", "季节单品", "质感测评"],
     painKeywords: ["版型", "显瘦", "面料", "尺码", "色差", "性价比"],
+    keywordAnchors: ["通勤穿搭", "显瘦", "版型", "小个子穿搭", "鞋包搭配"],
   },
   {
     slug: "digital",
@@ -45,6 +49,7 @@ export const INSIGHT_DIRECTIONS = [
     brandTrendLabels: ["本品牌被提及", "参数/功能讨论", "竞品对比内容", "体验/售后反馈"],
     creatorTrendLabels: ["参数测评", "使用体验", "横向对比", "避坑指南"],
     painKeywords: ["续航", "噪音", "性能", "售后", "价格", "易用性"],
+    keywordAnchors: ["手机测评", "耳机测评", "续航", "降噪", "性价比手机"],
   },
 ] as const;
 
@@ -58,4 +63,20 @@ export function getInsightDirection(slug?: string | null) {
 
 export function isInsightDirectionSlug(value: string): value is InsightDirectionSlug {
   return INSIGHT_DIRECTIONS.some((item) => item.slug === value);
+}
+
+export function getInsightDirectionTerms(directionSlug?: string) {
+  const direction = getInsightDirection(directionSlug);
+  return Array.from(
+    new Set(
+      [
+        direction.label,
+        ...direction.chips,
+        ...direction.brandTrendLabels,
+        ...direction.creatorTrendLabels,
+        ...direction.painKeywords,
+        ...direction.keywordAnchors,
+      ].filter((item) => item && item !== "更多"),
+    ),
+  );
 }

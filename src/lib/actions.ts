@@ -49,7 +49,7 @@ import { createCrawlerJob, toCrawlerPlatform } from "@/lib/crawler";
 import { collectConfiguredKeywords } from "@/lib/insights/collector";
 import { refreshCreatorTrendDailySnapshots } from "@/lib/insights/creator-daily-snapshots";
 import { INSIGHT_DIRECTION_SLUGS } from "@/lib/insights/directions";
-import { seedDefaultInsightKeywords } from "@/lib/insights/keywords";
+import { recommendedCollectionSettings, seedDefaultInsightKeywords } from "@/lib/insights/keywords";
 import { rebuildTrendSnapshotsFromContents } from "@/lib/insights/snapshots";
 import { TIKHUB_ENDPOINTS } from "@/lib/tikhub/endpoints";
 import {
@@ -3781,6 +3781,16 @@ const platformSettingsSchema = z.object({
   creatorTrendRefreshHourUtc: z.coerce.number().int().min(0).max(23),
   creatorTrendRefreshDirections: z.array(z.enum(INSIGHT_DIRECTION_SLUGS)).min(1),
   creatorTrendRefreshBatchCount: z.coerce.number().int().min(1).max(8),
+  insightConfiguredCollectionBatchLimit: z.coerce.number().int().min(1).max(100),
+  insightZeroResultCooldownHours: z.coerce.number().int().min(1).max(72),
+  insightCommentTargetCount: z.coerce.number().int().min(0).max(10),
+  insightCommentPerContentLimit: z.coerce.number().int().min(0).max(50),
+  insightDefaultHotKeywordPerRunLimit: z.coerce.number().int().min(1).max(50),
+  insightDefaultStandardPerRunLimit: z.coerce.number().int().min(1).max(50),
+  insightDefaultHotKeywordIntervalHours: z.coerce.number().int().min(1).max(168),
+  insightDefaultStandardIntervalHours: z.coerce.number().int().min(1).max(720),
+  insightAiEnabled: z.boolean(),
+  insightAiSystemPrompt: z.string().min(20).max(4000),
 });
 
 export async function updatePlatformSettingsAction(formData: FormData) {
@@ -3804,6 +3814,16 @@ export async function updatePlatformSettingsAction(formData: FormData) {
     creatorTrendRefreshHourUtc: text(formData.get("creatorTrendRefreshHourUtc")),
     creatorTrendRefreshDirections: formData.getAll("creatorTrendRefreshDirections").map((value) => text(value)),
     creatorTrendRefreshBatchCount: text(formData.get("creatorTrendRefreshBatchCount")),
+    insightConfiguredCollectionBatchLimit: text(formData.get("insightConfiguredCollectionBatchLimit")),
+    insightZeroResultCooldownHours: text(formData.get("insightZeroResultCooldownHours")),
+    insightCommentTargetCount: text(formData.get("insightCommentTargetCount")),
+    insightCommentPerContentLimit: text(formData.get("insightCommentPerContentLimit")),
+    insightDefaultHotKeywordPerRunLimit: text(formData.get("insightDefaultHotKeywordPerRunLimit")),
+    insightDefaultStandardPerRunLimit: text(formData.get("insightDefaultStandardPerRunLimit")),
+    insightDefaultHotKeywordIntervalHours: text(formData.get("insightDefaultHotKeywordIntervalHours")),
+    insightDefaultStandardIntervalHours: text(formData.get("insightDefaultStandardIntervalHours")),
+    insightAiEnabled: formData.get("insightAiEnabled") === "on",
+    insightAiSystemPrompt: text(formData.get("insightAiSystemPrompt")),
   });
   if (!parsed.success) redirect(`/admin/settings?error=${encodeURIComponent("配置项校验失败")}`);
 
@@ -3823,6 +3843,16 @@ export async function updatePlatformSettingsAction(formData: FormData) {
       creatorTrendRefreshHourUtc: parsed.data.creatorTrendRefreshHourUtc,
       creatorTrendRefreshDirections: parsed.data.creatorTrendRefreshDirections,
       creatorTrendRefreshBatchCount: parsed.data.creatorTrendRefreshBatchCount,
+      insightConfiguredCollectionBatchLimit: parsed.data.insightConfiguredCollectionBatchLimit,
+      insightZeroResultCooldownHours: parsed.data.insightZeroResultCooldownHours,
+      insightCommentTargetCount: parsed.data.insightCommentTargetCount,
+      insightCommentPerContentLimit: parsed.data.insightCommentPerContentLimit,
+      insightDefaultHotKeywordPerRunLimit: parsed.data.insightDefaultHotKeywordPerRunLimit,
+      insightDefaultStandardPerRunLimit: parsed.data.insightDefaultStandardPerRunLimit,
+      insightDefaultHotKeywordIntervalHours: parsed.data.insightDefaultHotKeywordIntervalHours,
+      insightDefaultStandardIntervalHours: parsed.data.insightDefaultStandardIntervalHours,
+      insightAiEnabled: parsed.data.insightAiEnabled,
+      insightAiSystemPrompt: parsed.data.insightAiSystemPrompt,
     },
   });
   await audit({
@@ -3843,6 +3873,16 @@ export async function updatePlatformSettingsAction(formData: FormData) {
       creatorTrendRefreshHourUtc: before.creatorTrendRefreshHourUtc,
       creatorTrendRefreshDirections: before.creatorTrendRefreshDirections,
       creatorTrendRefreshBatchCount: before.creatorTrendRefreshBatchCount,
+      insightConfiguredCollectionBatchLimit: before.insightConfiguredCollectionBatchLimit,
+      insightZeroResultCooldownHours: before.insightZeroResultCooldownHours,
+      insightCommentTargetCount: before.insightCommentTargetCount,
+      insightCommentPerContentLimit: before.insightCommentPerContentLimit,
+      insightDefaultHotKeywordPerRunLimit: before.insightDefaultHotKeywordPerRunLimit,
+      insightDefaultStandardPerRunLimit: before.insightDefaultStandardPerRunLimit,
+      insightDefaultHotKeywordIntervalHours: before.insightDefaultHotKeywordIntervalHours,
+      insightDefaultStandardIntervalHours: before.insightDefaultStandardIntervalHours,
+      insightAiEnabled: before.insightAiEnabled,
+      insightAiSystemPrompt: before.insightAiSystemPrompt,
     },
     afterJson: {
       acceptanceSlaDays: settings.acceptanceSlaDays,
@@ -3858,10 +3898,59 @@ export async function updatePlatformSettingsAction(formData: FormData) {
       creatorTrendRefreshHourUtc: settings.creatorTrendRefreshHourUtc,
       creatorTrendRefreshDirections: settings.creatorTrendRefreshDirections,
       creatorTrendRefreshBatchCount: settings.creatorTrendRefreshBatchCount,
+      insightConfiguredCollectionBatchLimit: settings.insightConfiguredCollectionBatchLimit,
+      insightZeroResultCooldownHours: settings.insightZeroResultCooldownHours,
+      insightCommentTargetCount: settings.insightCommentTargetCount,
+      insightCommentPerContentLimit: settings.insightCommentPerContentLimit,
+      insightDefaultHotKeywordPerRunLimit: settings.insightDefaultHotKeywordPerRunLimit,
+      insightDefaultStandardPerRunLimit: settings.insightDefaultStandardPerRunLimit,
+      insightDefaultHotKeywordIntervalHours: settings.insightDefaultHotKeywordIntervalHours,
+      insightDefaultStandardIntervalHours: settings.insightDefaultStandardIntervalHours,
+      insightAiEnabled: settings.insightAiEnabled,
+      insightAiSystemPrompt: settings.insightAiSystemPrompt,
     },
   });
   revalidatePath("/admin/settings");
   revalidatePath("/brand/campaigns/new");
+}
+
+export async function applyInsightCollectionDefaultsAction() {
+  await requireAdminPermission("compliance.manage");
+  const settings = await prisma.platformSettings.upsert({
+    where: { id: "platform" },
+    update: {},
+    create: { id: "platform" },
+  });
+
+  const configs = await prisma.insightKeywordConfig.findMany();
+  let updatedCount = 0;
+  for (const config of configs) {
+    const recommended = recommendedCollectionSettings(config.keywordType, settings);
+    await prisma.insightKeywordConfig.update({
+      where: { id: config.id },
+      data: {
+        perRunLimit: recommended.perRunLimit,
+        collectIntervalHours: recommended.collectIntervalHours,
+      },
+    });
+    updatedCount += 1;
+  }
+
+  await audit({
+    action: "insights.keyword_defaults_applied",
+    entityType: "insight_keyword_config",
+    entityId: "configured",
+    afterJson: {
+      updatedCount,
+      hotKeywordPerRunLimit: settings.insightDefaultHotKeywordPerRunLimit,
+      standardPerRunLimit: settings.insightDefaultStandardPerRunLimit,
+      hotKeywordIntervalHours: settings.insightDefaultHotKeywordIntervalHours,
+      standardIntervalHours: settings.insightDefaultStandardIntervalHours,
+    },
+  });
+  revalidatePath("/admin/settings");
+  revalidatePath("/admin/insights");
+  redirect(`/admin/settings?insightDefaults=${updatedCount}`);
 }
 
 export async function runCreatorTrendRefreshAction() {
@@ -4366,7 +4455,7 @@ export async function seedInsightKeywordsAction() {
 
 export async function collectConfiguredInsightKeywordsAction(formData: FormData) {
   await requireAdminPermission("compliance.manage");
-  const limit = Math.max(1, Math.min(Number(text(formData.get("limit")) || 5), 20));
+  const limit = Math.max(1, Math.min(Number(text(formData.get("limit")) || 5), 100));
   const result = await collectConfiguredKeywords(limit);
   await audit({
     action: "insights.configured_keywords_collected",

@@ -970,24 +970,37 @@ model Dispute {
 }
 
 model PlatformSettings {
-  id                            String    @id @default("platform")
-  acceptanceSlaDays             Int       @default(3)
-  highValueReviewThreshold      Decimal   @default(50) @db.Decimal(12, 2)
-  resubmissionGraceDays         Int       @default(2)
-  minimumWithdrawalAmount       Decimal   @default(20) @db.Decimal(12, 2)
-  kolPreviewMaxMb               Int       @default(50)
-  platformFeeRate               Decimal   @default(0) @db.Decimal(6, 4)
-  platformContactEmail          String    @default("support@example.com")
-  riskIndustryKeywords          String[]  @default(["金融", "医疗", "医美", "保健", "投资", "教育", "减肥", "母婴"])
-  riskIndustryPrompt            String    @default("该行业容易涉及效果承诺、资质证明或监管要求。请确认 brief 不包含夸大承诺，并准备必要资质。")
-  creatorTrendRefreshEnabled    Boolean   @default(true)
-  creatorTrendRefreshHourUtc    Int       @default(19)
-  creatorTrendRefreshDirections String[]  @default(["beauty"])
-  creatorTrendRefreshBatchCount Int       @default(3)
-  creatorTrendRefreshLastRunAt  DateTime?
-  creatorTrendRefreshLastStatus String?
-  creatorTrendRefreshLastError  String?
-  updatedAt                     DateTime  @updatedAt
+  id                                    String    @id @default("platform")
+  acceptanceSlaDays                     Int       @default(3)
+  highValueReviewThreshold              Decimal   @default(50) @db.Decimal(12, 2)
+  resubmissionGraceDays                 Int       @default(2)
+  minimumWithdrawalAmount               Decimal   @default(20) @db.Decimal(12, 2)
+  kolPreviewMaxMb                       Int       @default(50)
+  platformFeeRate                       Decimal   @default(0) @db.Decimal(6, 4)
+  platformContactEmail                  String    @default("support@example.com")
+  riskIndustryKeywords                  String[]  @default(["金融", "医疗", "医美", "保健", "投资", "教育", "减肥", "母婴"])
+  riskIndustryPrompt                    String    @default("该行业容易涉及效果承诺、资质证明或监管要求。请确认 brief 不包含夸大承诺，并准备必要资质。")
+  creatorTrendRefreshEnabled            Boolean   @default(true)
+  creatorTrendRefreshHourUtc            Int       @default(19)
+  creatorTrendRefreshDirections         String[]  @default(["beauty"])
+  creatorTrendRefreshBatchCount         Int       @default(3)
+  creatorTrendRefreshLastRunAt          DateTime?
+  creatorTrendRefreshLastStatus         String?
+  creatorTrendRefreshLastError          String?
+  insightConfiguredCollectionBatchLimit Int       @default(10)
+  insightZeroResultCooldownHours        Int       @default(2)
+  insightCommentTargetCount             Int       @default(3)
+  insightCommentPerContentLimit         Int       @default(8)
+  insightDefaultHotKeywordPerRunLimit   Int       @default(12)
+  insightDefaultStandardPerRunLimit     Int       @default(6)
+  insightDefaultHotKeywordIntervalHours Int       @default(6)
+  insightDefaultStandardIntervalHours   Int       @default(24)
+  insightAiEnabled                      Boolean   @default(false)
+  insightAiBaseUrl                      String?
+  insightAiApiKey                       String?
+  insightAiModel                        String    @default("chatgpt-4o-latest")
+  insightAiSystemPrompt                 String    @default("你是中文短视频选题策划。基于真实帖子样本、互动数据和评论痛点，把候选选题改写成更具体、可创作、可执行的中文标题。返回严格 JSON：{\"items\":[{\"sampleSourceContentId\":\"string\",\"title\":\"string\",\"reason\":\"string\",\"angles\":[\"string\",\"string\",\"string\"]}]}。标题要求避免空泛词，优先写成问题型、避坑型、对比型或新手痛点型，不要直接照抄原帖标题。")
+  updatedAt                             DateTime  @updatedAt
 }
 
 model CreatorTrendDailySnapshot {

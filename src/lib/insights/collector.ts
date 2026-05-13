@@ -4,7 +4,7 @@ import { analyzeCommentText } from "@/lib/insights/analysis";
 import { endpointFromConfig, getDueInsightKeywordConfigs } from "@/lib/insights/keywords";
 import { normalizeScore, trendStage } from "@/lib/insights/scoring";
 import { upsertKeywordTrendSnapshot } from "@/lib/insights/snapshots";
-import { hasTikHubConfig, tikhubRequest } from "@/lib/tikhub/client";
+import { TikHubError, hasTikHubConfig, tikhubRequest } from "@/lib/tikhub/client";
 import { TIKHUB_ENDPOINTS, type TikHubEndpointKey } from "@/lib/tikhub/endpoints";
 import { mapComments, mapHotTopics, mapSearchContents } from "@/lib/tikhub/mappers";
 
@@ -26,6 +26,10 @@ type CollectKeywordBatchInput = {
   keywords: string[];
   limit?: number;
 };
+
+function normalizedText(value: string) {
+  return value.trim().toLowerCase().replace(/\s+/g, "");
+}
 
 function startOfDay(date = new Date()) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -109,8 +113,21 @@ export async function collectHotTopics(input: CollectHotTopicsInput) {
       throw new Error("TIKHUB_API_KEY is not configured.");
     }
 
-    const payload = await tikhubRequest<unknown>(TIKHUB_ENDPOINTS[input.endpoint]);
-    const mapped = mapHotTopics(payload, input.platform);
+    const requestOptions = input.endpoint === "xiaohongshuCreatorHotInspiration" ? { query: { cursor: "" } } : undefined;
+    const payload = await (async () => {
+      try {
+        return await tikhubRequest<unknown>(TIKHUB_ENDPOINTS[input.endpoint], requestOptions);
+      } catch (error) {
+        const canFallback = input.endpoint === "xiaohongshuTrending" && error instanceof TikHubError && error.status === 400;
+        if (!canFallback) throw error;
+        // Some TikHub accounts cannot access `web_v3/fetch_trending`; fallback to `web_v2/fetch_hot_list`.
+        return tikhubRequest<unknown>(TIKHUB_ENDPOINTS.xiaohongshuHotList);
+      }
+    })();
+    const mapped = mapHotTopics(payload, input.platform).map((item, index, rows) => ({
+      ...item,
+      heatValue: item.heatValue > 0 ? item.heatValue : Math.max(1, rows.length - index),
+    }));
     const maxHeat = Math.max(...mapped.map((item) => item.heatValue), 0);
     const today = startOfDay();
 
@@ -177,29 +194,59 @@ export async function collectSearchContents(input: CollectSearchInput) {
     if (!hasTikHubConfig()) {
       throw new Error("TIKHUB_API_KEY is not configured.");
     }
+    const settings = await prisma.platformSettings.upsert({
+      where: { id: "platform" },
+      update: {},
+      create: { id: "platform" },
+    });
 
-    const query =
+    const requestOptions =
       input.endpoint === "xiaohongshuSearchNotes"
         ? {
-            keyword: input.keyword,
-            page: 1,
-            sort_type: "general",
-            note_type: 0,
-            time_filter: 0,
-            search_id: "",
-            search_session_id: "",
-            source: "explore_feed",
-            ai_mode: 0,
+            query: {
+              keyword: input.keyword,
+              page: 1,
+              sort_type: "general",
+              note_type: "不限",
+              time_filter: "不限",
+              search_id: "",
+              search_session_id: "",
+              source: "explore_feed",
+              ai_mode: 0,
+            },
           }
         : {
-            keyword: input.keyword,
-            keywords: input.keyword,
-            query: input.keyword,
-            page: 1,
-            count: input.limit ?? 20,
+            body: {
+              keyword: input.keyword,
+              cursor: 0,
+              sort_type: "0",
+              publish_time: "0",
+              filter_duration: "0",
+              content_type: "0",
+              search_id: "",
+              backtrace: "",
+            },
           };
-    const payload = await tikhubRequest<unknown>(TIKHUB_ENDPOINTS[input.endpoint], { query });
-    const mapped = mapSearchContents(payload, input.platform).slice(0, input.limit ?? 20);
+    let mapped = [] as ReturnType<typeof mapSearchContents>;
+    try {
+      const payload = await tikhubRequest<unknown>(TIKHUB_ENDPOINTS[input.endpoint], requestOptions);
+      mapped = mapSearchContents(payload, input.platform).slice(0, input.limit ?? 20);
+    } catch (error) {
+      const allowFallback =
+        input.platform === "xiaohongshu" &&
+        input.endpoint === "xiaohongshuSearchNotes" &&
+        (error instanceof TikHubError ? [400, 422].includes(error.status) : true);
+      if (!allowFallback) throw error;
+
+      // Fallback: creator inspiration feed still returns usable note-like payloads.
+      const fallbackPayload = await tikhubRequest<unknown>(TIKHUB_ENDPOINTS.xiaohongshuCreatorHotInspiration, {
+        query: { cursor: "" },
+      });
+      const fallbackMapped = mapSearchContents(fallbackPayload, input.platform);
+      const keywordText = normalizedText(input.keyword);
+      const strictMatches = fallbackMapped.filter((item) => normalizedText(`${item.title} ${item.description ?? ""}`).includes(keywordText));
+      mapped = (strictMatches.length > 0 ? strictMatches : fallbackMapped).slice(0, input.limit ?? 20);
+    }
 
     for (const item of mapped) {
       await prisma.insightContent.upsert({
@@ -245,9 +292,9 @@ export async function collectSearchContents(input: CollectSearchInput) {
         },
       });
     }
-    const commentTargets = mapped.slice(0, 3);
+    const commentTargets = mapped.slice(0, Math.max(0, settings.insightCommentTargetCount));
     for (const item of commentTargets) {
-      await collectCommentsForContent(item.sourceContentId, input.platform, 8);
+      await collectCommentsForContent(item.sourceContentId, input.platform, settings.insightCommentPerContentLimit);
     }
     await upsertKeywordTrendSnapshot({ platform: input.platform, keyword: input.keyword });
 
@@ -289,21 +336,56 @@ export async function collectKeywordBatch(input: CollectKeywordBatchInput) {
 }
 
 export async function collectConfiguredKeywords(limit = 20) {
-  const configs = await getDueInsightKeywordConfigs(limit);
-  const results = [];
+  const settings = await prisma.platformSettings.upsert({
+    where: { id: "platform" },
+    update: {},
+    create: { id: "platform" },
+  });
+  const batchLimit = Math.max(1, Math.min(limit, settings.insightConfiguredCollectionBatchLimit));
+  const configs = await getDueInsightKeywordConfigs(batchLimit);
+  const results: Array<{
+    configId: string;
+    keyword: string;
+    keywordType: string;
+    runId?: string;
+    resultCount: number;
+    error?: string;
+  }> = [];
 
   for (const config of configs) {
-    const result = await collectSearchContents({
-      endpoint: endpointFromConfig(config.endpoint),
-      platform: config.platform,
-      keyword: config.keyword,
-      limit: config.perRunLimit,
-    });
-    await prisma.insightKeywordConfig.update({
-      where: { id: config.id },
-      data: { lastCollectedAt: new Date() },
-    });
-    results.push({ configId: config.id, keyword: config.keyword, keywordType: config.keywordType, ...result });
+    const now = new Date();
+    try {
+      const result = await collectSearchContents({
+        endpoint: endpointFromConfig(config.endpoint),
+        platform: config.platform,
+        keyword: config.keyword,
+        limit: config.perRunLimit,
+      });
+      const retryDelayHours =
+        result.resultCount > 0 ? config.collectIntervalHours : Math.min(config.collectIntervalHours, settings.insightZeroResultCooldownHours);
+      // Backdate zero-result runs so the scheduler retries sooner without changing the config's steady-state interval.
+      const effectiveLastCollectedAt = new Date(now.getTime() - Math.max(0, config.collectIntervalHours - retryDelayHours) * 60 * 60 * 1000);
+      await prisma.insightKeywordConfig.update({
+        where: { id: config.id },
+        data: { lastCollectedAt: effectiveLastCollectedAt },
+      });
+      results.push({ configId: config.id, keyword: config.keyword, keywordType: config.keywordType, ...result });
+    } catch (error) {
+      // On failures, schedule a quicker retry.
+      const retryDelayHours = Math.min(config.collectIntervalHours, settings.insightZeroResultCooldownHours);
+      const effectiveLastCollectedAt = new Date(now.getTime() - Math.max(0, config.collectIntervalHours - retryDelayHours) * 60 * 60 * 1000);
+      await prisma.insightKeywordConfig.update({
+        where: { id: config.id },
+        data: { lastCollectedAt: effectiveLastCollectedAt },
+      });
+      results.push({
+        configId: config.id,
+        keyword: config.keyword,
+        keywordType: config.keywordType,
+        resultCount: 0,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
   }
 
   return {
