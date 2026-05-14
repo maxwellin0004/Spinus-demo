@@ -340,6 +340,7 @@ async function loadCreatorTrendDetailData(filters: CreatorTrendDetailFilters): P
     return platformMatches && keywordMatches;
   });
   const scopedTopContents = filteredTopContents.length > 0 ? filteredTopContents : topContents;
+  const scopedTopContentsWithCover = scopedTopContents.filter((content) => Boolean(extractCoverImageUrl(content.rawPayload)));
   const liveComments = scopedTopContents.length
     ? await prisma.insightComment.findMany({
         where: { contentId: { in: scopedTopContents.map((content) => content.id) } },
@@ -349,7 +350,8 @@ async function loadCreatorTrendDetailData(filters: CreatorTrendDetailFilters): P
       })
     : [];
 
-  const liveRecommendationSourceSeed = scopedTopContents.length > 3 ? scopedTopContents.slice(1) : scopedTopContents;
+  const recommendationSourceBase = scopedTopContentsWithCover.length >= 4 ? scopedTopContentsWithCover : scopedTopContents;
+  const liveRecommendationSourceSeed = recommendationSourceBase.length > 3 ? recommendationSourceBase.slice(1) : recommendationSourceBase;
   const liveRecommendationSource = liveRecommendationSourceSeed.slice(0, LIVE_RECOMMENDATION_SOURCE_LIMIT);
   const liveCommentCountMap = new Map(liveRecommendationSource.map((content) => [content.id, content.commentCount]));
   const liveCommentTextsByContentId = new Map<string, string[]>();
@@ -381,7 +383,7 @@ async function loadCreatorTrendDetailData(filters: CreatorTrendDetailFilters): P
       ? snapshotRecommendationBatches
       : [getDirectionFallbackRecommendations(direction)];
 
-  const topCase = scopedTopContents[0];
+  const topCase = scopedTopContentsWithCover[0] ?? scopedTopContents[0];
   const excludedRecommendationTitle = topCase?.title ?? snapshotCaseStudy?.title;
   const recommendationBatches = rawRecommendationBatches
     .map((batch) => {

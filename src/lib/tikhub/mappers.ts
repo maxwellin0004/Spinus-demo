@@ -146,15 +146,20 @@ function textFromRecord(record: JsonRecord, keys: string[]) {
   return firstString(record, keys) ?? "";
 }
 
-function isHttpUrl(value: string) {
-  return /^https?:\/\//i.test(value);
+function normalizeImageUrl(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  if (/^\/\//.test(trimmed)) return `https:${trimmed}`;
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return "";
 }
 
 function extractImageUrlFromValue(value: unknown, depth = 0, hinted = false): string | undefined {
-  if (depth > 4 || value == null) return undefined;
+  if (depth > 10 || value == null) return undefined;
   if (typeof value === "string") {
-    const trimmed = value.trim();
-    return hinted && isHttpUrl(trimmed) ? trimmed : undefined;
+    if (!hinted) return undefined;
+    const normalized = normalizeImageUrl(value);
+    return normalized || undefined;
   }
   if (Array.isArray(value)) {
     for (const item of value) {
@@ -171,18 +176,35 @@ function extractImageUrlFromValue(value: unknown, depth = 0, hinted = false): st
     "url_pre",
     "urlDefault",
     "urlPre",
+    "url_list",
+    "urlList",
     "origin_image_url",
     "originImageUrl",
+    "origin_cover",
+    "originCover",
+    "dynamic_cover",
+    "dynamicCover",
     "image_url",
     "imageUrl",
     "thumbnail_url",
     "thumbnailUrl",
     "cover_image_url",
     "coverImageUrl",
+    "cover_url",
+    "coverUrl",
+    "src",
     "url",
   ]) {
     const candidate = record[key];
-    if (typeof candidate === "string" && isHttpUrl(candidate)) return candidate;
+    if (typeof candidate === "string") {
+      const normalized = normalizeImageUrl(candidate);
+      if (normalized) return normalized;
+      continue;
+    }
+    if (Array.isArray(candidate)) {
+      const matched = extractImageUrlFromValue(candidate, depth + 1, true);
+      if (matched) return matched;
+    }
   }
 
   for (const [key, nested] of Object.entries(record)) {
