@@ -239,6 +239,7 @@ function statusTone(value: ReactNode) {
   if (
     hasAnyStatus(text, [
       "PENDING",
+      "PARTIAL",
       "AWAITING",
       "REQUESTED",
       "NOT_SUBMITTED",
@@ -302,6 +303,7 @@ function statusTone(value: ReactNode) {
   }
   if (
     text.includes("PENDING") ||
+    text.includes("PARTIAL") ||
     text.includes("APPLIED") ||
     text.includes("SUBMITTED") ||
     text.includes("AWAITING") ||

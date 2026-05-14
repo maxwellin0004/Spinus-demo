@@ -26,6 +26,7 @@ const statusLabels: Record<string, string> = {
   NEW: "新手",
   OPEN: "待付款",
   PAID: "已付款",
+  PARTIAL: "部分成功",
   PAYMENT: "付款",
   PAYMENT_SUBMITTED: "付款待确认",
   PENDING: "待处理",

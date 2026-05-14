@@ -30,6 +30,7 @@ const endpointLabels: Record<keyof typeof TIKHUB_ENDPOINTS, string> = {
   xiaohongshuHotList: "小红书热榜",
   xiaohongshuTrending: "小红书热搜词",
   xiaohongshuSearchNotes: "小红书笔记搜索",
+  xiaohongshuSearchNotesApp: "小红书笔记搜索(App)",
   xiaohongshuSearchSuggest: "小红书搜索联想词",
   xiaohongshuCreatorHotInspiration: "小红书创作者热点灵感",
   xiaohongshuNoteComments: "小红书评论",

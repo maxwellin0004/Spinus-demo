@@ -1042,6 +1042,8 @@ model InsightTopic {
   @@index([topic, date])
   @@index([source, date])
   @@index([heatScore])
+  @@index([date, heatScore])
+  @@index([date, updatedAt])
 }
 
 model InsightContent {
@@ -1070,9 +1072,14 @@ model InsightContent {
 
   @@unique([platform, sourceContentId])
   @@index([platform, keyword])
+  @@index([keyword, createdAt])
   @@index([topicId])
   @@index([heatScore])
   @@index([publishTime])
+  @@index([createdAt])
+  @@index([platform, createdAt])
+  @@index([createdAt, heatScore])
+  @@index([createdAt, updatedAt])
 }
 
 model InsightComment {
@@ -1091,8 +1098,11 @@ model InsightComment {
 
   @@unique([platform, sourceCommentId, contentId])
   @@index([contentId])
+  @@index([contentId, createdAt])
+  @@index([contentId, likeCount])
   @@index([sentiment])
   @@index([painPoint])
+  @@index([createdAt])
 }
 
 model InsightTrendSnapshot {
@@ -1116,6 +1126,8 @@ model InsightTrendSnapshot {
 
   @@unique([source, platform, keyword, date])
   @@index([platform, keyword, date])
+  @@index([keyword, date])
+  @@index([platform, date, heatScore])
   @@index([date])
   @@index([heatScore])
 }

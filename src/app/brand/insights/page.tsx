@@ -1,13 +1,23 @@
 import { UserRole } from "@prisma/client";
 import Link from "next/link";
-import { AlertTriangle, BarChart3, CalendarDays, ChevronDown, FileText, Gem, HeartPulse, Megaphone, Search, ShieldAlert, Sparkles, TrendingUp, UsersRound } from "lucide-react";
+import { AlertTriangle, CalendarDays, FileText, Gem, HeartPulse, Megaphone, Search, ShieldAlert, Sparkles, TrendingUp, UsersRound } from "lucide-react";
 import { BrandInsightChart, type BrandInsightPoint } from "@/components/brand-insight-chart";
 import { requireRole } from "@/lib/auth";
 import { getBrandInsightAnalysis } from "@/lib/insights/analysis-queries";
-import { getInsightDirection } from "@/lib/insights/directions";
-import { getBrandCompetitors, getKeywordTrendSeries } from "@/lib/insights/queries";
+import { DEFAULT_INSIGHT_DIRECTION, INSIGHT_DIRECTIONS, getInsightDirection } from "@/lib/insights/directions";
+import { getBrandCompetitors, getBrandInsightsOverview, getBrandRecentContents, getKeywordTrendSeries } from "@/lib/insights/queries";
 import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";
+
+type SourceKind = "真实采集" | "规则计算" | "示例兜底";
+type BrandPlatform = "all" | "xiaohongshu" | "douyin" | "weibo" | "bilibili";
+type BrandRange = "7d" | "30d" | "90d";
+type BrandInsightFilters = {
+  range: BrandRange;
+  platform: BrandPlatform;
+  direction: string;
+  keyword: string;
+};
 
 type CompetitorRow = {
   rank: number;
@@ -26,7 +36,21 @@ type PainPoint = {
   sample: string;
 };
 
-const trendData: BrandInsightPoint[] = [
+const brandRangeFilters = [
+  { label: "近7天", value: "7d" as const, days: 7 },
+  { label: "近30天", value: "30d" as const, days: 30 },
+  { label: "近90天", value: "90d" as const, days: 90 },
+];
+
+const brandPlatformFilters = [
+  { label: "全部平台", value: "all" as const },
+  { label: "小红书", value: "xiaohongshu" as const },
+  { label: "抖音", value: "douyin" as const },
+  { label: "微博", value: "weibo" as const },
+  { label: "B站", value: "bilibili" as const },
+];
+
+const trendDataFallback: BrandInsightPoint[] = [
   { date: "05-17", brand: 28, category: 52, competitor: 38, sellingPoint: 18 },
   { date: "05-18", brand: 34, category: 58, competitor: 42, sellingPoint: 23 },
   { date: "05-19", brand: 41, category: 65, competitor: 49, sellingPoint: 28 },
@@ -37,23 +61,16 @@ const trendData: BrandInsightPoint[] = [
   { date: "05-24", brand: 72, category: 89, competitor: 74, sellingPoint: 58 },
 ];
 
-const metricCards = [
-  { label: "品牌声量", value: "128.6万", sub: "近30天", delta: "+采集", icon: Megaphone, color: "from-teal-500 to-emerald-600", line: "teal" },
-  { label: "互动总量", value: "42.3万", sub: "近30天", delta: "+真实", icon: HeartPulse, color: "from-blue-500 to-sky-500", line: "blue" },
-  { label: "正面情绪", value: "68.7%", sub: "评论样本", delta: "+计算", icon: Gem, color: "from-amber-400 to-orange-500", line: "amber" },
-  { label: "负面预警", value: "5", sub: "风险样本", delta: "+监控", icon: ShieldAlert, color: "from-red-500 to-rose-500", line: "red" },
-];
-
 const fallbackCompetitors: CompetitorRow[] = [
-  { rank: 1, name: "完美日记 Perfect Diary", voice: "86.5万", growth: "+32.1%", sentiment: "71%", dominantTopic: "底妆测评", platforms: ["小红书", "抖音", "B站"] },
-  { rank: 2, name: "花西子 Florasis", voice: "72.4万", growth: "+18.7%", sentiment: "64%", dominantTopic: "国风妆容", platforms: ["小红书", "抖音"] },
-  { rank: 3, name: "橘朵 Judydoll", voice: "58.1万", growth: "+14.5%", sentiment: "69%", dominantTopic: "平价彩妆", platforms: ["小红书", "B站"] },
-  { rank: 4, name: "珂拉琪 Colorkey", voice: "36.7万", growth: "+9.2%", sentiment: "62%", dominantTopic: "唇釉色号", platforms: ["小红书", "视频号"] },
+  { rank: 1, name: "完美日记", voice: "86.5万", growth: "+32.1%", sentiment: "71%", dominantTopic: "底妆测评", platforms: ["小红书", "抖音", "B站"] },
+  { rank: 2, name: "花西子", voice: "72.4万", growth: "+18.7%", sentiment: "64%", dominantTopic: "国风妆容", platforms: ["小红书", "抖音"] },
+  { rank: 3, name: "橘朵", voice: "58.1万", growth: "+14.5%", sentiment: "69%", dominantTopic: "平价彩妆", platforms: ["小红书", "B站"] },
+  { rank: 4, name: "珂拉琪", voice: "36.7万", growth: "+9.2%", sentiment: "62%", dominantTopic: "唇釉色号", platforms: ["小红书", "抖音"] },
 ];
 
 const fallbackPainPoints: PainPoint[] = [
   { keyword: "搓泥", mentions: "2,451", sentiment: "负面", sample: "叠加防晒和底妆后容易起屑，是评论区最高频顾虑。" },
-  { keyword: "泛白", mentions: "1,936", sentiment: "负面", sample: "黄皮用户反馈明显，适合做肤色实测内容。" },
+  { keyword: "泛白", mentions: "1,936", sentiment: "负面", sample: "黄皮用户反馈明显，适合做不同肤色实测内容。" },
   { keyword: "持妆", mentions: "1,728", sentiment: "正面", sample: "通勤和夏季场景下讨论增长，可作为投放主卖点。" },
   { keyword: "成分安全", mentions: "1,382", sentiment: "中性", sample: "敏感肌用户会主动追问成分和适用人群。" },
 ];
@@ -66,11 +83,12 @@ const fallbackOpportunities = [
 
 const fallbackAlerts = [
   { level: "高", title: "泛白负面词上升", detail: "近 24 小时提及增长 42%，集中在防晒和底妆叠加场景。" },
-  { level: "中", title: "竞品底妆测评爆发", detail: "完美日记相关内容连续 3 天进入高互动样本池。" },
+  { level: "中", title: "竞品底妆测评爆发", detail: "竞品相关内容连续 3 天进入高互动样本池。" },
   { level: "低", title: "学生党价格讨论增加", detail: "价格敏感内容有长尾机会，可考虑低门槛套组。" },
 ];
 
-const keywordBubbles = ["防晒", "通勤", "敏感肌", "不卡粉", "泛白", "持妆", "油皮", "成分安全", "平价替代", "学生党", "新品", "包装设计"];
+const fallbackKeywords = ["防晒", "通勤", "敏感肌", "不拔干", "泛白", "持妆", "油皮", "成分安全", "平价替代", "学生党", "新品", "包装设计"];
+
 const navItems = [
   { label: "总览", href: "#overview" },
   { label: "关键词趋势", href: "#keyword-trend" },
@@ -79,28 +97,48 @@ const navItems = [
   { label: "投放机会", href: "#opportunities" },
   { label: "报告中心", href: "/brand/campaigns" },
 ];
-const fallbackChips = ["美妆个护", "防晒", "底妆", "敏感肌", "学生党", "更多"];
-const cardClass = "rounded-2xl border border-slate-200 bg-white shadow-sm";
-type SourceKind = "真实采集" | "规则计算" | "示例兜底";
 
-function MiniSparkline({ color }: { color: string }) {
-  const stroke = color === "teal" ? "#0f9488" : color === "blue" ? "#2563eb" : color === "amber" ? "#f59e0b" : "#ef4444";
-  return (
-    <svg aria-hidden className="h-12 w-full" viewBox="0 0 144 48">
-      <path d="M3 34 C16 30 18 20 30 25 C43 30 43 12 56 16 C69 20 72 33 84 21 C97 9 101 27 113 18 C126 10 130 14 140 8" fill="none" stroke={stroke} strokeLinecap="round" strokeWidth="2.6" />
-    </svg>
-  );
+const cardClass = "rounded-2xl border border-slate-200 bg-white shadow-sm";
+
+function normalizeBrandPlatform(value: string | undefined): BrandPlatform {
+  return brandPlatformFilters.some((item) => item.value === value) ? (value as BrandPlatform) : "all";
 }
 
-function PlatformBadge({ label }: { label: string }) {
-  const map: Record<string, string> = {
-    小红书: "bg-red-500 text-white",
-    抖音: "bg-stone-950 text-white",
-    B站: "bg-pink-500 text-white",
-    视频号: "bg-orange-400 text-white",
-    微博: "bg-amber-400 text-white",
-  };
-  return <span className={cn("inline-flex h-6 min-w-6 items-center justify-center rounded-md px-1.5 text-[0.62rem] font-black", map[label] ?? "bg-slate-100 text-slate-700")}>{label.slice(0, 2)}</span>;
+function normalizeBrandRange(value: string | undefined): BrandRange {
+  return brandRangeFilters.some((item) => item.value === value) ? (value as BrandRange) : "30d";
+}
+
+function normalizeBrandDirection(value: string | undefined, fallback: string) {
+  if (!value) return fallback;
+  return INSIGHT_DIRECTIONS.some((item) => item.slug === value) ? value : fallback;
+}
+
+function resolveRangeDays(range: BrandRange) {
+  return brandRangeFilters.find((item) => item.value === range)?.days ?? 30;
+}
+
+function readLegacyBrandFilter(filter: string | undefined): Partial<BrandInsightFilters> {
+  if (!filter) return {};
+  if (filter === "近7天") return { range: "7d" };
+  if (filter === "近30天") return { range: "30d" };
+  if (filter === "近90天") return { range: "90d" };
+  if (filter === "全部平台") return { platform: "all" };
+  const platform = brandPlatformFilters.find((item) => item.label === filter);
+  if (platform) return { platform: platform.value };
+  const direction = INSIGHT_DIRECTIONS.find((item) => item.label === filter);
+  if (direction) return { direction: direction.slug };
+  return {};
+}
+
+function buildBrandInsightsHref(filters: BrandInsightFilters, patch: Partial<BrandInsightFilters>) {
+  const next = { ...filters, ...patch };
+  const params = new URLSearchParams();
+  if (next.range !== "30d") params.set("range", next.range);
+  if (next.platform !== "all") params.set("platform", next.platform);
+  if (next.direction !== DEFAULT_INSIGHT_DIRECTION) params.set("direction", next.direction);
+  if (next.keyword.trim()) params.set("keyword", next.keyword.trim());
+  const query = params.toString();
+  return `/brand/insights${query ? `?${query}` : ""}`;
 }
 
 function platformLabel(platform: string) {
@@ -129,59 +167,111 @@ function SourceBadge({ kind }: { kind: SourceKind }) {
     kind === "真实采集"
       ? "border-teal-200 bg-teal-50 text-teal-700"
       : kind === "规则计算"
-        ? "border-blue-200 bg-blue-50 text-blue-700"
-        : "border-slate-200 bg-slate-50 text-slate-500";
+      ? "border-blue-200 bg-blue-50 text-blue-700"
+      : "border-slate-200 bg-slate-50 text-slate-500";
   return <span className={cn("rounded-full border px-2.5 py-1 text-xs font-black", style)}>{kind}</span>;
 }
 
-export default async function BrandInsightsPage() {
-  const session = await requireRole(UserRole.BRAND);
+function PlatformBadge({ label }: { label: string }) {
+  const map: Record<string, string> = {
+    小红书: "bg-red-500 text-white",
+    抖音: "bg-stone-950 text-white",
+    B站: "bg-pink-500 text-white",
+    微博: "bg-amber-400 text-white",
+  };
+  return <span className={cn("inline-flex h-6 min-w-6 items-center justify-center rounded-md px-1.5 text-[0.62rem] font-black", map[label] ?? "bg-slate-100 text-slate-700")}>{label.slice(0, 2)}</span>;
+}
 
-  const [brandPreference, competitorRows, recentContents, realTrendData, analysis] = await Promise.all([
+export default async function BrandInsightsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ platform?: string; range?: string; direction?: string; keyword?: string; filter?: string }>;
+}) {
+  const session = await requireRole(UserRole.BRAND);
+  const [params, brandPreference] = await Promise.all([
+    searchParams,
     prisma.brandProfile.findUnique({
       where: { userId: session.userId },
       select: { insightDirection: true },
     }),
-    getBrandCompetitors(),
-    prisma.insightContent.findMany({
-      orderBy: [{ heatScore: "desc" }, { updatedAt: "desc" }],
-      take: 40,
-    }),
-    getKeywordTrendSeries(30),
-    getBrandInsightAnalysis(),
   ]);
-  const currentDirection = getInsightDirection(brandPreference?.insightDirection);
-  const chips = currentDirection.chips.length > 0 ? currentDirection.chips : fallbackChips;
 
-  const hasComments = analysis.comments.length > 0;
-  const displayTrendData = realTrendData.length >= 2 ? realTrendData : trendData;
-  const trendSource: SourceKind = realTrendData.length >= 2 ? "真实采集" : "示例兜底";
+  const legacyFilters = readLegacyBrandFilter(params.filter);
+  const filters: BrandInsightFilters = {
+    range: legacyFilters.range ?? normalizeBrandRange(params.range),
+    platform: legacyFilters.platform ?? normalizeBrandPlatform(params.platform),
+    direction: normalizeBrandDirection(legacyFilters.direction ?? params.direction, brandPreference?.insightDirection ?? DEFAULT_INSIGHT_DIRECTION),
+    keyword: params.keyword?.trim() ?? legacyFilters.keyword ?? "",
+  };
+  const currentDirection = getInsightDirection(filters.direction);
+  const days = resolveRangeDays(filters.range);
+
+  const [overview, competitorRows, trendRows, analysis, recentContentsRaw] = await Promise.all([
+    getBrandInsightsOverview({
+      directionSlug: filters.direction,
+      platform: filters.platform,
+      keyword: filters.keyword,
+      days,
+    }),
+    getBrandCompetitors({
+      directionSlug: filters.direction,
+      platform: filters.platform,
+      keyword: filters.keyword,
+      days,
+    }),
+    getKeywordTrendSeries(days, filters.direction, {
+      platform: filters.platform,
+      keyword: filters.keyword,
+    }),
+    getBrandInsightAnalysis({
+      directionSlug: filters.direction,
+      platform: filters.platform,
+      keyword: filters.keyword,
+      days,
+    }),
+    getBrandRecentContents(
+      {
+        directionSlug: filters.direction,
+        platform: filters.platform,
+        keyword: filters.keyword,
+        days,
+      },
+      100,
+    ),
+  ]);
+
+  const recentContents = recentContentsRaw;
+  const chips = currentDirection.chips.length > 0 ? currentDirection.chips.filter((chip) => chip !== "更多") : ["美妆个护", "防晒", "底妆", "敏感肌", "学生党"];
+
+  const trendSource: SourceKind = trendRows.length >= 2 ? "真实采集" : "示例兜底";
   const competitorSource: SourceKind = competitorRows.length > 0 ? "真实采集" : "示例兜底";
   const painSource: SourceKind = analysis.painPoints.length > 0 ? "规则计算" : "示例兜底";
   const opportunitySource: SourceKind = analysis.recommendations.length > 0 ? "规则计算" : "示例兜底";
   const alertSource: SourceKind = analysis.risks.length > 0 ? "规则计算" : "示例兜底";
-  const sentimentSource: SourceKind = hasComments ? "规则计算" : "示例兜底";
-  const displayMetrics = metricCards.map((card) => {
-    if (card.label === "品牌声量") return { ...card, value: formatCompact(analysis.metrics.voiceCount), delta: analysis.metrics.voiceCount > 0 ? "+采集" : "待采集" };
-    if (card.label === "互动总量") return { ...card, value: formatCompact(analysis.metrics.interactionCount), delta: analysis.metrics.interactionCount > 0 ? "+真实" : "待采集" };
-    if (card.label === "正面情绪") return { ...card, value: hasComments ? `${Math.round(analysis.metrics.positiveRate * 100)}%` : "待分析", delta: hasComments ? "+计算" : "待评论" };
-    return { ...card, value: String(analysis.metrics.negativeAlerts), delta: hasComments ? "+监控" : "待评论" };
-  });
+  const sentimentSource: SourceKind = analysis.comments.length > 0 ? "规则计算" : "示例兜底";
 
-  const realCompetitors: CompetitorRow[] = competitorRows.slice(0, 5).map((row) => {
-    const keyword = row.keyword ?? "未标注";
+  const displayTrendData = trendRows.length >= 2 ? trendRows : trendDataFallback;
+  const displayMetrics = [
+    { label: "品牌声量", value: formatCompact(overview.voiceCount), sub: `近${days}天`, delta: overview.voiceCount > 0 ? "+采集" : "待采集", icon: Megaphone, color: "from-teal-500 to-emerald-600" },
+    { label: "互动总量", value: formatCompact(overview.interactionCount), sub: `近${days}天`, delta: overview.interactionCount > 0 ? "+真实" : "待采集", icon: HeartPulse, color: "from-blue-500 to-sky-500" },
+    { label: "正面情绪", value: analysis.comments.length > 0 ? `${Math.round(overview.positiveRate * 100)}%` : "待分析", sub: "评论样本", delta: analysis.comments.length > 0 ? "+计算" : "待评论", icon: Gem, color: "from-amber-400 to-orange-500" },
+    { label: "负面预警", value: String(overview.negativeAlerts), sub: "风险样本", delta: analysis.comments.length > 0 ? "+监控" : "待评论", icon: ShieldAlert, color: "from-red-500 to-rose-500" },
+  ];
+
+  const realCompetitors: CompetitorRow[] = competitorRows.slice(0, 6).map((row) => {
     const platforms = Array.from(new Set(recentContents.filter((item) => item.keyword === row.keyword).map((item) => platformLabel(item.platform))));
     return {
       rank: row.rank,
-      name: keyword,
+      name: row.keyword ?? "未标记",
       voice: formatCompact(row.voiceCount),
       growth: row.interactions > 0 ? "+采集" : "0%",
-      sentiment: hasComments ? `${Math.round(analysis.metrics.positiveRate * 100)}%` : "待分析",
-      dominantTopic: keyword,
-      platforms: platforms.length > 0 ? platforms : ["小红书"],
+      sentiment: analysis.comments.length > 0 ? `${Math.round(overview.positiveRate * 100)}%` : "待分析",
+      dominantTopic: row.keyword ?? "未标记",
+      platforms: platforms.length > 0 ? platforms : [filters.platform === "all" ? "小红书" : platformLabel(filters.platform)],
     };
   });
   const displayCompetitors = realCompetitors.length > 0 ? realCompetitors : fallbackCompetitors;
+
   const displayPainPoints: PainPoint[] =
     analysis.painPoints.length > 0
       ? analysis.painPoints.slice(0, 4).map((item) => ({
@@ -193,14 +283,15 @@ export default async function BrandInsightsPage() {
       : fallbackPainPoints;
   const displayOpportunities = analysis.recommendations.length > 0 ? analysis.recommendations : fallbackOpportunities;
   const displayAlerts = analysis.risks.length > 0 ? analysis.risks : fallbackAlerts;
+
   const sentimentTotal = Math.max(1, analysis.comments.length);
   const positivePercent = Math.round((analysis.comments.filter((comment) => comment.sentiment === "正面").length / sentimentTotal) * 100);
   const neutralPercent = Math.round((analysis.comments.filter((comment) => comment.sentiment === "中性").length / sentimentTotal) * 100);
   const negativePercent = Math.max(0, 100 - positivePercent - neutralPercent);
-  const realKeywordBubbles =
+  const keywordBubbles =
     recentContents.length > 0
-      ? Array.from(new Set([...recentContents.map((item) => item.keyword).filter((keyword): keyword is string => Boolean(keyword)), ...keywordBubbles])).slice(0, 12)
-      : keywordBubbles;
+      ? Array.from(new Set([...recentContents.map((item) => item.keyword).filter((item): item is string => Boolean(item)), ...fallbackKeywords])).slice(0, 12)
+      : fallbackKeywords;
 
   return (
     <>
@@ -226,28 +317,44 @@ export default async function BrandInsightsPage() {
                 </Link>
               ))}
             </nav>
-            <div className="flex flex-wrap items-center gap-3">
-              {["近30天", "全部平台", currentDirection.label, "品牌运营团队"].map((item) => (
-                <Link key={item} href={`/brand/insights?filter=${encodeURIComponent(item)}`} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black shadow-sm transition hover:border-teal-200 hover:text-teal-700">
-                  {item}
-                  {item === "近30天" ? <CalendarDays size={14} /> : <ChevronDown size={14} />}
-                </Link>
-              ))}
-            </div>
           </div>
         </header>
 
         <main className="space-y-5 p-8">
           <section className="flex flex-wrap items-center gap-4">
-            <div className="flex h-12 min-w-[26rem] flex-1 items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 shadow-sm">
+            <div className="flex h-12 min-w-[22rem] flex-1 items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 shadow-sm">
               <Search className="text-slate-400" size={20} />
-              <span className="text-sm font-semibold text-slate-400">搜索品牌 / 品类 / 竞品 / 关键词</span>
+              <span className="text-sm font-semibold text-slate-400">{filters.keyword ? `关键词：${filters.keyword}` : "搜索品牌 / 品类 / 竞品 / 关键词"}</span>
             </div>
-            <div className="flex flex-wrap gap-3">
-              {chips.map((chip, index) => (
-                <Link key={chip} href={`/brand/insights?keyword=${encodeURIComponent(chip)}`} className={cn("rounded-xl border px-4 py-2 text-sm font-black shadow-sm transition hover:border-teal-200 hover:text-teal-700", index === 0 ? "border-teal-600 bg-teal-600 text-white hover:text-white" : "border-slate-200 bg-white text-slate-700")}>{chip}</Link>
+            <div className="flex flex-wrap gap-2">
+              {brandRangeFilters.map((item) => (
+                <Link key={item.value} href={buildBrandInsightsHref(filters, { range: item.value })} className={cn("rounded-xl border px-4 py-2 text-sm font-black shadow-sm transition", filters.range === item.value ? "border-teal-600 bg-teal-600 text-white" : "border-slate-200 bg-white text-slate-700 hover:border-teal-200 hover:text-teal-700")}>
+                  <CalendarDays className="mr-1 inline" size={14} />
+                  {item.label}
+                </Link>
               ))}
+              {brandPlatformFilters.map((item) => (
+                <Link key={item.value} href={buildBrandInsightsHref(filters, { platform: item.value })} className={cn("rounded-xl border px-4 py-2 text-sm font-black shadow-sm transition", filters.platform === item.value ? "border-teal-600 bg-teal-600 text-white" : "border-slate-200 bg-white text-slate-700 hover:border-teal-200 hover:text-teal-700")}>
+                  {item.label}
+                </Link>
+              ))}
+              <Link href={buildBrandInsightsHref(filters, { direction: DEFAULT_INSIGHT_DIRECTION })} className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 shadow-sm transition hover:border-teal-200 hover:text-teal-700">
+                赛道：{currentDirection.label}
+              </Link>
             </div>
+          </section>
+
+          <section className="flex flex-wrap gap-3">
+            {chips.map((chip) => (
+              <Link key={chip} href={buildBrandInsightsHref(filters, { keyword: chip })} className={cn("rounded-xl border px-4 py-2 text-sm font-black shadow-sm transition", filters.keyword === chip ? "border-teal-600 bg-teal-600 text-white" : "border-slate-200 bg-white text-slate-700 hover:border-teal-200 hover:text-teal-700")}>
+                {chip}
+              </Link>
+            ))}
+            {filters.keyword ? (
+              <Link href={buildBrandInsightsHref(filters, { keyword: "" })} className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 shadow-sm transition hover:border-teal-200 hover:text-teal-700">
+                清除关键词
+              </Link>
+            ) : null}
           </section>
 
           <section id="overview" className="scroll-mt-28 grid grid-cols-1 gap-5 xl:grid-cols-4">
@@ -256,23 +363,14 @@ export default async function BrandInsightsPage() {
               return (
                 <div key={card.label} className={cn(cardClass, "min-h-36 p-5")}>
                   <div className="flex items-start justify-between gap-4">
-                    <div className="flex min-w-0 items-center gap-3">
-                      <div className={cn("flex size-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-white shadow-sm", card.color)}>
-                        <Icon size={26} />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-black text-slate-700">{card.label}</p>
-                        <p className="mt-1 text-xs font-semibold text-slate-500">{card.sub}</p>
-                      </div>
+                    <div className={cn("flex size-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-white shadow-sm", card.color)}>
+                      <Icon size={24} />
                     </div>
-                    <div className="h-12 w-28 shrink-0">
-                      <MiniSparkline color={card.line} />
-                    </div>
+                    <span className="rounded-full bg-red-50 px-2.5 py-1 text-xs font-black text-red-500">{card.delta}</span>
                   </div>
-                  <div className="mt-5 flex items-end justify-between gap-3">
-                    <p className="min-w-0 break-words text-4xl font-black leading-none tracking-tight">{card.value}</p>
-                    <span className="shrink-0 rounded-full bg-red-50 px-2.5 py-1 text-xs font-black text-red-500">{card.delta}</span>
-                  </div>
+                  <p className="mt-4 text-sm font-black text-slate-700">{card.label}</p>
+                  <p className="mt-1 text-4xl font-black tracking-tight">{card.value}</p>
+                  <p className="mt-1 text-xs font-semibold text-slate-500">{card.sub}</p>
                 </div>
               );
             })}
@@ -282,11 +380,8 @@ export default async function BrandInsightsPage() {
             <div className={cn(cardClass, "p-5")}>
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-black">品牌相关内容热度走势</h2>
+                  <h2 className="text-xl font-black">品牌相关内容热度趋势</h2>
                   <SourceBadge kind={trendSource} />
-                </div>
-                <div className="flex rounded-lg border border-slate-200 text-sm font-black">
-                  {["7天", "30天", "90天"].map((item, index) => <span key={item} className={cn("px-4 py-2", index === 1 && "bg-blue-50 text-blue-600")}>{item}</span>)}
                 </div>
               </div>
               <div className="mb-2 flex flex-wrap gap-4 text-sm font-bold text-slate-600">
@@ -296,7 +391,10 @@ export default async function BrandInsightsPage() {
                   ["#f59e0b", currentDirection.brandTrendLabels[2]],
                   ["#ef4444", currentDirection.brandTrendLabels[3]],
                 ].map(([color, label]) => (
-                  <span key={label}><i className="mr-2 inline-block size-2.5 rounded-full" style={{ backgroundColor: color }} />{label}</span>
+                  <span key={label}>
+                    <i className="mr-2 inline-block size-2.5 rounded-full" style={{ backgroundColor: color }} />
+                    {label}
+                  </span>
                 ))}
               </div>
               <BrandInsightChart data={displayTrendData} />
@@ -308,29 +406,41 @@ export default async function BrandInsightsPage() {
                   <h2 className="text-xl font-black">高频热词与竞品讨论排行</h2>
                   <SourceBadge kind={competitorSource} />
                 </div>
-                <Link href="#competitors" className="text-sm font-black text-blue-600 hover:text-blue-700">查看完整榜单 &gt;</Link>
               </div>
               <div className="overflow-x-auto">
-                <table className="min-w-[43rem] w-full text-left text-sm">
+                <table className="w-full min-w-[43rem] text-left text-sm">
                   <thead className="bg-slate-50 text-xs text-slate-500">
-                    <tr>{["排名", "热词/竞品", "内容样本数", "互动状态", "情绪状态", "主要讨论点", "来源平台"].map((head) => <th key={head} className="px-3 py-3 font-black">{head}</th>)}</tr>
+                    <tr>
+                      {["排名", "热词/竞品", "内容样本数", "互动状态", "情绪状态", "主要讨论点", "来源平台"].map((head) => (
+                        <th key={head} className="px-3 py-3 font-black">
+                          {head}
+                        </th>
+                      ))}
+                    </tr>
                   </thead>
                   <tbody>
                     {displayCompetitors.map((row) => (
                       <tr key={`${row.rank}-${row.name}`} className="border-b border-slate-100">
-                        <td className="px-3 py-3"><span className="inline-flex size-6 items-center justify-center rounded-md bg-amber-500 text-xs font-black text-white">{row.rank}</span></td>
+                        <td className="px-3 py-3">
+                          <span className="inline-flex size-6 items-center justify-center rounded-md bg-amber-500 text-xs font-black text-white">{row.rank}</span>
+                        </td>
                         <td className="px-3 py-3 font-black">{row.name}</td>
                         <td className="px-3 py-3 font-black">{row.voice}</td>
                         <td className="px-3 py-3 font-black text-red-500">{row.growth}</td>
                         <td className="px-3 py-3 font-black text-teal-600">{row.sentiment}</td>
                         <td className="px-3 py-3 font-bold">{row.dominantTopic}</td>
-                        <td className="px-3 py-3"><div className="flex gap-1">{row.platforms.map((platform) => <PlatformBadge key={platform} label={platform} />)}</div></td>
+                        <td className="px-3 py-3">
+                          <div className="flex gap-1">
+                            {row.platforms.map((platform) => (
+                              <PlatformBadge key={platform} label={platform} />
+                            ))}
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-              <p className="mt-3 text-xs font-semibold text-slate-400">内容样本数来自已采集的公开笔记/视频；互动状态综合点赞、评论、收藏和转发估算。</p>
             </div>
           </section>
 
@@ -355,7 +465,13 @@ export default async function BrandInsightsPage() {
                   </div>
                 ))}
               </div>
-              <div className="mt-4 flex flex-wrap gap-2">{realKeywordBubbles.slice(0, 10).map((keyword) => <span key={keyword} className="rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-black text-teal-700">{keyword}</span>)}</div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {keywordBubbles.slice(0, 12).map((keyword) => (
+                  <span key={keyword} className="rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-black text-teal-700">
+                    {keyword}
+                  </span>
+                ))}
+              </div>
             </div>
 
             <div className="grid gap-5">
@@ -382,8 +498,13 @@ export default async function BrandInsightsPage() {
                   ))}
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-3">
-                  <Link href="/brand/campaigns" className="rounded-xl bg-teal-600 px-4 py-3 text-center text-sm font-black text-white transition hover:bg-teal-700"><FileText className="mr-2 inline" size={15} />生成报告</Link>
-                  <Link href="/brand/campaigns/new" className="rounded-xl border border-teal-600 px-4 py-3 text-center text-sm font-black text-teal-700 transition hover:bg-teal-50">创建 Brief</Link>
+                  <Link href="/brand/campaigns" className="rounded-xl bg-teal-600 px-4 py-3 text-center text-sm font-black text-white transition hover:bg-teal-700">
+                    <FileText className="mr-2 inline" size={15} />
+                    生成报告
+                  </Link>
+                  <Link href="/brand/campaigns/new" className="rounded-xl border border-teal-600 px-4 py-3 text-center text-sm font-black text-teal-700 transition hover:bg-teal-50">
+                    创建 Brief
+                  </Link>
                 </div>
               </div>
 
@@ -406,7 +527,9 @@ export default async function BrandInsightsPage() {
                     </div>
                   ))}
                 </div>
-                <Link href="/admin/insights" className="mt-4 block w-full rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm font-black text-red-600 transition hover:bg-red-100">设置关键词监控</Link>
+                <Link href="/admin/insights" className="mt-4 block w-full rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm font-black text-red-600 transition hover:bg-red-100">
+                  设置关键词监控
+                </Link>
               </div>
             </div>
           </section>
@@ -421,30 +544,45 @@ export default async function BrandInsightsPage() {
                 <div className="flex aspect-square items-center justify-center rounded-full border-[1.35rem] border-teal-600 bg-white shadow-inner">
                   <div className="text-center">
                     <p className="text-xs font-black text-slate-500">正面</p>
-                    <p className="text-3xl font-black">{hasComments ? `${positivePercent}%` : "待分析"}</p>
+                    <p className="text-3xl font-black">{analysis.comments.length > 0 ? `${positivePercent}%` : "待分析"}</p>
                   </div>
                 </div>
                 <div className="space-y-3 text-sm font-bold text-slate-600">
-                  <p><span className="mr-2 inline-block size-2.5 rounded-full bg-teal-600" />正面 {hasComments ? `${positivePercent}%` : "待评论"}</p>
-                  <p><span className="mr-2 inline-block size-2.5 rounded-full bg-slate-300" />中性 {hasComments ? `${neutralPercent}%` : "待评论"}</p>
-                  <p><span className="mr-2 inline-block size-2.5 rounded-full bg-red-500" />负面 {hasComments ? `${negativePercent}%` : "待评论"}</p>
+                  <p>
+                    <span className="mr-2 inline-block size-2.5 rounded-full bg-teal-600" />
+                    正面 {analysis.comments.length > 0 ? `${positivePercent}%` : "待评论"}
+                  </p>
+                  <p>
+                    <span className="mr-2 inline-block size-2.5 rounded-full bg-slate-300" />
+                    中性 {analysis.comments.length > 0 ? `${neutralPercent}%` : "待评论"}
+                  </p>
+                  <p>
+                    <span className="mr-2 inline-block size-2.5 rounded-full bg-red-500" />
+                    负面 {analysis.comments.length > 0 ? `${negativePercent}%` : "待评论"}
+                  </p>
                 </div>
               </div>
             </div>
             <div className={cn(cardClass, "p-5")}>
               <div className="mb-4 flex items-center gap-2">
-                <BarChart3 className="text-blue-600" size={18} />
-                <h2 className="text-xl font-black">数据字段结构</h2>
+                <Megaphone className="text-blue-600" size={18} />
+                <h2 className="text-xl font-black">数据说明</h2>
               </div>
               <div className="grid gap-3 md:grid-cols-3">
                 {["内容样本", "评论样本", "分析结果"].map((title, index) => (
                   <div key={title} className="rounded-xl border border-slate-100 bg-slate-50 p-4">
                     <p className="font-black">{title}</p>
-                    <p className="mt-2 text-sm text-slate-600">{index === 0 ? "标题、正文、作者、平台、互动量、发布时间。" : index === 1 ? "评论原文、点赞数、情绪、痛点、风险标签。" : "趋势、排行、机会、预警、情绪分布。"}</p>
+                    <p className="mt-2 text-sm text-slate-600">
+                      {index === 0
+                        ? "标题、正文、作者、平台、互动量、发布时间。"
+                        : index === 1
+                        ? "评论原文、点赞数、情绪、痛点和风险标签。"
+                        : "趋势、排行、机会、预警、情绪分布。"}
+                    </p>
                   </div>
                 ))}
               </div>
-              <p className="mt-4 text-sm text-slate-500">当前优先读取 TikHub 采集入库数据；缺少样本的模块会回落到演示数据。</p>
+              <p className="mt-4 text-sm text-slate-500">当前优先读取 TikHub 采集入库数据；样本不足时会回退到示例数据，保证页面可用。</p>
             </div>
           </section>
         </main>

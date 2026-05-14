@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, type FormEvent, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useTransition, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarDays, ChevronDown, Search } from "lucide-react";
 import { CreatorTrendChart, type CreatorTrendPoint } from "@/components/creator-trend-chart";
@@ -27,13 +27,13 @@ type DirectionOption = {
 type TopicRow = {
   rank: number;
   topic: string;
-  stage: "爆发中" | "长尾可做" | "谨慎追";
+  stage: "爆发中" | "长尾可做" | "谨慎跟进";
   heat: string;
   match: string;
   competition: "低" | "中" | "高";
   difficulty: "低" | "中" | "高";
   platforms: string[];
-  advice: "立即跟" | "可长尾" | "谨慎跟";
+  advice: "立即跟进" | "可长期做" | "谨慎跟进";
   source?: string;
 };
 
@@ -84,7 +84,8 @@ type FilterContextValue = {
   filters: CreatorTrendFilters;
   directions: DirectionOption[];
   currentDirection: DirectionOption;
-  setFilters: (patch: Partial<CreatorTrendFilters>, hash?: string) => void;
+  setFilters: (patch: Partial<CreatorTrendFilters>, hash?: string, options?: { navigate?: boolean; scroll?: boolean }) => void;
+  isNavigating: boolean;
 };
 
 const FilterContext = createContext<FilterContextValue | null>(null);
@@ -93,6 +94,10 @@ function useFilters() {
   const value = useContext(FilterContext);
   if (!value) throw new Error("CreatorTrendFilterProvider is missing.");
   return value;
+}
+
+export function useCreatorTrendFilters() {
+  return useFilters();
 }
 
 export function CreatorTrendFilterProvider({
@@ -106,15 +111,27 @@ export function CreatorTrendFilterProvider({
 }) {
   const router = useRouter();
   const [filters, setLocalFilters] = useState(initialFilters);
+  const [isNavigating, startTransition] = useTransition();
   const currentDirection = directions.find((item) => item.slug === filters.direction) ?? directions[0];
 
-  function setFilters(patch: Partial<CreatorTrendFilters>, hash = "") {
+  function setFilters(
+    patch: Partial<CreatorTrendFilters>,
+    hash = "",
+    options?: { navigate?: boolean; scroll?: boolean },
+  ) {
     const next = { ...filters, ...patch };
-    router.push(buildUrl(next, hash));
     setLocalFilters(next);
+    const nextUrl = buildUrl(next, hash);
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", nextUrl);
+    }
+    if (options?.navigate === false) return;
+    startTransition(() => {
+      router.replace(nextUrl, { scroll: options?.scroll ?? false });
+    });
   }
 
-  const value = { filters, directions, currentDirection, setFilters };
+  const value = { filters, directions, currentDirection, setFilters, isNavigating };
 
   return <FilterContext.Provider value={value}>{children}</FilterContext.Provider>;
 }
@@ -166,21 +183,32 @@ function Dropdown({
 }
 
 export function CreatorTrendHeaderFilters() {
-  const { filters, directions, currentDirection, setFilters } = useFilters();
+  const { filters, directions, currentDirection, setFilters, isNavigating } = useFilters();
+  const router = useRouter();
+  const { range, platform, scenario, direction } = filters;
+
+  useEffect(() => {
+    const base = { range, platform, scenario, direction, keyword: "" as const };
+    for (const directionOption of directions) {
+      if (directionOption.slug === direction) continue;
+      void router.prefetch(buildUrl({ ...base, direction: directionOption.slug }));
+    }
+  }, [directions, direction, platform, range, scenario, router]);
+
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-wrap items-center gap-3" aria-busy={isNavigating}>
       <Dropdown
         icon={<CalendarDays size={14} />}
         items={rangeFilters}
         label={rangeFilters.find((item) => item.value === filters.range)?.label ?? "近7天"}
         value={filters.range}
-        onSelect={(value) => setFilters({ range: value as TrendRange })}
+        onSelect={(value) => setFilters({ range: value as TrendRange }, "", { navigate: false })}
       />
       <Dropdown
         items={platformFilters}
         label={platformFilters.find((item) => item.value === filters.platform)?.label ?? "全部"}
         value={filters.platform}
-        onSelect={(value) => setFilters({ platform: value as TrendPlatform }, "#hot-topics")}
+        onSelect={(value) => setFilters({ platform: value as TrendPlatform }, "#hot-topics", { navigate: false })}
       />
       <Dropdown
         items={directions.map((item) => ({ label: item.label, value: item.slug }))}
@@ -192,7 +220,7 @@ export function CreatorTrendHeaderFilters() {
         items={scenarioFilters}
         label={scenarioFilters.find((item) => item.value === filters.scenario)?.label ?? "达人运营"}
         value={filters.scenario}
-        onSelect={(value) => setFilters({ scenario: value })}
+        onSelect={(value) => setFilters({ scenario: value }, "", { navigate: false })}
       />
     </div>
   );
@@ -206,7 +234,7 @@ export function CreatorTrendSearch() {
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setFilters({ keyword: draft.trim() }, "#hot-topics");
+    setFilters({ keyword: draft.trim() }, "#hot-topics", { navigate: false });
   }
 
   return (
@@ -243,7 +271,7 @@ export function CreatorTrendSearch() {
                       type="button"
                       onClick={() => {
                         setDraft(item);
-                        setFilters({ keyword: item }, "#hot-topics");
+                        setFilters({ keyword: item }, "#hot-topics", { navigate: false });
                         setMoreOpen(false);
                       }}
                     >
@@ -263,7 +291,7 @@ export function CreatorTrendSearch() {
               type="button"
               onClick={() => {
                 setDraft(chip);
-                setFilters({ keyword: chip }, "#hot-topics");
+                setFilters({ keyword: chip }, "#hot-topics", { navigate: false });
               }}
             >
               {chip}
@@ -303,8 +331,8 @@ function stageClass(stage: TopicRow["stage"]) {
 }
 
 function adviceClass(advice: TopicRow["advice"]) {
-  if (advice === "立即跟") return "border-teal-200 bg-teal-50 text-teal-700";
-  if (advice === "可长尾") return "border-blue-200 bg-blue-50 text-blue-700";
+  if (advice === "立即跟进") return "border-teal-200 bg-teal-50 text-teal-700";
+  if (advice === "可长期做") return "border-blue-200 bg-blue-50 text-blue-700";
   return "border-orange-200 bg-orange-50 text-orange-700";
 }
 
@@ -320,11 +348,13 @@ export function CreatorTrendHotTopics({
   topicSource: SourceKind;
 }) {
   const { filters, currentDirection, setFilters } = useFilters();
-  const rangeDays = rangeFilters.find((item) => item.value === filters.range)?.days ?? 7;
-  const displayTrendData = trendData.slice(-Math.min(trendData.length, filters.range === "24h" ? 2 : rangeDays));
+  const [localRange, setLocalRange] = useState<TrendRange>(filters.range);
+  const [localPlatform, setLocalPlatform] = useState<TrendPlatform>(filters.platform);
+  const rangeDays = rangeFilters.find((item) => item.value === localRange)?.days ?? 7;
+  const displayTrendData = trendData.slice(-Math.min(trendData.length, localRange === "24h" ? 2 : rangeDays));
   const filteredRows = topicRows
     .filter((row, index, rows) => rows.findIndex((candidate) => `${candidate.topic}-${candidate.platforms.join(",")}` === `${row.topic}-${row.platforms.join(",")}`) === index)
-    .filter((row) => filters.platform === "all" || row.platforms.includes(platformName[filters.platform]))
+    .filter((row) => localPlatform === "all" || row.platforms.includes(platformName[localPlatform]))
     .filter((row) => !filters.keyword || row.topic.includes(filters.keyword) || row.source?.includes(filters.keyword))
     .sort((a, b) => Number.parseInt(b.match, 10) - Number.parseInt(a.match, 10))
     .map((row, index) => ({ ...row, rank: index + 1 }));
@@ -339,7 +369,7 @@ export function CreatorTrendHotTopics({
           </div>
           <div className="flex rounded-lg border border-slate-200 text-sm font-black">
             {rangeFilters.map((item) => (
-              <button key={item.value} className={cn("px-4 py-2", filters.range === item.value && "bg-blue-50 text-blue-600")} type="button" onClick={() => setFilters({ range: item.value }, "#hot-topics")}>
+              <button key={item.value} className={cn("px-4 py-2", localRange === item.value && "bg-blue-50 text-blue-600")} type="button" onClick={() => setLocalRange(item.value)}>
                 {item.label === "近7天" ? "7天" : item.label}
               </button>
             ))}
@@ -370,10 +400,10 @@ export function CreatorTrendHotTopics({
                 key={item.value}
                 className={cn(
                   "inline-flex h-8 items-center justify-center whitespace-nowrap rounded-full border px-3 py-1.5 leading-none transition",
-                  filters.platform === item.value ? "border-blue-200 bg-blue-50 text-blue-600" : "border-slate-200 bg-white text-slate-500 hover:text-slate-800",
+                  localPlatform === item.value ? "border-blue-200 bg-blue-50 text-blue-600" : "border-slate-200 bg-white text-slate-500 hover:text-slate-800",
                 )}
                 type="button"
-                onClick={() => setFilters({ platform: item.value }, "#hot-topics")}
+                onClick={() => setLocalPlatform(item.value)}
               >
                 {item.label}
               </button>
@@ -390,7 +420,7 @@ export function CreatorTrendHotTopics({
                 <tr key={`${row.rank}-${row.topic}`} className="border-b border-slate-100">
                   <td className="px-3 py-3"><span className="inline-flex size-6 items-center justify-center rounded-md bg-amber-500 text-xs font-black text-white">{row.rank}</span></td>
                   <td className="px-3 py-3 font-black">
-                    <button className="transition hover:text-teal-700" type="button" onClick={() => setFilters({ keyword: row.topic }, "#topic-recommendations")}>{row.topic}</button>
+                    <button className="transition hover:text-teal-700" type="button" onClick={() => setFilters({ keyword: row.topic }, "#topic-recommendations", { navigate: false })}>{row.topic}</button>
                     <span className={cn("ml-2 rounded-md border px-2 py-1 text-xs", stageClass(row.stage))}>{row.stage}</span>
                   </td>
                   <td className="min-w-[96px] px-3 py-3">
@@ -404,7 +434,7 @@ export function CreatorTrendHotTopics({
                   <td className="px-3 py-3"><span className="rounded-full bg-red-50 px-2 py-1 text-xs font-black text-red-600">{row.difficulty}</span></td>
                   <td className="px-3 py-3"><div className="flex gap-1">{row.platforms.map((platform) => <PlatformBadge key={platform} label={platform} />)}</div></td>
                   <td className="px-3 py-3">
-                    <button className={cn("rounded-md border px-2 py-1 text-xs font-black", adviceClass(row.advice))} type="button" onClick={() => setFilters({ keyword: row.topic }, row.advice === "谨慎跟" ? "#case-study" : "#topic-recommendations")}>
+                    <button className={cn("rounded-md border px-2 py-1 text-xs font-black", adviceClass(row.advice))} type="button" onClick={() => setFilters({ keyword: row.topic }, row.advice === "谨慎跟进" ? "#case-study" : "#topic-recommendations", { navigate: false })}>
                       {row.advice}
                     </button>
                   </td>

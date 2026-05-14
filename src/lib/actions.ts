@@ -47,6 +47,7 @@ import { saveUploadedFile } from "@/lib/storage";
 import { ADMIN_PERMISSIONS, hasAdminPermission, isFounder, requireAdminPermission } from "@/lib/admin";
 import { createCrawlerJob, toCrawlerPlatform } from "@/lib/crawler";
 import { collectConfiguredKeywords } from "@/lib/insights/collector";
+import { invalidateInsightReadCaches, scheduleInsightPrewarm } from "@/lib/insights/cache-maintenance";
 import { refreshCreatorTrendDailySnapshots } from "@/lib/insights/creator-daily-snapshots";
 import { INSIGHT_DIRECTION_SLUGS } from "@/lib/insights/directions";
 import { recommendedCollectionSettings, seedDefaultInsightKeywords } from "@/lib/insights/keywords";
@@ -3959,6 +3960,14 @@ export async function runCreatorTrendRefreshAction() {
   try {
     const result = await refreshCreatorTrendDailySnapshots({ force: true });
     snapshots = result.snapshots;
+    if (!result.skipped) {
+      await invalidateInsightReadCaches();
+      scheduleInsightPrewarm({
+        directions: result.directions,
+        platforms: ["all", "xiaohongshu", "douyin"],
+        maxDirections: 3,
+      });
+    }
     await audit({
       action: "creator_trends.daily_refresh_forced",
       entityType: "platform_settings",
@@ -3982,6 +3991,12 @@ export async function collectAndRefreshCreatorTrendsAction(formData: FormData) {
     const collection = await collectConfiguredKeywords(limit);
     const rebuilt = await rebuildTrendSnapshotsFromContents();
     const refresh = await refreshCreatorTrendDailySnapshots({ force: true });
+    await invalidateInsightReadCaches();
+    scheduleInsightPrewarm({
+      directions: refresh.directions,
+      platforms: ["all", "xiaohongshu", "douyin"],
+      maxDirections: 3,
+    });
     collected = collection.resultCount;
     snapshots = refresh.snapshots;
     await audit({
@@ -4457,6 +4472,11 @@ export async function collectConfiguredInsightKeywordsAction(formData: FormData)
   await requireAdminPermission("compliance.manage");
   const limit = Math.max(1, Math.min(Number(text(formData.get("limit")) || 5), 100));
   const result = await collectConfiguredKeywords(limit);
+  await invalidateInsightReadCaches();
+  scheduleInsightPrewarm({
+    platforms: ["all", "xiaohongshu", "douyin"],
+    maxDirections: 2,
+  });
   await audit({
     action: "insights.configured_keywords_collected",
     entityType: "insight_keyword_config",

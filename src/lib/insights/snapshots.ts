@@ -19,6 +19,10 @@ function endOfDay(date = new Date()) {
   return end;
 }
 
+function snapshotDateFromContent(content: { publishTime?: Date | null; updatedAt?: Date | null }) {
+  return startOfDay(content.publishTime ?? content.updatedAt ?? new Date());
+}
+
 function jsonInput(value: unknown): Prisma.InputJsonValue {
   return JSON.parse(JSON.stringify(value ?? null)) as Prisma.InputJsonValue;
 }
@@ -39,7 +43,13 @@ export async function upsertKeywordTrendSnapshot(input: SnapshotInput) {
     where: {
       platform: input.platform,
       keyword: input.keyword,
-      updatedAt: { gte: date, lt: nextDate },
+      OR: [
+        { publishTime: { gte: date, lt: nextDate } },
+        {
+          publishTime: null,
+          updatedAt: { gte: date, lt: nextDate },
+        },
+      ],
     },
     select: {
       likeCount: true,
@@ -108,16 +118,41 @@ export async function upsertKeywordTrendSnapshot(input: SnapshotInput) {
 }
 
 export async function rebuildTrendSnapshotsFromContents() {
-  const groups = await prisma.insightContent.groupBy({
-    by: ["platform", "keyword"],
+  const contents = await prisma.insightContent.findMany({
     where: { keyword: { not: null } },
-    _count: { _all: true },
+    select: {
+      platform: true,
+      keyword: true,
+      publishTime: true,
+      updatedAt: true,
+    },
+    orderBy: { updatedAt: "asc" },
   });
 
-  const results = [];
-  for (const group of groups) {
-    if (!group.keyword) continue;
-    results.push(await upsertKeywordTrendSnapshot({ platform: group.platform, keyword: group.keyword }));
+  const dayBuckets = new Map<string, { platform: string; keyword: string; date: Date }>();
+  for (const content of contents) {
+    if (!content.keyword) continue;
+    const day = snapshotDateFromContent(content);
+    const key = `${content.platform}::${content.keyword}::${day.getTime()}`;
+    if (!dayBuckets.has(key)) {
+      dayBuckets.set(key, { platform: content.platform, keyword: content.keyword, date: day });
+    }
   }
-  return { resultCount: results.length };
+
+  const results = [];
+  for (const bucket of dayBuckets.values()) {
+    results.push(
+      await upsertKeywordTrendSnapshot({
+        platform: bucket.platform,
+        keyword: bucket.keyword,
+        date: bucket.date,
+      }),
+    );
+  }
+
+  return {
+    resultCount: results.length,
+    contentCount: contents.length,
+    bucketCount: dayBuckets.size,
+  };
 }

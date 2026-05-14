@@ -6,6 +6,7 @@ export const TIKHUB_ENDPOINTS = {
   xiaohongshuHotList: "/api/v1/xiaohongshu/web_v2/fetch_hot_list",
   xiaohongshuTrending: "/api/v1/xiaohongshu/web_v3/fetch_trending",
   xiaohongshuSearchNotes: "/api/v1/xiaohongshu/app_v2/search_notes",
+  xiaohongshuSearchNotesApp: "/api/v1/xiaohongshu/app/search_notes",
   xiaohongshuSearchSuggest: "/api/v1/xiaohongshu/web_v3/fetch_search_suggest",
   xiaohongshuCreatorHotInspiration: "/api/v1/xiaohongshu/app_v2/get_creator_hot_inspiration_feed",
   xiaohongshuNoteComments: "/api/v1/xiaohongshu/app_v2/get_note_comments",

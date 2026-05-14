@@ -61,24 +61,73 @@ function firstNumber(record: JsonRecord, keys: string[]) {
   return 0;
 }
 
+const ARRAY_KEYS = [
+  "data",
+  "items",
+  "list",
+  "aweme_list",
+  "notes",
+  "result",
+  "results",
+  "feeds",
+  "feed",
+  "keywords",
+  "word_list",
+  "hot_list",
+  "inspiration_list",
+  "comments",
+  "comment_list",
+] as const;
+const COMBINED_ARRAY_KEYS = ["current", "rocketing"] as const;
+const MAX_ARRAY_SCAN_DEPTH = 10;
+const MAX_ARRAY_SCAN_NODES = 6000;
+
 function firstArray(payload: unknown): unknown[] {
-  if (Array.isArray(payload)) return payload;
-  const record = asRecord(payload);
-  for (const key of ["data", "items", "list", "aweme_list", "notes", "result", "results", "feeds", "feed", "keywords", "word_list", "hot_list", "inspiration_list"]) {
-    const value = record[key];
-    if (Array.isArray(value)) return value;
-    const nested = asRecord(value);
-    const combined = ["current", "rocketing"].flatMap((nestedKey) => {
-      const nestedValue = nested[nestedKey];
-      return Array.isArray(nestedValue) ? nestedValue : [];
-    });
-    if (combined.length) return combined;
-    for (const nestedKey of ["data", "items", "list", "aweme_list", "notes", "result", "results", "feeds", "feed", "keywords", "word_list", "hot_list", "inspiration_list"]) {
-      const nestedValue = nested[nestedKey];
-      if (Array.isArray(nestedValue)) return nestedValue;
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+
+  const stack: Array<{ node: unknown; depth: number }> = [{ node: payload, depth: 0 }];
+  const visited = new Set<object>();
+  let scannedNodes = 0;
+
+  while (stack.length > 0 && scannedNodes < MAX_ARRAY_SCAN_NODES) {
+    const current = stack.pop();
+    if (!current) break;
+    const { node, depth } = current;
+    if (Array.isArray(node)) return node;
+    if (!node || typeof node !== "object") continue;
+    if (visited.has(node)) continue;
+    visited.add(node);
+    scannedNodes += 1;
+
+    const record = asRecord(node);
+    for (const key of ARRAY_KEYS) {
+      const value = record[key];
+      if (Array.isArray(value)) return value;
     }
-    const deep = firstArray(nested);
-    if (deep.length) return deep;
+
+    for (const value of Object.values(record)) {
+      const nested = asRecord(value);
+      const combined = COMBINED_ARRAY_KEYS.flatMap((nestedKey) => {
+        const nestedValue = nested[nestedKey];
+        return Array.isArray(nestedValue) ? nestedValue : [];
+      });
+      if (combined.length > 0) return combined;
+
+      for (const nestedKey of ARRAY_KEYS) {
+        const nestedValue = nested[nestedKey];
+        if (Array.isArray(nestedValue)) return nestedValue;
+      }
+    }
+
+    if (depth >= MAX_ARRAY_SCAN_DEPTH) continue;
+
+    for (const value of Object.values(record)) {
+      if (value && typeof value === "object") {
+        stack.push({ node: value, depth: depth + 1 });
+      }
+    }
   }
   return [];
 }

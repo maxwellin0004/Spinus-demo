@@ -6,12 +6,12 @@ import { prisma } from "@/lib/prisma";
 import { Card, DataTable, MetricCard, PageHeader, StatusBadge } from "@/components/ui";
 
 const jobTypes = ["HOT_TOPICS", "SEARCH_CONTENTS"];
-const statuses = ["PENDING", "PROCESSING", "SUCCESS", "FAILED"];
+const statuses = ["PENDING", "PROCESSING", "SUCCESS", "PARTIAL", "FAILED"];
 
 function compactJson(value: unknown) {
   if (!value) return "-";
   const serialized = JSON.stringify(value);
-  return serialized.length > 120 ? `${serialized.slice(0, 120)}...` : serialized;
+  return serialized.length > 160 ? `${serialized.slice(0, 160)}...` : serialized;
 }
 
 function formatTime(value: Date | null | undefined) {
@@ -49,7 +49,7 @@ export default async function AdminInsightRunsPage({
     ...(keyword ? { keyword: { contains: keyword, mode: "insensitive" } } : {}),
   };
 
-  const [runs, totalCount, successCount, failedCount, processingCount] = await Promise.all([
+  const [runs, totalCount, successCount, partialCount, failedCount, processingCount] = await Promise.all([
     prisma.insightCollectionRun.findMany({
       where,
       orderBy: { startedAt: "desc" },
@@ -57,11 +57,12 @@ export default async function AdminInsightRunsPage({
     }),
     prisma.insightCollectionRun.count(),
     prisma.insightCollectionRun.count({ where: { status: "SUCCESS" } }),
+    prisma.insightCollectionRun.count({ where: { status: "PARTIAL" } }),
     prisma.insightCollectionRun.count({ where: { status: "FAILED" } }),
     prisma.insightCollectionRun.count({ where: { status: "PROCESSING" } }),
   ]);
   const successRate = totalCount ? Math.round((successCount / totalCount) * 100) : 0;
-  const latestFailures = runs.filter((run) => run.status === "FAILED").slice(0, 5);
+  const latestAbnormalRuns = runs.filter((run) => run.status === "FAILED" || run.status === "PARTIAL").slice(0, 5);
 
   return (
     <div className="grid gap-6">
@@ -72,11 +73,12 @@ export default async function AdminInsightRunsPage({
         </Link>
       </PageHeader>
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-5">
         <MetricCard label="总采集次数" value={number(totalCount)} compact />
         <MetricCard label="成功次数" value={number(successCount)} compact />
+        <MetricCard label="部分成功" value={number(partialCount)} compact />
         <MetricCard label="失败次数" value={number(failedCount)} compact />
-        <MetricCard label="成功率" value={`${successRate}%`} compact />
+        <MetricCard label="完全成功率" value={`${successRate}%`} compact />
       </div>
 
       <Card>
@@ -110,12 +112,12 @@ export default async function AdminInsightRunsPage({
 
       <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
         <Card>
-          <h2 className="text-xl font-black text-stone-950">最近采集失败</h2>
-          <p className="mt-2 text-sm text-stone-500">失败记录通常最能说明 TikHub 接口、参数或采集配置是否异常。</p>
+          <h2 className="text-xl font-black text-stone-950">最近异常采集</h2>
+          <p className="mt-2 text-sm text-stone-500">这里会展示 FAILED 与 PARTIAL，便于定位接口权限、参数以及评论采集可用性问题。</p>
           <div className="mt-4 grid gap-3">
-            {latestFailures.length > 0 ? (
-              latestFailures.map((run) => (
-                <div className="rounded-2xl border border-red-100 bg-red-50/60 p-4" key={run.id}>
+            {latestAbnormalRuns.length > 0 ? (
+              latestAbnormalRuns.map((run) => (
+                <div className="rounded-2xl border border-amber-200 bg-amber-50/60 p-4" key={run.id}>
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <p className="font-black text-stone-950">{run.jobType}</p>
@@ -123,42 +125,32 @@ export default async function AdminInsightRunsPage({
                         {formatTime(run.startedAt)} {run.platform ? ` / ${run.platform}` : ""} {run.keyword ? ` / ${run.keyword}` : ""}
                       </p>
                     </div>
-                    <StatusBadge tone="danger">{run.status}</StatusBadge>
+                    <StatusBadge tone={run.status === "PARTIAL" ? "warning" : "danger"}>{run.status}</StatusBadge>
                   </div>
-                  <p className="mt-3 text-sm leading-6 text-red-700">{run.errorMessage ?? "未知错误"}</p>
+                  <p className="mt-3 text-sm leading-6 text-amber-900">{run.errorMessage ?? "无详细信息"}</p>
                 </div>
               ))
             ) : (
-              <div className="rounded-2xl border border-dashed border-stone-300 bg-white/70 p-6 text-sm text-stone-500">当前没有失败记录。</div>
+              <div className="rounded-2xl border border-dashed border-stone-300 bg-white/70 p-6 text-sm text-stone-500">当前没有异常记录。</div>
             )}
           </div>
         </Card>
 
         <Card>
-          <h2 className="text-xl font-black text-stone-950">运行概览</h2>
+          <h2 className="text-xl font-black text-stone-950">运行说明</h2>
           <div className="mt-4 grid gap-3 text-sm text-stone-600">
-            <p>这里能直接看出系统是不是在持续产出数据，以及失败是不是集中在某个平台或某类关键词。</p>
-            <p>如果某个关键词长期没有成功运行，通常说明配置有问题、接口返回异常，或者采集间隔没有命中。</p>
-          <div className="grid gap-2 pt-2">
-            <p className="font-black text-stone-950">检查重点</p>
-            <ul className="grid gap-1">
-              <li>• 失败率是否连续上升</li>
-              <li>• 同一关键词是否反复失败</li>
-              <li>• 某个平台是否整体异常</li>
-              <li>• 结果数是否突然降为 0</li>
-            </ul>
+            <p>SUCCESS：主接口返回且流程完整。</p>
+            <p>PARTIAL：发生回退或评论采集失败，内容可能已入库，但分析样本不足。</p>
+            <p>FAILED：主流程失败，通常需要检查 TikHub 配额、接口参数或网络链路。</p>
           </div>
-          <p className="mt-2 rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700">
-            当前处理中：{number(processingCount)}
-          </p>
-        </div>
-      </Card>
+          <p className="mt-4 rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700">当前处理中：{number(processingCount)}</p>
+        </Card>
       </div>
 
       <DataTable
         emptyTitle="暂无采集日志"
         emptyBody="先执行一次关键词采集或热榜采集后，这里会出现记录。"
-        headers={["时间", "类型", "平台", "关键词", "状态", "结果数", "耗时", "请求", "错误"]}
+        headers={["时间", "类型", "平台", "关键词", "状态", "结果数", "耗时", "请求", "错误/告警"]}
         rows={runs.map((run) => [
           <div className="grid gap-1" key={`time-${run.id}`}>
             <span className="font-black text-stone-950">{formatTime(run.startedAt)}</span>
@@ -171,13 +163,15 @@ export default async function AdminInsightRunsPage({
           <span key={`keyword-${run.id}`} className="font-semibold text-stone-800">
             {run.keyword ?? "-"}
           </span>,
-          <StatusBadge key={`status-${run.id}`}>{run.status}</StatusBadge>,
+          <StatusBadge key={`status-${run.id}`} tone={run.status === "PARTIAL" ? "warning" : undefined}>
+            {run.status}
+          </StatusBadge>,
           number(run.resultCount),
           run.completedAt ? formatDuration(run.startedAt, run.completedAt) : "进行中",
-          <code className="block max-w-[16rem] whitespace-pre-wrap break-all text-xs text-stone-600" key={`payload-${run.id}`}>
+          <code className="block max-w-[18rem] whitespace-pre-wrap break-all text-xs text-stone-600" key={`payload-${run.id}`}>
             {compactJson(run.requestPayload)}
           </code>,
-          <code className="block max-w-[18rem] whitespace-pre-wrap break-all text-xs text-red-600" key={`error-${run.id}`}>
+          <code className="block max-w-[20rem] whitespace-pre-wrap break-all text-xs text-red-600" key={`error-${run.id}`}>
             {run.errorMessage ?? "-"}
           </code>,
         ])}
