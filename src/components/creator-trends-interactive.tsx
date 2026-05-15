@@ -196,7 +196,7 @@ export function CreatorTrendHeaderFilters() {
   }, [directions, direction, platform, range, scenario, router]);
 
   return (
-    <div className="flex flex-wrap items-center gap-3" aria-busy={isNavigating}>
+    <div className="flex w-full min-w-0 items-center gap-3 overflow-x-auto no-scrollbar lg:w-auto lg:shrink-0" aria-busy={isNavigating}>
       <Dropdown
         icon={<CalendarDays size={14} />}
         items={rangeFilters}
@@ -238,8 +238,8 @@ export function CreatorTrendSearch() {
   }
 
   return (
-    <section className="flex flex-wrap items-center gap-4">
-      <form className="flex h-12 min-w-[26rem] flex-1 items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 shadow-sm" onSubmit={submit}>
+    <section className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-center">
+      <form className="flex h-12 min-w-0 flex-1 items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 shadow-sm sm:min-w-[26rem] sm:px-4" onSubmit={submit}>
         <Search className="text-slate-400" size={20} />
         <input
           className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-slate-700 outline-none placeholder:text-slate-400"
@@ -247,23 +247,23 @@ export function CreatorTrendSearch() {
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
         />
-        <button className="rounded-lg bg-slate-950 px-3 py-1.5 text-xs font-black text-white" type="submit">
+        <button className="shrink-0 rounded-lg bg-slate-950 px-3 py-1.5 text-xs font-black text-white" type="submit">
           搜索
         </button>
       </form>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex min-w-0 gap-3 overflow-x-auto no-scrollbar pb-1 lg:flex-wrap lg:overflow-visible lg:pb-0">
         {chips.map((chip, index) =>
           chip === "更多" ? (
             <div key={chip} className="relative">
               <button
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 shadow-sm transition hover:border-teal-200 hover:text-teal-700"
+                className="shrink-0 whitespace-nowrap rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 shadow-sm transition hover:border-teal-200 hover:text-teal-700"
                 type="button"
                 onClick={() => setMoreOpen((next) => !next)}
               >
                 更多
               </button>
               {moreOpen ? (
-                <div className="absolute right-0 top-12 z-20 flex min-w-80 flex-wrap gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-lg">
+                <div className="absolute right-0 top-12 z-20 flex w-[min(20rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] flex-wrap gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-lg">
                   {moreKeywordChips.map((item) => (
                     <button
                       key={item}
@@ -285,7 +285,7 @@ export function CreatorTrendSearch() {
             <button
               key={chip}
               className={cn(
-                "rounded-xl border px-4 py-2 text-sm font-black shadow-sm transition hover:border-teal-200 hover:text-teal-700",
+                "shrink-0 whitespace-nowrap rounded-xl border px-4 py-2 text-sm font-black shadow-sm transition hover:border-teal-200 hover:text-teal-700",
                 filters.keyword === chip || (!filters.keyword && index === 0) ? "border-teal-600 bg-teal-600 text-white hover:text-white" : "border-slate-200 bg-white text-slate-700",
               )}
               type="button"
@@ -310,7 +310,7 @@ function SourceBadge({ kind }: { kind: SourceKind }) {
       : kind === "规则计算"
         ? "border-blue-200 bg-blue-50 text-blue-700"
         : "border-slate-200 bg-slate-50 text-slate-500";
-  return <span className={cn("rounded-full border px-2.5 py-1 text-xs font-black", style)}>{kind}</span>;
+  return <span className={cn("whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-black", style)}>{kind}</span>;
 }
 
 function PlatformBadge({ label }: { label: string }) {
@@ -360,8 +360,8 @@ export function CreatorTrendHotTopics({
     .map((row, index) => ({ ...row, rank: index + 1 }));
 
   return (
-    <section id="hot-topics" className="scroll-mt-28 grid grid-cols-1 gap-5 xl:grid-cols-[1.2fr_1fr]">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <section id="hot-topics" className="scroll-mt-28 grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+      <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-black">适合我的热点趋势</h2>
@@ -388,7 +388,7 @@ export function CreatorTrendHotTopics({
         <CreatorTrendChart data={displayTrendData} />
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-black">热点匹配度排行</h2>
@@ -410,7 +410,7 @@ export function CreatorTrendHotTopics({
             ))}
           </div>
         </div>
-        <div className="max-h-80 overflow-auto pr-1">
+        <div className="max-h-80 max-w-full overflow-auto pr-1">
           <table className="min-w-[48rem] w-full text-left text-sm">
             <thead className="sticky top-0 z-10 bg-slate-50 text-xs text-slate-500">
               <tr>{["排名", "话题", "来源", "热度", "匹配度", "竞争度", "创作难度", "主要平台", "建议"].map((head) => <th key={head} className="px-3 py-3 font-black">{head}</th>)}</tr>

@@ -583,7 +583,7 @@ export function DataTable({
           <article className="rounded-2xl border border-[var(--line)] bg-white/86 p-4 shadow-sm" key={rowIndex}>
             <div className="grid gap-3">
               {row.map((cell, cellIndex) => (
-                <div className={cellIndex === 0 ? "border-b border-stone-100 pb-3" : "grid grid-cols-[7rem_1fr] gap-3"} key={cellIndex}>
+                <div className={cellIndex === 0 ? "border-b border-stone-100 pb-3" : "grid grid-cols-[7rem_minmax(0,1fr)] gap-3"} key={cellIndex}>
                   <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-stone-400">{zhText(headers[cellIndex] ?? "")}</p>
                   <div className={cn("min-w-0 text-sm text-stone-700", cellIndex === 0 ? "mt-1 font-black text-stone-950" : "text-right")}>{zhNode(cell)}</div>
                 </div>
@@ -592,7 +592,7 @@ export function DataTable({
           </article>
         ))}
       </div>
-      <div className="hidden max-w-full overflow-x-auto rounded-2xl border border-[var(--line)] bg-white/86 shadow-sm backdrop-blur-sm md:block">
+      <div className="hidden max-w-full overflow-x-auto no-scrollbar rounded-2xl border border-[var(--line)] bg-white/86 shadow-sm backdrop-blur-sm md:block">
         <table className="w-full min-w-[1120px] text-left text-sm">
           <thead className="bg-stone-50 text-xs uppercase tracking-[0.1em] text-stone-500">
             <tr>
@@ -607,7 +607,7 @@ export function DataTable({
             {rows.map((row, rowIndex) => (
               <tr className="align-top transition hover:bg-amber-50/35" key={rowIndex}>
                 {row.map((cell, cellIndex) => (
-                  <td className="px-4 py-4 text-stone-700" key={cellIndex}>
+                  <td className="min-w-0 px-4 py-4 text-stone-700" key={cellIndex}>
                     {zhNode(cell)}
                   </td>
                 ))}

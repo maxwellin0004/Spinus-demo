@@ -2,16 +2,18 @@ import Link from "next/link";
 import { registerAction } from "@/lib/actions";
 import { Card, Field, PageHeader, Select } from "@/components/ui";
 import { SubmitButton } from "@/components/form-controls";
+import { normalizeCreatorShareCode } from "@/lib/creator-marketing";
 import { normalizeInviteCode } from "@/lib/invitations";
 import { prisma } from "@/lib/prisma";
 
 export default async function RegisterPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; invite?: string; role?: string }>;
+  searchParams: Promise<{ error?: string; invite?: string; role?: string; ref?: string }>;
 }) {
-  const { error, invite, role } = await searchParams;
+  const { error, invite, role, ref } = await searchParams;
   const inviteCode = normalizeInviteCode(invite ?? "");
+  const refCode = normalizeCreatorShareCode(ref ?? "");
   const defaultRole = role === "CREATOR" ? "CREATOR" : "BRAND";
   const invitation = inviteCode
     ? await prisma.invitationCode.findUnique({
@@ -19,13 +21,19 @@ export default async function RegisterPage({
         include: { adminProfile: true },
       })
     : null;
+  const creatorReferralSource = refCode
+    ? await prisma.creatorProfile.findUnique({
+        where: { shareCode: refCode },
+      })
+    : null;
   const lockedInvite = Boolean(invitation?.active);
   const invalidInvite = Boolean(inviteCode && (!invitation || !invitation.active));
+  const invalidReferral = Boolean(refCode && !creatorReferralSource);
 
   return (
     <main className="grid min-h-screen place-items-center bg-[radial-gradient(circle_at_top_left,#fbbf24,transparent_24rem),#fafaf9] p-6">
       <div className="w-full max-w-xl">
-        <PageHeader eyebrow="小黄雀" title="创建工作账号" />
+        <PageHeader eyebrow="小黄雀" title="创建工作台账号" />
         <Card className="mt-8">
           {error ? <div className="mb-5 rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</div> : null}
           {lockedInvite ? (
@@ -33,9 +41,19 @@ export default async function RegisterPage({
               邀请人：{invitation?.adminProfile.displayName}
             </div>
           ) : null}
+          {creatorReferralSource ? (
+            <div className="mb-5 rounded-2xl bg-sky-50 px-4 py-3 text-sm font-semibold text-sky-900">
+              分享人：{creatorReferralSource.displayName}
+            </div>
+          ) : null}
           {invalidInvite ? (
             <div className="mb-5 rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-              邀请码无效或已停用。没有邀请码可移除 URL 中的 invite 参数后继续注册。
+              邀请码无效或已停用。没有邀请码时，移除 URL 中的 `invite` 参数后继续注册。
+            </div>
+          ) : null}
+          {invalidReferral ? (
+            <div className="mb-5 rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+              分享链接已失效，请联系分享人重新发送海报或链接。
             </div>
           ) : null}
           <form action={registerAction} className="grid gap-4">
@@ -54,15 +72,18 @@ export default async function RegisterPage({
               />
               {lockedInvite ? <input name="inviteLocked" type="hidden" value="1" /> : null}
             </label>
-            <Field label="工作台/显示名称" name="name" required placeholder="例如 小黄雀测试" />
-            <Field label="国家/地区" name="country" required defaultValue="Singapore" />
+            {refCode ? <input name="refCode" type="hidden" value={refCode} /> : null}
+            <Field label="工作台 / 显示名称" name="name" required placeholder="例如 小黄雀测试" />
+            <Field label="国家 / 地区" name="country" required defaultValue="Singapore" />
             <Field label="行业（品牌方填写）" name="industry" defaultValue="AI SaaS" />
             <Field label="邮箱" name="email" type="email" required placeholder="name@example.com" />
             <Field label="密码" name="password" type="password" required placeholder="至少 8 位" />
-            <SubmitButton className="rounded-full py-3" pendingLabel="正在注册...">注册</SubmitButton>
+            <SubmitButton className="rounded-full py-3" pendingLabel="正在注册...">
+              注册
+            </SubmitButton>
           </form>
           <p className="mt-5 text-sm text-stone-500">
-            已有账号？ <Link className="font-semibold text-stone-950" href="/auth/login">登录</Link>
+            已有账号？<Link className="font-semibold text-stone-950" href="/auth/login">登录</Link>
           </p>
         </Card>
       </div>

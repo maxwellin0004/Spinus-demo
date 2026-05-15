@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ApplicationStatus, SubmissionStatus, UserRole } from "@prisma/client";
-import { DataTable, LinkButton, MetricCard, PageHeader, StatusBadge } from "@/components/ui";
+import { DataTable, MetricCard, PageHeader, StatusBadge } from "@/components/ui";
 import { requireRole } from "@/lib/auth";
 import { money } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
@@ -10,112 +10,158 @@ export default async function CreatorDashboard() {
   const creator = await prisma.creatorProfile.findUnique({
     where: { userId: session.userId },
     include: {
-      wallet: { include: { transactions: true } },
+      wallet: true,
       socialAccounts: true,
       responsibleAdmin: { include: { user: true } },
-      applications: { include: { submissions: { include: { proofs: true } }, task: { include: { campaign: true } } }, orderBy: { createdAt: "desc" } },
+      applications: {
+        include: {
+          submissions: {
+            include: { proofs: true },
+            orderBy: { createdAt: "desc" },
+          },
+          task: { include: { campaign: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      },
     },
   });
 
-  if (!creator) return <PageHeader title="缺少创作者资料" />;
+  if (!creator) {
+    return <PageHeader title="缺少创作者资料" />;
+  }
 
   const applications = creator.applications;
-  const submissions = applications.flatMap((app) => app.submissions);
-  const activeTasks = await prisma.campaignTask.count({ where: { status: "ACTIVE", campaign: { status: "ACTIVE", isDemo: false } } });
+  const submissions = applications.flatMap((application) => application.submissions);
   const verifiedSocials = creator.socialAccounts.filter((account) => account.verificationStatus === "VERIFIED");
   const profileComplete = Boolean(creator.displayName && creator.country && creator.languages.length && creator.categories.length && creator.contentTypes.length && creator.bio);
-  const walletReady = Boolean(creator.wallet?.payoutWalletAddress);
   const available = Number(creator.wallet?.availableBalance ?? 0);
+  const activeTasks = await prisma.campaignTask.count({
+    where: {
+      status: "ACTIVE",
+      campaign: { status: "ACTIVE", isDemo: false },
+    },
+  });
+  const referralCount = await prisma.creatorReferralAttribution.count({
+    where: { creatorProfileId: creator.id },
+  });
+  const operatorName = creator.responsibleAdmin?.displayName || "待分配";
+  const operatorContact = creator.responsibleAdmin?.wechat || creator.responsibleAdmin?.user.email || "待补充";
 
-  const onboarding = [
-    { label: "基础资料", done: profileComplete, detail: profileComplete ? "已填写昵称、国家、语言、领域和简介。" : "请补齐语言、领域、内容形式和个人简介。", href: "/creator/profile" },
-    { label: "社媒账号", done: creator.socialAccounts.length > 0, detail: creator.socialAccounts.length ? `已添加 ${creator.socialAccounts.length} 个账号。` : "至少添加一个社媒账号后才能申请任务。", href: "/creator/profile" },
-    { label: "账号验证", done: verifiedSocials.length > 0, detail: verifiedSocials.length ? `${verifiedSocials.length} 个账号已验证。` : "等待 Admin 审核社媒账号真实性。", href: "/creator/profile" },
-    { label: "创作者审核", done: creator.reviewStatus === "APPROVED", detail: `当前状态：${creator.reviewStatus}`, href: "/creator/profile" },
-    { label: "收款信息", done: walletReady, detail: walletReady ? "已填写收款钱包/银行信息。" : "填写后才方便提现。", href: "/creator/profile" },
+  const readiness = [
+    { label: "基础资料", done: profileComplete, detail: profileComplete ? "资料已完整" : "继续完善语言、领域、内容形式和简介" },
+    { label: "社媒账号", done: creator.socialAccounts.length > 0, detail: creator.socialAccounts.length ? `已添加 ${creator.socialAccounts.length} 个账号` : "至少添加 1 个社媒账号" },
+    { label: "账号验证", done: verifiedSocials.length > 0, detail: verifiedSocials.length ? `${verifiedSocials.length} 个账号已验证` : "等待平台完成账号审核" },
+    { label: "平台审核", done: creator.reviewStatus === "APPROVED", detail: `当前状态：${creator.reviewStatus}` },
+    { label: "收款信息", done: Boolean(creator.wallet?.payoutWalletAddress), detail: creator.wallet?.payoutWalletAddress ? "已填写提现信息" : "建议补全钱包提现信息" },
   ];
-  const onboardingCompleted = onboarding.filter((item) => item.done).length;
-  const onboardingPercent = Math.round((onboardingCompleted / onboarding.length) * 100);
-  const operatorName = creator.responsibleAdmin?.displayName ?? "暂未分配";
-  const operatorContact = creator.responsibleAdmin?.user.email || creator.responsibleAdmin?.wechat || "暂未填写";
+  const readinessDone = readiness.filter((item) => item.done).length;
+  const readinessPercent = Math.round((readinessDone / readiness.length) * 100);
 
   const cards = [
-    { label: "可申请任务", value: activeTasks, href: "/creator/marketplace" },
-    { label: "已申请任务", value: applications.length, href: "/creator/my-tasks" },
-    { label: "待制作内容", value: applications.filter((app) => app.status === ApplicationStatus.APPROVED && app.submissions.length === 0).length, href: "/creator/my-tasks?stage=content" },
-    { label: "内容审核中", value: submissions.filter((submission) => submission.status === SubmissionStatus.SUBMITTED).length, href: "/creator/my-tasks?stage=review" },
-    { label: "待发布", value: submissions.filter((submission) => submission.status === SubmissionStatus.APPROVED).length, href: "/creator/my-tasks?stage=publish" },
-    { label: "待提交链接", value: submissions.filter((submission) => submission.status === SubmissionStatus.PUBLISHED || submission.status === SubmissionStatus.APPROVED).length, href: "/creator/my-tasks?stage=publish" },
-    { label: "可提现余额", value: money(available), href: "/creator/wallet" },
-    { label: "累计收入", value: money(creator.wallet?.cumulativeIncome ?? creator.cumulativeIncome), href: "/creator/wallet" },
-    { label: "完成任务", value: creator.completedTasks, href: "/creator/my-tasks?stage=done" },
-    { label: "等级", value: creator.level, href: "/creator/profile" },
-    { label: "履约率", value: `${Number(creator.completionRate).toFixed(1)}%`, href: "/creator/profile" },
+    { label: "可申请任务", value: activeTasks, href: "/creator/marketplace", sub: "当前可浏览的真实任务" },
+    { label: "我的申请", value: applications.length, href: "/creator/my-tasks", sub: "历史申请总数" },
+    {
+      label: "待制作内容",
+      value: applications.filter((application) => application.status === ApplicationStatus.APPROVED && application.submissions.length === 0).length,
+      href: "/creator/my-tasks?stage=content",
+      sub: "已通过但尚未提交",
+    },
+    {
+      label: "待审核内容",
+      value: submissions.filter((submission) => submission.status === SubmissionStatus.SUBMITTED).length,
+      href: "/creator/my-tasks?stage=review",
+      sub: "等待平台审核",
+    },
+    {
+      label: "可提现余额",
+      value: money(available),
+      href: "/creator/wallet",
+      sub: `累计收入 ${money(creator.wallet?.cumulativeIncome ?? creator.cumulativeIncome)}`,
+    },
+    { label: "分享注册", value: referralCount, href: "/creator/share", sub: "通过你的海报完成注册" },
+    { label: "创作者等级", value: creator.level, href: "/creator/profile", sub: `完成率 ${Number(creator.completionRate).toFixed(1)}%` },
+    { label: "会员方案", value: "2 档", href: "/creator/membership", sub: "成长会员 / Pro 高阶会员" },
   ];
 
   return (
     <div className="grid gap-8">
-      <PageHeader eyebrow="创作者" title={`${creator.displayName} 仪表盘`}>
-        <LinkButton href="/creator/marketplace" variant="secondary">浏览任务</LinkButton>
+      <PageHeader eyebrow="Creator" title={`${creator.displayName} 的创作者工作台`}>
+        <div className="flex flex-wrap gap-3">
+          <Link className="rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-black text-stone-950 shadow-sm" href="/creator/marketplace">
+            浏览任务
+          </Link>
+          <Link className="rounded-full border border-stone-200 bg-white px-4 py-2 text-sm font-black text-stone-800 shadow-sm" href="/creator/share">
+            分享海报
+          </Link>
+          <Link className="rounded-full border border-stone-200 bg-white px-4 py-2 text-sm font-black text-stone-800 shadow-sm" href="/creator/membership">
+            会员方案
+          </Link>
+        </div>
       </PageHeader>
 
-      <section>
-        <details className="group rounded-2xl border border-[var(--line)] bg-white/82 p-4 shadow-sm backdrop-blur-sm">
-          <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3">
-            <div className="min-w-0">
-              <h2 className="text-lg font-black text-stone-950">今日接单准备</h2>
-              <p className="mt-1 text-sm text-stone-500">
-                完成度 {onboardingPercent}% · {onboardingCompleted}/{onboarding.length} 项已完成 · 运营联系人：{operatorName}
-              </p>
+      <section className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="rounded-2xl border border-[var(--line)] bg-white/84 p-5 shadow-sm">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-stone-500">今日状态</p>
+              <h2 className="mt-2 text-2xl font-black text-stone-950">接单准备度 {readinessPercent}%</h2>
+              <p className="mt-2 text-sm text-stone-600">已完成 {readinessDone} / {readiness.length} 项基础准备。</p>
             </div>
-            <div className="flex items-center gap-2">
-              {onboardingCompleted < onboarding.length ? (
-                <Link className="rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-black text-stone-950 shadow-sm" href="/creator/profile">
-                  完善资料
-                </Link>
-              ) : null}
-              <span className="rounded-full border border-stone-200 bg-white px-4 py-2 text-sm font-black text-stone-700 shadow-sm group-open:hidden">展开</span>
-              <span className="hidden rounded-full border border-stone-200 bg-white px-4 py-2 text-sm font-black text-stone-700 shadow-sm group-open:inline-flex">隐藏</span>
-            </div>
-          </summary>
-          <div className="mt-4">
-            <DataTable
-              headers={["项目", "状态", "当前记录", "下一步", "操作"]}
-              rows={[
-                ...onboarding.map((item) => [
-                  item.label,
-                  <StatusBadge key={`${item.label}-status`} tone={item.done ? "success" : "warning"}>{item.done ? "已完成" : "待处理"}</StatusBadge>,
-                  item.detail,
-                  item.done ? "保持资料可核对" : "补齐后再申请任务",
-                  <Link className="font-black text-stone-950" href={item.href ?? "/creator/profile"} key={`${item.label}-action`}>查看</Link>,
-                ]),
-                [
-                  "运营联系人",
-                  <StatusBadge key="operator-status" tone={creator.responsibleAdmin ? "success" : "neutral"}>{operatorName}</StatusBadge>,
-                  operatorContact,
-                  creator.responsibleAdmin ? "需要协助时联系运营" : "等待平台分配运营联系人",
-                  <span className="text-stone-400" key="operator-action">-</span>,
-                ],
-              ]}
-            />
+            <Link className="rounded-full border border-stone-200 bg-white px-4 py-2 text-sm font-black text-stone-800 shadow-sm" href="/creator/profile">
+              完善资料
+            </Link>
           </div>
-        </details>
+          <div className="mt-5 grid gap-3 md:grid-cols-2">
+            {readiness.map((item) => (
+              <div className="rounded-2xl border border-stone-200 bg-stone-50/70 p-4" key={item.label}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="font-black text-stone-950">{item.label}</p>
+                  <StatusBadge tone={item.done ? "success" : "warning"}>{item.done ? "已完成" : "待处理"}</StatusBadge>
+                </div>
+                <p className="mt-2 text-sm leading-6 text-stone-600">{item.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-[var(--line)] bg-white/84 p-5 shadow-sm">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-stone-500">会员与分享</p>
+          <h2 className="mt-2 text-2xl font-black text-stone-950">新增两个增长入口</h2>
+          <div className="mt-5 grid gap-3">
+            <div className="rounded-2xl bg-[linear-gradient(135deg,#0f2f8f,#2563eb)] p-4 text-white">
+              <p className="text-sm font-black">专属分享海报</p>
+              <p className="mt-2 text-sm leading-6 text-white/80">二维码直达创作者注册页，支持个人分享归因。</p>
+            </div>
+            <div className="rounded-2xl bg-[linear-gradient(135deg,#4c1d95,#9333ea)] p-4 text-white">
+              <p className="text-sm font-black">两档会员方案</p>
+              <p className="mt-2 text-sm leading-6 text-white/80">支持展示年度成长会员与 Pro 高阶会员，并跳转到开通页。</p>
+            </div>
+            <div className="rounded-2xl border border-stone-200 bg-stone-50 p-4">
+              <p className="text-sm font-black text-stone-950">对接运营</p>
+              <p className="mt-2 text-sm leading-6 text-stone-600">{operatorName} / {operatorContact}</p>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {cards.map((card) => <MetricCard key={card.label} label={card.label} value={card.value} href={card.href} />)}
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {cards.map((card) => (
+          <MetricCard href={card.href} key={card.label} label={card.label} sub={card.sub} value={card.value} />
+        ))}
       </div>
 
       <section>
-        <h2 className="mb-3 text-xl font-semibold">最近任务</h2>
+        <h2 className="mb-3 text-xl font-black text-stone-950">最近任务</h2>
         <DataTable
-          headers={["Campaign", "Task", "Application", "Latest submission", "Action"]}
+          headers={["Campaign", "Task", "申请状态", "最近提交", "操作"]}
           rows={applications.map((application) => [
             application.task.campaign.title,
             application.task.title,
-            <StatusBadge key="a">{application.status}</StatusBadge>,
-            application.submissions[0]?.status ? <StatusBadge key="s">{application.submissions[0].status}</StatusBadge> : "未提交",
-            <Link className="font-semibold text-stone-950" href={`/creator/my-tasks/${application.id}`} key={application.id}>打开</Link>,
+            <StatusBadge key={`${application.id}-application`}>{application.status}</StatusBadge>,
+            application.submissions[0]?.status ? <StatusBadge key={`${application.id}-submission`}>{application.submissions[0].status}</StatusBadge> : "未提交",
+            <Link className="font-semibold text-stone-950" href={`/creator/my-tasks/${application.id}`} key={application.id}>
+              打开
+            </Link>,
           ])}
         />
       </section>

@@ -1,0 +1,13 @@
+
+> tanglin-rd@0.1.0 dev
+> next dev --port 3001
+
+▲ Next.js 16.2.4 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://198.18.0.1:3001
+- Environments: .env
+✓ Ready in 766ms
+- Experiments (use with caution):
+  · serverActions
+
+ GET /auth/login 200 in 4.1s (next.js: 1676ms, application-code: 2.4s)

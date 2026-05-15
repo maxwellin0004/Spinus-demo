@@ -265,6 +265,7 @@ model User {
   adminProfile           AdminProfile?
   brandProfile           BrandProfile?
   creatorProfile         CreatorProfile?
+  creatorReferral        CreatorReferralAttribution?
   invitationCodesCreated InvitationCode[]       @relation("InvitationCodeCreator")
   invitationAttribution  InvitationAttribution?
   submissionReviews      SubmissionReview[]     @relation("Reviewer")
@@ -385,6 +386,7 @@ model CreatorProfile {
   displayName        String
   fullName           String?
   email              String
+  shareCode          String              @unique
   country            String
   languages          String[]            @default([])
   categories         String[]            @default([])
@@ -411,8 +413,22 @@ model CreatorProfile {
   wallet             Wallet?
   withdrawalRequests WithdrawalRequest[]
   walletTransactions WalletTransaction[]
+  referralsReceived  CreatorReferralAttribution[]
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
+}
+
+model CreatorReferralAttribution {
+  id              String         @id @default(cuid())
+  userId          String         @unique
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  creatorProfileId String
+  creatorProfile  CreatorProfile @relation(fields: [creatorProfileId], references: [id], onDelete: Restrict)
+  codeSnapshot    String
+  createdAt       DateTime       @default(now())
+
+  @@index([creatorProfileId, createdAt])
+  @@index([codeSnapshot])
 }
 
 model SocialAccount {

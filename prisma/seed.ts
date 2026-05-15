@@ -205,7 +205,7 @@ async function main() {
       ["creator3@test.com", "Ken 加密中文", "中国香港", CreatorLevel.VERIFIED, 76],
       ["creator4@test.com", "Rina 评测", "日本", CreatorLevel.NEW, 64],
       ["creator5@test.com", "Leo B2B", "英国", CreatorLevel.ELITE, 95],
-    ].map(([email, displayName, country, level, completionRate]) =>
+    ].map(([email, displayName, country, level, completionRate], index) =>
       prisma.user.create({
         data: {
           email: String(email),
@@ -216,6 +216,7 @@ async function main() {
             create: {
               displayName: String(displayName),
               email: String(email),
+              shareCode: `KOC${String(index + 1).padStart(5, "0")}`,
               country: String(country),
               languages: ["英语", "中文"],
               categories: ["AI", "SaaS", "金融科技"],

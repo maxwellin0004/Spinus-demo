@@ -63,6 +63,7 @@ import {
   isValidInviteCode,
   normalizeInviteCode,
 } from "@/lib/invitations";
+import { generateUniqueCreatorShareCode, normalizeCreatorShareCode } from "@/lib/creator-marketing";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -362,6 +363,7 @@ const registerSchema = z.object({
   country: z.string().min(2),
   industry: z.string().optional(),
   inviteCode: z.string().optional(),
+  refCode: z.string().optional(),
 });
 
 export async function registerAction(formData: FormData) {
@@ -372,11 +374,14 @@ export async function registerAction(formData: FormData) {
   const email = text(formData.get("email")).toLowerCase();
   const password = text(formData.get("password"));
   const inviteCode = normalizeInviteCode(text(formData.get("inviteCode")));
+  const refCode = normalizeCreatorShareCode(text(formData.get("refCode")));
   const inviteLocked = text(formData.get("inviteLocked")) === "1";
   const registerErrorPath = (message: string) =>
     `/auth/register?${new URLSearchParams({
       error: message,
       ...(inviteLocked && inviteCode ? { invite: inviteCode } : {}),
+      ...(refCode ? { ref: refCode } : {}),
+      ...(role === "CREATOR" ? { role } : {}),
     }).toString()}`;
   if (!["BRAND", "CREATOR"].includes(role)) redirect(`/auth/register?error=${encodeURIComponent("请选择注册角色。")}`);
   if (name.length < 2) redirect(`/auth/register?error=${encodeURIComponent("请填写工作台/显示名称，至少 2 个字符。")}`);
@@ -392,6 +397,7 @@ export async function registerAction(formData: FormData) {
     country,
     industry,
     inviteCode,
+    refCode,
   });
   if (!parsed.success) redirect(`/auth/register?error=${encodeURIComponent("请检查邮箱格式和必填字段。")}`);
 
@@ -399,8 +405,17 @@ export async function registerAction(formData: FormData) {
   if (exists) redirect(`/auth/register?error=${encodeURIComponent("该邮箱已经注册，请直接登录。")}`);
 
   const invitation = parsed.data.inviteCode ? await findActiveInvitation(parsed.data.inviteCode, prisma) : null;
+  const creatorReferralSource = parsed.data.refCode
+    ? await prisma.creatorProfile.findUnique({
+        where: { shareCode: parsed.data.refCode },
+        include: { user: true },
+      })
+    : null;
   if (parsed.data.inviteCode && (!invitation || !invitation.active)) {
     redirect(registerErrorPath("邀请码无效或已停用，请检查后重试；没有邀请码可移除 URL 中的 invite 参数后继续注册。"));
+  }
+  if (parsed.data.refCode && !creatorReferralSource) {
+    redirect(registerErrorPath("分享链接已失效，请返回分享海报重新扫码或联系分享人。"));
   }
 
   const user = await prisma.$transaction(async (tx) => {
@@ -432,6 +447,7 @@ export async function registerAction(formData: FormData) {
                 create: {
                   displayName: parsed.data.name,
                   email: parsed.data.email,
+                  shareCode: await generateUniqueCreatorShareCode(tx),
                   country: parsed.data.country,
                   languages: ["中文"],
                   categories: [],
@@ -463,6 +479,23 @@ export async function registerAction(formData: FormData) {
         },
       });
     }
+    if (creatorReferralSource) {
+      await tx.creatorReferralAttribution.create({
+        data: {
+          userId: created.id,
+          creatorProfileId: creatorReferralSource.id,
+          codeSnapshot: creatorReferralSource.shareCode,
+        },
+      });
+      await tx.notification.create({
+        data: {
+          userId: creatorReferralSource.userId,
+          title: "有新创作者通过你的分享注册",
+          body: `${parsed.data.name} (${parsed.data.email}) 通过你的专属分享海报完成注册。`,
+          href: "/creator/share",
+        },
+      });
+    }
     return created;
   });
 
@@ -470,7 +503,7 @@ export async function registerAction(formData: FormData) {
     action: "auth.register",
     entityType: "user",
     entityId: user.id,
-    afterJson: { role: user.role, email: user.email, inviteCode: invitation?.code },
+    afterJson: { role: user.role, email: user.email, inviteCode: invitation?.code, creatorRefCode: creatorReferralSource?.shareCode },
   });
   await createSession(user);
   redirect(roleHome(user.role));
@@ -1062,6 +1095,7 @@ export async function createCreatorAccountAction(formData: FormData) {
         create: {
           displayName: parsed.data.displayName,
           email: parsed.data.email,
+          shareCode: await generateUniqueCreatorShareCode(prisma),
           country: parsed.data.country,
           languages: csv(formData.get("languages")),
           categories: csv(formData.get("categories")),
@@ -1124,6 +1158,7 @@ export async function generateDemoDataAction() {
           create: {
             displayName: `演示创作者 ${suffix}`,
             email: `demo-creator-${suffix}@test.com`,
+            shareCode: await generateUniqueCreatorShareCode(tx),
             country: "新加坡",
             languages: ["中文", "英文"],
             categories: ["AI", "SaaS"],

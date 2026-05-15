@@ -295,16 +295,16 @@ export default async function CreatorTrendsPage({
       <CreatorTrendFilterProvider initialFilters={filters} directions={directionOptions}>
         <div data-creator-trends-shell className="min-h-screen bg-[#f8fafc] text-slate-950">
           <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
-            <div className="flex min-h-20 flex-wrap items-center gap-4 px-8">
-              <div className="flex items-center gap-3">
-                <div className="flex size-11 items-center justify-center rounded-full bg-teal-600 text-white shadow-sm">
+            <div className="flex min-h-20 min-w-0 flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:px-8 lg:py-0">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-teal-600 text-white shadow-sm">
                   <Flame size={22} />
                 </div>
-                <p className="text-xl font-black tracking-tight">热点洞察台 | 达人创作版</p>
+                <p className="min-w-0 truncate text-lg font-black tracking-tight text-horizontal sm:text-xl">热点洞察台 | 达人创作版</p>
               </div>
-              <nav className="flex flex-1 flex-wrap items-center gap-6 text-sm font-black text-slate-700">
+              <nav className="flex min-w-0 flex-1 items-center gap-5 overflow-x-auto no-scrollbar text-sm font-black text-slate-700 lg:justify-center">
                 {navItems.map((item, index) => (
-                  <Link key={item.label} href={item.href} className={cn("py-6 transition hover:text-teal-700", index === 0 && "border-b-4 border-teal-600 text-teal-700")}>
+                  <Link key={item.label} href={item.href} className={cn("shrink-0 whitespace-nowrap py-2 transition hover:text-teal-700 lg:py-6", index === 0 && "border-b-4 border-teal-600 text-teal-700")}>
                     {item.label}
                   </Link>
                 ))}
@@ -313,7 +313,7 @@ export default async function CreatorTrendsPage({
             </div>
           </header>
 
-          <main className="space-y-5 p-8">
+          <main className="space-y-5 p-4 sm:p-6 lg:p-8">
             <CreatorTrendSearch />
 
             <section className={cn(cardClass, "flex flex-col gap-3 px-5 py-4 md:flex-row md:items-center md:justify-between")}>
@@ -329,16 +329,16 @@ export default async function CreatorTrendsPage({
               {hasExampleFallback ? <p className="text-xs font-semibold text-amber-700">部分模块暂无真实数据，已启用示例兜底。</p> : null}
             </section>
 
-            <section id="overview" className="scroll-mt-28 grid grid-cols-1 gap-5 xl:grid-cols-4">
+            <section id="overview" className="scroll-mt-28 grid grid-cols-1 gap-5 sm:grid-cols-2 2xl:grid-cols-4">
               {displayMetrics.map((card) => {
                 const Icon = card.icon;
                 return (
-                  <div key={card.label} className={cn(cardClass, "grid min-h-32 grid-cols-[5rem_1fr_8rem] items-center gap-4 p-5")}>
-                    <div className={cn("flex size-16 items-center justify-center rounded-full bg-gradient-to-br text-white shadow-sm", card.color)}>
+                  <div key={card.label} className={cn(cardClass, "grid min-h-32 min-w-0 grid-cols-[4.25rem_minmax(0,1fr)] items-center gap-4 p-5 lg:grid-cols-[4.25rem_minmax(8rem,1fr)_7rem] 2xl:grid-cols-[4.25rem_minmax(0,1fr)] min-[1800px]:grid-cols-[4.25rem_minmax(8rem,1fr)_7rem]")}>
+                    <div className={cn("flex size-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-white shadow-sm", card.color)}>
                       <Icon size={30} />
                     </div>
-                    <div>
-                      <p className="text-sm font-black text-slate-700">{card.label}</p>
+                    <div className="min-w-0">
+                      <p className="text-horizontal whitespace-nowrap text-sm font-black text-slate-700">{card.label}</p>
                       <p className="mt-1 text-4xl font-black tracking-tight">
                         {card.value}
                         <span className="text-xl">{card.suffix ?? ""}</span>
@@ -347,7 +347,7 @@ export default async function CreatorTrendsPage({
                         {card.sub} <span className="text-red-500">{card.delta}</span>
                       </p>
                     </div>
-                    <MiniSparkline color={card.line} />
+                    <div className="hidden lg:block 2xl:hidden min-[1800px]:block"><MiniSparkline color={card.line} /></div>
                   </div>
                 );
               })}

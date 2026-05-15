@@ -33,15 +33,24 @@ const navGroups: Record<UserRole, NavGroup[]> = {
         ["/admin/disputes", "争议处理"],
       ],
     },
-    { title: "财务与规则", items: [["/admin/payments", "资金运营"], ["/admin/compliance", "规则中心"], ["/admin/settings", "平台配置"]] },
-    { title: "系统工具", items: [["/admin/crawler", "抓取队列"], ["/admin/insights", "洞察关键词"], ["/admin/insights/runs", "采集日志"], ["/admin/demo", "演示数据"]] },
+    {
+      title: "财务与规则",
+      items: [["/admin/payments", "资金运营"], ["/admin/compliance", "规则中心"], ["/admin/settings", "平台配置"]],
+    },
+    {
+      title: "系统工具",
+      items: [["/admin/crawler", "抓取队列"], ["/admin/insights", "洞察关键词"], ["/admin/insights/runs", "采集日志"], ["/admin/demo", "演示数据"]],
+    },
   ],
   [UserRole.BRAND]: [
     { title: "品牌工作台", items: [["/brand", "仪表盘"], ["/brand/insights", "品牌洞察"], ["/brand/profile", "品牌资料"], ["/brand/requests", "需求沟通"]] },
     { title: "投放", items: [["/brand/campaigns", "推广活动"], ["/brand/campaigns/new", "新建推广"], ["/brand/billing", "账单"]] },
   ],
   [UserRole.CREATOR]: [
-    { title: "创作者工作台", items: [["/creator", "仪表盘"], ["/creator/trends", "热点选题"], ["/creator/profile", "个人资料"]] },
+    {
+      title: "创作者工作台",
+      items: [["/creator", "仪表盘"], ["/creator/trends", "热点选题"], ["/creator/profile", "个人资料"], ["/creator/share", "分享海报"], ["/creator/membership", "会员方案"]],
+    },
     { title: "任务与收益", items: [["/creator/marketplace", "任务大厅"], ["/creator/my-tasks", "我的任务"], ["/creator/wallet", "钱包提现"]] },
   ],
 };
@@ -89,7 +98,7 @@ export async function AppShell({ role, children }: { role: UserRole; children: R
           : group.items,
     }))
     .filter((group) => group.items.length > 0);
-  const primaryNav = visibleGroups.flatMap((group) => group.items).slice(0, 4);
+  const primaryNav = visibleGroups.flatMap((group) => group.items).slice(0, 5);
   const notifications = await prisma.notification.count({
     where: { userId: session.userId, unread: true },
   });
@@ -101,7 +110,7 @@ export async function AppShell({ role, children }: { role: UserRole; children: R
           <div className="rounded-2xl border border-stone-200 bg-[linear-gradient(135deg,#17211c,#334138)] p-4 text-white shadow-sm">
             <p className="text-xs font-black text-amber-200">小黄雀</p>
             <p className="mt-2 text-2xl font-black tracking-tight">KOL 投放平台</p>
-            <p className="mt-2 text-xs leading-5 text-white/70">三方投放协作后台</p>
+            <p className="mt-2 text-xs leading-5 text-white/70">任务、审核、验收、财务一体协作</p>
           </div>
         </Link>
         <nav className="mt-6 grid flex-1 gap-5 overflow-y-auto pr-1">
@@ -160,7 +169,9 @@ export async function AppShell({ role, children }: { role: UserRole; children: R
               </details>
             </div>
             <form action={logout}>
-              <SubmitButton className="rounded-full px-4 py-2" pendingLabel="正在退出..." variant="ghost">退出登录</SubmitButton>
+              <SubmitButton className="rounded-full px-4 py-2" pendingLabel="正在退出..." variant="ghost">
+                退出登录
+              </SubmitButton>
             </form>
           </div>
         </header>
