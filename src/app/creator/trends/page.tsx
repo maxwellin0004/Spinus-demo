@@ -193,12 +193,13 @@ export default async function CreatorTrendsPage({
       select: { insightDirection: true },
     }),
   ]);
+  if (!creatorPreference) return null;
 
   const legacyFilters = readLegacyFilter(filter);
   const filters: CreatorTrendFilters = {
     range: legacyFilters.range ?? normalizeTrendRange(range),
     platform: legacyFilters.platform ?? normalizeTrendPlatform(platform),
-    direction: normalizeDirection(legacyFilters.direction ?? direction, creatorPreference?.insightDirection ?? DEFAULT_INSIGHT_DIRECTION),
+    direction: normalizeDirection(legacyFilters.direction ?? direction, creatorPreference.insightDirection ?? DEFAULT_INSIGHT_DIRECTION),
     scenario: normalizeScenario(legacyFilters.scenario ?? scenario),
     keyword: keyword?.trim() ?? legacyFilters.keyword ?? "",
   };

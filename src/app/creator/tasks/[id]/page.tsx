@@ -1,9 +1,9 @@
-import { applyTaskAction } from "@/lib/actions";
-import { requireRole } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { Card, PageHeader, StatusBadge, Textarea } from "@/components/ui";
 import { SubmitButton } from "@/components/form-controls";
+import { applyTaskAction } from "@/lib/actions";
+import { requireRole } from "@/lib/auth";
 import { money, shortDate } from "@/lib/format";
+import { prisma } from "@/lib/prisma";
 import { UserRole } from "@prisma/client";
 
 export default async function CreatorTaskDetailPage({
@@ -19,7 +19,10 @@ export default async function CreatorTaskDetailPage({
   const task = await prisma.campaignTask.findUnique({ where: { id }, include: { campaign: { include: { assets: true, brand: true } } } });
   if (!task) return <PageHeader title="未找到任务" />;
 
-  const creator = await prisma.creatorProfile.findUnique({ where: { userId: session.userId }, include: { socialAccounts: true } });
+  const creator = await prisma.creatorProfile.findUnique({
+    where: { userId: session.userId },
+    include: { socialAccounts: true },
+  });
   const existing = creator ? await prisma.taskApplication.findUnique({ where: { taskId_creatorId: { taskId: task.id, creatorId: creator.id } } }) : null;
   const existingInCampaign = creator
     ? await prisma.taskApplication.findFirst({

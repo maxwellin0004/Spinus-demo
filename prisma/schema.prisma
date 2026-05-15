@@ -55,6 +55,13 @@ enum CreatorMembershipTier {
   PRO
 }
 
+enum CreatorMembershipApplicationStatus {
+  SUBMITTED
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
 enum CampaignStatus {
   DRAFT
   AWAITING_PAYMENT
@@ -272,6 +279,7 @@ model User {
   brandProfile           BrandProfile?
   creatorProfile         CreatorProfile?
   creatorReferral        CreatorReferralAttribution?
+  reviewedMembershipApplications CreatorMembershipApplication[]
   invitationCodesCreated InvitationCode[]       @relation("InvitationCodeCreator")
   invitationAttribution  InvitationAttribution?
   submissionReviews      SubmissionReview[]     @relation("Reviewer")
@@ -424,8 +432,31 @@ model CreatorProfile {
   withdrawalRequests WithdrawalRequest[]
   walletTransactions WalletTransaction[]
   referralsReceived  CreatorReferralAttribution[]
+  membershipApplications CreatorMembershipApplication[]
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
+}
+
+model CreatorMembershipApplication {
+  id               String                             @id @default(cuid())
+  creatorId        String
+  creator          CreatorProfile                     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  tier             CreatorMembershipTier
+  amount           Decimal                            @db.Decimal(12, 2)
+  currency         String                             @default("CNY")
+  status           CreatorMembershipApplicationStatus @default(SUBMITTED)
+  paymentReference String?
+  paymentProofUrl  String?
+  creatorNote      String?
+  adminNote        String?
+  reviewedById     String?
+  reviewedBy       User?                              @relation(fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt       DateTime?
+  createdAt        DateTime                           @default(now())
+  updatedAt        DateTime                           @updatedAt
+
+  @@index([creatorId, createdAt])
+  @@index([status, createdAt])
 }
 
 model CreatorReferralAttribution {

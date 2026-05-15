@@ -12,7 +12,7 @@ type NavGroup = { title: string; items: NavItem[] };
 
 const navGroups: Record<UserRole, NavGroup[]> = {
   [UserRole.ADMIN]: [
-    { title: "总览", items: [["/admin", "仪表盘"], ["/admin/reports", "全局报表"], ["/admin/audit", "操作日志"]] },
+    { title: "总览", items: [["/admin", "仪表盘"], ["/admin/reports", "全局报表"], ["/admin/referrals", "邀请转化"], ["/admin/audit", "操作日志"]] },
     {
       title: "客户与账号",
       items: [
@@ -35,7 +35,12 @@ const navGroups: Record<UserRole, NavGroup[]> = {
     },
     {
       title: "财务与规则",
-      items: [["/admin/payments", "资金运营"], ["/admin/compliance", "规则中心"], ["/admin/settings", "平台配置"]],
+      items: [
+        ["/admin/payments", "资金运营"],
+        ["/admin/membership-applications", "会员开通"],
+        ["/admin/compliance", "规则中心"],
+        ["/admin/settings", "平台配置"],
+      ],
     },
     {
       title: "系统工具",
@@ -70,9 +75,11 @@ const adminNavPermissions: Record<string, AdminPermission | null> = {
   "/admin/proofs": "proof.review",
   "/admin/disputes": "proof.review",
   "/admin/payments": "payment.manage",
+  "/admin/membership-applications": "payment.manage",
   "/admin/compliance": "compliance.manage",
   "/admin/settings": "compliance.manage",
   "/admin/reports": "reports.view",
+  "/admin/referrals": "reports.view",
   "/admin/audit": "audit.view",
   "/admin/demo": "demo.manage",
 };
@@ -110,7 +117,7 @@ export async function AppShell({ role, children }: { role: UserRole; children: R
           <div className="rounded-2xl border border-stone-200 bg-[linear-gradient(135deg,#17211c,#334138)] p-4 text-white shadow-sm">
             <p className="text-xs font-black text-amber-200">小黄雀</p>
             <p className="mt-2 text-2xl font-black tracking-tight">KOL 投放平台</p>
-            <p className="mt-2 text-xs leading-5 text-white/70">任务、审核、验收、财务一体协作</p>
+            <p className="mt-2 text-xs leading-5 text-white/70">任务、审核、验收、财务统一协作。</p>
           </div>
         </Link>
         <nav className="mt-6 grid flex-1 gap-5 overflow-y-auto pr-1">

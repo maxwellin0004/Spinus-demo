@@ -17,6 +17,7 @@ import {
   CrawlerJobType,
   CrawlerTargetType,
   CreatorLevel,
+  CreatorMembershipApplicationStatus,
   CreatorMembershipTier,
   DisputeDecision,
   DisputeStatus,
@@ -65,6 +66,7 @@ import {
   normalizeInviteCode,
 } from "@/lib/invitations";
 import { generateUniqueCreatorShareCode, normalizeCreatorShareCode } from "@/lib/creator-marketing";
+import { membershipPriceAmount } from "@/lib/creator-memberships";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -899,6 +901,174 @@ export async function updateCreatorAction(creatorId: string, formData: FormData)
   revalidatePath("/creator");
   revalidatePath("/creator/share");
   revalidatePath("/creator/membership");
+}
+
+export async function submitCreatorMembershipApplicationAction(formData: FormData) {
+  const session = await requireRole(UserRole.CREATOR);
+  const creator = await prisma.creatorProfile.findUnique({
+    where: { userId: session.userId },
+    include: { responsibleAdmin: { include: { user: true } } },
+  });
+  if (!creator) redirect("/creator/membership/checkout");
+
+  const tierValue = text(formData.get("tier"));
+  if (tierValue !== CreatorMembershipTier.GROWTH && tierValue !== CreatorMembershipTier.PRO) {
+    redirect("/creator/membership/checkout?error=请选择正确的会员档位");
+  }
+  const tier = tierValue;
+
+  const paymentReference = text(formData.get("paymentReference"));
+  const creatorNote = text(formData.get("creatorNote"));
+  const proof = formData.get("paymentProof");
+  const proofFile = proof instanceof File && proof.size > 0 ? proof : null;
+  if (!paymentReference || !proofFile) {
+    redirect(`/creator/membership/checkout?tier=${tier === CreatorMembershipTier.PRO ? "pro" : "growth"}&error=请填写付款单号并上传付款凭证`);
+  }
+  if (proofFile.size > PAYMENT_PROOF_MAX_BYTES) {
+    redirect(`/creator/membership/checkout?tier=${tier === CreatorMembershipTier.PRO ? "pro" : "growth"}&error=付款凭证不能超过 8MB`);
+  }
+
+  const existing = await prisma.creatorMembershipApplication.findFirst({
+    where: {
+      creatorId: creator.id,
+      status: CreatorMembershipApplicationStatus.SUBMITTED,
+    },
+  });
+  if (existing) {
+    redirect("/creator/membership/checkout?error=当前已有待审核的会员申请，请等待平台处理");
+  }
+
+  const uploadedProof = await saveUploadedFile(proofFile, `creator-memberships/${creator.id}`);
+
+  await prisma.$transaction(async (tx) => {
+    const application = await tx.creatorMembershipApplication.create({
+      data: {
+        creatorId: creator.id,
+        tier,
+        amount: membershipPriceAmount(tier),
+        paymentReference,
+        paymentProofUrl: uploadedProof,
+        creatorNote: creatorNote || null,
+      },
+    });
+
+    if (creator.responsibleAdmin?.userId) {
+      await tx.notification.create({
+        data: {
+          userId: creator.responsibleAdmin.userId,
+          title: "有新的会员开通申请待审核",
+          body: `${creator.displayName} 提交了 ${tier} 会员申请，金额 ¥${membershipPriceAmount(tier)}。`,
+          href: "/admin/membership-applications",
+        },
+      });
+    }
+
+    await tx.auditLog.create({
+      data: {
+        actorUserId: session.userId,
+        actorRole: session.role,
+        action: "creator_membership_application.submitted",
+        entityType: "creator_membership_application",
+        entityId: application.id,
+        afterJson: { tier, amount: membershipPriceAmount(tier), paymentReference },
+      },
+    });
+  });
+
+  revalidatePath("/creator/membership/checkout");
+  revalidatePath("/creator/membership");
+  revalidatePath("/admin/membership-applications");
+  redirect("/creator/membership/checkout?submitted=1");
+}
+
+export async function updateCreatorMembershipApplicationAction(applicationId: string, formData: FormData) {
+  const session = await requireAdminPermission("payment.manage");
+  const action = text(formData.get("action"));
+  const adminNote = text(formData.get("adminNote"));
+  const membershipStartedAt = text(formData.get("membershipStartedAt"));
+  const membershipEndsAt = text(formData.get("membershipEndsAt"));
+
+  const application = await prisma.creatorMembershipApplication.findUnique({
+    where: { id: applicationId },
+    include: { creator: { include: { user: true } } },
+  });
+  if (!application) redirect("/admin/membership-applications");
+  if (application.status !== CreatorMembershipApplicationStatus.SUBMITTED) redirect("/admin/membership-applications");
+
+  const nextStatus =
+    action === "approve"
+      ? CreatorMembershipApplicationStatus.APPROVED
+      : action === "reject"
+        ? CreatorMembershipApplicationStatus.REJECTED
+        : action === "cancel"
+          ? CreatorMembershipApplicationStatus.CANCELLED
+          : null;
+  if (!nextStatus) redirect("/admin/membership-applications?error=无效操作");
+  if ((nextStatus === CreatorMembershipApplicationStatus.REJECTED || nextStatus === CreatorMembershipApplicationStatus.CANCELLED) && adminNote.length < 3) {
+    redirect("/admin/membership-applications?error=拒绝或取消时请填写处理备注");
+  }
+
+  const startedAt = membershipStartedAt ? new Date(membershipStartedAt) : new Date();
+  const endsAt = membershipEndsAt ? new Date(membershipEndsAt) : new Date(new Date(startedAt).setFullYear(new Date(startedAt).getFullYear() + 1));
+
+  await prisma.$transaction(async (tx) => {
+    await tx.creatorMembershipApplication.update({
+      where: { id: application.id },
+      data: {
+        status: nextStatus,
+        adminNote: adminNote || null,
+        reviewedAt: new Date(),
+        reviewedById: session.userId,
+      },
+    });
+
+    if (nextStatus === CreatorMembershipApplicationStatus.APPROVED) {
+      await tx.creatorProfile.update({
+        where: { id: application.creatorId },
+        data: {
+          membershipTier: application.tier,
+          membershipStartedAt: startedAt,
+          membershipEndsAt: endsAt,
+          membershipNote: adminNote || application.creatorNote || null,
+        },
+      });
+    }
+
+    await tx.notification.create({
+      data: {
+        userId: application.creator.userId,
+        title:
+          nextStatus === CreatorMembershipApplicationStatus.APPROVED
+            ? "会员申请已通过"
+            : nextStatus === CreatorMembershipApplicationStatus.REJECTED
+              ? "会员申请未通过"
+              : "会员申请已取消",
+        body:
+          nextStatus === CreatorMembershipApplicationStatus.APPROVED
+            ? `你的 ${application.tier} 会员申请已通过，当前有效期至 ${endsAt.toLocaleDateString("zh-CN")} 。`
+            : adminNote || "请联系平台获取更多信息。",
+        href: "/creator/membership",
+      },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        actorUserId: session.userId,
+        actorRole: session.role,
+        action: `creator_membership_application.${action}`,
+        entityType: "creator_membership_application",
+        entityId: application.id,
+        beforeJson: { status: application.status, tier: application.tier },
+        afterJson: { status: nextStatus, adminNote, membershipStartedAt: startedAt, membershipEndsAt: endsAt },
+      },
+    });
+  });
+
+  revalidatePath("/admin/membership-applications");
+  revalidatePath(`/admin/creators/${application.creatorId}`);
+  revalidatePath("/creator");
+  revalidatePath("/creator/membership");
+  revalidatePath("/creator/membership/checkout");
 }
 
 const adminAccountSchema = z.object({

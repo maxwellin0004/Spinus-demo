@@ -1,11 +1,11 @@
 import { CreatorMembershipTier } from "@prisma/client";
 import { updateCreatorAction, updateSocialAccountVerificationAction } from "@/lib/actions";
-import { prisma } from "@/lib/prisma";
+import { getAdminContext } from "@/lib/admin";
 import { SubmitButton } from "@/components/form-controls";
 import { Card, DataTable, Field, PageHeader, Select, StatusBadge, Textarea } from "@/components/ui";
-import { money, percent, shortDate } from "@/lib/format";
-import { getAdminContext } from "@/lib/admin";
 import { creatorMembershipLabel, creatorMembershipTone } from "@/lib/creator-membership-status";
+import { money, percent, shortDate } from "@/lib/format";
+import { prisma } from "@/lib/prisma";
 
 function dateInputValue(value?: Date | null) {
   if (!value) return "";
@@ -30,6 +30,11 @@ export default async function AdminCreatorDetailPage({ params }: { params: Promi
           },
         },
         orderBy: { createdAt: "desc" },
+      },
+      membershipApplications: {
+        include: { reviewedBy: true },
+        orderBy: { createdAt: "desc" },
+        take: 10,
       },
     },
   });
@@ -116,7 +121,7 @@ export default async function AdminCreatorDetailPage({ params }: { params: Promi
             <div><dt className="font-semibold">会员有效期</dt><dd>{creator.membershipEndsAt ? shortDate(creator.membershipEndsAt) : "未设置"}</dd></div>
             <div><dt className="font-semibold">专属分享码</dt><dd>{creator.shareCode}</dd></div>
             <div><dt className="font-semibold">负责运营</dt><dd>{creator.responsibleAdmin?.displayName ?? "-"}</dd></div>
-            <div><dt className="font-semibold">联系信息</dt><dd>{creator.responsibleAdmin?.wechat || creator.responsibleAdmin?.user.email || "-"}</dd></div>
+            <div><dt className="font-semibold">联系方式</dt><dd>{creator.responsibleAdmin?.wechat || creator.responsibleAdmin?.user.email || "-"}</dd></div>
             <div><dt className="font-semibold">演示数据</dt><dd>{creator.isDemo ? "是" : "否"}</dd></div>
             <div><dt className="font-semibold">分享带来注册</dt><dd>{creator.referralsReceived.length}</dd></div>
           </dl>
@@ -127,6 +132,34 @@ export default async function AdminCreatorDetailPage({ params }: { params: Promi
             </div>
           ) : null}
         </Card>
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-xl font-semibold">会员申请记录</h2>
+        <DataTable
+          headers={["提交时间", "档位", "金额", "状态", "付款单号", "凭证", "审核时间", "处理人", "备注"]}
+          rows={creator.membershipApplications.map((application) => [
+            shortDate(application.createdAt),
+            <StatusBadge key={`${application.id}-tier`} tone={creatorMembershipTone(application.tier)}>
+              {creatorMembershipLabel(application.tier)}
+            </StatusBadge>,
+            money(application.amount, application.currency),
+            <StatusBadge key={`${application.id}-status`}>{application.status}</StatusBadge>,
+            application.paymentReference || "-",
+            application.paymentProofUrl ? (
+              <a className="font-semibold text-stone-950 underline-offset-2 hover:underline" href={application.paymentProofUrl} key={`${application.id}-proof`} target="_blank">
+                查看凭证
+              </a>
+            ) : (
+              "-"
+            ),
+            shortDate(application.reviewedAt),
+            application.reviewedBy?.email ?? "-",
+            application.adminNote ?? application.creatorNote ?? "-",
+          ])}
+          emptyTitle="还没有会员申请记录"
+          emptyBody="创作者提交付款凭证后，这里会保留每一条开通申请。"
+        />
       </section>
 
       <section>

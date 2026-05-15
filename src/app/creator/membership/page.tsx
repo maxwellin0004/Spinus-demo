@@ -30,8 +30,13 @@ function splitPrice(priceLabel: string) {
   };
 }
 
-export default async function CreatorMembershipPage() {
+export default async function CreatorMembershipPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ feature?: string; error?: string }>;
+}) {
   const session = await requireRole(UserRole.CREATOR);
+  const { feature, error } = await searchParams;
   const creator = await prisma.creatorProfile.findUnique({
     where: { userId: session.userId },
   });
@@ -44,6 +49,20 @@ export default async function CreatorMembershipPage() {
     <div className="relative -mx-4 -my-6 overflow-hidden px-4 pb-16 pt-12 md:-mx-8 md:px-8">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_72%_12%,rgba(255,197,51,0.34),transparent_24%),radial-gradient(circle_at_50%_46%,rgba(139,61,255,0.16),transparent_24%),linear-gradient(135deg,#fff7e6_0%,#f4ead8_48%,#eadfce_100%)]" />
       <div className="pointer-events-none absolute left-[9%] top-16 -z-10 h-72 w-72 rounded-full bg-white/35 blur-3xl" />
+
+      {feature || error ? (
+        <section className="mx-auto mb-4 max-w-6xl rounded-[24px] border border-amber-200 bg-amber-50/80 p-5 shadow-sm backdrop-blur-xl">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-700">权限升级提示</p>
+          <p className="mt-2 text-base font-black text-stone-950">
+            {feature === "marketplace"
+              ? "任务大厅需要成长会员或 Pro 高阶会员权限。"
+              : feature === "trends"
+                ? "热点选题和趋势分析需要 Pro 高阶会员权限。"
+                : "当前功能需要先开通会员。"}
+          </p>
+          {error ? <p className="mt-2 text-sm font-medium text-stone-600">{error}</p> : null}
+        </section>
+      ) : null}
 
       <section className="mx-auto mb-4 grid max-w-6xl gap-4 md:grid-cols-3">
         <div className="rounded-[24px] border border-stone-900/6 bg-white/70 p-5 shadow-sm backdrop-blur-xl">

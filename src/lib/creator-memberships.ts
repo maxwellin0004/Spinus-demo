@@ -1,4 +1,6 @@
-export type CreatorMembershipTier = {
+import { CreatorMembershipTier } from "@prisma/client";
+
+export type CreatorMembershipPlan = {
   slug: "growth" | "pro";
   badge: string;
   title: string;
@@ -12,7 +14,7 @@ export type CreatorMembershipTier = {
   outcomes: string[];
 };
 
-export const creatorMembershipTiers: CreatorMembershipTier[] = [
+export const creatorMembershipTiers: CreatorMembershipPlan[] = [
   {
     slug: "growth",
     badge: "年度成长会员",
@@ -64,4 +66,16 @@ export const creatorMembershipTiers: CreatorMembershipTier[] = [
 
 export function getCreatorMembershipTier(slug?: string | null) {
   return creatorMembershipTiers.find((tier) => tier.slug === slug) ?? creatorMembershipTiers[0];
+}
+
+export function membershipTierFromSlug(slug?: string | null) {
+  return slug === "pro" ? CreatorMembershipTier.PRO : CreatorMembershipTier.GROWTH;
+}
+
+export function membershipSlugFromTier(tier: CreatorMembershipTier) {
+  return tier === CreatorMembershipTier.PRO ? "pro" : "growth";
+}
+
+export function membershipPriceAmount(tier: CreatorMembershipTier) {
+  return tier === CreatorMembershipTier.PRO ? 6999 : 1999;
 }

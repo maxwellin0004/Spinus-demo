@@ -9,6 +9,15 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 const posterTemplatePath = path.join(process.cwd(), "public", "creator-share-poster-template.png");
+const posterSize = {
+  width: 941,
+  height: 1672,
+};
+const qrCodePlacement = {
+  x: 663,
+  y: 1324,
+  size: 176,
+};
 
 async function readTemplateDataUrl() {
   const buffer = await fs.readFile(posterTemplatePath);
@@ -43,10 +52,9 @@ export async function GET(request: Request) {
   ]);
 
   const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="941" height="1672" viewBox="0 0 941 1672" fill="none">
-      <image href="${posterTemplateDataUrl}" width="941" height="1672" />
-      <rect x="681" y="1328" width="182" height="182" rx="12" fill="#ffffff" />
-      <image href="${qrCodeDataUrl}" x="695" y="1342" width="154" height="154" />
+    <svg xmlns="http://www.w3.org/2000/svg" width="${posterSize.width}" height="${posterSize.height}" viewBox="0 0 ${posterSize.width} ${posterSize.height}" fill="none">
+      <image href="${posterTemplateDataUrl}" width="${posterSize.width}" height="${posterSize.height}" />
+      <image href="${qrCodeDataUrl}" x="${qrCodePlacement.x}" y="${qrCodePlacement.y}" width="${qrCodePlacement.size}" height="${qrCodePlacement.size}" />
     </svg>
   `.trim();
 
