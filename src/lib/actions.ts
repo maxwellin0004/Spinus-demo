@@ -17,6 +17,7 @@ import {
   CrawlerJobType,
   CrawlerTargetType,
   CreatorLevel,
+  CreatorMembershipTier,
   DisputeDecision,
   DisputeStatus,
   DraftReviewStatus,
@@ -806,14 +807,27 @@ export async function updateCreatorAction(creatorId: string, formData: FormData)
   await requireAdminPermission("account.freeze");
   const reviewStatus = text(formData.get("reviewStatus")) as ReviewStatus;
   const level = text(formData.get("level")) as CreatorLevel;
+  const membershipTier = text(formData.get("membershipTier")) as CreatorMembershipTier;
   const riskLevel = text(formData.get("riskLevel")) as RiskLevel;
   const responsibleAdminId = text(formData.get("responsibleAdminId")) || null;
   const violationDelta = Number(text(formData.get("violationDelta")) || 0);
+  const membershipStartedAt = text(formData.get("membershipStartedAt"));
+  const membershipEndsAt = text(formData.get("membershipEndsAt"));
+  const membershipNote = text(formData.get("membershipNote"));
   const before = await prisma.creatorProfile.findUnique({ where: { id: creatorId }, include: { user: true } });
   if (!before) redirect("/admin/creators");
 
   const newViolationCount = Math.max(0, before.violationCount + violationDelta);
   const derivedRisk = newViolationCount >= 3 ? RiskLevel.HIGH : riskLevel;
+  const nextMembershipTier = Object.values(CreatorMembershipTier).includes(membershipTier) ? membershipTier : before.membershipTier;
+  const nextMembershipStartedAt = nextMembershipTier === CreatorMembershipTier.NONE ? null : membershipStartedAt ? new Date(membershipStartedAt) : null;
+  const nextMembershipEndsAt = nextMembershipTier === CreatorMembershipTier.NONE ? null : membershipEndsAt ? new Date(membershipEndsAt) : null;
+  const nextMembershipNote = membershipNote || null;
+  const membershipChanged =
+    before.membershipTier !== nextMembershipTier ||
+    String(before.membershipStartedAt ?? "") !== String(nextMembershipStartedAt ?? "") ||
+    String(before.membershipEndsAt ?? "") !== String(nextMembershipEndsAt ?? "") ||
+    String(before.membershipNote ?? "") !== String(nextMembershipNote ?? "");
 
   await prisma.$transaction(async (tx) => {
     await tx.creatorProfile.update({
@@ -821,6 +835,10 @@ export async function updateCreatorAction(creatorId: string, formData: FormData)
       data: {
         reviewStatus,
         level,
+        membershipTier: nextMembershipTier,
+        membershipStartedAt: nextMembershipStartedAt,
+        membershipEndsAt: nextMembershipEndsAt,
+        membershipNote: nextMembershipNote,
         riskLevel: derivedRisk,
         responsibleAdmin: responsibleAdminId ? { connect: { id: responsibleAdminId } } : { disconnect: true },
         violationCount: newViolationCount,
@@ -837,17 +855,50 @@ export async function updateCreatorAction(creatorId: string, formData: FormData)
         },
       });
     }
+    if (membershipChanged) {
+      await tx.notification.create({
+        data: {
+          userId: before.userId,
+          title: nextMembershipTier === CreatorMembershipTier.NONE ? "会员状态已更新" : `会员已调整为 ${nextMembershipTier}`,
+          body:
+            nextMembershipTier === CreatorMembershipTier.NONE
+              ? "你的会员状态已被更新为未开通。"
+              : `你的会员状态已更新，当前档位：${nextMembershipTier}${nextMembershipEndsAt ? `，到期时间：${nextMembershipEndsAt.toLocaleDateString("zh-CN")}` : ""}。`,
+          href: "/creator/membership",
+        },
+      });
+    }
     await tx.auditLog.create({
       data: {
         action: "creator.updated",
         entityType: "creator",
         entityId: creatorId,
-        beforeJson: { reviewStatus: before.reviewStatus, level: before.level, riskLevel: before.riskLevel },
-        afterJson: { reviewStatus, level, riskLevel: derivedRisk, violationCount: newViolationCount, responsibleAdminId },
+        beforeJson: {
+          reviewStatus: before.reviewStatus,
+          level: before.level,
+          membershipTier: before.membershipTier,
+          membershipStartedAt: before.membershipStartedAt,
+          membershipEndsAt: before.membershipEndsAt,
+          riskLevel: before.riskLevel,
+        },
+        afterJson: {
+          reviewStatus,
+          level,
+          membershipTier: nextMembershipTier,
+          membershipStartedAt: nextMembershipStartedAt,
+          membershipEndsAt: nextMembershipEndsAt,
+          riskLevel: derivedRisk,
+          violationCount: newViolationCount,
+          responsibleAdminId,
+        },
       },
     });
   });
   revalidatePath("/admin/creators");
+  revalidatePath(`/admin/creators/${creatorId}`);
+  revalidatePath("/creator");
+  revalidatePath("/creator/share");
+  revalidatePath("/creator/membership");
 }
 
 const adminAccountSchema = z.object({

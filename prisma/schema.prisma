@@ -49,6 +49,12 @@ enum CreatorLevel {
   ELITE
 }
 
+enum CreatorMembershipTier {
+  NONE
+  GROWTH
+  PRO
+}
+
 enum CampaignStatus {
   DRAFT
   AWAITING_PAYMENT
@@ -395,6 +401,10 @@ model CreatorProfile {
   bio                String?
   avatarUrl          String?
   level              CreatorLevel        @default(NEW)
+  membershipTier     CreatorMembershipTier @default(NONE)
+  membershipStartedAt DateTime?
+  membershipEndsAt   DateTime?
+  membershipNote     String?
   reviewStatus       ReviewStatus        @default(PENDING)
   riskLevel          RiskLevel           @default(LOW)
   riskScore          Int                 @default(0)

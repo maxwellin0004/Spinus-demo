@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ApplicationStatus, SubmissionStatus, UserRole } from "@prisma/client";
 import { DataTable, MetricCard, PageHeader, StatusBadge } from "@/components/ui";
 import { requireRole } from "@/lib/auth";
+import { creatorMembershipLabel, creatorMembershipTone } from "@/lib/creator-membership-status";
 import { money } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
@@ -80,7 +81,7 @@ export default async function CreatorDashboard() {
     },
     { label: "分享注册", value: referralCount, href: "/creator/share", sub: "通过你的海报完成注册" },
     { label: "创作者等级", value: creator.level, href: "/creator/profile", sub: `完成率 ${Number(creator.completionRate).toFixed(1)}%` },
-    { label: "会员方案", value: "2 档", href: "/creator/membership", sub: "成长会员 / Pro 高阶会员" },
+    { label: "当前会员", value: creatorMembershipLabel(creator.membershipTier), href: "/creator/membership", sub: creator.membershipEndsAt ? `到期 ${creator.membershipEndsAt.toLocaleDateString("zh-CN")}` : "可在后台开通成长 / Pro" },
   ];
 
   return (
@@ -133,8 +134,13 @@ export default async function CreatorDashboard() {
               <p className="mt-2 text-sm leading-6 text-white/80">二维码直达创作者注册页，支持个人分享归因。</p>
             </div>
             <div className="rounded-2xl bg-[linear-gradient(135deg,#4c1d95,#9333ea)] p-4 text-white">
-              <p className="text-sm font-black">两档会员方案</p>
-              <p className="mt-2 text-sm leading-6 text-white/80">支持展示年度成长会员与 Pro 高阶会员，并跳转到开通页。</p>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-black">当前会员状态</p>
+                <StatusBadge tone={creatorMembershipTone(creator.membershipTier)}>{creatorMembershipLabel(creator.membershipTier)}</StatusBadge>
+              </div>
+              <p className="mt-2 text-sm leading-6 text-white/80">
+                {creator.membershipEndsAt ? `会员有效期到 ${creator.membershipEndsAt.toLocaleDateString("zh-CN")}` : "目前还未开通会员，可联系运营开通成长会员或 Pro 高阶会员。"}
+              </p>
             </div>
             <div className="rounded-2xl border border-stone-200 bg-stone-50 p-4">
               <p className="text-sm font-black text-stone-950">对接运营</p>

@@ -1,10 +1,16 @@
 import Link from "next/link";
 import { Check, Orbit, Rocket, ShieldCheck, Sparkles, UsersRound } from "lucide-react";
+import { UserRole } from "@prisma/client";
+import { requireRole } from "@/lib/auth";
+import { creatorMembershipLabel, creatorMembershipTone } from "@/lib/creator-membership-status";
 import { creatorMembershipTiers } from "@/lib/creator-memberships";
+import { shortDate } from "@/lib/format";
+import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";
+import { StatusBadge } from "@/components/ui";
 
 const membershipSignals = [
-  { label: "12个月", copy: "年度陪跑周期" },
+  { label: "12 个月", copy: "年度陪跑周期" },
   { label: "20+", copy: "每月选题方向" },
   { label: "1v1", copy: "专属诊断与共创" },
 ];
@@ -24,11 +30,39 @@ function splitPrice(priceLabel: string) {
   };
 }
 
-export default function CreatorMembershipPage() {
+export default async function CreatorMembershipPage() {
+  const session = await requireRole(UserRole.CREATOR);
+  const creator = await prisma.creatorProfile.findUnique({
+    where: { userId: session.userId },
+  });
+
+  if (!creator) {
+    return null;
+  }
+
   return (
     <div className="relative -mx-4 -my-6 overflow-hidden px-4 pb-16 pt-12 md:-mx-8 md:px-8">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_72%_12%,rgba(255,197,51,0.34),transparent_24%),radial-gradient(circle_at_50%_46%,rgba(139,61,255,0.16),transparent_24%),linear-gradient(135deg,#fff7e6_0%,#f4ead8_48%,#eadfce_100%)]" />
       <div className="pointer-events-none absolute left-[9%] top-16 -z-10 h-72 w-72 rounded-full bg-white/35 blur-3xl" />
+
+      <section className="mx-auto mb-4 grid max-w-6xl gap-4 md:grid-cols-3">
+        <div className="rounded-[24px] border border-stone-900/6 bg-white/70 p-5 shadow-sm backdrop-blur-xl">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-stone-500">当前会员</p>
+          <div className="mt-3">
+            <StatusBadge tone={creatorMembershipTone(creator.membershipTier)}>{creatorMembershipLabel(creator.membershipTier)}</StatusBadge>
+          </div>
+        </div>
+        <div className="rounded-[24px] border border-stone-900/6 bg-white/70 p-5 shadow-sm backdrop-blur-xl">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-stone-500">到期时间</p>
+          <p className="mt-3 text-xl font-black text-stone-950">{creator.membershipEndsAt ? shortDate(creator.membershipEndsAt) : "未设置"}</p>
+        </div>
+        <div className="rounded-[24px] border border-stone-900/6 bg-white/70 p-5 shadow-sm backdrop-blur-xl">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-stone-500">开通入口</p>
+          <Link className="mt-3 inline-flex rounded-full bg-stone-950 px-5 py-2.5 text-sm font-black text-white" href="/creator/membership/checkout">
+            去联系开通
+          </Link>
+        </div>
+      </section>
 
       <section className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1.04fr_0.96fr] lg:items-center">
         <div>
@@ -46,10 +80,7 @@ export default function CreatorMembershipPage() {
             会员方案不只是价格页，而是一条创作者升级路径：从账号诊断、选题陪跑，到内容共创与商业资源推荐，让用户清楚知道自己买到的是“成长确定性”。
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <Link
-              className="rounded-full bg-[#101812] px-6 py-3 text-sm font-black text-white shadow-[0_18px_34px_rgba(16,24,18,0.2)] transition hover:-translate-y-0.5 hover:bg-[#1d2a21]"
-              href="/creator/membership/checkout"
-            >
+            <Link className="rounded-full bg-[#101812] px-6 py-3 text-sm font-black text-white shadow-[0_18px_34px_rgba(16,24,18,0.2)] transition hover:-translate-y-0.5 hover:bg-[#1d2a21]" href="/creator/membership/checkout">
               立即选择方案
             </Link>
             <a className="rounded-full border border-stone-900/10 bg-white/70 px-6 py-3 text-sm font-black text-stone-950 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:bg-white" href="#plans">
@@ -115,12 +146,7 @@ export default function CreatorMembershipPage() {
               ) : null}
 
               <div className="relative p-7 md:p-8">
-                <span
-                  className={cn(
-                    "inline-flex h-8 items-center rounded-full px-4 font-['Avenir_Next','Segoe_UI',Arial,sans-serif] text-[11px] font-black uppercase tracking-[0.16em]",
-                    isPro ? "bg-[#ffc533] text-[#191003]" : "bg-[#fff3c5] text-[#7a4b00]",
-                  )}
-                >
+                <span className={cn("inline-flex h-8 items-center rounded-full px-4 font-['Avenir_Next','Segoe_UI',Arial,sans-serif] text-[11px] font-black uppercase tracking-[0.16em]", isPro ? "bg-[#ffc533] text-[#191003]" : "bg-[#fff3c5] text-[#7a4b00]")}>
                   {isPro ? "Campus Creator Pro" : "Starter Path"}
                 </span>
 
@@ -142,13 +168,7 @@ export default function CreatorMembershipPage() {
 
                 <div className="mt-8 grid gap-3">
                   {visibleBenefits.map((benefit) => (
-                    <div
-                      className={cn(
-                        "flex min-h-[50px] items-center gap-3 rounded-[17px] border px-4 py-3 font-['PingFang_SC','Microsoft_YaHei_UI','Microsoft_YaHei',sans-serif] text-sm font-bold tracking-[-0.01em]",
-                        isPro ? "border-white/12 bg-white/8 text-white" : "border-stone-900/8 bg-white/70 text-stone-900",
-                      )}
-                      key={benefit}
-                    >
+                    <div className={cn("flex min-h-[50px] items-center gap-3 rounded-[17px] border px-4 py-3 font-['PingFang_SC','Microsoft_YaHei_UI','Microsoft_YaHei',sans-serif] text-sm font-bold tracking-[-0.01em]", isPro ? "border-white/12 bg-white/8 text-white" : "border-stone-900/8 bg-white/70 text-stone-900")} key={benefit}>
                       <span className={cn("grid h-7 w-7 shrink-0 place-items-center rounded-full", isPro ? "bg-[#ffd14f] text-[#111]" : "bg-[#101812] text-[#ffd14f]")}>
                         <Check className="h-4 w-4 stroke-[4]" />
                       </span>
@@ -157,15 +177,7 @@ export default function CreatorMembershipPage() {
                   ))}
                 </div>
 
-                <Link
-                  className={cn(
-                    "mt-5 flex h-14 w-full items-center justify-center rounded-[18px] text-base font-black shadow-sm transition hover:-translate-y-0.5 active:translate-y-0",
-                    isPro
-                      ? "bg-[linear-gradient(90deg,#ffd24c,#ffae00)] text-[#171006] shadow-[0_18px_40px_rgba(255,184,0,0.24)]"
-                      : "bg-[#101812] text-white hover:bg-[#1d2a21]",
-                  )}
-                  href={`/creator/membership/checkout?tier=${tier.slug}`}
-                >
+                <Link className={cn("mt-5 flex h-14 w-full items-center justify-center rounded-[18px] text-base font-black shadow-sm transition hover:-translate-y-0.5 active:translate-y-0", isPro ? "bg-[linear-gradient(90deg,#ffd24c,#ffae00)] text-[#171006] shadow-[0_18px_40px_rgba(255,184,0,0.24)]" : "bg-[#101812] text-white hover:bg-[#1d2a21]")} href={`/creator/membership/checkout?tier=${tier.slug}`}>
                   {isPro ? "立即开通高阶会员" : "选择成长会员"}
                 </Link>
               </div>
