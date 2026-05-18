@@ -11,6 +11,7 @@ import {
   type CreatorTrendFilters,
 } from "@/components/creator-trends-interactive";
 import { requireRole } from "@/lib/auth";
+import { buildInsightReason, evaluateInsightConfidence, formatInsightSampleText, formatInsightUpdatedAt, type InsightConfidence, type InsightSourceKind } from "@/lib/insights/credibility";
 import { DEFAULT_INSIGHT_DIRECTION, INSIGHT_DIRECTIONS, getInsightDirection } from "@/lib/insights/directions";
 import { getCreatorTopTopics, getCreatorTrendSeries, getCreatorTrendsOverview, getXiaohongshuOpportunityRows } from "@/lib/insights/queries";
 import { prisma } from "@/lib/prisma";
@@ -18,7 +19,7 @@ import { cn } from "@/lib/utils";
 
 type TopicStage = "爆发中" | "长尾可做" | "谨慎跟进";
 type Level = "低" | "中" | "高";
-type SourceKind = "真实采集" | "规则计算" | "示例兜底";
+type SourceKind = InsightSourceKind;
 type TrendRange = CreatorTrendFilters["range"];
 type TrendPlatform = CreatorTrendFilters["platform"];
 
@@ -33,6 +34,12 @@ type TopicRow = {
   platforms: string[];
   advice: "立即跟进" | "可长期做" | "谨慎跟进";
   source?: string;
+  updatedAt?: string;
+  sampleCount?: number;
+  commentSampleCount?: number;
+  platformSourceCount?: number;
+  confidence?: InsightConfidence;
+  reason?: string;
 };
 
 type CreatorTrendOverview = {
@@ -129,7 +136,15 @@ function toDifficulty(heatScore: number): Level {
 
 function sourceClass(kind: SourceKind) {
   if (kind === "真实采集") return "border-teal-200 bg-teal-50 text-teal-700";
+  if (kind === "AI生成") return "border-violet-200 bg-violet-50 text-violet-700";
   if (kind === "规则计算") return "border-blue-200 bg-blue-50 text-blue-700";
+  return "border-slate-200 bg-slate-50 text-slate-500";
+}
+
+function confidenceClass(confidence: InsightConfidence) {
+  if (confidence === "高可信") return "border-teal-200 bg-teal-50 text-teal-700";
+  if (confidence === "中可信") return "border-blue-200 bg-blue-50 text-blue-700";
+  if (confidence === "低可信") return "border-amber-200 bg-amber-50 text-amber-700";
   return "border-slate-200 bg-slate-50 text-slate-500";
 }
 
@@ -190,7 +205,7 @@ export default async function CreatorTrendsPage({
     searchParams,
     prisma.creatorProfile.findUnique({
       where: { userId: session.userId },
-      select: { insightDirection: true },
+      select: { id: true, insightDirection: true },
     }),
   ]);
   if (!creatorPreference) return null;
@@ -203,15 +218,27 @@ export default async function CreatorTrendsPage({
     scenario: normalizeScenario(legacyFilters.scenario ?? scenario),
     keyword: keyword?.trim() ?? legacyFilters.keyword ?? "",
   };
+  const filterScope = {
+    directionSlug: filters.direction,
+    platform: filters.platform,
+    keyword: filters.keyword,
+    days: rangeFilters.find((item) => item.value === filters.range)?.days ?? 7,
+    scenario: filters.scenario,
+  };
 
-  const [overview, topTopics, xiaohongshuOpportunities, realTrendData, dailySnapshot] = await Promise.all([
-    getCreatorTrendsOverview(filters.direction),
-    getCreatorTopTopics(filters.direction),
-    getXiaohongshuOpportunityRows(filters.direction),
-    getCreatorTrendSeries(30, filters.direction),
+  const [overview, topTopics, xiaohongshuOpportunities, realTrendData, dailySnapshot, savedTrends] = await Promise.all([
+    getCreatorTrendsOverview(filterScope),
+    getCreatorTopTopics(filterScope),
+    getXiaohongshuOpportunityRows(filterScope),
+    getCreatorTrendSeries(filterScope.days, filters.direction, { platform: filters.platform, keyword: filters.keyword }),
     prisma.creatorTrendDailySnapshot.findFirst({
       where: { direction: filters.direction },
       orderBy: [{ date: "desc" }, { generatedAt: "desc" }],
+    }),
+    prisma.creatorSavedTrend.findMany({
+      where: { creatorId: creatorPreference.id },
+      orderBy: [{ updatedAt: "desc" }],
+      take: 12,
     }),
   ]);
 
@@ -241,10 +268,49 @@ export default async function CreatorTrendsPage({
 
   const displayTopicRows: TopicRow[] =
     snapshotTopicRows && snapshotTopicRows.length > 0
-      ? snapshotTopicRows.map((row) => ({ ...row, source: row.source ?? "综合热榜" }))
+      ? snapshotTopicRows.map((row) => {
+          const source = row.source ?? "综合热榜";
+          const updatedAt = row.updatedAt ?? dailySnapshot?.generatedAt.toISOString();
+          const sampleCount = row.sampleCount ?? 0;
+          const commentSampleCount = row.commentSampleCount ?? 0;
+          const platformSourceCount = row.platformSourceCount ?? row.platforms.length;
+          const confidence =
+            row.confidence ??
+            evaluateInsightConfidence({
+              sourceKind: "规则计算",
+              sampleCount,
+              commentSampleCount,
+              platformSourceCount,
+              updatedAt,
+            });
+          return {
+            ...row,
+            source,
+            updatedAt,
+            sampleCount,
+            commentSampleCount,
+            platformSourceCount,
+            confidence,
+            reason:
+              row.reason ??
+              buildInsightReason({
+                topic: row.topic,
+                matchScore: Number.parseInt(row.match, 10),
+                sampleCount,
+                commentSampleCount,
+                platformSourceCount,
+                source,
+              }),
+          };
+        })
       : topTopics.length > 0
         ? topTopics.slice(0, 8).map((row) => {
             const stage = toTopicStage(row.stage, row.heatScore);
+            const source = "综合热榜";
+            const updatedAt = row.updatedAt;
+            const sampleCount = row.sampleCount ?? 0;
+            const commentSampleCount = row.commentSampleCount ?? 0;
+            const platformSourceCount = row.platformSourceCount ?? row.platforms.length;
             return {
               rank: row.rank,
               topic: row.topic,
@@ -255,7 +321,30 @@ export default async function CreatorTrendsPage({
               difficulty: toDifficulty(row.heatScore),
               platforms: row.platforms.length > 0 ? row.platforms.map(platformLabel) : ["抖音"],
               advice: row.heatScore >= 70 ? "立即跟进" : row.heatScore >= 45 ? "可长期做" : "谨慎跟进",
-              source: "综合热榜",
+              source,
+              updatedAt,
+              sampleCount,
+              commentSampleCount,
+              platformSourceCount,
+              confidence:
+                row.confidence ??
+                evaluateInsightConfidence({
+                  sourceKind: "真实采集",
+                  sampleCount,
+                  commentSampleCount,
+                  platformSourceCount,
+                  updatedAt,
+                }),
+              reason:
+                row.reason ??
+                buildInsightReason({
+                  topic: row.topic,
+                  heatScore: row.heatScore,
+                  sampleCount,
+                  commentSampleCount,
+                  platformSourceCount,
+                  source,
+                }),
             };
           })
         : [];
@@ -271,11 +360,40 @@ export default async function CreatorTrendsPage({
     platforms: ["小红书"],
     advice: row.action === "立即做" ? "立即跟进" : row.action === "观察补样本" ? "可长期做" : "谨慎跟进",
     source: row.source,
+    updatedAt: row.updatedAt,
+    sampleCount: row.sampleCount,
+    commentSampleCount: row.commentSampleCount,
+    platformSourceCount: row.platformSourceCount,
+    confidence: row.confidence,
+    reason: row.reason,
   }));
 
   const mergedTopicRows = [...displayTopicRows, ...displayXiaohongshuRows].filter((row, index, rows) => {
     const key = `${row.topic}-${row.platforms.join(",")}`;
     return rows.findIndex((candidate) => `${candidate.topic}-${candidate.platforms.join(",")}` === key) === index;
+  });
+  const topicSampleCount = mergedTopicRows.reduce((sum, row) => sum + (row.sampleCount ?? 0), 0);
+  const topicCommentSampleCount = mergedTopicRows.reduce((sum, row) => sum + (row.commentSampleCount ?? 0), 0);
+  const topicPlatformSourceCount = Math.max(
+    ...mergedTopicRows.map((row) => row.platformSourceCount ?? row.platforms.length),
+    0,
+  );
+  const freshestTopicUpdate =
+    mergedTopicRows
+      .map((row) => (row.updatedAt ? new Date(row.updatedAt) : null))
+      .filter((value): value is Date => value !== null && !Number.isNaN(value.getTime()))
+      .sort((left, right) => right.getTime() - left.getTime())[0] ?? dailySnapshot?.generatedAt;
+  const pageConfidence = evaluateInsightConfidence({
+    sourceKind: hasExampleFallback ? "示例兜底" : topicSource,
+    sampleCount: topicSampleCount,
+    commentSampleCount: topicCommentSampleCount,
+    platformSourceCount: topicPlatformSourceCount,
+    updatedAt: freshestTopicUpdate,
+  });
+  const sampleText = formatInsightSampleText({
+    sampleCount: topicSampleCount,
+    commentSampleCount: topicCommentSampleCount,
+    platformSourceCount: topicPlatformSourceCount,
   });
 
   const directionOptions = INSIGHT_DIRECTIONS.map((item) => ({
@@ -318,10 +436,16 @@ export default async function CreatorTrendsPage({
             <CreatorTrendSearch />
 
             <section className={cn(cardClass, "flex flex-col gap-3 px-5 py-4 md:flex-row md:items-center md:justify-between")}>
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-black text-slate-950">数据来源：{dataSourceLabel}</p>
                 <p className="mt-1 text-sm font-semibold text-slate-500">当前方向：{currentDirection.label} · {dataSourceDetail}</p>
                 <p className="mt-1 text-xs font-semibold text-slate-400">该页展示同方向达人共享趋势池，由系统每日生成。</p>
+                <div className="mt-3 flex flex-wrap gap-2 text-xs font-black">
+                  <span className={cn("rounded-full border px-2.5 py-1", confidenceClass(pageConfidence))}>可信度：{pageConfidence}</span>
+                  <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-slate-600">更新：{formatInsightUpdatedAt(freshestTopicUpdate)}</span>
+                  <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-slate-600">{sampleText}</span>
+                  <span className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-blue-700">推荐原因：热度、匹配度、平台覆盖综合计算</span>
+                </div>
               </div>
               <div className="flex flex-wrap gap-2">
                 <SourceBadge kind={trendSource} />
@@ -362,7 +486,20 @@ export default async function CreatorTrendsPage({
               topicSource={topicSource}
             />
 
-            <CreatorTrendDetailPanels initialBatch={batch} initialRec={rec} initialPool={pool} />
+            <CreatorTrendDetailPanels
+              initialBatch={batch}
+              initialRec={rec}
+              initialPool={pool}
+              savedTrends={savedTrends.map((item) => ({
+                id: item.id,
+                title: item.title,
+                topic: item.topic,
+                platform: item.platform,
+                status: item.status,
+                reason: item.reason,
+                updatedAt: item.updatedAt.toISOString(),
+              }))}
+            />
           </main>
         </div>
       </CreatorTrendFilterProvider>

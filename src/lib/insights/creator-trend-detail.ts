@@ -1,12 +1,12 @@
-import { deriveContentRecommendations, type RecommendationSummary } from "@/lib/insights/analysis";
-import { getCreatorInsightAnalysis } from "@/lib/insights/analysis-queries";
-import { withSharedInsightCache } from "@/lib/insights/cache";
+import { getOrGenerateAiTopicDeck } from "@/lib/insights/ai-topic-deck";
+import { invalidateInsightCache, withSharedInsightCache } from "@/lib/insights/cache";
+import type { InsightConfidence, InsightSourceKind } from "@/lib/insights/credibility";
 import { DEFAULT_INSIGHT_DIRECTION, getInsightDirection, getInsightDirectionTerms } from "@/lib/insights/directions";
 import { getCreatorTopTopics, getXiaohongshuOpportunityRows } from "@/lib/insights/queries";
 import { prisma } from "@/lib/prisma";
 import { extractCoverImageUrl } from "@/lib/tikhub/mappers";
 
-export type SourceKind = "真实采集" | "规则计算" | "示例兜底";
+export type SourceKind = InsightSourceKind;
 export type TopicStage = "爆发中" | "长尾可做" | "谨慎跟进";
 
 export type TopicCard = {
@@ -23,6 +23,9 @@ export type TopicCard = {
   sampleTitle?: string;
   sampleContentUrl?: string;
   sampleSourceContentId?: string;
+  sampleCoverImageUrl?: string;
+  evidenceSummary?: string;
+  referenceSourceContentIds?: string[];
   metrics?: {
     likes: number;
     comments: number;
@@ -31,6 +34,13 @@ export type TopicCard = {
   };
   angles?: string[];
   coverImageUrl?: string;
+  coverImagePrompt?: string;
+  coverNegativePrompt?: string;
+  updatedAt?: string;
+  sampleCount?: number;
+  commentSampleCount?: number;
+  platformSourceCount?: number;
+  confidence?: InsightConfidence;
 };
 
 export type WatchPoolItem = {
@@ -59,6 +69,12 @@ type TopicRow = {
   platforms: string[];
   advice: "立即跟进" | "可长期做" | "谨慎跟进";
   source?: string;
+  updatedAt?: string;
+  sampleCount?: number;
+  commentSampleCount?: number;
+  platformSourceCount?: number;
+  confidence?: InsightConfidence;
+  reason?: string;
 };
 
 type CaseStudySnapshot = {
@@ -79,6 +95,9 @@ export type CreatorTrendDetailFilters = {
 
 export type CreatorTrendDetailData = {
   recommendationSource: SourceKind;
+  recommendationStatus?: "READY" | "FAILED";
+  recommendationError?: string | null;
+  recommendationGeneratedAt?: string | null;
   caseSource: SourceKind;
   recommendationBatches: TopicCard[][];
   watchPool: WatchPoolItem[];
@@ -90,11 +109,12 @@ export type CreatorTrendDetailData = {
     stats: string[];
     rows: [string, string][];
     scriptText: string;
+    graphicScriptText: string;
+    videoScriptText: string;
     templateKeyword: string;
   };
 };
 
-const REC_BATCH_SIZE = 6;
 const LIVE_TOP_CONTENT_LIMIT = 180;
 const LIVE_RECOMMENDATION_SOURCE_LIMIT = 24;
 const LIVE_COMMENT_LIMIT = 240;
@@ -230,33 +250,12 @@ function matchesDirectionText(text: string, terms: string[]) {
   return terms.some((term) => text.includes(term));
 }
 
-function mapRecommendationItem(item: RecommendationSummary): TopicCard {
-  return {
-    id: item.id,
-    title: item.title,
-    stage: item.heat.includes("分") && Number.parseInt(item.heat, 10) >= 60 ? "爆发中" : "长尾可做",
-    reason: item.reason,
-    platform: item.platform,
-    tags: item.tags.map((tag) => (["xiaohongshu", "douyin", "weibo", "bilibili"].includes(tag) ? platformLabel(tag) : tag)),
-    heat: item.heat,
-    tone: item.tone,
-    keyword: item.keyword,
-    creator: item.creator,
-    sampleTitle: item.sampleTitle,
-    sampleContentUrl: item.sampleContentUrl,
-    sampleSourceContentId: item.sampleSourceContentId,
-    metrics: item.metrics,
-    angles: item.angles,
-    coverImageUrl: item.coverImageUrl,
-  };
-}
-
 function buildWatchPool(rows: TopicRow[]): WatchPoolItem[] {
   return rows.slice(0, 4).map<WatchPoolItem>((row) => ({
     topic: row.topic,
     status: row.stage === "爆发中" ? "升温中" : row.stage === "谨慎跟进" ? "已过热" : "观察中",
     action: row.stage === "爆发中" ? "可转草稿" : row.stage === "谨慎跟进" ? "暂缓" : "继续观察",
-    signal: `${row.heat} / 匹配 ${row.match}`,
+    signal: `${row.heat} / 匹配 ${row.match}${row.sampleCount ? ` / 样本 ${row.sampleCount}` : ""}`,
   }));
 }
 
@@ -287,6 +286,12 @@ function normalizeTopicRows(
       platforms: row.platforms.length > 0 ? row.platforms.map(platformLabel) : ["抖音"],
       advice: row.heatScore >= 70 ? "立即跟进" : row.heatScore >= 45 ? "可长期做" : "谨慎跟进",
       source: "综合热榜",
+      updatedAt: row.updatedAt,
+      sampleCount: row.sampleCount,
+      commentSampleCount: row.commentSampleCount,
+      platformSourceCount: row.platformSourceCount,
+      confidence: row.confidence,
+      reason: row.reason,
     };
   });
 
@@ -301,6 +306,12 @@ function normalizeTopicRows(
     platforms: ["小红书"],
     advice: row.action === "立即做" ? "立即跟进" : row.action === "观察补样本" ? "可长期做" : "谨慎跟进",
     source: row.source,
+    updatedAt: row.updatedAt,
+    sampleCount: row.sampleCount,
+    commentSampleCount: row.commentSampleCount,
+    platformSourceCount: row.platformSourceCount,
+    confidence: row.confidence,
+    reason: row.reason,
   }));
 
   return [...primaryRows, ...extraRows].filter((row, index, rows) => {
@@ -309,14 +320,13 @@ function normalizeTopicRows(
   });
 }
 
-async function loadCreatorTrendDetailData(filters: CreatorTrendDetailFilters): Promise<CreatorTrendDetailData> {
+async function loadCreatorTrendDetailData(filters: CreatorTrendDetailFilters, options: { forceAiRecommendations?: boolean } = {}): Promise<CreatorTrendDetailData> {
   const direction = filters.direction || DEFAULT_INSIGHT_DIRECTION;
   const currentDirection = getInsightDirection(direction);
   const directionTextTerms = getInsightDirectionTerms(direction);
-  const [topTopics, xiaohongshuOpportunities, analysis, allTopContents, dailySnapshot] = await Promise.all([
+  const [topTopics, xiaohongshuOpportunities, allTopContents, dailySnapshot, aiSettings] = await Promise.all([
     getCreatorTopTopics(direction),
     getXiaohongshuOpportunityRows(direction),
-    getCreatorInsightAnalysis(direction),
     prisma.insightContent.findMany({
       where: {
         createdAt: { gte: daysAgo(LIVE_CONTENT_LOOKBACK_DAYS) },
@@ -328,9 +338,23 @@ async function loadCreatorTrendDetailData(filters: CreatorTrendDetailFilters): P
       where: { direction: currentDirection.slug },
       orderBy: [{ date: "desc" }, { generatedAt: "desc" }],
     }),
+    prisma.platformSettings.upsert({
+      where: { id: "platform" },
+      update: {},
+      create: { id: "platform" },
+      select: {
+        insightAiEnabled: true,
+        insightAiBaseUrl: true,
+        insightAiApiKey: true,
+        insightAiModel: true,
+        insightAiSystemPrompt: true,
+        insightAiScriptSystemPrompt: true,
+        insightAiGraphicScriptSystemPrompt: true,
+        insightAiVideoScriptSystemPrompt: true,
+      },
+    }),
   ]);
 
-  const snapshotRecommendationBatches = readSnapshotValue<TopicCard[][]>(dailySnapshot?.recommendationBatches) ?? [];
   const snapshotCaseStudy = readSnapshotValue<CaseStudySnapshot>(dailySnapshot?.caseStudy);
   const topContents = allTopContents.filter((content) => matchesDirectionText(contentDirectionText(content), directionTextTerms));
   const filteredTopContents = topContents.filter((content) => {
@@ -353,7 +377,6 @@ async function loadCreatorTrendDetailData(filters: CreatorTrendDetailFilters): P
   const recommendationSourceBase = scopedTopContentsWithCover.length >= 4 ? scopedTopContentsWithCover : scopedTopContents;
   const liveRecommendationSourceSeed = recommendationSourceBase.length > 3 ? recommendationSourceBase.slice(1) : recommendationSourceBase;
   const liveRecommendationSource = liveRecommendationSourceSeed.slice(0, LIVE_RECOMMENDATION_SOURCE_LIMIT);
-  const liveCommentCountMap = new Map(liveRecommendationSource.map((content) => [content.id, content.commentCount]));
   const liveCommentTextsByContentId = new Map<string, string[]>();
   for (const comment of liveComments) {
     const texts = liveCommentTextsByContentId.get(comment.contentId) ?? [];
@@ -361,51 +384,36 @@ async function loadCreatorTrendDetailData(filters: CreatorTrendDetailFilters): P
     liveCommentTextsByContentId.set(comment.contentId, texts);
   }
 
-  const baseLiveRecommendationBatches = Array.from(
-    { length: Math.max(1, Math.ceil(liveRecommendationSource.length / REC_BATCH_SIZE)) },
-    (_, index) => {
-      const start = index * REC_BATCH_SIZE;
-      const batchContents = liveRecommendationSource.slice(start, start + REC_BATCH_SIZE);
-      return deriveContentRecommendations(batchContents, liveCommentCountMap, liveCommentTextsByContentId).map(mapRecommendationItem);
-    },
-  ).filter((batch) => batch.length > 0);
+  const aiTopicDeck = await getOrGenerateAiTopicDeck({
+    direction,
+    directionLabel: currentDirection.label,
+    platform: filters.platform,
+    keyword: filters.keyword,
+    sourceContents: liveRecommendationSource,
+    commentsByContentId: liveCommentTextsByContentId,
+    settings: aiSettings,
+    force: options.forceAiRecommendations,
+  });
+  const baseLiveRecommendationBatches =
+    aiTopicDeck.status === "READY"
+      ? Array.from({ length: Math.ceil(aiTopicDeck.items.length / 3) }, (_, index) => aiTopicDeck.items.slice(index * 3, index * 3 + 3)).filter(
+          (batch) => batch.length > 0,
+        )
+      : [];
+  const liveRecommendationsUsedAi = aiTopicDeck.status === "READY";
 
-  const hasRichSnapshotRecommendations = snapshotRecommendationBatches.some((batch) =>
-    batch.some((item) => Boolean(item.coverImageUrl) && Boolean(item.id || item.sampleSourceContentId)),
-  );
-
-  const rawRecommendationBatches =
-    baseLiveRecommendationBatches.length > 0
-      ? baseLiveRecommendationBatches
-      : analysis.recommendations.length > 0
-      ? [analysis.recommendations.slice(0, 4).map(mapRecommendationItem)]
-      : hasRichSnapshotRecommendations
-      ? snapshotRecommendationBatches
-      : [getDirectionFallbackRecommendations(direction)];
+  const rawRecommendationBatches = baseLiveRecommendationBatches.length > 0 ? baseLiveRecommendationBatches : [];
 
   const topCase = scopedTopContentsWithCover[0] ?? scopedTopContents[0];
   const excludedRecommendationTitle = topCase?.title ?? snapshotCaseStudy?.title;
   const recommendationBatches = rawRecommendationBatches
     .map((batch) => {
-      const filterMatched = batch.filter((item) => {
-        const platformMatches = filters.platform === "all" || item.platform === filters.platform || item.tags.includes(platformLabel(filters.platform));
-        const keywordMatches =
-          !filters.keyword ||
-          [item.title, item.reason, item.keyword, item.sampleTitle, ...(item.tags ?? []), ...(item.angles ?? [])]
-            .filter(Boolean)
-            .some((value) => String(value).includes(filters.keyword));
-        return platformMatches && keywordMatches;
-      });
-      const platformMatched = batch.filter(
-        (item) => filters.platform === "all" || item.platform === filters.platform || item.tags.includes(platformLabel(filters.platform)),
-      );
-      const effective = filterMatched.length > 0 ? filterMatched : platformMatched.length > 0 ? platformMatched : batch;
-      const deduped = excludedRecommendationTitle ? effective.filter((item) => item.title !== excludedRecommendationTitle) : effective;
-      return (deduped.length > 0 ? deduped : effective).slice(0, 4);
+      const deduped = excludedRecommendationTitle ? batch.filter((item) => item.title !== excludedRecommendationTitle) : batch;
+      return deduped.length > 0 ? deduped : batch;
     })
     .filter((batch) => batch.length > 0);
 
-  const effectiveRecommendationBatches = recommendationBatches.length > 0 ? recommendationBatches : [getDirectionFallbackRecommendations(direction)];
+  const effectiveRecommendationBatches = recommendationBatches;
   const topicRows = normalizeTopicRows(topTopics, xiaohongshuOpportunities);
   const watchPool = !topCase && snapshotCaseStudy?.watchPool?.length ? snapshotCaseStudy.watchPool : buildWatchPool(topicRows);
   const draftPools =
@@ -430,11 +438,80 @@ async function loadCreatorTrendDetailData(filters: CreatorTrendDetailFilters): P
         ["可复用模板", "热点内容拆解模板"],
       ]
     : snapshotCaseStudy?.rows ?? getDirectionFallbackCaseRows(direction);
-  const caseScriptText = [`标题：${caseTitle}`, `方向：${currentDirection.label}`, ...caseRows.map(([label, value]) => `${label}：${value}`)].join("\n");
+  const fallbackScriptText = [
+    `选题标题：${caseTitle}`,
+    `适合平台：${topCase ? platformLabel(topCase.platform) : filters.platform === "all" ? "小红书 / 抖音" : platformLabel(filters.platform)}`,
+    `内容目标：借势 ${currentDirection.label} 热点，完成真实体验种草`,
+    "",
+    "0-3秒 Hook：先抛出用户最关心的问题或反差结论。",
+    "3-8秒 痛点放大：说明为什么这个问题最近被频繁讨论。",
+    "8-20秒 体验过程：展示真实使用、对比或步骤。",
+    "20-35秒 证据细节：补充互动样本、评论痛点或关键细节。",
+    "35-45秒 总结 CTA：给出适合/不适合人群，并引导评论或主页链接。",
+    "",
+    ...caseRows.map(([label, value]) => `${label}：${value}`),
+  ].join("\n");
+  const fallbackGraphicScriptText = [
+    "【图文脚本】",
+    `选题标题：${caseTitle}`,
+    `适合平台：${topCase ? platformLabel(topCase.platform) : filters.platform === "all" ? "小红书 / 抖音" : platformLabel(filters.platform)}`,
+    `内容目标：借势 ${currentDirection.label} 热点，做成可收藏、可评论的图文笔记。`,
+    "",
+    "图文分页结构：",
+    "封面：用真实场景图或结果对比图，标题写清楚痛点和结果。",
+    "图片生成提示词：竖版小红书封面图，真实生活方式摄影，主体和结果形成明确对比，上方保留标题留白，自然柔光，清爽干净，高质感，真实摄影风格。",
+    "负向提示词：不要生成中文文字，不要水印，不要品牌 logo，不要夸张广告海报风，不要杂乱背景，不要低清晰度。",
+    "建议画幅：3:4",
+    "生图备注：标题、标签和正文由前端叠加；画面必须保留可叠字留白。",
+    "第 2 页：放大用户痛点，解释为什么这个问题最近被反复讨论。",
+    "图片生成提示词：竖版真实生活场景图，展示用户遇到的具体痛点，主体清晰，背景简洁，侧边保留留白用于叠加痛点文字，真实记录感。",
+    "负向提示词：不要生成文字，不要过度摆拍，不要虚构品牌，不要手部畸形，不要强滤镜。",
+    "建议画幅：3:4",
+    "生图备注：适合前端叠加 01 编号和痛点短句。",
+    "第 3 页：展示第一组真实体验、步骤或细节。",
+    "图片生成提示词：竖版教程步骤图，展示一个具体动作或关键细节，手部动作自然，物品摆放有序，画面留白适合加编号和箭头。",
+    "负向提示词：不要复杂背景，不要多人抢主体，不要过曝，不要生成水印或品牌 logo。",
+    "建议画幅：3:4",
+    "生图备注：适合前端叠加步骤编号和箭头标注。",
+    "第 4 页：展示第二组对比、避坑或评论里高频追问。",
+    "图片生成提示词：竖版对比图，同一场景下展示前后差异或优缺点对照，左右分区明确，主体一致，真实摄影风格。",
+    "负向提示词：不要强烈滤镜，不要商业广告质感，不要文字乱码，不要画面拥挤。",
+    "建议画幅：3:4",
+    "生图备注：适合前端叠加左右对比标签。",
+    "第 5 页：总结适合/不适合人群，给出收藏清单。",
+    "图片生成提示词：竖版清单背景图，干净浅色背景，主体物品整齐摆放，下方或中间留出大面积空白，适合叠加 checklist 文案。",
+    "负向提示词：不要复杂纹理，不要深色压抑背景，不要生成错误文字，不要低质感拼贴。",
+    "建议画幅：3:4",
+    "生图备注：清单文字由前端叠加，保证可读性。",
+    "",
+    "发布文案：围绕真实体验展开，不做绝对化承诺，结尾引导评论补充使用场景。",
+    "互动引导：你最近也遇到过类似问题吗？评论区说一个场景。",
+  ].join("\n");
+  const fallbackVideoScriptText = [
+    "【视频脚本】",
+    fallbackScriptText,
+    "",
+    "voiceover_script（时间为 estimated，最终以 TTS 对齐为准）：",
+    "0-3s / v01 / hook：先抛出用户最关心的问题或反差结论。",
+    "3-8s / v02 / pain：说明为什么这个问题最近被频繁讨论。",
+    "8-22s / v03 / process：展示真实使用、对比或步骤，不要只讲结论。",
+    "22-42s / v04 / proof：补充评论痛点、关键细节和避坑提醒。",
+    "42-55s / v05 / cta：总结适合和不适合人群，引导评论或收藏。",
+  ].join("\n");
+  const caseScriptPack = {
+    graphicScriptText: fallbackGraphicScriptText,
+    videoScriptText: fallbackVideoScriptText,
+    scriptText: `${fallbackGraphicScriptText}\n\n${fallbackVideoScriptText}`,
+  };
 
   return {
     recommendationSource:
-      baseLiveRecommendationBatches.length > 0 || analysis.recommendations.length > 0 || hasRichSnapshotRecommendations ? "规则计算" : "示例兜底",
+      liveRecommendationsUsedAi
+        ? "AI生成"
+        : "示例兜底",
+    recommendationStatus: aiTopicDeck.status,
+    recommendationError: aiTopicDeck.errorMessage,
+    recommendationGeneratedAt: aiTopicDeck.generatedAt,
     caseSource: topCase ? "真实采集" : snapshotCaseStudy ? "规则计算" : "示例兜底",
     recommendationBatches: effectiveRecommendationBatches,
     watchPool,
@@ -445,7 +522,9 @@ async function loadCreatorTrendDetailData(filters: CreatorTrendDetailFilters): P
       likes: caseLikes,
       stats: caseStats,
       rows: caseRows,
-      scriptText: caseScriptText,
+      scriptText: caseScriptPack.scriptText,
+      graphicScriptText: caseScriptPack.graphicScriptText,
+      videoScriptText: caseScriptPack.videoScriptText,
       templateKeyword: getDirectionCaseTemplateKeyword(direction),
     },
   };
@@ -458,4 +537,14 @@ export async function getCreatorTrendDetailData(filters: CreatorTrendDetailFilte
     keyword: filters.keyword.trim(),
   };
   return withDetailServerCache(detailServerCacheKey(normalizedFilters), () => loadCreatorTrendDetailData(normalizedFilters));
+}
+
+export async function regenerateCreatorTrendAiRecommendations(filters: CreatorTrendDetailFilters): Promise<CreatorTrendDetailData> {
+  const normalizedFilters: CreatorTrendDetailFilters = {
+    direction: filters.direction || DEFAULT_INSIGHT_DIRECTION,
+    platform: filters.platform,
+    keyword: filters.keyword.trim(),
+  };
+  await invalidateInsightCache({ namespace: "creator-trend-detail" });
+  return loadCreatorTrendDetailData(normalizedFilters, { forceAiRecommendations: true });
 }

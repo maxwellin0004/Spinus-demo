@@ -1,11 +1,11 @@
-import { BrandLedgerTxStatus, BrandLedgerTxType, WithdrawalStatus } from "@prisma/client";
+import { BrandLedgerTxStatus, BrandLedgerTxType, InvoiceStatus, WithdrawalStatus } from "@prisma/client";
 import type { ReactNode } from "react";
-import { updateBrandRefundAction, updateInvoiceStatusAction, updateWithdrawalAction } from "@/lib/actions";
+import { refreshInvoicePaymentStatusAction, resolvePaymentProviderEventAction, updateBrandRefundAction, updateInvoiceStatusAction, updateWithdrawalAction } from "@/lib/actions";
 import { prisma } from "@/lib/prisma";
 import { SubmitButton } from "@/components/form-controls";
 import { Card, DataTable, LinkButton, MetricCard, PageHeader, StatusBadge, WorkflowHint } from "@/components/ui";
 import { money, shortDate } from "@/lib/format";
-import { demoWhere, getAdminContext, hasAdminPermission } from "@/lib/admin";
+import { demoWhere, hasAdminPermission, requireAdminPermission } from "@/lib/admin";
 
 type MoneyValue = number | string | { toString(): string } | null | undefined;
 
@@ -15,10 +15,10 @@ function Nowrap({ children, className = "min-w-[7rem]" }: { children: ReactNode;
 
 function invoiceNextStep(status: string, amount: MoneyValue, currency: string, hasRisk: boolean) {
   if (hasRisk) return { title: "先核对风险", body: "订单号存在重复提交提示，确认后再入账。", tone: "warning" as const };
-  if (status === "PAYMENT_SUBMITTED") return { title: "核对凭证", body: `确认后品牌余额增加 ${money(amount, currency)}。`, tone: "warning" as const };
-  if (status === "REQUESTED" || status === "OPEN") return { title: "等待付款", body: "品牌提交订单号和凭证后再确认。", tone: "default" as const };
-  if (status === "PAID") return { title: "已入账", body: "品牌余额已更新。", tone: "success" as const };
-  if (status === "REJECTED" || status === "VOID") return { title: "已关闭", body: "无需继续处理。", tone: "danger" as const };
+  if (status === InvoiceStatus.PAYMENT_SUBMITTED) return { title: "核对凭证", body: `确认后品牌余额增加 ${money(amount, currency)}。`, tone: "warning" as const };
+  if (status === InvoiceStatus.REQUESTED || status === InvoiceStatus.OPEN) return { title: "等待付款", body: "品牌提交订单号和凭证后再确认。", tone: "default" as const };
+  if (status === InvoiceStatus.PAID) return { title: "已入账", body: "品牌余额已更新。", tone: "success" as const };
+  if (status === InvoiceStatus.REJECTED || status === InvoiceStatus.VOID) return { title: "已关闭", body: "无需继续处理。", tone: "danger" as const };
   return { title: "查看状态", body: "按付款单状态处理。", tone: "default" as const };
 }
 
@@ -36,11 +36,14 @@ function withdrawalNextStep(status: string, amount: MoneyValue, currency: string
 }
 
 export default async function AdminPaymentsPage({ searchParams }: { searchParams: Promise<{ demo?: string; paymentReference?: string; error?: string }> }) {
-  const context = await getAdminContext();
+  const context = await requireAdminPermission("payment.view");
   const { demo, paymentReference, error } = await searchParams;
   const canSeeDemo = hasAdminPermission(context.profile, "demo.manage");
+  const canConfirmPayments = hasAdminPermission(context.profile, "payment.confirm");
+  const canReviewRefunds = hasAdminPermission(context.profile, "payment.refund.review");
+  const canExecuteRefunds = hasAdminPermission(context.profile, "payment.refund.execute");
   const referenceQuery = paymentReference?.trim();
-  const [earnings, withdrawals, invoices, refunds, ledgers] = await Promise.all([
+  const [earnings, withdrawals, invoices, refunds, ledgers, providerEvents] = await Promise.all([
     prisma.walletTransaction.findMany({
       where: { type: "EARNING", ...demoWhere(demo, canSeeDemo) },
       include: { creator: true, relatedSubmission: { include: { campaign: true } } },
@@ -61,7 +64,7 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
     }),
     prisma.brandRefundRequest.findMany({
       where: demoWhere(demo, canSeeDemo),
-      include: { brand: true, campaign: true },
+      include: { brand: true, campaign: true, relatedInvoice: true },
       orderBy: { createdAt: "desc" },
     }),
     prisma.brandLedgerTransaction.findMany({
@@ -69,8 +72,13 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
       orderBy: { createdAt: "desc" },
       take: 80,
     }),
+    prisma.paymentProviderEvent.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 80,
+    }),
   ]);
-  const pendingInvoices = invoices.filter((invoice) => ["REQUESTED", "OPEN", "PAYMENT_SUBMITTED"].includes(invoice.status));
+  const pendingInvoiceStatuses: InvoiceStatus[] = [InvoiceStatus.REQUESTED, InvoiceStatus.OPEN, InvoiceStatus.PAYMENT_SUBMITTED];
+  const pendingInvoices = invoices.filter((invoice) => pendingInvoiceStatuses.includes(invoice.status));
   const invoiceRiskFlags = invoices.length
     ? await prisma.riskFlag.findMany({
         where: {
@@ -99,7 +107,69 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
   for (const log of invoiceDuplicateLogs) {
     invoiceDuplicateLogsById.set(log.entityId, [...(invoiceDuplicateLogsById.get(log.entityId) ?? []), log]);
   }
-  const submittedInvoices = invoices.filter((invoice) => invoice.status === "PAYMENT_SUBMITTED");
+  const paymentRiskFlags = await prisma.riskFlag.findMany({
+    where: {
+      entityType: "invoice",
+      OR: [
+        { reason: { contains: "amount mismatch", mode: "insensitive" } },
+        { reason: { startsWith: "重复交易订单号提交被拦截" } },
+      ],
+    },
+    orderBy: { createdAt: "desc" },
+    take: 30,
+  });
+  const paymentFailureLogs = await prisma.auditLog.findMany({
+    where: {
+      entityType: "invoice",
+      action: {
+        in: [
+          "invoice.payment_status_query_failed",
+          "alipay.invoice_amount_mismatch",
+          "wechat_pay.invoice_amount_mismatch",
+          "invoice.payment_reference_duplicate_blocked",
+        ],
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 30,
+  });
+  const abnormalInvoiceIds = Array.from(new Set([...paymentRiskFlags.map((flag) => flag.entityId), ...paymentFailureLogs.map((log) => log.entityId)]));
+  const abnormalInvoices = abnormalInvoiceIds.length
+    ? await prisma.invoice.findMany({
+        where: { id: { in: abnormalInvoiceIds } },
+        include: { brand: true, campaign: true },
+      })
+    : [];
+  const abnormalInvoiceById = new Map(abnormalInvoices.map((invoice) => [invoice.id, invoice]));
+  const paymentAbnormalRows = [
+    ...paymentRiskFlags.map((flag) => ({
+      id: `risk-${flag.id}`,
+      invoiceId: flag.entityId,
+      source: "RiskFlag",
+      level: flag.level,
+      message: flag.reason,
+      createdAt: flag.createdAt,
+    })),
+    ...paymentFailureLogs.map((log) => ({
+      id: `audit-${log.id}`,
+      invoiceId: log.entityId,
+      source: log.action,
+      level: "MEDIUM",
+      message: JSON.stringify(log.afterJson ?? {}),
+      createdAt: log.createdAt,
+    })),
+    ...providerEvents
+      .filter((event) => event.status === "FAILED")
+      .map((event) => ({
+        id: `provider-${event.id}`,
+        invoiceId: event.entityType === "invoice" && event.entityId ? event.entityId : "",
+        source: `${event.provider}.${event.eventType}`,
+        level: "HIGH",
+        message: event.errorMessage || JSON.stringify(event.responseJson ?? {}),
+        createdAt: event.createdAt,
+      })),
+  ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, 40);
+  const submittedInvoices = invoices.filter((invoice) => invoice.status === InvoiceStatus.PAYMENT_SUBMITTED);
   const pendingRefunds = refunds.filter((request) => request.status !== "PAID" && request.status !== "REJECTED");
   const pendingWithdrawals = withdrawals.filter((request) => request.status === WithdrawalStatus.PENDING || request.status === WithdrawalStatus.APPROVED);
   const confirmedPayments = ledgers
@@ -113,11 +183,18 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
     .reduce((sum, ledger) => sum + Number(ledger.amount), 0);
   const pendingWithdrawalAmount = pendingWithdrawals.reduce((sum, request) => sum + Number(request.amount), 0);
   const pendingRefundAmount = pendingRefunds.reduce((sum, request) => sum + Number(request.amount), 0);
+  const failedProviderEvents = providerEvents.filter((event) => event.status === "FAILED");
+  const pendingProviderEvents = providerEvents.filter((event) => event.status === "PENDING");
+  const providerEventReviewRows = providerEvents.filter((event) => event.status === "FAILED" || event.status === "PENDING").slice(0, 30);
+  const invoiceById = new Map(invoices.map((invoice) => [invoice.id, invoice]));
+  const refundById = new Map(refunds.map((refund) => [refund.id, refund]));
 
   return (
     <div className="grid gap-6">
       <PageHeader eyebrow="管理端" title="财务中心">
         <LinkButton href="/api/admin/finance.csv" variant="ghost">导出财务流水 CSV</LinkButton>
+        <LinkButton href="/api/admin/payment-reconciliation.csv" variant="ghost">导出支付对账 CSV</LinkButton>
+        <LinkButton href="/api/admin/payment-provider-events.csv" variant="ghost">导出渠道事件 CSV</LinkButton>
         <LinkButton href="/api/admin/withdrawals.csv" variant="ghost">导出提现 CSV</LinkButton>
       </PageHeader>
       {error ? (
@@ -145,12 +222,13 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
       </form>
       {referenceQuery ? <p className="text-sm font-semibold text-stone-500">当前匹配 {invoices.length} 笔付款记录</p> : null}
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
         <MetricCard label="待确认付款" value={money(pendingInvoices.reduce((sum, invoice) => sum + Number(invoice.amount), 0), "CNY")} sub={`${pendingInvoices.length} 笔付款单`} />
         <MetricCard label="已确认入账" value={money(confirmedPayments, "CNY")} sub="品牌付款确认流水" />
         <MetricCard label="累计托管冻结" value={money(frozenEscrow, "CNY")} sub="Campaign 上架前锁定" />
         <MetricCard label="平台服务费" value={money(platformFee, "CNY")} sub="随验收逐步确认" />
         <MetricCard label="待人工打款" value={money(pendingWithdrawalAmount + pendingRefundAmount, "CNY")} sub={`${pendingWithdrawals.length} 个提现 / ${pendingRefunds.length} 个退款`} />
+        <MetricCard label="支付异常" value={paymentAbnormalRows.length} sub={`${failedProviderEvents.length} 渠道失败 / ${pendingProviderEvents.length} 待完成事件`} />
       </div>
 
       <Card className="border-amber-200 bg-amber-50/70">
@@ -171,13 +249,127 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
       </Card>
 
       <section className="min-w-0">
+        <h2 className="mb-3 text-xl font-semibold">支付失败复核队列</h2>
+        <DataTable
+          headers={["时间", "渠道事件", "状态", "关联对象", "错误", "处理"]}
+          emptyTitle="暂无需要复核的支付事件"
+          emptyBody="渠道回调、查单、退款请求或退款查询失败时，会集中出现在这里。"
+          rows={providerEventReviewRows.map((event) => {
+            const invoice = event.entityType === "invoice" && event.entityId ? invoiceById.get(event.entityId) : null;
+            const refund = event.entityType === "brand_refund_request" && event.entityId ? refundById.get(event.entityId) : null;
+            return [
+              shortDate(event.createdAt),
+              <div className="grid min-w-[12rem] gap-1" key={`${event.id}-event`}>
+                <span className="font-black text-stone-900">{event.provider}</span>
+                <span className="text-xs text-stone-500">{event.eventType}</span>
+              </div>,
+              <StatusBadge key={`${event.id}-status`}>{event.status}</StatusBadge>,
+              <div className="grid min-w-[14rem] gap-1 text-sm" key={`${event.id}-entity`}>
+                {invoice ? (
+                  <>
+                    <span className="font-semibold">{invoice.brand.brandName}</span>
+                    <span className="text-xs text-stone-500">{invoice.paymentReference ?? invoice.invoiceNumber ?? invoice.id}</span>
+                  </>
+                ) : refund ? (
+                  <>
+                    <span className="font-semibold">{refund.brand.brandName}</span>
+                    <span className="text-xs text-stone-500">{refund.providerRefundId ?? refund.id}</span>
+                  </>
+                ) : (
+                  <span className="text-stone-500">{event.entityType && event.entityId ? `${event.entityType}:${event.entityId.slice(-8)}` : "-"}</span>
+                )}
+              </div>,
+              <span className="inline-block min-w-[18rem] max-w-[34rem] whitespace-normal text-sm text-stone-700" key={`${event.id}-error`}>
+                {event.errorMessage ?? JSON.stringify(event.responseJson ?? {})}
+              </span>,
+              <div className="grid min-w-[13rem] gap-2" key={`${event.id}-action`}>
+                {invoice?.paymentReference?.startsWith("ALIPAY-") || invoice?.paymentReference?.startsWith("WECHAT-") ? (
+                  <form action={refreshInvoicePaymentStatusAction.bind(null, invoice.id)}>
+                    <input name="returnTo" type="hidden" value="/admin/payments" />
+                    <SubmitButton pendingLabel="查询中..." variant="secondary">重新查单</SubmitButton>
+                  </form>
+                ) : null}
+                {canExecuteRefunds && refund?.providerRefundId && refund.status !== "PAID" && refund.status !== "REJECTED" ? (
+                  <form action={updateBrandRefundAction.bind(null, refund.id)} className="grid gap-2">
+                    <input name="confirmAction" type="hidden" value="yes" />
+                    <input name="adminNote" type="hidden" value="从支付失败复核队列重新查询退款状态。" />
+                    <SubmitButton name="action" pendingLabel="查询中..." value="query_refund" variant="secondary">重新查退款</SubmitButton>
+                  </form>
+                ) : null}
+                <form action={resolvePaymentProviderEventAction.bind(null, event.id)} className="grid gap-2">
+                  <input name="returnTo" type="hidden" value="/admin/payments" />
+                  <input name="note" type="hidden" value="已由 Admin 在支付失败复核队列中确认，无需继续自动处理。" />
+                  <SubmitButton pendingLabel="处理中..." variant="ghost">标记已复核</SubmitButton>
+                </form>
+              </div>,
+            ];
+          })}
+        />
+      </section>
+
+      <section className="min-w-0">
+        <h2 className="mb-3 text-xl font-semibold">支付异常</h2>
+        <DataTable
+          headers={["时间", "等级", "来源", "品牌", "付款单", "交易订单号", "金额", "异常说明", "处理"]}
+          emptyTitle="暂无支付异常"
+          emptyBody="支付查询失败、金额不一致、重复订单号等异常会集中显示在这里。"
+          rows={paymentAbnormalRows.map((row) => {
+            const invoice = abnormalInvoiceById.get(row.invoiceId);
+            return [
+              shortDate(row.createdAt),
+              <StatusBadge key={`${row.id}-level`}>{row.level}</StatusBadge>,
+              <Nowrap key={`${row.id}-source`} className="min-w-[11rem]">{row.source}</Nowrap>,
+              <Nowrap key={`${row.id}-brand`} className="min-w-[6rem]">{invoice?.brand.brandName ?? "-"}</Nowrap>,
+              <Nowrap key={`${row.id}-invoice`} className="min-w-[8rem]">{invoice?.invoiceNumber ?? row.invoiceId.slice(-8)}</Nowrap>,
+              <Nowrap key={`${row.id}-ref`} className="min-w-[13rem]">{invoice?.paymentReference ?? "-"}</Nowrap>,
+              invoice ? money(invoice.amount, invoice.currency) : "-",
+              <span className="inline-block min-w-[18rem] max-w-[32rem] whitespace-normal text-sm text-stone-700" key={`${row.id}-message`}>{row.message}</span>,
+              invoice ? (
+                <div className="grid min-w-[10rem] gap-2" key={`${row.id}-action`}>
+                  {invoice.paymentReference?.startsWith("ALIPAY-") || invoice.paymentReference?.startsWith("WECHAT-") ? (
+                    <form action={refreshInvoicePaymentStatusAction.bind(null, invoice.id)}>
+                      <input name="returnTo" type="hidden" value="/admin/payments" />
+                      <SubmitButton pendingLabel="查询中..." variant="ghost">重新查询</SubmitButton>
+                    </form>
+                  ) : null}
+                  <a className="rounded-xl border border-stone-200 bg-white px-3 py-2 text-center text-xs font-black text-stone-700" href={`/admin/payments?paymentReference=${encodeURIComponent(invoice.paymentReference ?? "")}`}>
+                    查看付款单
+                  </a>
+                </div>
+              ) : (
+                "-"
+              ),
+            ];
+          })}
+        />
+      </section>
+
+      <section className="min-w-0">
+        <h2 className="mb-3 text-xl font-semibold">支付渠道事件</h2>
+        <DataTable
+          headers={["时间", "渠道", "类型", "状态", "关联对象", "幂等键", "错误"]}
+          emptyTitle="暂无渠道事件"
+          emptyBody="支付宝和微信支付的回调、查询、退款请求会记录在这里，用于排查重复回调和渠道失败。"
+          rows={providerEvents.map((event) => [
+            shortDate(event.createdAt),
+            <Nowrap key={`${event.id}-provider`} className="min-w-[6rem]">{event.provider}</Nowrap>,
+            <Nowrap key={`${event.id}-type`} className="min-w-[8rem]">{event.eventType}</Nowrap>,
+            <StatusBadge key={`${event.id}-status`}>{event.status}</StatusBadge>,
+            <Nowrap key={`${event.id}-entity`} className="min-w-[10rem]">{event.entityType && event.entityId ? `${event.entityType}:${event.entityId.slice(-8)}` : "-"}</Nowrap>,
+            <span className="inline-block min-w-[18rem] max-w-[28rem] truncate text-xs text-stone-500" key={`${event.id}-key`}>{event.eventKey}</span>,
+            <span className="inline-block min-w-[12rem] max-w-[24rem] whitespace-normal text-sm text-stone-700" key={`${event.id}-error`}>{event.errorMessage ?? "-"}</span>,
+          ])}
+        />
+      </section>
+
+      <section className="min-w-0">
         <h2 className="mb-3 text-xl font-semibold">商家付款与托管确认</h2>
         <DataTable
           headers={["商家", "Campaign", "付款单", "金额", "状态", "交易订单号", "凭证", "创建时间", "下一步", "操作"]}
           emptyTitle="暂无付款单"
           emptyBody="品牌提交预算申请或 Campaign 付款后，会在这里出现。"
           rows={invoices.map((invoice) => {
-            const canAct = invoice.status !== "PAID" && invoice.status !== "VOID" && invoice.status !== "REJECTED";
+            const canAct = invoice.status !== InvoiceStatus.PAID && invoice.status !== InvoiceStatus.VOID && invoice.status !== InvoiceStatus.REJECTED;
             const duplicateFlags = invoiceRiskById.get(invoice.id) ?? [];
             const latestDuplicateFlag = duplicateFlags[0];
             const duplicateLogs = invoiceDuplicateLogsById.get(invoice.id) ?? [];
@@ -211,9 +403,15 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
               invoice.paymentProofUrl ? <a className="inline-block min-w-[3rem] whitespace-nowrap font-semibold text-stone-950" href={invoice.paymentProofUrl} key={invoice.id}>查看</a> : "-",
               <Nowrap key={`${invoice.id}-created`} className="min-w-[7rem]">{shortDate(invoice.createdAt)}</Nowrap>,
               <WorkflowHint key={`${invoice.id}-next`} title={nextStep.title} body={nextStep.body} tone={nextStep.tone} />,
-              canAct ? (
+              canAct && canConfirmPayments ? (
                 <details className="min-w-[18rem]" key={`${invoice.id}-action`}>
                   <summary className="cursor-pointer font-black text-stone-950">处理付款</summary>
+                  {invoice.paymentReference?.startsWith("ALIPAY-") || invoice.paymentReference?.startsWith("WECHAT-") ? (
+                    <form action={refreshInvoicePaymentStatusAction.bind(null, invoice.id)} className="mt-3">
+                      <input name="returnTo" type="hidden" value="/admin/payments" />
+                      <SubmitButton pendingLabel="查询中..." variant="ghost">查询渠道状态</SubmitButton>
+                    </form>
+                  ) : null}
                   <form action={updateInvoiceStatusAction.bind(null, invoice.id)} className="mt-3 grid gap-3">
                     <textarea
                       className="min-h-20 rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm shadow-inner outline-none focus:border-[var(--accent)] focus:ring-4 focus:ring-amber-100"
@@ -253,12 +451,17 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
             return [
               <Nowrap key={`${request.id}-brand`} className="min-w-[6rem]">{request.brand.brandName}</Nowrap>,
               <Nowrap key={`${request.id}-amount`} className="min-w-[5rem]">{money(request.amount, request.currency)}</Nowrap>,
-              <Nowrap key={`${request.id}-method`} className="min-w-[7rem]">{request.payoutMethod ?? "-"}</Nowrap>,
+              <div className="grid min-w-[13rem] gap-1 text-sm" key={`${request.id}-method`}>
+                <span className="font-semibold">{request.payoutMethod ?? "-"}</span>
+                {request.relatedInvoice?.paymentReference ? <span className="text-xs text-stone-500">Original: {request.relatedInvoice.paymentReference}</span> : null}
+                {request.providerRefundId ? <span className="text-xs text-stone-500">Refund: {request.providerRefundId}</span> : null}
+                {request.providerRefundStatus ? <span className="text-xs font-semibold text-stone-700">Channel: {request.providerRefundStatus}</span> : null}
+              </div>,
               <StatusBadge key="s">{request.status}</StatusBadge>,
               <Nowrap key={`${request.id}-campaign`} className="min-w-[10rem]">{request.campaign?.title ?? "-"}</Nowrap>,
               <Nowrap key={`${request.id}-created`} className="min-w-[7rem]">{shortDate(request.createdAt)}</Nowrap>,
               <WorkflowHint key={`${request.id}-next`} title={nextStep.title} body={nextStep.body} tone={nextStep.tone} />,
-              canAct ? (
+              canAct && (canReviewRefunds || canExecuteRefunds) ? (
                 <details className="min-w-[17rem]" key={`${request.id}-action`}>
                   <summary className="cursor-pointer font-black text-stone-950">处理退款</summary>
                   <form action={updateBrandRefundAction.bind(null, request.id)} className="mt-3 grid gap-3">
@@ -273,9 +476,15 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
                       我已核对品牌余额、退款金额和线下处理结果，确认执行该操作。
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      <SubmitButton name="action" pendingLabel="处理中..." value="approve" variant="ghost">通过</SubmitButton>
-                      <SubmitButton name="action" pendingLabel="处理中..." value="paid" variant="secondary">标记已退款</SubmitButton>
-                      <SubmitButton name="action" pendingLabel="处理中..." value="reject" variant="danger">拒绝</SubmitButton>
+                      {canReviewRefunds ? <SubmitButton name="action" pendingLabel="处理中..." value="approve" variant="ghost">通过</SubmitButton> : null}
+                      {canExecuteRefunds && (request.relatedInvoice?.paymentReference?.startsWith("ALIPAY-") || request.relatedInvoice?.paymentReference?.startsWith("WECHAT-")) ? (
+                        <SubmitButton name="action" pendingLabel="退款中..." value="channel_refund" variant="secondary">原渠道退款</SubmitButton>
+                      ) : null}
+                      {canExecuteRefunds && request.providerRefundId ? (
+                        <SubmitButton name="action" pendingLabel="查询中..." value="query_refund" variant="ghost">查询退款</SubmitButton>
+                      ) : null}
+                      {canExecuteRefunds ? <SubmitButton name="action" pendingLabel="处理中..." value="paid" variant="secondary">标记已退款</SubmitButton> : null}
+                      {canReviewRefunds ? <SubmitButton name="action" pendingLabel="处理中..." value="reject" variant="danger">拒绝</SubmitButton> : null}
                     </div>
                   </form>
                 </details>
@@ -334,7 +543,7 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
               <StatusBadge key="s">{request.status}</StatusBadge>,
               <Nowrap key={`${request.id}-created`} className="min-w-[7rem]">{shortDate(request.createdAt)}</Nowrap>,
               <WorkflowHint key={`${request.id}-next`} title={nextStep.title} body={nextStep.body} tone={nextStep.tone} />,
-              canAct ? (
+              canAct && canConfirmPayments ? (
                 <details className="min-w-[17rem]" key={`${request.id}-action`}>
                   <summary className="cursor-pointer font-black text-stone-950">处理提现</summary>
                   <form action={updateWithdrawalAction.bind(null, request.id)} className="mt-3 grid gap-3">

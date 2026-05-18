@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, useTransition, type For
 import { useRouter } from "next/navigation";
 import { CalendarDays, ChevronDown, Search } from "lucide-react";
 import { CreatorTrendChart, type CreatorTrendPoint } from "@/components/creator-trend-chart";
+import { formatInsightSampleText, formatInsightUpdatedAt, type InsightConfidence } from "@/lib/insights/credibility";
 import { cn } from "@/lib/utils";
 
 type TrendRange = "24h" | "7d" | "30d";
@@ -35,6 +36,12 @@ type TopicRow = {
   platforms: string[];
   advice: "立即跟进" | "可长期做" | "谨慎跟进";
   source?: string;
+  updatedAt?: string;
+  sampleCount?: number;
+  commentSampleCount?: number;
+  platformSourceCount?: number;
+  confidence?: InsightConfidence;
+  reason?: string;
 };
 
 type SourceKind = "真实采集" | "规则计算" | "示例兜底";
@@ -202,13 +209,13 @@ export function CreatorTrendHeaderFilters() {
         items={rangeFilters}
         label={rangeFilters.find((item) => item.value === filters.range)?.label ?? "近7天"}
         value={filters.range}
-        onSelect={(value) => setFilters({ range: value as TrendRange }, "", { navigate: false })}
+        onSelect={(value) => setFilters({ range: value as TrendRange }, "#hot-topics", { scroll: false })}
       />
       <Dropdown
         items={platformFilters}
         label={platformFilters.find((item) => item.value === filters.platform)?.label ?? "全部"}
         value={filters.platform}
-        onSelect={(value) => setFilters({ platform: value as TrendPlatform }, "#hot-topics", { navigate: false })}
+        onSelect={(value) => setFilters({ platform: value as TrendPlatform }, "#hot-topics", { scroll: false })}
       />
       <Dropdown
         items={directions.map((item) => ({ label: item.label, value: item.slug }))}
@@ -220,7 +227,7 @@ export function CreatorTrendHeaderFilters() {
         items={scenarioFilters}
         label={scenarioFilters.find((item) => item.value === filters.scenario)?.label ?? "达人运营"}
         value={filters.scenario}
-        onSelect={(value) => setFilters({ scenario: value }, "", { navigate: false })}
+        onSelect={(value) => setFilters({ scenario: value }, "#hot-topics", { scroll: false })}
       />
     </div>
   );
@@ -234,7 +241,7 @@ export function CreatorTrendSearch() {
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setFilters({ keyword: draft.trim() }, "#hot-topics", { navigate: false });
+    setFilters({ keyword: draft.trim() }, "#hot-topics", { scroll: false });
   }
 
   return (
@@ -271,7 +278,7 @@ export function CreatorTrendSearch() {
                       type="button"
                       onClick={() => {
                         setDraft(item);
-                        setFilters({ keyword: item }, "#hot-topics", { navigate: false });
+                        setFilters({ keyword: item }, "#hot-topics", { scroll: false });
                         setMoreOpen(false);
                       }}
                     >
@@ -291,7 +298,7 @@ export function CreatorTrendSearch() {
               type="button"
               onClick={() => {
                 setDraft(chip);
-                setFilters({ keyword: chip }, "#hot-topics", { navigate: false });
+                setFilters({ keyword: chip }, "#hot-topics", { scroll: false });
               }}
             >
               {chip}
@@ -336,6 +343,13 @@ function adviceClass(advice: TopicRow["advice"]) {
   return "border-orange-200 bg-orange-50 text-orange-700";
 }
 
+function confidenceClass(confidence: InsightConfidence | undefined) {
+  if (confidence === "高可信") return "border-teal-200 bg-teal-50 text-teal-700";
+  if (confidence === "中可信") return "border-blue-200 bg-blue-50 text-blue-700";
+  if (confidence === "低可信") return "border-amber-200 bg-amber-50 text-amber-700";
+  return "border-slate-200 bg-slate-50 text-slate-500";
+}
+
 export function CreatorTrendHotTopics({
   trendData,
   topicRows,
@@ -355,7 +369,7 @@ export function CreatorTrendHotTopics({
   const filteredRows = topicRows
     .filter((row, index, rows) => rows.findIndex((candidate) => `${candidate.topic}-${candidate.platforms.join(",")}` === `${row.topic}-${row.platforms.join(",")}`) === index)
     .filter((row) => localPlatform === "all" || row.platforms.includes(platformName[localPlatform]))
-    .filter((row) => !filters.keyword || row.topic.includes(filters.keyword) || row.source?.includes(filters.keyword))
+    .filter((row) => !filters.keyword || row.topic.includes(filters.keyword) || row.source?.includes(filters.keyword) || row.reason?.includes(filters.keyword))
     .sort((a, b) => Number.parseInt(b.match, 10) - Number.parseInt(a.match, 10))
     .map((row, index) => ({ ...row, rank: index + 1 }));
 
@@ -411,22 +425,33 @@ export function CreatorTrendHotTopics({
           </div>
         </div>
         <div className="max-h-80 max-w-full overflow-auto pr-1">
-          <table className="min-w-[48rem] w-full text-left text-sm">
+          <table className="min-w-[58rem] w-full text-left text-sm">
             <thead className="sticky top-0 z-10 bg-slate-50 text-xs text-slate-500">
-              <tr>{["排名", "话题", "来源", "热度", "匹配度", "竞争度", "创作难度", "主要平台", "建议"].map((head) => <th key={head} className="px-3 py-3 font-black">{head}</th>)}</tr>
+              <tr>{["排名", "话题/推荐原因", "来源可信度", "热度", "匹配度", "竞争度", "创作难度", "主要平台", "建议"].map((head) => <th key={head} className="px-3 py-3 font-black">{head}</th>)}</tr>
             </thead>
             <tbody>
               {filteredRows.map((row) => (
                 <tr key={`${row.rank}-${row.topic}`} className="border-b border-slate-100">
                   <td className="px-3 py-3"><span className="inline-flex size-6 items-center justify-center rounded-md bg-amber-500 text-xs font-black text-white">{row.rank}</span></td>
-                  <td className="px-3 py-3 font-black">
-                    <button className="transition hover:text-teal-700" type="button" onClick={() => setFilters({ keyword: row.topic }, "#topic-recommendations", { navigate: false })}>{row.topic}</button>
-                    <span className={cn("ml-2 rounded-md border px-2 py-1 text-xs", stageClass(row.stage))}>{row.stage}</span>
+                  <td className="min-w-[14rem] px-3 py-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button className="font-black transition hover:text-teal-700" type="button" onClick={() => setFilters({ keyword: row.topic }, "#topic-recommendations", { navigate: false })}>{row.topic}</button>
+                      <span className={cn("rounded-md border px-2 py-1 text-xs font-black", stageClass(row.stage))}>{row.stage}</span>
+                    </div>
+                    <p className="mt-1 line-clamp-2 text-xs font-semibold leading-5 text-slate-500">{row.reason ?? "系统根据热度、匹配度和平台信号生成推荐。"}</p>
                   </td>
-                  <td className="min-w-[96px] px-3 py-3">
-                    <span className="inline-flex h-7 items-center whitespace-nowrap rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-black leading-none text-slate-600">
-                      {row.source ?? "综合热榜"}
-                    </span>
+                  <td className="min-w-[11rem] px-3 py-3">
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="inline-flex h-7 items-center whitespace-nowrap rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-black leading-none text-slate-600">
+                        {row.source ?? "综合热榜"}
+                      </span>
+                      <span className={cn("inline-flex h-7 items-center whitespace-nowrap rounded-md border px-2 py-1 text-xs font-black leading-none", confidenceClass(row.confidence))}>
+                        {row.confidence ?? "示例数据"}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-xs font-semibold leading-5 text-slate-500">
+                      {formatInsightSampleText(row)} · {formatInsightUpdatedAt(row.updatedAt)}
+                    </p>
                   </td>
                   <td className="px-3 py-3 font-black">{row.heat}</td>
                   <td className="px-3 py-3 font-black text-teal-600">{row.match}</td>

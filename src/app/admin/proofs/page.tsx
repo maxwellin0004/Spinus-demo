@@ -1,9 +1,9 @@
 import { CrawlerJobStatus, ProofStatus } from "@prisma/client";
-import { verifyProofAction } from "@/lib/actions";
+import { createManualPostMetricSnapshotAction, verifyProofAction } from "@/lib/actions";
 import { brandScopeWhere, demoWhere, getAdminContext, hasAdminPermission, scopeOptions } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { CopyButton, SubmitButton } from "@/components/form-controls";
-import { DataTable, PageHeader, PostMetricsPanel, StatusBadge, WorkflowHint } from "@/components/ui";
+import { DataTable, Field, PageHeader, PostMetricsPanel, StatusBadge, Textarea, WorkflowHint } from "@/components/ui";
 import { crawlerMetric, number, shortDate } from "@/lib/format";
 
 function shortUrl(value: string) {
@@ -157,6 +157,7 @@ export default async function AdminProofsPage({
         emptyBody="KOL 提交发布链接后，会出现在这里等待平台复核。"
         rows={proofs.map((proof) => {
           const action = verifyProofAction.bind(null, proof.id);
+          const manualMetricsAction = createManualPostMetricSnapshotAction.bind(null, proof.id);
           const latestSuccess = proof.postMetricSnapshots.find((snapshot) => snapshot.status === "SUCCESS");
           const latestAttempt = proof.postMetricSnapshots[0];
           const crawlerStatus = proof.crawlerJobs[0]?.status ?? latestAttempt?.status ?? "NO_JOB";
@@ -236,6 +237,20 @@ export default async function AdminProofsPage({
                     <SubmitButton name="action" pendingLabel="正在验收..." value="verify" variant="secondary">通过验收</SubmitButton>
                     <SubmitButton name="action" pendingLabel="正在拒绝..." value="reject" variant="danger">拒绝</SubmitButton>
                   </div>
+                </form>
+                <form action={manualMetricsAction} className="mt-4 grid gap-3 rounded-2xl border border-stone-200 bg-stone-50 p-3">
+                  <p className="text-xs font-black uppercase tracking-[0.12em] text-stone-500">人工补录数据</p>
+                  <div className="grid gap-3 md:grid-cols-2">
+                    <Field label="浏览" name="viewCount" type="number" />
+                    <Field label="点赞" name="likeCount" type="number" />
+                    <Field label="收藏" name="favoriteCount" type="number" />
+                    <Field label="评论" name="commentCount" type="number" />
+                    <Field label="分享" name="shareCount" type="number" />
+                    <Field label="作者名" name="authorName" />
+                  </div>
+                  <Field label="最终链接" name="canonicalUrl" type="url" defaultValue={proof.resolvedPostUrl ?? proof.postUrl} />
+                  <Textarea label="证据说明" name="evidenceNote" required rows={3} placeholder="例如：后台截图核对，链接可访问，作者与任务一致。" />
+                  <SubmitButton pendingLabel="正在补录..." variant="ghost">保存人工数据</SubmitButton>
                 </form>
               </details>
             ) : (

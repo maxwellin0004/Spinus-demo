@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ApplicationStatus, CampaignStatus, UserRole } from "@prisma/client";
+import { ApplicationStatus, CampaignStatus, SocialVerificationStatus, UserRole } from "@prisma/client";
 import { addBrandMessageAction, batchReviewTaskApplicationsAction, reviewTaskApplicationAction, submitExistingCampaignAction } from "@/lib/actions";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -7,6 +7,7 @@ import { MessageThread, ProgressTimeline } from "@/components/brand-ops";
 import { SubmitButton } from "@/components/form-controls";
 import { Button, Card, DataTable, LinkButton, MetricCard, PageHeader, StatusBadge, Textarea } from "@/components/ui";
 import { money, number, shortDate } from "@/lib/format";
+import { buildTaskMatch } from "@/lib/task-match";
 
 const detailTabs = [
   { value: "overview", label: "概览" },
@@ -19,6 +20,13 @@ const detailTabs = [
 ] as const;
 
 type DetailTab = (typeof detailTabs)[number]["value"];
+type ApplicationSortKey = "recommended" | "newest" | "followers" | "completed" | "completion";
+
+const applicationSortKeys: ApplicationSortKey[] = ["recommended", "newest", "followers", "completed", "completion"];
+
+function isApplicationSortKey(value?: string): value is ApplicationSortKey {
+  return applicationSortKeys.includes(value as ApplicationSortKey);
+}
 
 function isDetailTab(value?: string): value is DetailTab {
   return detailTabs.some((tab) => tab.value === value);
@@ -74,15 +82,20 @@ export default async function BrandCampaignDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string; batch?: string; applicationStatus?: string; tab?: string }>;
+  searchParams: Promise<{ error?: string; batch?: string; applicationStatus?: string; accountStatus?: string; applicationSort?: string; q?: string; tab?: string }>;
 }) {
   const session = await requireRole(UserRole.BRAND);
   const { id } = await params;
-  const { error, batch, applicationStatus, tab } = await searchParams;
+  const { error, batch, applicationStatus, accountStatus, applicationSort, q, tab } = await searchParams;
   const activeTab: DetailTab = isDetailTab(tab) ? tab : "overview";
   const selectedApplicationStatus = Object.values(ApplicationStatus).includes(applicationStatus as ApplicationStatus)
     ? (applicationStatus as ApplicationStatus)
     : null;
+  const selectedAccountStatus = Object.values(SocialVerificationStatus).includes(accountStatus as SocialVerificationStatus)
+    ? (accountStatus as SocialVerificationStatus)
+    : null;
+  const applicationSortKey = isApplicationSortKey(applicationSort) ? applicationSort : "recommended";
+  const applicationSearchQuery = (q ?? "").trim().toLowerCase();
   const campaign = await prisma.campaign.findFirst({
     where: { id, brand: { userId: session.userId } },
     include: {
@@ -90,7 +103,7 @@ export default async function BrandCampaignDetailPage({
       tasks: {
         include: {
           applications: {
-            include: { creator: true, selectedSocialAccount: true },
+            include: { creator: { include: { socialAccounts: true } }, selectedSocialAccount: true },
             orderBy: { createdAt: "desc" },
           },
         },
@@ -104,14 +117,75 @@ export default async function BrandCampaignDetailPage({
 
   const proofViews = campaign.proofs.reduce((sum, proof) => sum + proof.views, 0);
   const applications = campaign.tasks.flatMap((task) => task.applications.map((application) => ({ ...application, task })));
-  const visibleApplications = selectedApplicationStatus
-    ? applications.filter((application) => application.status === selectedApplicationStatus)
-    : applications;
+  const enrichedApplications = applications.map((application) => {
+    const match = buildTaskMatch(
+      {
+        platform: application.task.platform,
+        contentType: application.task.contentType,
+        minimumFollowers: application.task.minimumFollowers,
+        slotsTaken: application.task.slotsTaken,
+        slotsTotal: application.task.slotsTotal,
+        status: application.task.status,
+        creatorLevelRequired: application.task.creatorLevelRequired,
+        campaign: {
+          status: campaign.status,
+          industry: campaign.industry,
+          allowUnverifiedSocialAccounts: campaign.allowUnverifiedSocialAccounts,
+        },
+      },
+      application.creator,
+    );
+    const followerCount = application.selectedSocialAccount?.followers ?? match.usableAccount?.followers ?? 0;
+    return {
+      ...application,
+      matchScore: match.score,
+      matchReasons: match.reasons,
+      matchBlockers: match.blockers,
+      followerCount,
+      completionRateNumber: Number(application.creator.completionRate),
+      completedTaskCount: application.creator.completedTasks,
+    };
+  });
+  const visibleApplications = enrichedApplications
+    .filter((application) => (selectedApplicationStatus ? application.status === selectedApplicationStatus : true))
+    .filter((application) => (selectedAccountStatus ? application.selectedSocialAccount?.verificationStatus === selectedAccountStatus : true))
+    .filter((application) => {
+      if (!applicationSearchQuery) return true;
+      const haystack = [
+        application.creator.displayName,
+        application.creator.fullName,
+        application.creator.email,
+        application.task.title,
+        application.task.platform,
+        application.selectedSocialAccount?.accountName,
+        application.applicationNote,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(applicationSearchQuery);
+    })
+    .sort((a, b) => {
+      if (applicationSortKey === "newest") return b.createdAt.getTime() - a.createdAt.getTime();
+      if (applicationSortKey === "followers") return b.followerCount - a.followerCount;
+      if (applicationSortKey === "completed") return b.completedTaskCount - a.completedTaskCount;
+      if (applicationSortKey === "completion") return b.completionRateNumber - a.completionRateNumber;
+      return b.matchScore - a.matchScore || b.followerCount - a.followerCount || b.createdAt.getTime() - a.createdAt.getTime();
+    });
   const visiblePendingApplications = visibleApplications.filter((application) => application.status === "APPLIED");
   const pendingApplications = applications.filter((application) => application.status === "APPLIED").length;
   const pendingSubmissions = campaign.submissions.filter((submission) => submission.status === "SUBMITTED").length;
   const pendingProofs = campaign.proofs.filter((proof) => proof.verificationStatus === "PENDING").length;
   const focus = campaignFocus({ status: campaign.status, pendingApplications, pendingSubmissions, pendingProofs });
+  const focusHref =
+    focus.href ??
+    (pendingApplications > 0
+      ? `/brand/campaigns/${campaign.id}?tab=applications`
+      : pendingSubmissions > 0
+        ? `/brand/campaigns/${campaign.id}/submissions`
+        : pendingProofs > 0
+          ? `/brand/campaigns/${campaign.id}/proofs`
+          : null);
   const firstApplication = [...applications].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[0];
   const firstSubmission = [...campaign.submissions].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[0];
   const firstProof = [...campaign.proofs].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[0];
@@ -125,6 +199,20 @@ export default async function BrandCampaignDetailPage({
     { label: "发布链接", done: campaign.proofs.length > 0, date: firstProof?.publishedAt, detail: `${campaign.proofs.length} 条链接` },
     { label: "商家验收", done: Boolean(proofReviewed), date: proofReviewed?.updatedAt, detail: `${campaign.proofs.filter((proof) => proof.verificationStatus === "VERIFIED").length} 条已验收` },
     { label: "收益入账", done: Boolean(settled), date: settled?.updatedAt, detail: settled ? "KOL 收益已进入可提现余额" : "等待商家验收" },
+  ];
+  const communicationTargets = [
+    ...applications.map((application) => ({
+      type: "application",
+      label: `KOL申请 / ${application.creator.displayName} / ${application.task.title}`,
+    })),
+    ...campaign.submissions.map((submission) => ({
+      type: "submission",
+      label: `内容审核 / ${submission.creator.displayName} / ${submission.application.task.title}`,
+    })),
+    ...campaign.proofs.map((proof) => ({
+      type: "proof",
+      label: `发布验收 / ${proof.creator.displayName} / ${proof.submission.application.task.title}`,
+    })),
   ];
 
   return (
@@ -152,8 +240,8 @@ export default async function BrandCampaignDetailPage({
             <h2 className="mt-2 text-xl font-black text-stone-950">{focus.title}</h2>
             <p className="mt-1 text-sm text-stone-600">{focus.body}</p>
           </div>
-          {focus.href ? (
-            <Link className="rounded-xl bg-stone-950 px-4 py-2.5 text-sm font-black text-white" href={focus.href}>
+          {focusHref ? (
+            <Link className="rounded-xl bg-stone-950 px-4 py-2.5 text-sm font-black text-white" href={focusHref}>
               去处理
             </Link>
           ) : null}
@@ -249,6 +337,15 @@ export default async function BrandCampaignDetailPage({
         <form className="mb-4 flex flex-wrap items-end gap-3">
           <input name="tab" type="hidden" value="applications" />
           <label className="grid gap-2 text-sm font-semibold text-stone-600">
+            搜索 KOL / 任务 / 账号
+            <input
+              className="min-h-12 w-64 rounded-2xl border border-stone-200 bg-white px-4 text-sm font-semibold text-stone-950 outline-none focus:border-amber-400"
+              defaultValue={q ?? ""}
+              name="q"
+              placeholder="昵称、邮箱、任务或账号"
+            />
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-stone-600">
             申请状态
             <select
               className="min-h-12 rounded-2xl border border-stone-200 bg-white px-4 text-sm font-semibold text-stone-950 outline-none focus:border-amber-400"
@@ -263,8 +360,37 @@ export default async function BrandCampaignDetailPage({
               ))}
             </select>
           </label>
+          <label className="grid gap-2 text-sm font-semibold text-stone-600">
+            账号认证
+            <select
+              className="min-h-12 rounded-2xl border border-stone-200 bg-white px-4 text-sm font-semibold text-stone-950 outline-none focus:border-amber-400"
+              defaultValue={selectedAccountStatus ?? ""}
+              name="accountStatus"
+            >
+              <option value="">全部账号状态</option>
+              {Object.values(SocialVerificationStatus).map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-stone-600">
+            排序
+            <select
+              className="min-h-12 rounded-2xl border border-stone-200 bg-white px-4 text-sm font-semibold text-stone-950 outline-none focus:border-amber-400"
+              defaultValue={applicationSortKey}
+              name="applicationSort"
+            >
+              <option value="recommended">推荐优先</option>
+              <option value="newest">最新申请</option>
+              <option value="followers">粉丝最多</option>
+              <option value="completed">完成任务最多</option>
+              <option value="completion">履约率最高</option>
+            </select>
+          </label>
           <Button variant="ghost">筛选</Button>
-          {selectedApplicationStatus ? (
+          {selectedApplicationStatus || selectedAccountStatus || applicationSearchQuery || applicationSortKey !== "recommended" ? (
             <Link className="rounded-full border border-stone-200 bg-white px-4 py-3 text-sm font-black text-stone-700" href={`/brand/campaigns/${campaign.id}?tab=applications`}>
               清空
             </Link>
@@ -289,7 +415,7 @@ export default async function BrandCampaignDetailPage({
               </form>
             </Card>
             <DataTable
-              headers={["选择", "KOL", "任务", "账号", "粉丝", "状态", "申请说明", "操作"]}
+              headers={["选择", "KOL", "推荐度", "任务", "账号", "粉丝", "状态", "申请说明", "操作"]}
               rows={visibleApplications.map((application) => [
                 <input
                   className="h-4 w-4"
@@ -303,6 +429,14 @@ export default async function BrandCampaignDetailPage({
                 <div key={`kol-${application.id}`}>
                   <p className="font-black text-stone-950">{application.creator.displayName}</p>
                   <p className="mt-1 text-xs text-stone-500">申请于 {shortDate(application.createdAt)}</p>
+                  <p className="mt-1 text-xs text-stone-500">
+                    {application.creator.level} / 完成 {application.completedTaskCount} / 履约 {application.completionRateNumber.toFixed(0)}%
+                  </p>
+                </div>,
+                <div className="min-w-48" key={`match-${application.id}`}>
+                  <p className="text-lg font-black text-stone-950">{application.matchScore}</p>
+                  <p className="mt-1 text-xs text-emerald-700">{application.matchReasons.slice(0, 2).join(" / ")}</p>
+                  {application.matchBlockers.length ? <p className="mt-1 text-xs text-red-600">{application.matchBlockers[0]}</p> : null}
                 </div>,
                 <div key={`task-${application.id}`}>
                   <p>{application.task.title}</p>
@@ -409,8 +543,33 @@ export default async function BrandCampaignDetailPage({
         <div className="mt-5">
           <MessageThread messages={campaign.messages} />
         </div>
-        <form action={addBrandMessageAction.bind(null, "campaign", campaign.id)} className="mt-5 grid gap-3">
+        <form action={addBrandMessageAction.bind(null, "campaign", campaign.id)} className="mt-5 grid gap-3 md:grid-cols-2">
+          <label className="grid gap-2 text-sm font-semibold text-stone-700">
+            沟通类型
+            <select className="rounded-2xl border border-stone-200 px-4 py-3 outline-none focus:border-[var(--accent)] focus:ring-4 focus:ring-amber-100" name="messageCategory" defaultValue="运营跟进">
+              <option value="运营跟进">运营跟进</option>
+              <option value="KOL申请">KOL申请</option>
+              <option value="内容审核">内容审核</option>
+              <option value="发布验收">发布验收</option>
+              <option value="账单付款">账单付款</option>
+              <option value="风险处理">风险处理</option>
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-stone-700">
+            关联对象
+            <select className="rounded-2xl border border-stone-200 px-4 py-3 outline-none focus:border-[var(--accent)] focus:ring-4 focus:ring-amber-100" name="relatedLabel" defaultValue="">
+              <option value="">整场 Campaign</option>
+              {communicationTargets.map((target) => (
+                <option key={`${target.type}-${target.label}`} value={target.label}>
+                  {target.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <input name="relatedType" type="hidden" value="campaign" />
+          <div className="md:col-span-2">
           <Textarea label="留言给运营" name="body" required rows={4} />
+          </div>
           <div>
             <SubmitButton pendingLabel="正在发送..." variant="secondary">发送留言</SubmitButton>
           </div>

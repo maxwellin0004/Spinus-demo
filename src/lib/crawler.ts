@@ -10,6 +10,7 @@ import {
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
+import { categorizeCrawlerFailure, evaluateCrawlerDataConfidence, toJsonEvidence } from "@/lib/crawler-reliability";
 
 export const crawlerLockTimeoutMs = 10 * 60 * 1000;
 
@@ -72,6 +73,7 @@ const crawlerResultSchema = z.object({
       rawUserId: nullableStringSchema,
       rawCanonicalUrl: nullableStringSchema,
       rawMetricText: nullableStringSchema,
+      rawEvidence: z.unknown().optional(),
       parserVersion: nullableStringSchema,
     })
     .default({}),
@@ -200,18 +202,36 @@ export async function completeCrawlerJob(jobId: string, result: CrawlerResultInp
   const completedAt = nextStatus === CrawlerJobStatus.PENDING ? null : now;
   const status = snapshotStatus(result.status);
   const fetchedAt = dateOrNow(result.snapshot.fetchedAt);
+  const normalizedFailureReason = failed ? failureReason(result) : null;
+  const failureCategory = failed ? categorizeCrawlerFailure(result.errorCode, normalizedFailureReason) : null;
   const authorMatchStatus =
     existing.targetType === CrawlerTargetType.PROOF ? await resolveAuthorMatchStatus(existing.id, result) : AuthorMatchStatus.UNKNOWN;
+  const rawEvidence = toJsonEvidence(result.snapshot.rawEvidence);
+  const socialDataConfidence = evaluateCrawlerDataConfidence({
+    status,
+    failureCategory,
+    hasRawEvidence: Boolean(rawEvidence || result.snapshot.rawMetricText),
+    hasCoreMetric: result.snapshot.followerCount != null || result.snapshot.likeCount != null || result.snapshot.postCount != null,
+  });
+  const postDataConfidence = evaluateCrawlerDataConfidence({
+    status,
+    failureCategory,
+    hasRawEvidence: Boolean(rawEvidence || result.snapshot.rawMetricText),
+    hasCoreMetric: result.snapshot.viewCount != null || result.snapshot.likeCount != null,
+    authorMatched: authorMatchStatus === AuthorMatchStatus.UNKNOWN ? undefined : authorMatchStatus === AuthorMatchStatus.MATCHED,
+  });
   const commonSnapshot = {
     crawlerJobId: existing.id,
     platform: existing.platform,
     status,
-    failureReason: failed ? failureReason(result) : null,
+    failureReason: normalizedFailureReason,
+    failureCategory,
     fetchedAt,
     rawProvider: cleanNullableString(result.snapshot.rawProvider),
     rawUserId: cleanNullableString(result.snapshot.rawUserId),
     rawCanonicalUrl: cleanNullableString(result.snapshot.rawCanonicalUrl),
     rawMetricText: cleanNullableString(result.snapshot.rawMetricText),
+    rawEvidence,
     parserVersion: cleanNullableString(result.snapshot.parserVersion),
   };
 
@@ -222,6 +242,7 @@ export async function completeCrawlerJob(jobId: string, result: CrawlerResultInp
       await tx.socialAccountSnapshot.create({
         data: {
           ...commonSnapshot,
+          dataConfidence: socialDataConfidence,
           socialAccountId: existing.socialAccountId,
           displayName: cleanNullableString(result.snapshot.displayName),
           profileUrl: cleanNullableString(result.snapshot.profileUrl),
@@ -240,6 +261,7 @@ export async function completeCrawlerJob(jobId: string, result: CrawlerResultInp
       await tx.postMetricSnapshot.create({
         data: {
           ...commonSnapshot,
+          dataConfidence: postDataConfidence,
           proofId: existing.proofId,
           viewCount: result.snapshot.viewCount ?? null,
           likeCount: result.snapshot.likeCount ?? null,
@@ -265,7 +287,8 @@ export async function completeCrawlerJob(jobId: string, result: CrawlerResultInp
         lockedAt: nextStatus === CrawlerJobStatus.PENDING ? null : existing.lockedAt,
         lockedBy: nextStatus === CrawlerJobStatus.PENDING ? null : existing.lockedBy,
         lastErrorCode: result.errorCode ?? null,
-        lastErrorMessage: failed ? failureReason(result) : null,
+        lastErrorMessage: normalizedFailureReason,
+        lastErrorCategory: failureCategory,
         completedAt,
       },
     });
@@ -291,7 +314,9 @@ export async function createCrawlerJob(data: {
   socialAccountId?: string | null;
   proofId?: string | null;
   createdByUserId?: string | null;
+  maxAttempts?: number;
 }) {
+  const settings = await prisma.platformSettings.upsert({ where: { id: "platform" }, update: {}, create: { id: "platform" } });
   return prisma.crawlerJob.create({
     data: {
       type: data.type,
@@ -302,6 +327,7 @@ export async function createCrawlerJob(data: {
       socialAccountId: data.socialAccountId ?? null,
       proofId: data.proofId ?? null,
       createdByUserId: data.createdByUserId ?? null,
+      maxAttempts: data.maxAttempts ?? settings.crawlerMaxAttempts,
     },
   });
 }

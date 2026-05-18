@@ -86,6 +86,8 @@ export default async function AdminCrawlerPage({ searchParams }: { searchParams:
       include: {
         socialAccount: { include: { creator: true } },
         proof: { include: { creator: true, campaign: true } },
+        socialSnapshots: { orderBy: { createdAt: "desc" }, take: 1 },
+        postSnapshots: { orderBy: { createdAt: "desc" }, take: 1 },
       },
       orderBy: { createdAt: "desc" },
       take: 50,
@@ -173,7 +175,14 @@ export default async function AdminCrawlerPage({ searchParams }: { searchParams:
               </Link>
             </div>,
             job.lockedBy ? `${job.lockedBy} / ${job.lockedAt ? shortDate(job.lockedAt) : "-"}` : "-",
-            job.lastErrorMessage ?? "-",
+            <div className="grid gap-1" key="error">
+              <span>{job.lastErrorMessage ?? "-"}</span>
+              <span className="text-xs text-stone-500">
+                {job.lastErrorCategory ?? job.socialSnapshots[0]?.failureCategory ?? job.postSnapshots[0]?.failureCategory ?? "-"}
+                {" / "}
+                {job.socialSnapshots[0]?.dataConfidence ?? job.postSnapshots[0]?.dataConfidence ?? "-"}
+              </span>
+            </div>,
             <div className="flex flex-wrap gap-2" key="actions">
               {job.status === CrawlerJobStatus.FAILED || job.status === CrawlerJobStatus.CANCELLED ? (
                 <form action={retry}>

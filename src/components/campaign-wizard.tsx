@@ -31,6 +31,18 @@ type TaskRow = {
   platformRequirement: string;
 };
 
+export type CampaignWizardPrefill = {
+  title?: string;
+  productName?: string;
+  objective?: string;
+  brief?: string;
+  cta?: string;
+  mustInclude?: string;
+  hashtags?: string;
+  platform?: string;
+  creator?: string;
+};
+
 const defaultTaskRows: TaskRow[] = [
   {
     id: 1,
@@ -91,12 +103,57 @@ function firstInvalidControl(form: HTMLFormElement, step: number) {
   });
 }
 
-export function CampaignWizard({ error, settings, brandBalance = 0 }: { error?: string; settings: WizardSettings; brandBalance?: number }) {
+function platformFromPrefill(value: string | undefined) {
+  const text = value ?? "";
+  if (text.includes("小红书")) return "小红书";
+  if (text.includes("抖音")) return "抖音";
+  if (text.includes("微博")) return "微博";
+  if (text.includes("B站")) return "B站";
+  if (text.includes("视频号")) return "视频号";
+  return "小红书";
+}
+
+function buildPrefillTasks(prefill?: CampaignWizardPrefill): TaskRow[] {
+  if (!prefill?.title && !prefill?.platform) return defaultTaskRows;
+  const platform = platformFromPrefill(prefill.platform);
+  return [
+    {
+      id: 1,
+      platform,
+      contentType: platform === "小红书" ? "图文" : "短视频",
+      slotsTotal: 5,
+      rewardAmount: platform === "小红书" ? 40 : 60,
+      minimumFollowers: 1000,
+      draftDeadline: todayPlus(7),
+      publishDeadline: todayPlus(12),
+      platformRequirement: `${prefill.title ?? "热点选题"}：围绕真实体验、用户痛点和对比证据展开，避免夸大承诺。`,
+    },
+  ];
+}
+
+export function CampaignWizard({
+  error,
+  settings,
+  brandBalance = 0,
+  prefill,
+}: {
+  error?: string;
+  settings: WizardSettings;
+  brandBalance?: number;
+  prefill?: CampaignWizardPrefill;
+}) {
   const [step, setStep] = useState(0);
   const [localError, setLocalError] = useState(error ?? "");
   const [industry, setIndustry] = useState("AI/工具软件");
-  const [tasks, setTasks] = useState<TaskRow[]>(defaultTaskRows);
+  const [tasks, setTasks] = useState<TaskRow[]>(() => buildPrefillTasks(prefill));
   const formRef = useRef<HTMLFormElement>(null);
+  const prefillTitle = prefill?.title ? `${prefill.title} 种草推广` : "新品种草推广";
+  const prefillObjective = prefill?.objective ?? "下载/注册";
+  const prefillBrief =
+    prefill?.brief ??
+    "请用真实体验介绍产品解决了什么问题，适合什么人使用，以及为什么值得尝试。表达要具体、真实、可验证。";
+  const prefillMustInclude = prefill?.mustInclude ?? "产品名称, 真实使用场景, 广告披露";
+  const prefillHashtags = prefill?.hashtags ?? "#好物分享, #实用工具";
 
   const escrowAmount = useMemo(
     () => tasks.reduce((sum, task) => sum + Number(task.slotsTotal || 0) * Number(task.rewardAmount || 0), 0),
@@ -164,6 +221,55 @@ export function CampaignWizard({ error, settings, brandBalance = 0 }: { error?: 
     setFormValue("objective", template.objective);
     setFormValue("cta", template.cta);
     setFormValue("brief", template.brief);
+  }
+
+  function generateSmartDraft() {
+    const form = formRef.current;
+    const fieldValue = (name: string) => {
+      const field = form?.elements.namedItem(name);
+      return field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement ? field.value.trim() : "";
+    };
+    const productName = fieldValue("productName");
+    const objective = fieldValue("objective");
+    const landingUrl = fieldValue("landingUrl");
+    const name = productName || "产品";
+    const targetObjective = objective || "提升真实体验种草和转化";
+    setFormValue("title", `${name} 种草推广`);
+    setFormValue("objective", targetObjective);
+    setFormValue("cta", landingUrl ? "点击链接了解详情并完成体验" : "评论区/主页了解详情");
+    setFormValue(
+      "brief",
+      `${name} 需要一批真实体验型内容。请围绕用户痛点、使用场景、核心卖点和实际体验展开，表达要自然可信，不夸大效果。推广目标：${targetObjective}。`,
+    );
+    setFormValue("mustInclude", `${name}, 真实使用场景, 核心卖点, 广告披露`);
+    setFormValue("mustNotInclude", "保证效果, 夸大收益, 虚假官方背书, 绝对化承诺");
+    setFormValue("visualRequirements", "展示产品界面或实物, 展示真实使用过程, 保留关键操作或体验证据");
+    setFormValue("hashtags", "#真实体验, #好物分享, #实用工具");
+    setTasks([
+      {
+        id: 1,
+        platform: "小红书",
+        contentType: "图文",
+        slotsTotal: 5,
+        rewardAmount: 40,
+        minimumFollowers: 1000,
+        draftDeadline: todayPlus(7),
+        publishDeadline: todayPlus(12),
+        platformRequirement: "标题自然种草，正文包含真实体验、适用人群和广告披露。",
+      },
+      {
+        id: 2,
+        platform: "抖音",
+        contentType: "短视频",
+        slotsTotal: 3,
+        rewardAmount: 60,
+        minimumFollowers: 3000,
+        draftDeadline: todayPlus(7),
+        publishDeadline: todayPlus(12),
+        platformRequirement: "前 3 秒说明痛点，中段展示体验过程，结尾引导查看主页或链接。",
+      },
+    ]);
+    setLocalError("");
   }
 
   function validateStep(targetStep = step) {
@@ -272,9 +378,20 @@ export function CampaignWizard({ error, settings, brandBalance = 0 }: { error?: 
                 </button>
               ))}
             </div>
+            <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="text-sm font-black text-emerald-900">智能生成 Campaign 草稿</p>
+                  <p className="mt-1 text-xs font-semibold text-emerald-800">先填写产品名、链接和推广目标，再自动补齐 brief、内容要求、话题和推荐平台任务。</p>
+                </div>
+                <Button type="button" variant="ghost" onClick={generateSmartDraft}>
+                  生成草稿
+                </Button>
+              </div>
+            </div>
             <div className="mt-4 grid gap-4 md:grid-cols-2">
-              <Field label="Campaign 名称" name="title" required defaultValue="新品种草推广" />
-              <Field label="产品/项目名称" name="productName" required defaultValue="小黄雀产品" />
+              <Field label="Campaign 名称" name="title" required defaultValue={prefillTitle} />
+              <Field label="产品/项目名称" name="productName" required defaultValue={prefill?.productName ?? "小黄雀产品"} />
               <Field label="产品或活动链接" name="landingUrl" defaultValue="https://example.com" />
               <label className="grid gap-2 text-sm font-medium text-stone-700">
                 行业分类
@@ -292,8 +409,8 @@ export function CampaignWizard({ error, settings, brandBalance = 0 }: { error?: 
                   ))}
                 </select>
               </label>
-              <Field label="推广目标" name="objective" required defaultValue="下载/注册" />
-              <Field label="目标动作 CTA" name="cta" required defaultValue="点击链接领取试用名额" />
+              <Field label="推广目标" name="objective" required defaultValue={prefillObjective} />
+              <Field label="目标动作 CTA" name="cta" required defaultValue={prefill?.cta ?? "点击链接领取试用名额"} />
               <Field label="开始时间" name="startDate" type="date" required defaultValue={todayPlus(3)} />
               <Field label="结束时间" name="endDate" type="date" required defaultValue={todayPlus(30)} />
             </div>
@@ -308,7 +425,7 @@ export function CampaignWizard({ error, settings, brandBalance = 0 }: { error?: 
                 name="brief"
                 required
                 rows={5}
-                defaultValue="请用真实体验介绍产品解决了什么问题，适合什么人使用，以及为什么值得尝试。表达要具体、真实、可验证。"
+                defaultValue={prefillBrief}
               />
             </div>
           </Card>
@@ -388,10 +505,10 @@ export function CampaignWizard({ error, settings, brandBalance = 0 }: { error?: 
           <Card>
             <h2 className="text-xl font-black">第 4 步：内容要求</h2>
             <div className="mt-4 grid gap-4 md:grid-cols-2">
-              <Textarea label="必须包含内容（逗号分隔）" name="mustInclude" required defaultValue="产品名称, 真实使用场景, 广告披露" />
+              <Textarea label="必须包含内容（逗号分隔）" name="mustInclude" required defaultValue={prefillMustInclude} />
               <Textarea label="禁止表达（逗号分隔）" name="mustNotInclude" required defaultValue="保证效果, 夸大收益, 虚假官方合作" />
               <Textarea label="画面/素材要求（逗号分隔）" name="visualRequirements" defaultValue="展示产品界面, 展示真实使用过程" />
-              <Field label="推荐 Hashtag（逗号分隔）" name="hashtags" defaultValue="#好物分享, #实用工具" />
+              <Field label="推荐 Hashtag（逗号分隔）" name="hashtags" defaultValue={prefillHashtags} />
               <label className="flex items-center gap-3 rounded-2xl border border-stone-200 bg-white/80 p-4 text-sm font-semibold text-stone-700">
                 <input name="requiresDraftReview" type="checkbox" defaultChecked /> 需要 KOL 先提交草稿，商家审核通过后再发布
               </label>

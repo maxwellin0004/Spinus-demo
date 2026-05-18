@@ -122,6 +122,9 @@ export default async function AdminInsightsPage({
               <Link className="text-stone-900 underline" href="/admin/insights/runs">
                 查看采集日志
               </Link>
+              <Link className="text-stone-900 underline" href="/admin/insights/script-generations">
+                查看脚本生成记录
+              </Link>
             </div>
           </div>
           <form action={createInsightKeywordConfigAction} className="mt-5 grid gap-4 md:grid-cols-4">

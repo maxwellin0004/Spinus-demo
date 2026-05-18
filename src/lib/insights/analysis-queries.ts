@@ -2,6 +2,7 @@ import { deriveContentRecommendations, deriveTopicAdvice, summarizeCommentSignal
 import type { PainPointSummary } from "@/lib/insights/analysis";
 import { getInsightDirectionTerms } from "@/lib/insights/directions";
 import { rewriteRecommendationsWithAi } from "@/lib/insights/recommendation-ai";
+import { DEFAULT_INSIGHT_AI_MODEL } from "@/lib/insights/ai-prompts";
 import type { InsightScopedFilters } from "@/lib/insights/queries";
 import { withSharedInsightCache } from "@/lib/insights/cache";
 import { prisma } from "@/lib/prisma";
@@ -10,7 +11,13 @@ const INSIGHT_ANALYSIS_CACHE_MAX = 200;
 
 const DEFAULT_INSIGHT_AI_SETTINGS = {
   insightAiEnabled: false,
+  insightAiBaseUrl: null,
+  insightAiApiKey: null,
+  insightAiModel: DEFAULT_INSIGHT_AI_MODEL,
   insightAiSystemPrompt: "",
+  insightAiScriptSystemPrompt: "",
+  insightAiGraphicScriptSystemPrompt: "",
+  insightAiVideoScriptSystemPrompt: "",
 } as const;
 
 async function withInsightAnalysisCache<T>(key: string, ttlMs: number, loader: () => Promise<T>) {
@@ -83,7 +90,13 @@ export async function getBrandInsightAnalysis(filters?: InsightScopedFilters) {
       where: { id: "platform" },
       select: {
         insightAiEnabled: true,
+        insightAiBaseUrl: true,
+        insightAiApiKey: true,
+        insightAiModel: true,
         insightAiSystemPrompt: true,
+        insightAiScriptSystemPrompt: true,
+        insightAiGraphicScriptSystemPrompt: true,
+        insightAiVideoScriptSystemPrompt: true,
       },
     }),
   ]);
@@ -189,7 +202,13 @@ export async function getCreatorInsightAnalysis(directionSlug?: string) {
       where: { id: "platform" },
       select: {
         insightAiEnabled: true,
+        insightAiBaseUrl: true,
+        insightAiApiKey: true,
+        insightAiModel: true,
         insightAiSystemPrompt: true,
+        insightAiScriptSystemPrompt: true,
+        insightAiGraphicScriptSystemPrompt: true,
+        insightAiVideoScriptSystemPrompt: true,
       },
     }),
   ]);

@@ -4,6 +4,7 @@ import { applyTaskAction } from "@/lib/actions";
 import { requireRole } from "@/lib/auth";
 import { money, shortDate } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
+import { buildTaskMatch } from "@/lib/task-match";
 import { UserRole } from "@prisma/client";
 
 export default async function CreatorTaskDetailPage({
@@ -37,11 +38,13 @@ export default async function CreatorTaskDetailPage({
 
   const socialAccounts = creator?.socialAccounts ?? [];
   const verifiedAccounts = socialAccounts.filter((account) => account.verificationStatus === "VERIFIED");
+  const platformAccounts = socialAccounts.filter((account) => account.platform === task.platform);
   const matchingVerifiedAccounts = verifiedAccounts.filter((account) => account.platform === task.platform);
-  const selectableAccounts = matchingVerifiedAccounts.length ? matchingVerifiedAccounts : verifiedAccounts;
+  const selectableAccounts = task.campaign.allowUnverifiedSocialAccounts ? platformAccounts : matchingVerifiedAccounts;
   const hasSocial = socialAccounts.length > 0;
   const hasVerifiedSocial = verifiedAccounts.length > 0;
   const remainingSlots = task.slotsTotal - task.slotsTaken;
+  const match = buildTaskMatch(task, creator, existingInCampaign);
 
   return (
     <div className="grid gap-6">
@@ -113,6 +116,18 @@ export default async function CreatorTaskDetailPage({
             </div>
           </dl>
 
+          <div className={`mt-5 rounded-2xl border p-4 text-sm ${match.canApply ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-amber-200 bg-amber-50 text-amber-800"}`}>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="font-black">{match.canApply ? `匹配度 ${match.score}%` : "暂不可申请"}</p>
+              <StatusBadge tone={match.canApply ? "success" : "warning"}>{match.canApply ? "可申请" : "需处理"}</StatusBadge>
+            </div>
+            <div className="mt-3 grid gap-2">
+              {(match.canApply ? match.reasons : match.blockers).map((item) => (
+                <p key={item}>· {item}</p>
+              ))}
+            </div>
+          </div>
+
           {existing ? (
             <div className="mt-5 rounded-2xl bg-stone-100 p-4 text-sm font-semibold text-stone-700">已申请，当前状态：{existing.status}</div>
           ) : existingInCampaign ? (
@@ -125,6 +140,8 @@ export default async function CreatorTaskDetailPage({
             <div className="mt-5 rounded-2xl bg-amber-50 p-4 text-sm font-semibold text-amber-800">默认只有已验证社媒账号可以申请任务，请等待平台审核。</div>
           ) : remainingSlots <= 0 ? (
             <div className="mt-5 rounded-2xl bg-stone-100 p-4 text-sm font-semibold text-stone-700">任务名额已满。</div>
+          ) : !match.canApply ? (
+            <div className="mt-5 rounded-2xl bg-amber-50 p-4 text-sm font-semibold text-amber-800">{match.blockers[0]}</div>
           ) : (
             <form action={applyTaskAction.bind(null, task.id)} className="mt-5 grid gap-3">
               <label className="grid gap-2 text-sm font-medium text-stone-700">

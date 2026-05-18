@@ -1,5 +1,4 @@
-import { UserRole } from "@prisma/client";
-import { requireRole } from "@/lib/auth";
+import { requireAdminPermission } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 
 function escapeCsv(value: unknown) {
@@ -8,7 +7,7 @@ function escapeCsv(value: unknown) {
 }
 
 export async function GET() {
-  await requireRole(UserRole.ADMIN);
+  await requireAdminPermission("payment.view");
   const withdrawals = await prisma.withdrawalRequest.findMany({ where: { isDemo: false }, include: { creator: true }, orderBy: { createdAt: "desc" } });
   const rows = [
     ["creator", "amount", "currency", "method", "status", "admin_note", "created_at"],

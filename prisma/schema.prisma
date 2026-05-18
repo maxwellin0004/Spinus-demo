@@ -197,6 +197,15 @@ enum BrandRefundStatus {
   REJECTED
 }
 
+enum InvoiceStatus {
+  REQUESTED
+  OPEN
+  PAYMENT_SUBMITTED
+  PAID
+  REJECTED
+  VOID
+}
+
 enum ComplianceRuleType {
   SENSITIVE_WORD
   PROHIBITED_EXPRESSION
@@ -230,6 +239,21 @@ enum DisputeDecision {
   FULL_REFUND
   PARTIAL_SETTLEMENT
   ALLOW_RESUBMISSION
+}
+
+enum SupportTicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_CUSTOMER
+  RESOLVED
+  CLOSED
+}
+
+enum SupportTicketPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
 }
 
 enum CrawlerPlatform {
@@ -270,23 +294,54 @@ enum AuthorMatchStatus {
 }
 
 model User {
-  id                     String                 @id @default(cuid())
-  email                  String                 @unique
-  passwordHash           String
-  role                   UserRole
-  status                 UserStatus             @default(ACTIVE)
-  adminProfile           AdminProfile?
-  brandProfile           BrandProfile?
-  creatorProfile         CreatorProfile?
-  creatorReferral        CreatorReferralAttribution?
+  id                             String                         @id @default(cuid())
+  email                          String                         @unique
+  passwordHash                   String
+  role                           UserRole
+  status                         UserStatus                     @default(ACTIVE)
+  emailVerifiedAt                DateTime?
+  passwordChangedAt              DateTime?
+  passwordResetTokens            PasswordResetToken[]
+  emailVerificationTokens        EmailVerificationToken[]
+  adminProfile                   AdminProfile?
+  brandProfile                   BrandProfile?
+  creatorProfile                 CreatorProfile?
+  creatorReferral                CreatorReferralAttribution?
   reviewedMembershipApplications CreatorMembershipApplication[]
-  invitationCodesCreated InvitationCode[]       @relation("InvitationCodeCreator")
-  invitationAttribution  InvitationAttribution?
-  submissionReviews      SubmissionReview[]     @relation("Reviewer")
-  brandMessages          BrandMessage[]         @relation("BrandMessageAuthor")
-  notifications          Notification[]
-  createdAt              DateTime               @default(now())
-  updatedAt              DateTime               @updatedAt
+  invitationCodesCreated         InvitationCode[]               @relation("InvitationCodeCreator")
+  invitationAttribution          InvitationAttribution?
+  submissionReviews              SubmissionReview[]             @relation("Reviewer")
+  brandMessages                  BrandMessage[]                 @relation("BrandMessageAuthor")
+  supportTicketsOpened           SupportTicket[]                @relation("SupportTicketOpenedBy")
+  supportTicketsAssigned         SupportTicket[]                @relation("SupportTicketAssignedTo")
+  supportTicketNotes             SupportTicketNote[]
+  notifications                  Notification[]
+  createdAt                      DateTime                       @default(now())
+  updatedAt                      DateTime                       @updatedAt
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, expiresAt])
+}
+
+model EmailVerificationToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, expiresAt])
 }
 
 model AdminProfile {
@@ -371,6 +426,7 @@ model BrandProfile {
   invoices            Invoice[]
   ledgerTransactions  BrandLedgerTransaction[]
   refundRequests      BrandRefundRequest[]
+  supportTickets      SupportTicket[]
   createdAt           DateTime                 @default(now())
   updatedAt           DateTime                 @updatedAt
 }
@@ -394,47 +450,50 @@ model BrandRequest {
 }
 
 model CreatorProfile {
-  id                 String              @id @default(cuid())
-  userId             String              @unique
-  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  displayName        String
-  fullName           String?
-  email              String
-  shareCode          String              @unique
-  country            String
-  languages          String[]            @default([])
-  categories         String[]            @default([])
-  contentTypes       String[]            @default([])
-  insightDirection   String              @default("beauty")
-  bio                String?
-  avatarUrl          String?
-  level              CreatorLevel        @default(NEW)
-  membershipTier     CreatorMembershipTier @default(NONE)
-  membershipStartedAt DateTime?
-  membershipEndsAt   DateTime?
-  membershipNote     String?
-  reviewStatus       ReviewStatus        @default(PENDING)
-  riskLevel          RiskLevel           @default(LOW)
-  riskScore          Int                 @default(0)
-  violationCount     Int                 @default(0)
-  completionRate     Decimal             @default(0) @db.Decimal(6, 2)
-  cumulativeIncome   Decimal             @default(0) @db.Decimal(12, 2)
-  completedTasks     Int                 @default(0)
-  responsibleAdminId String?
-  responsibleAdmin   AdminProfile?       @relation("CreatorResponsible", fields: [responsibleAdminId], references: [id], onDelete: SetNull)
-  isDemo             Boolean             @default(false)
-  socialAccounts     SocialAccount[]
-  applications       TaskApplication[]
-  drafts             ContentDraft[]
-  submissions        Submission[]
-  proofs             Proof[]
-  wallet             Wallet?
-  withdrawalRequests WithdrawalRequest[]
-  walletTransactions WalletTransaction[]
-  referralsReceived  CreatorReferralAttribution[]
+  id                     String                         @id @default(cuid())
+  userId                 String                         @unique
+  user                   User                           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  displayName            String
+  fullName               String?
+  email                  String
+  shareCode              String                         @unique
+  country                String
+  languages              String[]                       @default([])
+  categories             String[]                       @default([])
+  contentTypes           String[]                       @default([])
+  insightDirection       String                         @default("beauty")
+  bio                    String?
+  avatarUrl              String?
+  level                  CreatorLevel                   @default(NEW)
+  membershipTier         CreatorMembershipTier          @default(NONE)
+  membershipStartedAt    DateTime?
+  membershipEndsAt       DateTime?
+  membershipNote         String?
+  reviewStatus           ReviewStatus                   @default(PENDING)
+  riskLevel              RiskLevel                      @default(LOW)
+  riskScore              Int                            @default(0)
+  violationCount         Int                            @default(0)
+  completionRate         Decimal                        @default(0) @db.Decimal(6, 2)
+  cumulativeIncome       Decimal                        @default(0) @db.Decimal(12, 2)
+  completedTasks         Int                            @default(0)
+  responsibleAdminId     String?
+  responsibleAdmin       AdminProfile?                  @relation("CreatorResponsible", fields: [responsibleAdminId], references: [id], onDelete: SetNull)
+  isDemo                 Boolean                        @default(false)
+  socialAccounts         SocialAccount[]
+  applications           TaskApplication[]
+  drafts                 ContentDraft[]
+  submissions            Submission[]
+  proofs                 Proof[]
+  wallet                 Wallet?
+  withdrawalRequests     WithdrawalRequest[]
+  walletTransactions     WalletTransaction[]
+  referralsReceived      CreatorReferralAttribution[]
   membershipApplications CreatorMembershipApplication[]
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
+  savedTrends            CreatorSavedTrend[]
+  trendScriptGenerations CreatorTrendScriptGeneration[]
+  supportTickets         SupportTicket[]
+  createdAt              DateTime                       @default(now())
+  updatedAt              DateTime                       @updatedAt
 }
 
 model CreatorMembershipApplication {
@@ -460,13 +519,13 @@ model CreatorMembershipApplication {
 }
 
 model CreatorReferralAttribution {
-  id              String         @id @default(cuid())
-  userId          String         @unique
-  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id               String         @id @default(cuid())
+  userId           String         @unique
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   creatorProfileId String
-  creatorProfile  CreatorProfile @relation(fields: [creatorProfileId], references: [id], onDelete: Restrict)
-  codeSnapshot    String
-  createdAt       DateTime       @default(now())
+  creatorProfile   CreatorProfile @relation(fields: [creatorProfileId], references: [id], onDelete: Restrict)
+  codeSnapshot     String
+  createdAt        DateTime       @default(now())
 
   @@index([creatorProfileId, createdAt])
   @@index([codeSnapshot])
@@ -734,30 +793,31 @@ model MetricsSnapshot {
 }
 
 model CrawlerJob {
-  id               String                  @id @default(cuid())
-  type             CrawlerJobType
-  platform         CrawlerPlatform
-  status           CrawlerJobStatus        @default(PENDING)
-  targetType       CrawlerTargetType
-  targetId         String
-  targetUrl        String
-  socialAccountId  String?
-  socialAccount    SocialAccount?          @relation(fields: [socialAccountId], references: [id], onDelete: Cascade)
-  proofId          String?
-  proof            Proof?                  @relation(fields: [proofId], references: [id], onDelete: Cascade)
-  attempts         Int                     @default(0)
-  maxAttempts      Int                     @default(2)
-  lockedAt         DateTime?
-  lockedBy         String?
-  lastAttemptAt    DateTime?
-  lastErrorCode    String?
-  lastErrorMessage String?
-  createdByUserId  String?
-  socialSnapshots  SocialAccountSnapshot[]
-  postSnapshots    PostMetricSnapshot[]
-  createdAt        DateTime                @default(now())
-  updatedAt        DateTime                @updatedAt
-  completedAt      DateTime?
+  id                String                  @id @default(cuid())
+  type              CrawlerJobType
+  platform          CrawlerPlatform
+  status            CrawlerJobStatus        @default(PENDING)
+  targetType        CrawlerTargetType
+  targetId          String
+  targetUrl         String
+  socialAccountId   String?
+  socialAccount     SocialAccount?          @relation(fields: [socialAccountId], references: [id], onDelete: Cascade)
+  proofId           String?
+  proof             Proof?                  @relation(fields: [proofId], references: [id], onDelete: Cascade)
+  attempts          Int                     @default(0)
+  maxAttempts       Int                     @default(2)
+  lockedAt          DateTime?
+  lockedBy          String?
+  lastAttemptAt     DateTime?
+  lastErrorCode     String?
+  lastErrorMessage  String?
+  lastErrorCategory String?
+  createdByUserId   String?
+  socialSnapshots   SocialAccountSnapshot[]
+  postSnapshots     PostMetricSnapshot[]
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+  completedAt       DateTime?
 
   @@index([status, createdAt])
   @@index([status, lockedAt])
@@ -775,6 +835,8 @@ model SocialAccountSnapshot {
   platform        CrawlerPlatform
   status          CrawlerSnapshotStatus @default(PENDING)
   failureReason   String?
+  failureCategory String?
+  dataConfidence  String                @default("UNKNOWN")
   displayName     String?
   profileUrl      String?
   platformUserId  String?
@@ -787,12 +849,14 @@ model SocialAccountSnapshot {
   rawUserId       String?
   rawCanonicalUrl String?
   rawMetricText   String?
+  rawEvidence     Json?
   parserVersion   String?
   createdAt       DateTime              @default(now())
 
   @@index([socialAccountId, fetchedAt])
   @@index([crawlerJobId])
   @@index([platform, status])
+  @@index([failureCategory])
 }
 
 model PostMetricSnapshot {
@@ -804,6 +868,8 @@ model PostMetricSnapshot {
   platform             CrawlerPlatform
   status               CrawlerSnapshotStatus @default(PENDING)
   failureReason        String?
+  failureCategory      String?
+  dataConfidence       String                @default("UNKNOWN")
   viewCount            Int?
   likeCount            Int?
   favoriteCount        Int?
@@ -822,6 +888,7 @@ model PostMetricSnapshot {
   rawUserId            String?
   rawCanonicalUrl      String?
   rawMetricText        String?
+  rawEvidence          Json?
   parserVersion        String?
   createdAt            DateTime              @default(now())
 
@@ -829,6 +896,7 @@ model PostMetricSnapshot {
   @@index([crawlerJobId])
   @@index([platform, status])
   @@index([authorMatchStatus])
+  @@index([failureCategory])
 }
 
 model Wallet {
@@ -887,24 +955,25 @@ model WithdrawalRequest {
 }
 
 model Invoice {
-  id               String       @id @default(cuid())
+  id               String               @id @default(cuid())
   brandId          String
-  brand            BrandProfile @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brand            BrandProfile         @relation(fields: [brandId], references: [id], onDelete: Cascade)
   campaignId       String?
-  campaign         Campaign?    @relation(fields: [campaignId], references: [id], onDelete: SetNull)
-  invoiceNumber    String?      @unique
-  amount           Decimal      @db.Decimal(12, 2)
-  currency         String       @default("CNY")
-  status           String       @default("OPEN")
+  campaign         Campaign?            @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  invoiceNumber    String?              @unique
+  amount           Decimal              @db.Decimal(12, 2)
+  currency         String               @default("CNY")
+  status           InvoiceStatus        @default(OPEN)
   dueDate          DateTime?
   paidAt           DateTime?
   paymentMethod    String?
   paymentProofUrl  String?
-  paymentReference String?      @unique
+  paymentReference String?              @unique
   note             String?
-  isDemo           Boolean      @default(false)
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
+  isDemo           Boolean              @default(false)
+  refundRequests   BrandRefundRequest[] @relation("InvoiceRefunds")
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
 }
 
 model BrandMessage {
@@ -947,6 +1016,54 @@ model AuditLog {
   createdAt   DateTime  @default(now())
 }
 
+model SupportTicket {
+  id             String                @id @default(cuid())
+  title          String
+  category       String
+  status         SupportTicketStatus   @default(OPEN)
+  priority       SupportTicketPriority @default(NORMAL)
+  brandId        String?
+  brand          BrandProfile?         @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  creatorId      String?
+  creator        CreatorProfile?       @relation(fields: [creatorId], references: [id], onDelete: SetNull)
+  campaignId     String?
+  proofId        String?
+  disputeId      String?
+  openedByUserId String?
+  openedBy       User?                 @relation("SupportTicketOpenedBy", fields: [openedByUserId], references: [id], onDelete: SetNull)
+  assignedToId   String?
+  assignedTo     User?                 @relation("SupportTicketAssignedTo", fields: [assignedToId], references: [id], onDelete: SetNull)
+  lastMessageAt  DateTime?
+  resolvedAt     DateTime?
+  closedAt       DateTime?
+  internalNote   String?
+  notes          SupportTicketNote[]
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  @@index([status, priority])
+  @@index([brandId, createdAt])
+  @@index([creatorId, createdAt])
+  @@index([assignedToId, status])
+  @@index([campaignId])
+  @@index([proofId])
+  @@index([disputeId])
+}
+
+model SupportTicketNote {
+  id           String        @id @default(cuid())
+  ticketId     String
+  ticket       SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  authorUserId String?
+  author       User?         @relation(fields: [authorUserId], references: [id], onDelete: SetNull)
+  authorRole   UserRole?
+  body         String
+  internal     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+
+  @@index([ticketId, createdAt])
+}
+
 model BrandLedgerTransaction {
   id               String              @id @default(cuid())
   brandId          String
@@ -967,20 +1084,30 @@ model BrandLedgerTransaction {
 }
 
 model BrandRefundRequest {
-  id            String            @id @default(cuid())
-  brandId       String
-  brand         BrandProfile      @relation(fields: [brandId], references: [id], onDelete: Cascade)
-  campaignId    String?
-  campaign      Campaign?         @relation(fields: [campaignId], references: [id], onDelete: SetNull)
-  amount        Decimal           @db.Decimal(12, 2)
-  currency      String            @default("CNY")
-  status        BrandRefundStatus @default(PENDING)
-  payoutMethod  String?
-  payoutDetails Json?
-  adminNote     String?
-  isDemo        Boolean           @default(false)
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  id                   String            @id @default(cuid())
+  brandId              String
+  brand                BrandProfile      @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  campaignId           String?
+  campaign             Campaign?         @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  relatedInvoiceId     String?
+  relatedInvoice       Invoice?          @relation("InvoiceRefunds", fields: [relatedInvoiceId], references: [id], onDelete: SetNull)
+  amount               Decimal           @db.Decimal(12, 2)
+  currency             String            @default("CNY")
+  status               BrandRefundStatus @default(PENDING)
+  payoutMethod         String?
+  payoutDetails        Json?
+  provider             String?
+  providerRefundId     String?           @unique
+  providerRefundStatus String?
+  providerRefundRaw    Json?
+  adminNote            String?
+  refundedAt           DateTime?
+  isDemo               Boolean           @default(false)
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  @@index([relatedInvoiceId])
+  @@index([provider, providerRefundStatus])
 }
 
 model ComplianceRule {
@@ -1027,37 +1154,100 @@ model Dispute {
 }
 
 model PlatformSettings {
-  id                                    String    @id @default("platform")
-  acceptanceSlaDays                     Int       @default(3)
-  highValueReviewThreshold              Decimal   @default(50) @db.Decimal(12, 2)
-  resubmissionGraceDays                 Int       @default(2)
-  minimumWithdrawalAmount               Decimal   @default(20) @db.Decimal(12, 2)
-  kolPreviewMaxMb                       Int       @default(50)
-  platformFeeRate                       Decimal   @default(0) @db.Decimal(6, 4)
-  platformContactEmail                  String    @default("support@example.com")
-  riskIndustryKeywords                  String[]  @default(["金融", "医疗", "医美", "保健", "投资", "教育", "减肥", "母婴"])
-  riskIndustryPrompt                    String    @default("该行业容易涉及效果承诺、资质证明或监管要求。请确认 brief 不包含夸大承诺，并准备必要资质。")
-  creatorTrendRefreshEnabled            Boolean   @default(true)
-  creatorTrendRefreshHourUtc            Int       @default(19)
-  creatorTrendRefreshDirections         String[]  @default(["beauty"])
-  creatorTrendRefreshBatchCount         Int       @default(3)
-  creatorTrendRefreshLastRunAt          DateTime?
-  creatorTrendRefreshLastStatus         String?
-  creatorTrendRefreshLastError          String?
-  insightConfiguredCollectionBatchLimit Int       @default(10)
-  insightZeroResultCooldownHours        Int       @default(2)
-  insightCommentTargetCount             Int       @default(3)
-  insightCommentPerContentLimit         Int       @default(8)
-  insightDefaultHotKeywordPerRunLimit   Int       @default(12)
-  insightDefaultStandardPerRunLimit     Int       @default(6)
-  insightDefaultHotKeywordIntervalHours Int       @default(6)
-  insightDefaultStandardIntervalHours   Int       @default(24)
-  insightAiEnabled                      Boolean   @default(false)
-  insightAiBaseUrl                      String?
-  insightAiApiKey                       String?
-  insightAiModel                        String    @default("chatgpt-4o-latest")
-  insightAiSystemPrompt                 String    @default("你是中文短视频选题策划。基于真实帖子样本、互动数据和评论痛点，把候选选题改写成更具体、可创作、可执行的中文标题。返回严格 JSON：{\"items\":[{\"sampleSourceContentId\":\"string\",\"title\":\"string\",\"reason\":\"string\",\"angles\":[\"string\",\"string\",\"string\"]}]}。标题要求避免空泛词，优先写成问题型、避坑型、对比型或新手痛点型，不要直接照抄原帖标题。")
-  updatedAt                             DateTime  @updatedAt
+  id                                     String    @id @default("platform")
+  acceptanceSlaDays                      Int       @default(3)
+  highValueReviewThreshold               Decimal   @default(50) @db.Decimal(12, 2)
+  resubmissionGraceDays                  Int       @default(2)
+  minimumWithdrawalAmount                Decimal   @default(20) @db.Decimal(12, 2)
+  kolPreviewMaxMb                        Int       @default(50)
+  platformFeeRate                        Decimal   @default(0) @db.Decimal(6, 4)
+  platformContactEmail                   String    @default("support@example.com")
+  riskIndustryKeywords                   String[]  @default(["金融", "医疗", "医美", "保健", "投资", "教育", "减肥", "母婴"])
+  riskIndustryPrompt                     String    @default("该行业容易涉及效果承诺、资质证明或监管要求。请确认 brief 不包含夸大承诺，并准备必要资质。")
+  creatorTrendRefreshEnabled             Boolean   @default(true)
+  creatorTrendRefreshHourUtc             Int       @default(19)
+  creatorTrendRefreshDirections          String[]  @default(["beauty"])
+  creatorTrendRefreshBatchCount          Int       @default(3)
+  creatorTrendRefreshLastRunAt           DateTime?
+  creatorTrendRefreshLastStatus          String?
+  creatorTrendRefreshLastError           String?
+  insightConfiguredCollectionBatchLimit  Int       @default(10)
+  insightZeroResultCooldownHours         Int       @default(2)
+  insightCommentTargetCount              Int       @default(3)
+  insightCommentPerContentLimit          Int       @default(8)
+  insightDefaultHotKeywordPerRunLimit    Int       @default(12)
+  insightDefaultStandardPerRunLimit      Int       @default(6)
+  insightDefaultHotKeywordIntervalHours  Int       @default(6)
+  insightDefaultStandardIntervalHours    Int       @default(24)
+  crawlerProofRefreshCooldownMinutes     Int       @default(10)
+  crawlerBrandHourlyRefreshLimit         Int       @default(100)
+  crawlerSocialRefreshCooldownMinutes    Int       @default(30)
+  crawlerMaxAttempts                     Int       @default(2)
+  insightAiEnabled                       Boolean   @default(false)
+  insightAiBaseUrl                       String?
+  insightAiApiKey                        String?
+  insightAiModel                         String    @default("gpt-5.5")
+  insightImageAiBaseUrl                  String?
+  insightImageAiApiKey                   String?
+  insightImageAiModel                    String    @default("gpt-image-2")
+  insightAiSystemPrompt                  String    @default("你是中文短视频和小红书选题策划。你的任务是基于真实帖子样本、互动数据、评论痛点和平台语境，把候选选题改写成更具体、可创作、可执行的中文标题与推荐理由。只返回严格 JSON：{\"items\":[{\"sampleSourceContentId\":\"string\",\"title\":\"string\",\"reason\":\"string\",\"angles\":[\"string\",\"string\",\"string\"]}]}。标题必须匹配平台：小红书偏种草/避坑/教程/测评，抖音偏短钩子/强结果/B站偏教程复盘/深度测评，微博偏话题讨论。标题避免空泛词、营销腔和绝对化承诺，优先写成问题型、避坑型、对比型、新手痛点型或真实体验型，不要直接照抄原帖标题。reason 用一句话解释为什么现在值得做；angles 给 3 个可延展拍摄角度。")
+  insightAiScriptSystemPrompt            String    @default("你是中文小红书图文和短视频内容策划。你的任务是基于真实热点样本，同时生成两套可直接给创作者执行的脚本：graphic 图文脚本和 video 视频脚本。只返回严格 JSON，不输出 Markdown。graphic 必须包含 title、platform、objective、audience、coverText、noteStructure、caption、hashtags、cta；noteStructure 必须 5-7 页，每页包含 page、image、copy、design，要求写清楚封面、痛点页、过程页、证据页、总结页。video 必须包含 title、platform、objective、audience、hook、contentScript、storyboard、voiceover、timeline、caption、cta；contentScript 说明每段讲什么，storyboard 说明画面目标、画面内容、素材需求和转场，voiceover 每条必须有 timeRange、voiceId、section、text、targetDurationSec、pauseAfterSec、visualSectionId、emphasisWords，并标记时间为 estimated，最终以 TTS 对齐为准；timeline 要写清楚每段画面和声音。视频总时长控制 45-75 秒，分 6-8 段。语言自然口语化，避免夸大功效、保证收益、虚假背书和不合规承诺。")
+  insightAiGraphicScriptSystemPrompt     String    @default("你是中文小红书图文内容策划，同时也是平台内图片生成提示词设计师。你的任务是基于真实热点样本、互动数据、评论痛点，生成一套可直接给创作者执行、也可直接交给图片生成模型生产配图的图文笔记脚本。\n\n工作目标：\n1. 让创作者知道每一页发什么、拍什么、写什么、怎么排版。\n2. 让图片生成模型知道每一页生成什么图、什么画幅、什么风格、避免什么内容。\n3. 内容要像真实小红书图文笔记，具体、可收藏、可评论。\n4. 不能写成视频分镜，不能写成泛泛大纲。\n5. 不夸大功效，不保证收益，不虚假背书，不使用绝对化承诺。\n\n输入会包含：\n- directionLabel：内容方向。\n- platformLabel：目标平台。\n- title：参考热点标题。\n- keyword：热点关键词。\n- metrics：互动指标。\n- rows：案例拆解信息。\n- comments：评论痛点样本。\n\n输出格式：\n只返回严格 JSON，不输出 Markdown，不解释过程。顶层必须包含 graphic 和 riskNotes。\n\ngraphic 必须包含：\n- title：图文笔记标题。\n- platform：适合平台。\n- objective：这篇图文要达成的内容目标。\n- audience：目标人群。\n- coverText：封面短句，12-18 个中文字符，适合由前端叠加到封面图上。\n- noteStructure：6-8 页数组。\n- caption：发布文案，100-180 字，像真实创作者口吻。\n- hashtags：5-8 个话题标签。\n- cta：评论或收藏引导。\n\nnoteStructure 每一页必须包含：\n- page：页名，例如 封面、第2页 痛点、第3页 对比。\n- image：给创作者看的拍摄画面或素材建议，要具体到主体、场景、构图。\n- imagePrompt：给图片生成模型用的正向提示词。必须写清楚主体、场景、构图、光线、镜头、材质、风格、留白位置、是否适合叠加文字。\n- negativePrompt：给图片生成模型用的负向提示词。必须说明不要出现什么，例如文字乱码、水印、夸张广告感、低清晰度、手部畸形、过度磨皮、杂乱背景等。\n- aspectRatio：建议画幅。小红书图文优先 3:4，封面也可以 4:5；不要输出横屏比例，除非题材强依赖。\n- imageModelNotes：图片生成备注。说明文字是否由前端叠加、哪些元素必须保留、哪些元素可替换。\n- copy：这一页放在图上的正文短句，不要超过 45 个中文字符。\n- design：排版提示，包括标题层级、编号、箭头、贴纸、对比框、重点色或留白方式。\n\n图片生成提示词规则：\n1. imagePrompt 不要让模型直接生成中文文字，中文标题和正文默认由前端叠加。\n2. imagePrompt 要像给生图模型的指令，不要只写“痛点图”“总结图”。\n3. 每页 imagePrompt 要有差异，不能所有页都复用同一套画面。\n4. 如果需要真实产品但没有产品图，写成“无品牌通用产品/可替换产品占位”，避免虚构具体品牌。\n5. 画面要给正文留白，避免主体挡住后续叠字区域。\n6. 对比页要说明左右/上下分区；清单页要说明大面积留白。\n\n建议分页顺序：\n1. 封面：用强痛点或强结果吸引点击。\n2. 痛点页：把评论区高频问题说清楚。\n3. 核心观点页：给出这篇笔记的判断。\n4. 体验/步骤页：展示真实过程或可执行步骤。\n5. 证据页：引用互动指标、评论洞察或对比细节。\n6. 避坑页：说清楚不适合谁、容易误解哪里。\n7. 总结页：给出清单、结论和互动问题。\n\n最小 JSON 示例，只参考结构，不要照抄内容：\n{\"graphic\":{\"title\":\"新手别急着买这类通勤包\",\"platform\":\"小红书\",\"objective\":\"把热点讨论转成可收藏的避坑图文\",\"audience\":\"每天通勤、想减少试错的新手用户\",\"coverText\":\"通勤包别先看颜值\",\"noteStructure\":[{\"page\":\"封面\",\"image\":\"桌面平铺两个通勤包，一个塞满变形，一个轻量整齐；封面中间留白放标题。\",\"imagePrompt\":\"竖版小红书封面图，真实生活方式摄影，浅色木质桌面，左侧一个塞满变形的通勤包，右侧一个轻量整齐的通勤包，中间和上方保留大面积干净留白用于叠加中文标题，自然柔光，清爽干净，高质感，真实摄影风格\",\"negativePrompt\":\"不要生成中文文字，不要水印，不要品牌 logo，不要夸张广告海报风，不要杂乱背景，不要低清晰度，不要畸形拉链或变形包带\",\"aspectRatio\":\"3:4\",\"imageModelNotes\":\"标题和标签由前端叠加；画面必须保留上方留白；包不要出现具体品牌。\",\"copy\":\"通勤包别先看颜值\",\"design\":\"大标题居中，左下角放 避坑清单 标签，右侧用箭头指向变形包。\"},{\"page\":\"第2页 痛点\",\"image\":\"打开包展示电脑、水杯、化妆包、纸巾堆在一起的真实状态。\",\"imagePrompt\":\"竖版真实通勤包内部特写，打开的无品牌托特包，里面有笔记本电脑、水杯、纸巾、钥匙、化妆包，物品略显拥挤但主体清晰，俯拍视角，右侧留白用于叠加痛点文字，自然室内光，真实生活记录感\",\"negativePrompt\":\"不要生成文字，不要过度摆拍，不要奢侈品牌 logo，不要脏乱到不可读，不要手部畸形，不要强滤镜\",\"aspectRatio\":\"3:4\",\"imageModelNotes\":\"适合叠加 01 编号和痛点句；如果无包图，可用通勤物品平铺替代。\",\"copy\":\"很多人买错，是因为只看容量。\",\"design\":\"用 01 编号开头，痛点句加粗，背景保持干净。\"}],\"caption\":\"最近评论里很多人问通勤包到底怎么选。我更建议先看重量、分区和肩带，再看外形。尤其每天带电脑的人，容量大不等于好背。\",\"hashtags\":[\"#通勤包\",\"#新手避坑\",\"#小红书图文\",\"#真实测评\",\"#职场通勤\"],\"cta\":\"你通勤包里最占地方的东西是什么？评论区给我一个真实场景。\"},\"riskNotes\":[\"不要承诺所有人都适合，避免绝对化推荐。\"]}")
+  insightAiVideoScriptSystemPrompt       String    @default("你是中文短视频 production script pack 策划。基于真实热点样本、互动数据和评论痛点，生成可直接进入拍摄、剪辑、TTS 和 Remotion/React 实现的视频脚本。只返回严格 JSON，不输出 Markdown。输出 video：title、platform、objective、audience、hook、contentScript、storyboard、assetScript、subtitleVoiceScript、voiceover、audioPlan、sfxBgmMap、visualScriptVertical、reactPageScriptVertical、timeline、formalScriptVertical、caption、cta。严格按顺序生成共享层 content_script、storyboard_script、asset_script、subtitle_voice_script，再生成 audio 层 voiceover_script、audio_plan、sfx_bgm_map，再生成 9:16 vertical 层 visual_script、react_page_script、timeline_script、formal_script。voiceover 每条必须有 timeRange、voiceId、section、text、targetDurationSec、pauseAfterSec、visualSectionId、emphasisWords、timingStatus，timingStatus 必须是 estimated，最终字幕时间以 TTS 对齐为准。视频总长 45-75 秒，6-8 段，所有画面、素材、动画、声音都要具体可执行。")
+  insightAiCaseAnalysisSystemPrompt      String    @default("你是中文短视频和小红书爆款案例拆解分析师。请参考 video-analysis-table 方法，把输入案例拆成可复用表格，区分观察事实和模板推断。只返回严格 JSON：{\"caseAnalysisTables\":[{\"id\":\"basic\",\"title\":\"基础信息\",\"columns\":[\"字段\",\"内容\",\"证据等级\"],\"rows\":[[\"案例标题\",\"string\",\"observed\"]]}]}。默认输出 10 张核心表：基础信息、标题包装、Hook、内容结构、逐镜头视觉、逐镜头布局、图层、动画特效、字幕音频、素材提示词与复用规则。证据不足时写 estimated 或 none，不要假装看过视频。")
+  insightAiCaseGraphicScriptSystemPrompt String    @default("你是中文小红书图文改写策划。请基于爆款案例拆解、互动数据和评论痛点，把案例迁移成新的图文脚本表格。只返回严格 JSON：{\"graphicTables\":[{\"id\":\"graphic_pages\",\"title\":\"图文分页脚本表\",\"columns\":[\"页码\",\"页面目标\",\"画面建议\",\"页面文案\",\"排版建议\"],\"rows\":[[\"封面\",\"string\",\"string\",\"string\",\"string\"]]}]}。必须包含选题策略、封面包装、图文分页、图片生成提示词、发布包装、合规避坑 6 张表。图片生成提示词表必须包含正向提示词、负向提示词、画幅、文字叠加说明。")
+  insightAiCaseVideoScriptSystemPrompt   String    @default("你是中文短视频爆款改写 production script pack 策划。请基于案例拆解表，把爆款结构迁移成可直接拍摄、剪辑、TTS 和 Remotion 实现的视频脚本表格。只返回严格 JSON：{\"videoTables\":[{\"id\":\"video_structure\",\"title\":\"视频结构总览表\",\"columns\":[\"段落\",\"时间范围\",\"段落目标\",\"核心信息\",\"停留理由\"],\"rows\":[[\"hook\",\"0-4s\",\"string\",\"string\",\"string\"]]}]}。必须包含视频结构、口播、分镜画面、素材需求、字幕屏幕文字、音频节奏、动画转场、Remotion 映射、发布包装、合规风险 10 张表。")
+  updatedAt                              DateTime  @updatedAt
+}
+
+model PaymentProviderConfig {
+  id                   String   @id @default(cuid())
+  provider             String
+  enabled              Boolean  @default(false)
+  visibleToBrand       Boolean  @default(true)
+  environment          String   @default("sandbox")
+  displayName          String   @default("Alipay")
+  maintenanceMessage   String?
+  sortOrder            Int      @default(100)
+  appId                String?
+  merchantId           String?
+  certificateSerialNo  String?
+  gatewayUrl           String?
+  notifyUrl            String?
+  returnUrl            String?
+  encryptedPrivateKey  String?
+  encryptedPublicKey   String?
+  encryptedApiV3Key    String?
+  privateKeyConfigured Boolean  @default(false)
+  publicKeyConfigured  Boolean  @default(false)
+  apiV3KeyConfigured   Boolean  @default(false)
+  lastUpdatedById      String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@unique([provider])
+  @@index([enabled, provider])
+}
+
+model PaymentProviderEvent {
+  id           String    @id @default(cuid())
+  provider     String
+  eventType    String
+  eventKey     String
+  entityType   String?
+  entityId     String?
+  status       String    @default("PENDING")
+  requestJson  Json?
+  responseJson Json?
+  errorMessage String?
+  processedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@unique([provider, eventKey])
+  @@index([provider, eventType, status])
+  @@index([entityType, entityId])
+  @@index([createdAt])
 }
 
 model CreatorTrendDailySnapshot {
@@ -1076,6 +1266,100 @@ model CreatorTrendDailySnapshot {
 
   @@unique([date, direction])
   @@index([direction, generatedAt])
+}
+
+model CreatorTrendAiTopicDeck {
+  id              String   @id @default(cuid())
+  cacheKey        String   @unique
+  direction       String
+  platform        String
+  keyword         String   @default("")
+  sampleSignature String
+  sampleContentIds String[] @default([])
+  model           String
+  promptHash      String
+  batchCount      Int      @default(4)
+  itemsPerBatch   Int      @default(3)
+  items           Json
+  status          String   @default("READY")
+  errorMessage    String?
+  generatedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([direction, platform, keyword])
+  @@index([sampleSignature])
+  @@index([status, updatedAt])
+}
+
+model CreatorSavedTrend {
+  id                 String         @id @default(cuid())
+  creatorId          String
+  creator            CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  title              String
+  topic              String?
+  platform           String?
+  status             String         @default("SAVED")
+  reason             String?
+  sourceContentId    String?
+  sourceUrl          String?
+  plannedPublishDate DateTime?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  @@unique([creatorId, title, platform])
+  @@index([creatorId, status, createdAt])
+  @@index([creatorId, updatedAt])
+}
+
+model CreatorTrendScriptGeneration {
+  id                     String         @id @default(cuid())
+  creatorId              String
+  creator                CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  savedTrendId           String?
+  sourceType             String
+  sourceKey              String
+  sourceTitle            String
+  platform               String?
+  status                 String         @default("GENERATING")
+  generationMode         String         @default("FALLBACK")
+  model                  String?
+  userInstruction        String?
+  sourcePayload          Json?
+  graphicTablesJson      Json?
+  videoTablesJson        Json?
+  caseAnalysisTablesJson Json?
+  plainText              String?
+  errorMessage           String?
+  aiDebugJson            Json?
+  generatedAt            DateTime?
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+
+  @@unique([creatorId, sourceType, sourceKey])
+  @@index([creatorId, updatedAt])
+  @@index([sourceType, status, updatedAt])
+  @@index([status, updatedAt])
+}
+
+model CreatorTrendTopicImage {
+  id              String   @id @default(cuid())
+  cacheKey        String   @unique
+  sourceContentId String?
+  sourceTitle     String
+  platform        String?
+  model           String
+  promptHash      String
+  prompt          String
+  negativePrompt  String?
+  imageUrl        String?
+  status          String   @default("READY")
+  errorMessage    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([sourceContentId])
+  @@index([status, updatedAt])
 }
 
 model InsightTopic {

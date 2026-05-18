@@ -4,12 +4,13 @@ import { AlertTriangle, CalendarDays, FileText, Gem, HeartPulse, Megaphone, Sear
 import { BrandInsightChart, type BrandInsightPoint } from "@/components/brand-insight-chart";
 import { requireRole } from "@/lib/auth";
 import { getBrandInsightAnalysis } from "@/lib/insights/analysis-queries";
+import { buildInsightReason, evaluateInsightConfidence, formatInsightSampleText, formatInsightUpdatedAt, type InsightConfidence, type InsightSourceKind } from "@/lib/insights/credibility";
 import { DEFAULT_INSIGHT_DIRECTION, INSIGHT_DIRECTIONS, getInsightDirection } from "@/lib/insights/directions";
 import { getBrandCompetitors, getBrandInsightsOverview, getBrandRecentContents, getKeywordTrendSeries } from "@/lib/insights/queries";
 import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";
 
-type SourceKind = "真实采集" | "规则计算" | "示例兜底";
+type SourceKind = InsightSourceKind;
 type BrandPlatform = "all" | "xiaohongshu" | "douyin" | "weibo" | "bilibili";
 type BrandRange = "7d" | "30d" | "90d";
 type BrandInsightFilters = {
@@ -27,6 +28,12 @@ type CompetitorRow = {
   sentiment: string;
   dominantTopic: string;
   platforms: string[];
+  updatedAt?: string;
+  sampleCount?: number;
+  commentSampleCount?: number;
+  platformSourceCount?: number;
+  confidence?: InsightConfidence;
+  reason?: string;
 };
 
 type PainPoint = {
@@ -172,6 +179,13 @@ function SourceBadge({ kind }: { kind: SourceKind }) {
   return <span className={cn("rounded-full border px-2.5 py-1 text-xs font-black", style)}>{kind}</span>;
 }
 
+function confidenceClass(confidence: InsightConfidence) {
+  if (confidence === "高可信") return "border-teal-200 bg-teal-50 text-teal-700";
+  if (confidence === "中可信") return "border-blue-200 bg-blue-50 text-blue-700";
+  if (confidence === "低可信") return "border-amber-200 bg-amber-50 text-amber-700";
+  return "border-slate-200 bg-slate-50 text-slate-500";
+}
+
 function PlatformBadge({ label }: { label: string }) {
   const map: Record<string, string> = {
     小红书: "bg-red-500 text-white",
@@ -249,6 +263,27 @@ export default async function BrandInsightsPage({
   const opportunitySource: SourceKind = analysis.recommendations.length > 0 ? "规则计算" : "示例兜底";
   const alertSource: SourceKind = analysis.risks.length > 0 ? "规则计算" : "示例兜底";
   const sentimentSource: SourceKind = analysis.comments.length > 0 ? "规则计算" : "示例兜底";
+  const hasExampleFallback = [trendSource, competitorSource, painSource, opportunitySource, alertSource, sentimentSource].includes("示例兜底");
+  const contentSampleCount = recentContents.length;
+  const commentSampleCount = analysis.comments.length;
+  const platformSourceCount = new Set(recentContents.map((item) => item.platform)).size;
+  const latestContentUpdate =
+    recentContents
+      .map((item) => item.updatedAt)
+      .filter((value): value is Date => Boolean(value))
+      .sort((left, right) => right.getTime() - left.getTime())[0] ?? null;
+  const pageConfidence = evaluateInsightConfidence({
+    sourceKind: contentSampleCount > 0 ? "真实采集" : "示例兜底",
+    sampleCount: contentSampleCount,
+    commentSampleCount,
+    platformSourceCount,
+    updatedAt: latestContentUpdate,
+  });
+  const sampleText = formatInsightSampleText({
+    sampleCount: contentSampleCount,
+    commentSampleCount,
+    platformSourceCount,
+  });
 
   const displayTrendData = trendRows.length >= 2 ? trendRows : trendDataFallback;
   const displayMetrics = [
@@ -259,7 +294,23 @@ export default async function BrandInsightsPage({
   ];
 
   const realCompetitors: CompetitorRow[] = competitorRows.slice(0, 6).map((row) => {
-    const platforms = Array.from(new Set(recentContents.filter((item) => item.keyword === row.keyword).map((item) => platformLabel(item.platform))));
+    const relatedContents = recentContents.filter((item) => item.keyword === row.keyword);
+    const relatedContentIds = new Set(relatedContents.map((item) => item.id));
+    const platforms = Array.from(new Set(relatedContents.map((item) => platformLabel(item.platform))));
+    const rowCommentSampleCount = analysis.comments.filter((comment) => relatedContentIds.has(comment.contentId)).length;
+    const rowPlatformSourceCount = platforms.length;
+    const rowUpdatedAt =
+      relatedContents
+        .map((item) => item.updatedAt)
+        .filter((value): value is Date => Boolean(value))
+        .sort((left, right) => right.getTime() - left.getTime())[0]?.toISOString();
+    const confidence = evaluateInsightConfidence({
+      sourceKind: "真实采集",
+      sampleCount: row.voiceCount,
+      commentSampleCount: rowCommentSampleCount,
+      platformSourceCount: rowPlatformSourceCount,
+      updatedAt: rowUpdatedAt,
+    });
     return {
       rank: row.rank,
       name: row.keyword ?? "未标记",
@@ -268,9 +319,31 @@ export default async function BrandInsightsPage({
       sentiment: analysis.comments.length > 0 ? `${Math.round(overview.positiveRate * 100)}%` : "待分析",
       dominantTopic: row.keyword ?? "未标记",
       platforms: platforms.length > 0 ? platforms : [filters.platform === "all" ? "小红书" : platformLabel(filters.platform)],
+      updatedAt: rowUpdatedAt,
+      sampleCount: row.voiceCount,
+      commentSampleCount: rowCommentSampleCount,
+      platformSourceCount: rowPlatformSourceCount,
+      confidence,
+      reason: buildInsightReason({
+        topic: row.keyword ?? "未标记",
+        sampleCount: row.voiceCount,
+        commentSampleCount: rowCommentSampleCount,
+        platformSourceCount: rowPlatformSourceCount,
+        source: "高频热词",
+      }),
     };
   });
-  const displayCompetitors = realCompetitors.length > 0 ? realCompetitors : fallbackCompetitors;
+  const displayCompetitors =
+    realCompetitors.length > 0
+      ? realCompetitors
+      : fallbackCompetitors.map((row) => ({
+          ...row,
+          sampleCount: 0,
+          commentSampleCount: 0,
+          platformSourceCount: row.platforms.length,
+          confidence: "示例数据" as const,
+          reason: "当前筛选条件下真实样本不足，该行用于展示分析口径和页面结构。",
+        }));
 
   const displayPainPoints: PainPoint[] =
     analysis.painPoints.length > 0
@@ -322,10 +395,21 @@ export default async function BrandInsightsPage({
 
         <main className="space-y-5 p-8">
           <section className="flex flex-wrap items-center gap-4">
-            <div className="flex h-12 min-w-[22rem] flex-1 items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 shadow-sm">
+            <form action="/brand/insights" className="flex h-12 min-w-[22rem] flex-1 items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 shadow-sm">
               <Search className="text-slate-400" size={20} />
-              <span className="text-sm font-semibold text-slate-400">{filters.keyword ? `关键词：${filters.keyword}` : "搜索品牌 / 品类 / 竞品 / 关键词"}</span>
-            </div>
+              <input name="range" type="hidden" value={filters.range} />
+              <input name="platform" type="hidden" value={filters.platform} />
+              <input name="direction" type="hidden" value={filters.direction} />
+              <input
+                className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-slate-700 outline-none placeholder:text-slate-400"
+                defaultValue={filters.keyword}
+                name="keyword"
+                placeholder="搜索品牌 / 品类 / 竞品 / 关键词"
+              />
+              <button className="shrink-0 rounded-lg bg-slate-950 px-3 py-1.5 text-xs font-black text-white" type="submit">
+                搜索
+              </button>
+            </form>
             <div className="flex flex-wrap gap-2">
               {brandRangeFilters.map((item) => (
                 <Link key={item.value} href={buildBrandInsightsHref(filters, { range: item.value })} className={cn("rounded-xl border px-4 py-2 text-sm font-black shadow-sm transition", filters.range === item.value ? "border-teal-600 bg-teal-600 text-white" : "border-slate-200 bg-white text-slate-700 hover:border-teal-200 hover:text-teal-700")}>
@@ -355,6 +439,26 @@ export default async function BrandInsightsPage({
                 清除关键词
               </Link>
             ) : null}
+          </section>
+
+          <section className={cn(cardClass, "flex flex-col gap-3 px-5 py-4 lg:flex-row lg:items-center lg:justify-between")}>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-black text-slate-950">数据可信度：{pageConfidence}</p>
+              <p className="mt-1 text-sm font-semibold text-slate-500">
+                当前赛道：{currentDirection.label} · 更新：{formatInsightUpdatedAt(latestContentUpdate)}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2 text-xs font-black">
+                <span className={cn("rounded-full border px-2.5 py-1", confidenceClass(pageConfidence))}>可信度：{pageConfidence}</span>
+                <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-slate-600">{sampleText}</span>
+                <span className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-blue-700">推荐原因：热词声量、互动、评论情绪综合计算</span>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <SourceBadge kind={trendSource} />
+              <SourceBadge kind={competitorSource} />
+              <SourceBadge kind={painSource} />
+            </div>
+            {hasExampleFallback ? <p className="text-xs font-semibold text-amber-700">部分模块样本不足，已显示兜底数据并标记可信度。</p> : null}
           </section>
 
           <section id="overview" className="scroll-mt-28 grid grid-cols-1 gap-5 xl:grid-cols-4">
@@ -411,7 +515,7 @@ export default async function BrandInsightsPage({
                 <table className="w-full min-w-[43rem] text-left text-sm">
                   <thead className="bg-slate-50 text-xs text-slate-500">
                     <tr>
-                      {["排名", "热词/竞品", "内容样本数", "互动状态", "情绪状态", "主要讨论点", "来源平台"].map((head) => (
+                      {["排名", "热词/推荐原因", "样本可信度", "互动状态", "情绪状态", "主要讨论点", "来源平台"].map((head) => (
                         <th key={head} className="px-3 py-3 font-black">
                           {head}
                         </th>
@@ -424,8 +528,19 @@ export default async function BrandInsightsPage({
                         <td className="px-3 py-3">
                           <span className="inline-flex size-6 items-center justify-center rounded-md bg-amber-500 text-xs font-black text-white">{row.rank}</span>
                         </td>
-                        <td className="px-3 py-3 font-black">{row.name}</td>
-                        <td className="px-3 py-3 font-black">{row.voice}</td>
+                        <td className="min-w-[14rem] px-3 py-3">
+                          <p className="font-black">{row.name}</p>
+                          <p className="mt-1 line-clamp-2 text-xs font-semibold leading-5 text-slate-500">{row.reason}</p>
+                        </td>
+                        <td className="min-w-[11rem] px-3 py-3">
+                          <div className="flex flex-wrap gap-1.5">
+                            <span className={cn("rounded-md border px-2 py-1 text-xs font-black", confidenceClass(row.confidence ?? "示例数据"))}>{row.confidence ?? "示例数据"}</span>
+                            <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-black text-slate-600">{row.voice}</span>
+                          </div>
+                          <p className="mt-1 text-xs font-semibold leading-5 text-slate-500">
+                            {formatInsightSampleText(row)} · {formatInsightUpdatedAt(row.updatedAt)}
+                          </p>
+                        </td>
                         <td className="px-3 py-3 font-black text-red-500">{row.growth}</td>
                         <td className="px-3 py-3 font-black text-teal-600">{row.sentiment}</td>
                         <td className="px-3 py-3 font-bold">{row.dominantTopic}</td>
@@ -462,6 +577,7 @@ export default async function BrandInsightsPage({
                     </div>
                     <p className="mt-1 text-sm font-bold text-blue-700">提及 {item.mentions}</p>
                     <p className="mt-2 line-clamp-2 text-sm text-slate-600">{item.sample}</p>
+                    <p className="mt-2 text-xs font-semibold text-slate-500">来源：评论样本 · {formatInsightUpdatedAt(latestContentUpdate)} · {pageConfidence}</p>
                   </div>
                 ))}
               </div>
@@ -494,6 +610,10 @@ export default async function BrandInsightsPage({
                         <span className="rounded-md bg-blue-50 px-2 py-1 text-xs font-black text-blue-700">{item.platform}</span>
                       </div>
                       <p className="mt-2 line-clamp-3 text-sm text-slate-600">{item.reason}</p>
+                      <div className="mt-3 flex flex-wrap gap-1.5 text-xs font-black">
+                        <span className={cn("rounded-md border px-2 py-1", confidenceClass(pageConfidence))}>{pageConfidence}</span>
+                        <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-slate-600">{formatInsightUpdatedAt(latestContentUpdate)}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -502,7 +622,16 @@ export default async function BrandInsightsPage({
                     <FileText className="mr-2 inline" size={15} />
                     生成报告
                   </Link>
-                  <Link href="/brand/campaigns/new" className="rounded-xl border border-teal-600 px-4 py-3 text-center text-sm font-black text-teal-700 transition hover:bg-teal-50">
+                  <Link
+                    href={`/brand/campaigns/new?${new URLSearchParams({
+                      trend: displayOpportunities[0]?.title ?? filters.keyword ?? currentDirection.label,
+                      platform: displayOpportunities[0]?.platform ?? platformLabel(filters.platform),
+                      creator: displayOpportunities[0]?.creator ?? "匹配达人",
+                      reason: displayOpportunities[0]?.reason ?? "来自品牌热点洞察台的投放机会。",
+                      keyword: filters.keyword || displayOpportunities[0]?.title || currentDirection.label,
+                    }).toString()}`}
+                    className="rounded-xl border border-teal-600 px-4 py-3 text-center text-sm font-black text-teal-700 transition hover:bg-teal-50"
+                  >
                     创建 Brief
                   </Link>
                 </div>
@@ -527,7 +656,7 @@ export default async function BrandInsightsPage({
                     </div>
                   ))}
                 </div>
-                <Link href="/admin/insights" className="mt-4 block w-full rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm font-black text-red-600 transition hover:bg-red-100">
+                <Link href={`/brand/insights/alerts?keyword=${encodeURIComponent(filters.keyword || displayAlerts[0]?.title || "")}`} className="mt-4 block w-full rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm font-black text-red-600 transition hover:bg-red-100">
                   设置关键词监控
                 </Link>
               </div>

@@ -1,6 +1,7 @@
 ﻿"use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import {
@@ -15,6 +16,8 @@ import {
   ComplianceRuleType,
   CrawlerJobStatus,
   CrawlerJobType,
+  CrawlerPlatform,
+  CrawlerSnapshotStatus,
   CrawlerTargetType,
   CreatorLevel,
   CreatorMembershipApplicationStatus,
@@ -23,6 +26,7 @@ import {
   DisputeStatus,
   DraftReviewStatus,
   DraftStatus,
+  InvoiceStatus,
   PublicationStatus,
   ProofStatus,
   ReviewDecision,
@@ -31,6 +35,8 @@ import {
   SocialVerificationStatus,
   SettlementStatus,
   SubmissionStatus,
+  SupportTicketPriority,
+  SupportTicketStatus,
   TaskStatus,
   UserRole,
   UserStatus,
@@ -49,6 +55,20 @@ import { saveUploadedFile } from "@/lib/storage";
 import { ADMIN_PERMISSIONS, hasAdminPermission, isFounder, requireAdminPermission } from "@/lib/admin";
 import { createCrawlerJob, toCrawlerPlatform } from "@/lib/crawler";
 import { collectConfiguredKeywords } from "@/lib/insights/collector";
+import {
+  DEFAULT_INSIGHT_AI_CASE_ANALYSIS_PROMPT,
+  DEFAULT_INSIGHT_AI_BASE_URL,
+  DEFAULT_INSIGHT_AI_CASE_GRAPHIC_SCRIPT_PROMPT,
+  DEFAULT_INSIGHT_AI_CASE_VIDEO_SCRIPT_PROMPT,
+  DEFAULT_INSIGHT_AI_GRAPHIC_SCRIPT_PROMPT,
+  DEFAULT_INSIGHT_AI_GRAPHIC_TABLE_SCRIPT_PROMPT,
+  DEFAULT_INSIGHT_AI_MODEL,
+  DEFAULT_INSIGHT_AI_LEGACY_SCRIPT_PROMPT,
+  DEFAULT_INSIGHT_AI_TOPIC_DECK_PROMPT,
+  DEFAULT_INSIGHT_AI_VIDEO_SCRIPT_PROMPT,
+  DEFAULT_INSIGHT_AI_VIDEO_TABLE_SCRIPT_PROMPT,
+  DEFAULT_INSIGHT_IMAGE_AI_MODEL,
+} from "@/lib/insights/ai-prompts";
 import { invalidateInsightReadCaches, scheduleInsightPrewarm } from "@/lib/insights/cache-maintenance";
 import { refreshCreatorTrendDailySnapshots } from "@/lib/insights/creator-daily-snapshots";
 import { INSIGHT_DIRECTION_SLUGS } from "@/lib/insights/directions";
@@ -67,10 +87,78 @@ import {
 } from "@/lib/invitations";
 import { generateUniqueCreatorShareCode, normalizeCreatorShareCode } from "@/lib/creator-marketing";
 import { membershipPriceAmount } from "@/lib/creator-memberships";
+import { encryptSecret } from "@/lib/secret-crypto";
+import { decimalAmount, queryAlipayRefund, queryAlipayTrade, refundAlipayTrade } from "@/lib/alipay";
+import { amountFen, queryWechatRefund, queryWechatTrade, refundWechatTrade } from "@/lib/wechat-pay";
+import { confirmInvoicePaidByProvider } from "@/lib/invoice-payments";
+import { beginPaymentProviderEvent, completePaymentProviderEvent, paymentEventKey } from "@/lib/payment-events";
+import { notifyBrand, notifyPaymentAdmins } from "@/lib/payment-notifications";
+import { dispatchExternalNotification } from "@/lib/external-notifications";
+import { evaluateAcceptedSubmissionSettlement } from "@/lib/settlement-rules";
+import {
+  createEmailVerificationToken,
+  createPasswordResetToken,
+  LOGIN_FAILURE_LIMIT,
+  LOGIN_FAILURE_WINDOW_MINUTES,
+  normalizedSecurityEmail,
+  securityEntityForEmail,
+  securityHash,
+} from "@/lib/account-security";
+import {
+  assertApplicationTransition,
+  assertCampaignTransition,
+  assertDraftReviewTransition,
+  assertDraftTransition,
+  assertProofTransition,
+  assertPublicationTransition,
+  assertSettlementTransition,
+  assertSubmissionTransition,
+} from "@/lib/state-machines";
 
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
+});
+
+const forgotPasswordSchema = z.object({
+  email: z.string().email(),
+});
+
+const resetPasswordSchema = z.object({
+  token: z.string().trim().min(20),
+  password: z.string().min(8),
+  confirmPassword: z.string().min(8),
+});
+
+const supportTicketSchema = z.object({
+  title: z.string().trim().min(3).max(120),
+  category: z.string().trim().min(2).max(40),
+  priority: z.enum(SupportTicketPriority),
+  brandId: z.string().optional(),
+  creatorId: z.string().optional(),
+  campaignId: z.string().optional(),
+  proofId: z.string().optional(),
+  disputeId: z.string().optional(),
+  assignedToId: z.string().optional(),
+  body: z.string().trim().min(3).max(2000),
+  internalNote: z.string().trim().max(2000).optional(),
+});
+
+const supportTicketUpdateSchema = z.object({
+  status: z.enum(SupportTicketStatus),
+  priority: z.enum(SupportTicketPriority),
+  assignedToId: z.string().optional(),
+  note: z.string().trim().max(2000).optional(),
+  internalNote: z.string().trim().max(2000).optional(),
+});
+
+const customerSupportTicketSchema = z.object({
+  title: z.string().trim().min(3).max(120),
+  category: z.string().trim().min(2).max(40),
+  priority: z.enum(SupportTicketPriority),
+  campaignId: z.string().trim().optional(),
+  proofId: z.string().trim().optional(),
+  body: z.string().trim().min(5).max(2000),
 });
 
 const PAYMENT_PROOF_MAX_BYTES = 8 * 1024 * 1024;
@@ -111,6 +199,38 @@ function isUniqueConstraintError(error: unknown, fields: string[]) {
   if (!(error instanceof Prisma.PrismaClientKnownRequestError) || error.code !== "P2002") return false;
   const target = Array.isArray(error.meta?.target) ? error.meta.target.map(String) : [];
   return fields.every((field) => target.includes(field));
+}
+
+async function requestIpAddress() {
+  const headerStore = await headers();
+  return headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() || headerStore.get("x-real-ip") || null;
+}
+
+async function assertLoginNotRateLimited(email: string) {
+  const since = new Date(Date.now() - LOGIN_FAILURE_WINDOW_MINUTES * 60 * 1000);
+  const recentFailures = await prisma.auditLog.count({
+    where: {
+      action: "auth.login_failed",
+      entityType: "auth_login",
+      entityId: securityEntityForEmail(email),
+      createdAt: { gte: since },
+    },
+  });
+  if (recentFailures >= LOGIN_FAILURE_LIMIT) {
+    redirect(`/auth/login?error=${encodeURIComponent(`登录失败次数过多，请 ${LOGIN_FAILURE_WINDOW_MINUTES} 分钟后再试。`)}`);
+  }
+}
+
+async function recordLoginFailure(email: string, reason: string) {
+  await prisma.auditLog.create({
+    data: {
+      action: "auth.login_failed",
+      entityType: "auth_login",
+      entityId: securityEntityForEmail(email),
+      ipAddress: await requestIpAddress(),
+      afterJson: { reason },
+    },
+  });
 }
 
 async function creditAcceptedSubmissionEarning({
@@ -157,6 +277,14 @@ async function creditAcceptedSubmissionEarning({
     update: {},
     create: { creatorId, currency: campaign.currency || "CNY" },
   });
+  const currentSubmission = await tx.submission.findUnique({
+    where: { id: submissionId },
+    select: { status: true, settlementStatus: true },
+  });
+  if (!currentSubmission) return;
+  assertSubmissionTransition(currentSubmission.status, SubmissionStatus.SETTLED);
+  assertSettlementTransition(currentSubmission.settlementStatus, SettlementStatus.PAID_TO_WALLET);
+
   const pendingEarning = await tx.walletTransaction.findFirst({
     where: {
       relatedSubmissionId: submissionId,
@@ -215,11 +343,13 @@ async function creditAcceptedSubmissionEarning({
     },
   });
 
-  const platformFee = roundMoney(amount * Number(campaign.platformFeeRate));
-  const releaseTarget = roundMoney(amount + platformFee);
-  const frozenBefore = Number(campaign.escrowFrozenAmount);
-  const releasedFromEscrow = Math.min(frozenBefore, releaseTarget);
-  const platformFeeRecognized = Math.max(0, roundMoney(releasedFromEscrow - amount));
+  const settlement = evaluateAcceptedSubmissionSettlement({
+    rewardAmount: amount,
+    platformFeeRate: campaign.platformFeeRate,
+    escrowFrozenAmount: campaign.escrowFrozenAmount,
+  });
+  const releasedFromEscrow = settlement.releasedFromEscrow;
+  const platformFeeRecognized = settlement.platformFeeRecognized;
 
   if (releasedFromEscrow > 0) {
     await tx.brandProfile.update({
@@ -343,19 +473,146 @@ async function returnCampaignUnusedEscrow({
 
 export async function loginAction(formData: FormData) {
   const parsed = loginSchema.safeParse({
-    email: text(formData.get("email")).toLowerCase(),
+    email: normalizedSecurityEmail(text(formData.get("email"))),
     password: text(formData.get("password")),
   });
   if (!parsed.success) redirect(`/auth/login?error=${encodeURIComponent("请填写有效邮箱和密码。")}`);
 
+  await assertLoginNotRateLimited(parsed.data.email);
   const user = await prisma.user.findUnique({ where: { email: parsed.data.email } });
   if (!user || !(await verifyPassword(parsed.data.password, user.passwordHash))) {
+    await recordLoginFailure(parsed.data.email, user ? "bad_password" : "unknown_email");
     redirect(`/auth/login?error=${encodeURIComponent("邮箱或密码错误。")}`);
   }
-  if (user.status === UserStatus.FROZEN) redirect(`/auth/login?error=${encodeURIComponent("账号已被冻结，请联系平台。")}`);
+  if (user.status === UserStatus.FROZEN) {
+    await recordLoginFailure(parsed.data.email, "frozen_user");
+    redirect(`/auth/login?error=${encodeURIComponent("账号已被冻结，请联系平台。")}`);
+  }
 
   await createSession(user);
+  await prisma.auditLog.create({
+    data: {
+      actorUserId: user.id,
+      actorRole: user.role,
+      action: "auth.login_succeeded",
+      entityType: "user",
+      entityId: user.id,
+      ipAddress: await requestIpAddress(),
+    },
+  });
   redirect(roleHome(user.role));
+}
+
+export async function requestPasswordResetAction(formData: FormData) {
+  const parsed = forgotPasswordSchema.safeParse({
+    email: normalizedSecurityEmail(text(formData.get("email"))),
+  });
+  if (!parsed.success) redirect(`/auth/forgot-password?error=${encodeURIComponent("请填写有效邮箱。")}`);
+
+  const user = await prisma.user.findUnique({ where: { email: parsed.data.email } });
+  let devPath: string | null = null;
+  if (user && user.status !== UserStatus.FROZEN) {
+    const reset = await createPasswordResetToken(prisma, user.id);
+    devPath = reset.path;
+    await prisma.auditLog.create({
+      data: {
+        action: "auth.password_reset_requested",
+        entityType: "user",
+        entityId: user.id,
+        ipAddress: await requestIpAddress(),
+        afterJson: {
+          expiresAt: reset.expiresAt.toISOString(),
+          delivery: process.env.PASSWORD_RESET_DEV_LINKS === "true" ? "dev_link" : "pending_email_provider",
+          ...(process.env.PASSWORD_RESET_DEV_LINKS === "true" ? { resetPath: reset.path } : {}),
+        },
+      },
+    });
+  }
+
+  const params = new URLSearchParams({ sent: "1" });
+  if (process.env.PASSWORD_RESET_DEV_LINKS === "true" && devPath) params.set("devResetPath", devPath);
+  redirect(`/auth/forgot-password?${params.toString()}`);
+}
+
+export async function resetPasswordAction(formData: FormData) {
+  const parsed = resetPasswordSchema.safeParse({
+    token: text(formData.get("token")),
+    password: text(formData.get("password")),
+    confirmPassword: text(formData.get("confirmPassword")),
+  });
+  if (!parsed.success || parsed.data.password !== parsed.data.confirmPassword) {
+    redirect(`/auth/reset-password?error=${encodeURIComponent("请填写一致的新密码，至少 8 位。")}`);
+  }
+
+  const tokenHash = securityHash(parsed.data.token);
+  const resetToken = await prisma.passwordResetToken.findUnique({ where: { tokenHash }, include: { user: true } });
+  if (!resetToken || resetToken.usedAt || resetToken.expiresAt < new Date()) {
+    redirect(`/auth/reset-password?error=${encodeURIComponent("重置链接无效或已过期，请重新申请。")}`);
+  }
+  if (resetToken.user.status === UserStatus.FROZEN) {
+    redirect(`/auth/reset-password?error=${encodeURIComponent("账号已被冻结，请联系平台。")}`);
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.user.update({
+      where: { id: resetToken.userId },
+      data: {
+        passwordHash: await hashPassword(parsed.data.password),
+        passwordChangedAt: new Date(),
+      },
+    });
+    await tx.passwordResetToken.update({
+      where: { id: resetToken.id },
+      data: { usedAt: new Date() },
+    });
+    await tx.auditLog.create({
+      data: {
+        actorUserId: resetToken.userId,
+        actorRole: resetToken.user.role,
+        action: "auth.password_reset_completed",
+        entityType: "user",
+        entityId: resetToken.userId,
+        ipAddress: await requestIpAddress(),
+      },
+    });
+  });
+
+  redirect(`/auth/login?error=${encodeURIComponent("密码已更新，请使用新密码登录。")}`);
+}
+
+export async function verifyEmailAction(formData: FormData) {
+  const token = text(formData.get("token"));
+  if (token.length < 20) redirect(`/auth/verify-email?error=${encodeURIComponent("验证链接无效。")}`);
+
+  const verification = await prisma.emailVerificationToken.findUnique({
+    where: { tokenHash: securityHash(token) },
+    include: { user: true },
+  });
+  if (!verification || verification.usedAt || verification.expiresAt < new Date()) {
+    redirect(`/auth/verify-email?error=${encodeURIComponent("验证链接无效或已过期。")}`);
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.user.update({
+      where: { id: verification.userId },
+      data: { emailVerifiedAt: verification.user.emailVerifiedAt ?? new Date() },
+    });
+    await tx.emailVerificationToken.update({
+      where: { id: verification.id },
+      data: { usedAt: new Date() },
+    });
+    await tx.auditLog.create({
+      data: {
+        actorUserId: verification.userId,
+        actorRole: verification.user.role,
+        action: "auth.email_verified",
+        entityType: "user",
+        entityId: verification.userId,
+      },
+    });
+  });
+
+  redirect(`/auth/login?error=${encodeURIComponent("邮箱已验证，请登录。")}`);
 }
 
 const registerSchema = z.object({
@@ -426,6 +683,7 @@ export async function registerAction(formData: FormData) {
       data: {
         email: parsed.data.email,
         passwordHash: await hashPassword(parsed.data.password),
+        passwordChangedAt: new Date(),
         role: parsed.data.role as UserRole,
         status: UserStatus.ACTIVE,
         brandProfile:
@@ -507,6 +765,21 @@ export async function registerAction(formData: FormData) {
     entityType: "user",
     entityId: user.id,
     afterJson: { role: user.role, email: user.email, inviteCode: invitation?.code, creatorRefCode: creatorReferralSource?.shareCode },
+  });
+  const verification = await createEmailVerificationToken(prisma, user.id);
+  await prisma.auditLog.create({
+    data: {
+      actorUserId: user.id,
+      actorRole: user.role,
+      action: "auth.email_verification_requested",
+      entityType: "user",
+      entityId: user.id,
+      afterJson: {
+        expiresAt: verification.expiresAt.toISOString(),
+        delivery: process.env.EMAIL_VERIFICATION_DEV_LINKS === "true" ? "dev_link" : "pending_email_provider",
+        ...(process.env.EMAIL_VERIFICATION_DEV_LINKS === "true" ? { verifyPath: verification.path } : {}),
+      },
+    },
   });
   await createSession(user);
   redirect(roleHome(user.role));
@@ -720,6 +993,12 @@ export async function addBrandMessageAction(targetType: "brand" | "request" | "c
   const session = await requireRole([UserRole.ADMIN, UserRole.BRAND]);
   const body = text(formData.get("body"));
   if (body.length < 2) redirect(session.role === UserRole.ADMIN ? "/admin/brands" : "/brand/requests");
+  const messageCategory = text(formData.get("messageCategory")) || "普通留言";
+  const relatedType = text(formData.get("relatedType"));
+  const relatedLabel = text(formData.get("relatedLabel"));
+  const structuredBody = [`[${messageCategory}]`, relatedLabel ? `关联：${relatedLabel}` : "", relatedType && !relatedLabel ? `关联类型：${relatedType}` : "", "", body]
+    .filter((item, index) => item || index === 3)
+    .join("\n");
 
   if (session.role === UserRole.ADMIN) {
     await requireAdminPermission("account.create");
@@ -765,7 +1044,7 @@ export async function addBrandMessageAction(targetType: "brand" | "request" | "c
         campaignId,
         authorUserId: session.userId,
         authorRole: session.role,
-        body,
+        body: structuredBody,
         visibleToBrand: session.role === UserRole.BRAND ? true : formData.get("visibleToBrand") !== "off",
       },
     });
@@ -776,7 +1055,7 @@ export async function addBrandMessageAction(targetType: "brand" | "request" | "c
         action: "brand_message.created",
         entityType: "brand_message",
         entityId: message.id,
-        afterJson: { targetType, targetId },
+        afterJson: { targetType, targetId, messageCategory, relatedType, relatedLabel },
       },
     });
   });
@@ -982,7 +1261,7 @@ export async function submitCreatorMembershipApplicationAction(formData: FormDat
 }
 
 export async function updateCreatorMembershipApplicationAction(applicationId: string, formData: FormData) {
-  const session = await requireAdminPermission("payment.manage");
+  const session = await requireAdminPermission("payment.confirm");
   const action = text(formData.get("action"));
   const adminNote = text(formData.get("adminNote"));
   const membershipStartedAt = text(formData.get("membershipStartedAt"));
@@ -1159,10 +1438,20 @@ export async function updateAdminStaffAction(adminProfileId: string, formData: F
   const dataScope = text(formData.get("dataScope")) as AdminDataScope;
   const status = text(formData.get("status")) as UserStatus;
   const password = text(formData.get("password"));
+  const sensitiveConfirmation = text(formData.get("sensitiveConfirmation"));
   const permissions = formData.getAll("permissions").map(String).filter((permission) => ADMIN_PERMISSIONS.includes(permission as never));
   const inviteCodeInput = normalizeInviteCode(text(formData.get("inviteCode")));
   const inviteActive = formData.get("inviteActive") === "on";
   const inviteNote = text(formData.get("inviteNote"));
+  const sensitiveChange =
+    password.length >= 8 ||
+    status === UserStatus.FROZEN ||
+    level !== before.level ||
+    dataScope !== before.dataScope ||
+    permissions.sort().join("|") !== before.permissions.sort().join("|");
+  if (sensitiveChange && sensitiveConfirmation !== "CONFIRM") {
+    redirect(`/admin/staff?error=${encodeURIComponent("敏感账号操作需要在确认框输入 CONFIRM。")}`);
+  }
 
   try {
     await prisma.$transaction(async (tx) => {
@@ -1182,6 +1471,7 @@ export async function updateAdminStaffAction(adminProfileId: string, formData: F
         data: {
           status: status || before.user.status,
           passwordHash: password.length >= 8 ? await hashPassword(password) : undefined,
+          passwordChangedAt: password.length >= 8 ? new Date() : undefined,
         },
       });
       if (inviteCodeInput) {
@@ -1768,7 +2058,7 @@ export async function createCampaignAction(formData: FormData) {
           invoiceNumber: `PAY-${shortId}`,
           amount: Math.max(0, totalCampaignBudget - Number(brand.budgetBalance)),
           currency: "CNY",
-          status: uploadedPaymentProof ? "PAYMENT_SUBMITTED" : "OPEN",
+          status: uploadedPaymentProof ? InvoiceStatus.PAYMENT_SUBMITTED : InvoiceStatus.OPEN,
           paymentMethod: "人工转账",
           paymentProofUrl: uploadedPaymentProof,
           paymentReference,
@@ -1849,6 +2139,12 @@ export async function submitExistingCampaignAction(campaignId: string) {
   if (campaign.status !== CampaignStatus.DRAFT) redirect(`/brand/campaigns/${campaignId}`);
   const requiredEscrow = Math.max(0, Number(campaign.escrowAmount) - Number(campaign.escrowFrozenAmount));
   const hasEnoughBalance = Number(campaign.brand.budgetBalance) >= requiredEscrow;
+  const nextCampaignStatus = hasEnoughBalance ? CampaignStatus.PENDING_REVIEW : CampaignStatus.AWAITING_PAYMENT;
+  try {
+    assertCampaignTransition(campaign.status, nextCampaignStatus);
+  } catch (error) {
+    redirect(`/brand/campaigns/${campaignId}?error=${encodeURIComponent(error instanceof Error ? error.message : "Campaign 状态不允许提交")}`);
+  }
   await prisma.$transaction(async (tx) => {
     if (hasEnoughBalance) {
       if (requiredEscrow > 0) {
@@ -1877,14 +2173,14 @@ export async function submitExistingCampaignAction(campaignId: string) {
       await tx.campaign.update({
         where: { id: campaignId },
         data: {
-          status: CampaignStatus.PENDING_REVIEW,
+          status: nextCampaignStatus,
           escrowFrozenAmount: { increment: requiredEscrow },
         },
       });
     } else {
       await tx.campaign.update({
         where: { id: campaignId },
-        data: { status: CampaignStatus.AWAITING_PAYMENT },
+        data: { status: nextCampaignStatus },
       });
       await tx.invoice.create({
         data: {
@@ -1893,7 +2189,7 @@ export async function submitExistingCampaignAction(campaignId: string) {
           invoiceNumber: `PAY-${campaign.id.slice(-8).toUpperCase()}`,
           amount: Math.max(0, requiredEscrow - Number(campaign.brand.budgetBalance)),
           currency: campaign.currency,
-          status: "OPEN",
+          status: InvoiceStatus.OPEN,
           note: "Campaign escrow payment order generated from draft submission.",
           isDemo: campaign.isDemo,
         },
@@ -1919,7 +2215,7 @@ export async function submitExistingCampaignAction(campaignId: string) {
     entityType: "campaign",
     entityId: campaignId,
     beforeJson: { status: CampaignStatus.DRAFT },
-    afterJson: { status: hasEnoughBalance ? CampaignStatus.PENDING_REVIEW : CampaignStatus.AWAITING_PAYMENT, requiredEscrow },
+    afterJson: { status: nextCampaignStatus, requiredEscrow },
   });
   redirect(`/brand/campaigns/${campaignId}`);
 }
@@ -1935,7 +2231,82 @@ const brandRefundSchema = z.object({
   amount: z.coerce.number().positive(),
   payoutMethod: z.string().min(1),
   payoutDetails: z.string().min(3),
+  relatedInvoiceId: z.string().optional(),
 });
+
+function providerFromPaymentReference(paymentReference?: string | null) {
+  if (paymentReference?.startsWith("ALIPAY-")) return "alipay";
+  if (paymentReference?.startsWith("WECHAT-")) return "wechat_pay";
+  return null;
+}
+
+async function markBrandRefundPaid({
+  refundId,
+  actorUserId,
+  actorRole,
+  adminNote,
+  provider,
+  providerRefundStatus,
+  providerRefundRaw,
+}: {
+  refundId: string;
+  actorUserId: string;
+  actorRole: UserRole;
+  adminNote: string;
+  provider?: string;
+  providerRefundStatus?: string;
+  providerRefundRaw?: Prisma.InputJsonValue;
+}) {
+  const request = await prisma.brandRefundRequest.findUnique({ where: { id: refundId }, include: { brand: true } });
+  if (!request) redirect("/admin/payments");
+  if (request.status === BrandRefundStatus.PAID) return;
+  if (Number(request.amount) > Number(request.brand.budgetBalance)) redirect("/admin/payments?error=退款金额超过品牌当前可用余额。");
+
+  await prisma.$transaction(async (tx) => {
+    await tx.brandRefundRequest.update({
+      where: { id: refundId },
+      data: {
+        status: BrandRefundStatus.PAID,
+        adminNote,
+        provider: provider ?? request.provider,
+        providerRefundStatus: providerRefundStatus ?? request.providerRefundStatus,
+        providerRefundRaw,
+        refundedAt: new Date(),
+      },
+    });
+    await tx.brandProfile.update({
+      where: { id: request.brandId },
+      data: { budgetBalance: { decrement: request.amount } },
+    });
+    await tx.brandLedgerTransaction.updateMany({
+      where: { relatedRefundId: refundId, type: BrandLedgerTxType.REFUND },
+      data: { status: BrandLedgerTxStatus.CONFIRMED, note: adminNote || "Merchant refund paid." },
+    });
+    await notifyBrand(tx, {
+      brandId: request.brandId,
+      title: "退款已完成",
+      body: `${request.currency} ${Number(request.amount).toFixed(2)} 已完成退款处理。`,
+      href: "/brand/billing?tab=refunds",
+    });
+    await notifyPaymentAdmins(tx, {
+      brandId: request.brandId,
+      title: "品牌退款已完成",
+      body: `${request.brand.brandName} 的退款 ${request.currency} ${Number(request.amount).toFixed(2)} 已完成。`,
+      href: "/admin/payments",
+    });
+    await tx.auditLog.create({
+      data: {
+        actorUserId,
+        actorRole,
+        action: "brand_refund.paid",
+        entityType: "brand_refund_request",
+        entityId: refundId,
+        beforeJson: { status: request.status, budgetBalance: String(request.brand.budgetBalance) },
+        afterJson: { adminNote, provider, providerRefundStatus },
+      },
+    });
+  });
+}
 
 export async function requestBrandInvoiceAction(formData: FormData) {
   const session = await requireRole(UserRole.BRAND);
@@ -1961,7 +2332,7 @@ export async function requestBrandInvoiceAction(formData: FormData) {
         campaignId,
         amount: parsed.data.amount,
         currency: parsed.data.currency,
-        status: "REQUESTED",
+        status: InvoiceStatus.REQUESTED,
         note: parsed.data.note || "品牌方提交预算/发票申请。",
         isDemo: brand.isDemo,
       },
@@ -1994,7 +2365,7 @@ export async function requestBrandInvoiceAction(formData: FormData) {
 export async function submitInvoicePaymentAction(invoiceId: string, formData: FormData) {
   const session = await requireRole(UserRole.BRAND);
   const invoice = await prisma.invoice.findFirst({ where: { id: invoiceId, brand: { userId: session.userId } }, include: { brand: true } });
-  if (!invoice || invoice.status === "PAID" || invoice.status === "VOID") redirect("/brand/billing");
+  if (!invoice || invoice.status === InvoiceStatus.PAID || invoice.status === InvoiceStatus.VOID) redirect("/brand/billing");
 
   const proof = formData.get("paymentProof");
   const proofFile = proof instanceof File && proof.size > 0 ? proof : null;
@@ -2025,7 +2396,7 @@ export async function submitInvoicePaymentAction(invoiceId: string, formData: Fo
     await tx.invoice.update({
       where: { id: invoice.id },
       data: {
-        status: "PAYMENT_SUBMITTED",
+        status: InvoiceStatus.PAYMENT_SUBMITTED,
         paymentMethod: method,
         paymentProofUrl: paymentProofUrl || null,
         paymentReference,
@@ -2039,8 +2410,14 @@ export async function submitInvoicePaymentAction(invoiceId: string, formData: Fo
         entityType: "invoice",
         entityId: invoice.id,
         beforeJson: { status: invoice.status },
-        afterJson: { status: "PAYMENT_SUBMITTED", paymentMethod: method, paymentReference },
+        afterJson: { status: InvoiceStatus.PAYMENT_SUBMITTED, paymentMethod: method, paymentReference },
       },
+    });
+    await notifyPaymentAdmins(tx, {
+      brandId: invoice.brandId,
+      title: "品牌提交了付款凭证",
+      body: `${invoice.brand.brandName} 提交了 ${invoice.currency} ${Number(invoice.amount).toFixed(2)} 的付款凭证。`,
+      href: "/admin/payments",
     });
   }).catch(async (error: unknown) => {
     if (isUniqueConstraintError(error, ["paymentReference"])) {
@@ -2066,7 +2443,7 @@ export async function submitInvoicePaymentAction(invoiceId: string, formData: Fo
 }
 
 export async function updateInvoiceStatusAction(invoiceId: string, formData: FormData) {
-  const session = await requireAdminPermission("payment.manage");
+  const session = await requireAdminPermission("payment.confirm");
   const action = text(formData.get("action"));
   const note = text(formData.get("note"));
   const returnTo = text(formData.get("returnTo"));
@@ -2077,11 +2454,11 @@ export async function updateInvoiceStatusAction(invoiceId: string, formData: For
   if (!invoice) redirect(fallbackPath);
 
   const invoiceNumber = invoice.invoiceNumber || `INV-${new Date().getFullYear()}-${invoice.id.slice(-6).toUpperCase()}`;
-  const statusMap: Record<string, string> = {
-    issue: "OPEN",
-    paid: "PAID",
-    reject: "REJECTED",
-    void: "VOID",
+  const statusMap: Record<string, InvoiceStatus> = {
+    issue: InvoiceStatus.OPEN,
+    paid: InvoiceStatus.PAID,
+    reject: InvoiceStatus.REJECTED,
+    void: InvoiceStatus.VOID,
   };
   const nextStatus = statusMap[action];
   if (!nextStatus) redirect(fallbackPath);
@@ -2095,10 +2472,10 @@ export async function updateInvoiceStatusAction(invoiceId: string, formData: For
         status: nextStatus,
         invoiceNumber,
         note: note || invoice.note,
-        paidAt: nextStatus === "PAID" ? new Date() : invoice.paidAt,
+      paidAt: nextStatus === InvoiceStatus.PAID ? new Date() : invoice.paidAt,
       },
     });
-    if (nextStatus === "PAID" && invoice.status !== "PAID") {
+    if (nextStatus === InvoiceStatus.PAID && invoice.status !== InvoiceStatus.PAID) {
       const beforeBalance = Number(invoice.brand.budgetBalance);
       const afterPaymentBalance = beforeBalance + Number(invoice.amount);
       await tx.brandProfile.update({
@@ -2133,6 +2510,7 @@ export async function updateInvoiceStatusAction(invoiceId: string, formData: For
       if (invoice.campaign && invoice.campaign.status === CampaignStatus.AWAITING_PAYMENT) {
         const requiredEscrow = Math.max(0, Number(invoice.campaign.escrowAmount) - Number(invoice.campaign.escrowFrozenAmount));
         if (requiredEscrow > 0 && afterPaymentBalance >= requiredEscrow) {
+          assertCampaignTransition(invoice.campaign.status, CampaignStatus.PENDING_REVIEW);
           await tx.brandProfile.update({
             where: { id: invoice.brandId },
             data: {
@@ -2176,11 +2554,182 @@ export async function updateInvoiceStatusAction(invoiceId: string, formData: For
         afterJson: { status: nextStatus, invoiceNumber, note },
       },
     });
+    if (nextStatus === InvoiceStatus.PAID) {
+      await notifyBrand(tx, {
+        brandId: invoice.brandId,
+        title: "付款已确认入账",
+        body: `${invoice.currency} ${Number(invoice.amount).toFixed(2)} 已确认入账。`,
+        href: "/brand/billing?tab=invoices",
+      });
+    }
+    if (nextStatus === InvoiceStatus.REJECTED || nextStatus === InvoiceStatus.VOID) {
+      await notifyBrand(tx, {
+        brandId: invoice.brandId,
+        title: nextStatus === InvoiceStatus.REJECTED ? "付款单已被拒绝" : "付款单已作废",
+        body: note || "请查看账单详情并按平台要求重新处理。",
+        href: "/brand/billing?tab=invoices",
+      });
+    }
   });
   revalidatePath("/admin/payments");
   revalidatePath(`/brand/billing`);
   if (invoice.campaignId) revalidatePath(`/admin/campaigns/${invoice.campaignId}`);
   revalidatePath("/admin/campaigns");
+  redirect(fallbackPath);
+}
+
+export async function refreshInvoicePaymentStatusAction(invoiceId: string, formData: FormData) {
+  const session = await requireRole([UserRole.ADMIN, UserRole.BRAND]);
+  if (session.role === UserRole.ADMIN) {
+    await requireAdminPermission("payment.view");
+  }
+  const returnTo = text(formData.get("returnTo"));
+  const fallbackPath =
+    returnTo.startsWith("/admin/") || returnTo.startsWith("/brand/")
+      ? returnTo
+      : session.role === UserRole.ADMIN
+        ? "/admin/payments"
+        : "/brand/billing?tab=invoices";
+  const invoice = await prisma.invoice.findFirst({
+    where: {
+      id: invoiceId,
+      ...(session.role === UserRole.BRAND ? { brand: { userId: session.userId } } : {}),
+    },
+    include: { brand: true },
+  });
+  if (!invoice) redirect(fallbackPath);
+  if (!invoice.paymentReference) redirect(`${fallbackPath}?error=${encodeURIComponent("该付款单没有渠道订单号，无法查询。")}`);
+  if (invoice.status === InvoiceStatus.PAID) redirect(fallbackPath);
+
+  try {
+    if (invoice.paymentReference.startsWith("ALIPAY-")) {
+      const event = await beginPaymentProviderEvent({
+        provider: "alipay",
+        eventType: "payment_query",
+        eventKey: paymentEventKey("query", invoice.paymentReference, Date.now()),
+        entityType: "invoice",
+        entityId: invoice.id,
+        requestJson: { paymentReference: invoice.paymentReference },
+      });
+      const result = await queryAlipayTrade(invoice.paymentReference);
+      const paid = result.tradeStatus === "TRADE_SUCCESS" || result.tradeStatus === "TRADE_FINISHED";
+      if (paid && result.tradeNo && result.totalAmount) {
+        await confirmInvoicePaidByProvider({
+          invoiceId: invoice.id,
+          paymentReference: invoice.paymentReference,
+          provider: "Alipay",
+          providerTradeNo: result.tradeNo,
+          totalAmount: result.totalAmount,
+          rawNotify: result.raw as Prisma.InputJsonValue,
+        });
+      }
+      await completePaymentProviderEvent({ id: event.event.id, status: "SUCCESS", responseJson: result.raw as Prisma.InputJsonValue });
+      await audit({
+        action: "alipay.invoice_status_queried",
+        entityType: "invoice",
+        entityId: invoice.id,
+        afterJson: { tradeStatus: result.tradeStatus, tradeNo: result.tradeNo, paid },
+      });
+    } else if (invoice.paymentReference.startsWith("WECHAT-")) {
+      const event = await beginPaymentProviderEvent({
+        provider: "wechat_pay",
+        eventType: "payment_query",
+        eventKey: paymentEventKey("query", invoice.paymentReference, Date.now()),
+        entityType: "invoice",
+        entityId: invoice.id,
+        requestJson: { paymentReference: invoice.paymentReference },
+      });
+      const result = await queryWechatTrade(invoice.paymentReference);
+      const paid = result.tradeState === "SUCCESS";
+      if (paid && result.transactionId && result.totalAmount) {
+        await confirmInvoicePaidByProvider({
+          invoiceId: invoice.id,
+          paymentReference: invoice.paymentReference,
+          provider: "WeChat Pay",
+          providerTradeNo: result.transactionId,
+          totalAmount: result.totalAmount,
+          rawNotify: result.raw as Prisma.InputJsonValue,
+        });
+      }
+      await completePaymentProviderEvent({ id: event.event.id, status: "SUCCESS", responseJson: result.raw as Prisma.InputJsonValue });
+      await audit({
+        action: "wechat_pay.invoice_status_queried",
+        entityType: "invoice",
+        entityId: invoice.id,
+        afterJson: { tradeState: result.tradeState, transactionId: result.transactionId, paid },
+      });
+    } else {
+      redirect(`${fallbackPath}?error=${encodeURIComponent("该付款单不是支付宝或微信支付订单。")}`);
+    }
+  } catch (error) {
+    const provider = invoice.paymentReference.startsWith("ALIPAY-") ? "alipay" : invoice.paymentReference.startsWith("WECHAT-") ? "wechat_pay" : "unknown";
+    const failureEvent = await beginPaymentProviderEvent({
+      provider,
+      eventType: "payment_query",
+      eventKey: paymentEventKey("query_failed", invoice.paymentReference, Date.now()),
+      entityType: "invoice",
+      entityId: invoice.id,
+      requestJson: { paymentReference: invoice.paymentReference },
+    });
+    await completePaymentProviderEvent({
+      id: failureEvent.event.id,
+      status: "FAILED",
+      errorMessage: error instanceof Error ? error.message : "unknown_error",
+    });
+    await prisma.$transaction(async (tx) => {
+      await notifyPaymentAdmins(tx, {
+        brandId: invoice.brandId,
+        title: "支付查单失败",
+        body: `${invoice.paymentReference} 查单失败：${error instanceof Error ? error.message : "unknown_error"}`,
+        href: "/admin/payments",
+      });
+    });
+    await audit({
+      action: "invoice.payment_status_query_failed",
+      entityType: "invoice",
+      entityId: invoice.id,
+      afterJson: { paymentReference: invoice.paymentReference, error: error instanceof Error ? error.message : "unknown_error" },
+    });
+    redirect(`${fallbackPath}?error=${encodeURIComponent(error instanceof Error ? error.message : "支付状态查询失败")}`);
+  }
+
+  revalidatePath("/admin/payments");
+  revalidatePath("/brand/billing");
+  redirect(fallbackPath);
+}
+
+export async function resolvePaymentProviderEventAction(eventId: string, formData: FormData) {
+  const session = await requireAdminPermission("payment.view");
+  const returnTo = text(formData.get("returnTo"));
+  const note = text(formData.get("note")) || "Admin marked this payment provider event as reviewed.";
+  const fallbackPath = returnTo.startsWith("/admin/") ? returnTo : "/admin/payments";
+  const event = await prisma.paymentProviderEvent.findUnique({ where: { id: eventId } });
+  if (!event) redirect(fallbackPath);
+  if (event.status !== "FAILED" && event.status !== "PENDING") redirect(fallbackPath);
+
+  await prisma.$transaction(async (tx) => {
+    await tx.paymentProviderEvent.update({
+      where: { id: event.id },
+      data: {
+        status: "IGNORED",
+        errorMessage: event.errorMessage ? `${event.errorMessage}\nReviewed: ${note}` : `Reviewed: ${note}`,
+        processedAt: new Date(),
+      },
+    });
+    await tx.auditLog.create({
+      data: {
+        actorUserId: session.userId,
+        actorRole: session.role,
+        action: "payment_provider_event.reviewed",
+        entityType: "payment_provider_event",
+        entityId: event.id,
+        beforeJson: { status: event.status, errorMessage: event.errorMessage },
+        afterJson: { status: "IGNORED", note },
+      },
+    });
+  });
+
+  revalidatePath("/admin/payments");
   redirect(fallbackPath);
 }
 
@@ -2192,18 +2741,37 @@ export async function requestBrandRefundAction(formData: FormData) {
     amount: text(formData.get("amount")),
     payoutMethod: text(formData.get("payoutMethod")),
     payoutDetails: text(formData.get("payoutDetails")),
+    relatedInvoiceId: text(formData.get("relatedInvoiceId")),
   });
   if (!parsed.success) redirect("/brand/billing?error=Invalid%20refund%20request");
   if (parsed.data.amount > Number(brand.budgetBalance)) redirect("/brand/billing?error=Refund%20amount%20exceeds%20available%20balance");
+
+  const relatedInvoice = parsed.data.relatedInvoiceId
+    ? await prisma.invoice.findFirst({
+        where: { id: parsed.data.relatedInvoiceId, brandId: brand.id, status: InvoiceStatus.PAID },
+        include: { refundRequests: { where: { status: { not: BrandRefundStatus.REJECTED } } } },
+      })
+    : null;
+  if (parsed.data.relatedInvoiceId && !relatedInvoice) redirect("/brand/billing?error=请选择已支付的原付款单");
+  const provider = providerFromPaymentReference(relatedInvoice?.paymentReference);
+  if (relatedInvoice && !provider) redirect("/brand/billing?error=该付款单不是支付宝或微信支付订单，无法原渠道退款");
+  if (relatedInvoice) {
+    const pendingRefunded = relatedInvoice.refundRequests.reduce((sum, item) => sum + Number(item.amount), 0);
+    if (pendingRefunded + parsed.data.amount > Number(relatedInvoice.amount)) {
+      redirect("/brand/billing?error=退款金额超过原付款单剩余可退金额");
+    }
+  }
 
   await prisma.$transaction(async (tx) => {
     const request = await tx.brandRefundRequest.create({
       data: {
         brandId: brand.id,
+        relatedInvoiceId: relatedInvoice?.id,
         amount: parsed.data.amount,
         currency: "CNY",
         payoutMethod: parsed.data.payoutMethod,
         payoutDetails: { value: parsed.data.payoutDetails },
+        provider,
         isDemo: brand.isDemo,
       },
     });
@@ -2231,20 +2799,226 @@ export async function requestBrandRefundAction(formData: FormData) {
         afterJson: { amount: parsed.data.amount, currency: "CNY" },
       },
     });
+    await notifyPaymentAdmins(tx, {
+      brandId: brand.id,
+      title: "品牌提交了退款申请",
+      body: `${brand.brandName} 申请退款 CNY ${Number(parsed.data.amount).toFixed(2)}。`,
+      href: "/admin/payments",
+    });
   });
   redirect("/brand/billing?refund=1");
 }
 
 export async function updateBrandRefundAction(refundId: string, formData: FormData) {
-  const session = await requireAdminPermission("payment.manage");
+  const session = await requireAdminPermission("payment.view");
   const action = text(formData.get("action"));
   const adminNote = text(formData.get("adminNote"));
   const confirmed = text(formData.get("confirmAction")) === "yes";
-  const request = await prisma.brandRefundRequest.findUnique({ where: { id: refundId }, include: { brand: true } });
+  const request = await prisma.brandRefundRequest.findUnique({ where: { id: refundId }, include: { brand: true, relatedInvoice: true } });
   if (!request) redirect("/admin/payments");
   if (request.status === BrandRefundStatus.PAID || request.status === BrandRefundStatus.REJECTED) redirect("/admin/payments");
   if (!confirmed) redirect("/admin/payments?error=资金操作必须先勾选确认。");
-  if ((action === "paid" || action === "reject") && adminNote.length < 3) redirect("/admin/payments?error=退款打款或拒绝必须填写处理备注。");
+  if ((action === "paid" || action === "reject" || action === "channel_refund") && adminNote.length < 3) redirect("/admin/payments?error=退款打款或拒绝必须填写处理备注。");
+  if ((action === "approve" || action === "reject") && !hasAdminPermission(session.profile, "payment.refund.review")) redirect("/403");
+  if ((action === "paid" || action === "channel_refund" || action === "query_refund") && !hasAdminPermission(session.profile, "payment.refund.execute")) redirect("/403");
+
+  if (action === "channel_refund") {
+    if (!request.relatedInvoice?.paymentReference) redirect("/admin/payments?error=该退款申请没有关联可退款的原付款单。");
+    const provider = providerFromPaymentReference(request.relatedInvoice.paymentReference);
+    if (!provider) redirect("/admin/payments?error=该原付款单不是支付宝或微信支付订单。");
+    if (Number(request.amount) > Number(request.brand.budgetBalance)) redirect("/admin/payments?error=退款金额超过品牌当前可用余额。");
+    const providerRefundId = request.providerRefundId || `RF-${request.id}`;
+    await prisma.brandRefundRequest.update({
+      where: { id: refundId },
+      data: {
+        status: BrandRefundStatus.APPROVED,
+        provider,
+        providerRefundId,
+        providerRefundStatus: request.providerRefundStatus || "PROCESSING",
+        adminNote,
+      },
+    });
+    const event = await beginPaymentProviderEvent({
+      provider,
+      eventType: "refund_request",
+      eventKey: paymentEventKey("refund", providerRefundId),
+      entityType: "brand_refund_request",
+      entityId: refundId,
+      requestJson: {
+        providerRefundId,
+        outTradeNo: request.relatedInvoice.paymentReference,
+        amount: String(request.amount),
+        originalAmount: String(request.relatedInvoice.amount),
+      },
+    });
+    if (event.duplicate && event.event.status === "SUCCESS") {
+      revalidatePath("/admin/payments");
+      revalidatePath("/brand/billing");
+      return;
+    }
+    try {
+      if (provider === "alipay") {
+        const result = await refundAlipayTrade({
+          outTradeNo: request.relatedInvoice.paymentReference,
+          outRequestNo: providerRefundId,
+          refundAmount: decimalAmount(request.amount),
+          refundReason: adminNote,
+        });
+        await markBrandRefundPaid({
+          refundId,
+          actorUserId: session.userId,
+          actorRole: session.role,
+          adminNote,
+          provider,
+          providerRefundStatus: result.refundStatus || "SUCCESS",
+          providerRefundRaw: result.raw as Prisma.InputJsonValue,
+        });
+        await completePaymentProviderEvent({ id: event.event.id, status: "SUCCESS", responseJson: result.raw as Prisma.InputJsonValue });
+      } else {
+        const result = await refundWechatTrade({
+          outTradeNo: request.relatedInvoice.paymentReference,
+          outRefundNo: providerRefundId,
+          amountFen: amountFen(request.amount),
+          originalAmountFen: amountFen(request.relatedInvoice.amount),
+          reason: adminNote,
+        });
+        if (result.status === "SUCCESS") {
+          await markBrandRefundPaid({
+            refundId,
+            actorUserId: session.userId,
+            actorRole: session.role,
+            adminNote,
+            provider,
+            providerRefundStatus: result.status,
+            providerRefundRaw: result.raw as Prisma.InputJsonValue,
+          });
+          await completePaymentProviderEvent({ id: event.event.id, status: "SUCCESS", responseJson: result.raw as Prisma.InputJsonValue });
+        } else {
+          await prisma.brandRefundRequest.update({
+            where: { id: refundId },
+            data: { providerRefundStatus: result.status || "PROCESSING", providerRefundRaw: result.raw as Prisma.InputJsonValue },
+          });
+          await completePaymentProviderEvent({ id: event.event.id, status: "SUCCESS", responseJson: result.raw as Prisma.InputJsonValue });
+        }
+      }
+      await audit({
+        action: `${provider}.refund_requested`,
+        entityType: "brand_refund_request",
+        entityId: refundId,
+        afterJson: { providerRefundId, amount: String(request.amount) },
+      });
+    } catch (error) {
+      await prisma.brandRefundRequest.update({
+        where: { id: refundId },
+        data: { providerRefundStatus: "FAILED" },
+      });
+      await prisma.$transaction(async (tx) => {
+        await notifyBrand(tx, {
+          brandId: request.brandId,
+          title: "退款处理失败",
+          body: `${request.currency} ${Number(request.amount).toFixed(2)} 退款处理失败，平台将继续复核。`,
+          href: "/brand/billing?tab=refunds",
+        });
+        await notifyPaymentAdmins(tx, {
+          brandId: request.brandId,
+          title: "渠道退款失败",
+          body: `${request.brand.brandName} 的退款 ${providerRefundId} 失败：${error instanceof Error ? error.message : "unknown_error"}`,
+          href: "/admin/payments",
+        });
+      });
+      await completePaymentProviderEvent({
+        id: event.event.id,
+        status: "FAILED",
+        errorMessage: error instanceof Error ? error.message : "unknown_error",
+      });
+      await audit({
+        action: `${provider}.refund_failed`,
+        entityType: "brand_refund_request",
+        entityId: refundId,
+        afterJson: { providerRefundId, error: error instanceof Error ? error.message : "unknown_error" },
+      });
+      redirect(`/admin/payments?error=${encodeURIComponent(error instanceof Error ? error.message : "渠道退款失败")}`);
+    }
+    revalidatePath("/admin/payments");
+    revalidatePath("/brand/billing");
+    return;
+  }
+
+  if (action === "query_refund") {
+    if (!request.provider || !request.providerRefundId || !request.relatedInvoice?.paymentReference) redirect("/admin/payments?error=该退款申请没有渠道退款单号。");
+    const event = await beginPaymentProviderEvent({
+      provider: request.provider,
+      eventType: "refund_query",
+      eventKey: paymentEventKey("refund_query", request.providerRefundId, Date.now()),
+      entityType: "brand_refund_request",
+      entityId: refundId,
+      requestJson: { providerRefundId: request.providerRefundId, paymentReference: request.relatedInvoice.paymentReference },
+    });
+    try {
+      if (request.provider === "alipay") {
+        const result = await queryAlipayRefund(request.relatedInvoice.paymentReference, request.providerRefundId);
+        await markBrandRefundPaid({
+          refundId,
+          actorUserId: session.userId,
+          actorRole: session.role,
+          adminNote: adminNote || request.adminNote || "Alipay refund status confirmed.",
+          provider: request.provider,
+          providerRefundStatus: result.refundStatus || "SUCCESS",
+          providerRefundRaw: result.raw as Prisma.InputJsonValue,
+        });
+        await completePaymentProviderEvent({ id: event.event.id, status: "SUCCESS", responseJson: result.raw as Prisma.InputJsonValue });
+      } else if (request.provider === "wechat_pay") {
+        const result = await queryWechatRefund(request.providerRefundId);
+        if (result.status === "SUCCESS") {
+          await markBrandRefundPaid({
+            refundId,
+            actorUserId: session.userId,
+            actorRole: session.role,
+            adminNote: adminNote || request.adminNote || "WeChat Pay refund status confirmed.",
+            provider: request.provider,
+            providerRefundStatus: result.status,
+            providerRefundRaw: result.raw as Prisma.InputJsonValue,
+          });
+        } else {
+          await prisma.brandRefundRequest.update({
+            where: { id: refundId },
+            data: { providerRefundStatus: result.status || "PROCESSING", providerRefundRaw: result.raw as Prisma.InputJsonValue },
+          });
+        }
+        await completePaymentProviderEvent({ id: event.event.id, status: "SUCCESS", responseJson: result.raw as Prisma.InputJsonValue });
+      }
+      await audit({
+        action: `${request.provider}.refund_status_queried`,
+        entityType: "brand_refund_request",
+        entityId: refundId,
+        afterJson: { providerRefundId: request.providerRefundId },
+      });
+    } catch (error) {
+      await completePaymentProviderEvent({
+        id: event.event.id,
+        status: "FAILED",
+        errorMessage: error instanceof Error ? error.message : "unknown_error",
+      });
+      await prisma.$transaction(async (tx) => {
+        await notifyPaymentAdmins(tx, {
+          brandId: request.brandId,
+          title: "退款状态查询失败",
+          body: `${request.providerRefundId} 查询失败：${error instanceof Error ? error.message : "unknown_error"}`,
+          href: "/admin/payments",
+        });
+      });
+      await audit({
+        action: "brand_refund.provider_query_failed",
+        entityType: "brand_refund_request",
+        entityId: refundId,
+        afterJson: { provider: request.provider, providerRefundId: request.providerRefundId, error: error instanceof Error ? error.message : "unknown_error" },
+      });
+      redirect(`/admin/payments?error=${encodeURIComponent(error instanceof Error ? error.message : "退款状态查询失败")}`);
+    }
+    revalidatePath("/admin/payments");
+    revalidatePath("/brand/billing");
+    return;
+  }
 
   await prisma.$transaction(async (tx) => {
     if (action === "approve") {
@@ -2252,21 +3026,15 @@ export async function updateBrandRefundAction(refundId: string, formData: FormDa
         where: { id: refundId },
         data: { status: BrandRefundStatus.APPROVED, adminNote },
       });
+      await notifyBrand(tx, {
+        brandId: request.brandId,
+        title: "退款申请已通过",
+        body: `${request.currency} ${Number(request.amount).toFixed(2)} 退款申请已通过，等待平台处理。`,
+        href: "/brand/billing?tab=refunds",
+      });
     }
     if (action === "paid") {
-      if (Number(request.amount) > Number(request.brand.budgetBalance)) redirect("/admin/payments");
-      await tx.brandRefundRequest.update({
-        where: { id: refundId },
-        data: { status: BrandRefundStatus.PAID, adminNote },
-      });
-      await tx.brandProfile.update({
-        where: { id: request.brandId },
-        data: { budgetBalance: { decrement: request.amount } },
-      });
-      await tx.brandLedgerTransaction.updateMany({
-        where: { relatedRefundId: refundId, type: BrandLedgerTxType.REFUND },
-        data: { status: BrandLedgerTxStatus.CONFIRMED, note: adminNote || "Merchant refund paid." },
-      });
+      if (Number(request.amount) > Number(request.brand.budgetBalance)) redirect("/admin/payments?error=退款金额超过品牌当前可用余额。");
     }
     if (action === "reject") {
       await tx.brandRefundRequest.update({
@@ -2276,6 +3044,12 @@ export async function updateBrandRefundAction(refundId: string, formData: FormDa
       await tx.brandLedgerTransaction.updateMany({
         where: { relatedRefundId: refundId, type: BrandLedgerTxType.REFUND },
         data: { status: BrandLedgerTxStatus.REJECTED, note: adminNote || "Merchant refund rejected." },
+      });
+      await notifyBrand(tx, {
+        brandId: request.brandId,
+        title: "退款申请已被拒绝",
+        body: adminNote || "退款申请未通过，请查看账单详情。",
+        href: "/brand/billing?tab=refunds",
       });
     }
     await tx.auditLog.create({
@@ -2290,6 +3064,15 @@ export async function updateBrandRefundAction(refundId: string, formData: FormDa
       },
     });
   });
+  if (action === "paid") {
+    await markBrandRefundPaid({
+      refundId,
+      actorUserId: session.userId,
+      actorRole: session.role,
+      adminNote,
+      providerRefundStatus: request.providerRefundStatus ?? undefined,
+    });
+  }
   revalidatePath("/admin/payments");
   revalidatePath("/brand/billing");
 }
@@ -2329,6 +3112,11 @@ export async function adminCampaignAction(campaignId: string, formData: FormData
   };
   const nextStatus = statusMap[action];
   if (!nextStatus) redirect(`/admin/campaigns/${campaignId}`);
+  try {
+    assertCampaignTransition(before.status, nextStatus);
+  } catch (error) {
+    redirect(`/admin/campaigns/${campaignId}?error=${encodeURIComponent(error instanceof Error ? error.message : "Campaign 状态不允许这样流转。")}`);
+  }
 
   await prisma.$transaction(async (tx) => {
     await tx.campaign.update({ where: { id: campaignId }, data: { status: nextStatus, reviewNote } });
@@ -2404,7 +3192,7 @@ export async function applyTaskAction(taskId: string, formData: FormData) {
   });
   const task = await prisma.campaignTask.findUnique({
     where: { id: taskId },
-    include: { campaign: true },
+    include: { campaign: { include: { brand: true } } },
   });
   if (!creator || !task) redirect("/creator/marketplace");
   if (creator.user.status === UserStatus.FROZEN || creator.reviewStatus === ReviewStatus.FROZEN) redirect("/403");
@@ -2478,7 +3266,24 @@ export async function applyTaskAction(taskId: string, formData: FormData) {
         afterJson: { applicationId: app.id, selectedSocialAccountId: selectedAccount.id },
       },
     });
+    await tx.notification.create({
+      data: {
+        userId: task.campaign.brand.userId,
+        title: "有新的 KOL 申请待审核",
+        body: `${creator.displayName} 申请了 ${task.title}，请尽快处理。`,
+        href: `/brand/campaigns/${task.campaignId}?tab=applications`,
+      },
+    });
     return app;
+  });
+  await dispatchExternalNotification({
+    userId: task.campaign.brand.userId,
+    role: "BRAND",
+    event: "task_application.submitted",
+    channel: "workflow",
+    title: "有新的 KOL 申请待审核",
+    body: `${creator.displayName} 申请了 ${task.title}。`,
+    href: `/brand/campaigns/${task.campaignId}?tab=applications`,
   });
   redirect(`/creator/my-tasks/${application.id}?applied=1`);
 }
@@ -2507,6 +3312,7 @@ export async function reviewTaskApplicationAction(applicationId: string, formDat
   if (decision === ApplicationStatus.APPROVED && application.status !== ApplicationStatus.APPROVED && application.task.slotsTaken >= application.task.slotsTotal) {
     redirect(session.role === UserRole.ADMIN ? `/admin/campaigns/${application.task.campaignId}?error=Task%20slots%20full` : `/brand/campaigns/${application.task.campaignId}?error=Task%20slots%20full`);
   }
+  assertApplicationTransition(application.status, decision);
 
   await prisma.$transaction(async (tx) => {
     await tx.taskApplication.update({
@@ -2542,6 +3348,15 @@ export async function reviewTaskApplicationAction(applicationId: string, formDat
         afterJson: { status: decision, note },
       },
     });
+  });
+  await dispatchExternalNotification({
+    userId: application.creator.userId,
+    role: "CREATOR",
+    event: "task_application.reviewed",
+    channel: "workflow",
+    title: `任务申请结果：${decision}`,
+    body: note || `你的 ${application.task.title} 申请已更新。`,
+    href: `/creator/my-tasks/${applicationId}`,
   });
   revalidatePath(`/admin/campaigns/${application.task.campaignId}`);
   revalidatePath(`/brand/campaigns/${application.task.campaignId}`);
@@ -2588,6 +3403,7 @@ export async function batchReviewTaskApplicationsAction(campaignId: string, form
 
   await prisma.$transaction(async (tx) => {
     for (const application of actionable) {
+      assertApplicationTransition(application.status, decision);
       await tx.taskApplication.update({
         where: { id: application.id },
         data: {
@@ -2624,6 +3440,19 @@ export async function batchReviewTaskApplicationsAction(campaignId: string, form
       }
     }
   });
+  await Promise.all(
+    actionable.map((application) =>
+      dispatchExternalNotification({
+        userId: application.creator.userId,
+        role: "CREATOR",
+        event: "task_application.batch_reviewed",
+        channel: "workflow",
+        title: `任务申请结果：${decision}`,
+        body: note,
+        href: `/creator/my-tasks/${application.id}`,
+      }),
+    ),
+  );
 
   revalidatePath(`/brand/campaigns/${campaignId}`);
   redirect(`/brand/campaigns/${campaignId}?batch=${actionable.length}`);
@@ -2812,6 +3641,21 @@ export async function submitContentAction(applicationId: string, formData: FormD
   });
   revalidatePath(`/brand/campaigns/${application.task.campaignId}/submissions`);
   revalidatePath(`/creator/my-tasks/${applicationId}`);
+  const notifyBrandTarget = await prisma.brandProfile.findUnique({
+    where: { id: application.task.campaign.brandId },
+    select: { userId: true },
+  });
+  if (notifyBrandTarget) {
+    await dispatchExternalNotification({
+      userId: notifyBrandTarget.userId,
+      role: "BRAND",
+      event: "submission.created",
+      channel: "workflow",
+      title: application.task.campaign.requiresDraftReview ? "新内容草稿待审核" : "KOL 已提交免审草稿",
+      body: `${application.creator.displayName} 提交了 ${application.task.title} 的内容。`,
+      href: `/brand/campaigns/${application.task.campaignId}/submissions`,
+    });
+  }
   redirect(`/creator/my-tasks/${applicationId}?submitted=${submission.id}`);
 }
 export async function reviewSubmissionAction(submissionId: string, formData: FormData) {
@@ -2859,6 +3703,9 @@ export async function reviewSubmissionAction(submissionId: string, formData: For
       : decision === ReviewDecision.REVISION_REQUESTED
         ? DraftReviewStatus.REVISION_REQUESTED
         : DraftReviewStatus.REJECTED;
+  assertSubmissionTransition(submission.status, next);
+  assertDraftTransition(submission.draft.status, nextDraftStatus);
+  assertDraftReviewTransition(submission.draft.reviewStatus, nextDraftReviewStatus);
 
   await prisma.$transaction(async (tx) => {
     await tx.submission.update({
@@ -2912,6 +3759,15 @@ export async function reviewSubmissionAction(submissionId: string, formData: For
   revalidatePath(session.role === UserRole.ADMIN ? "/admin/submissions" : `/brand/campaigns/${submission.campaignId}/submissions`);
   revalidatePath(`/creator/my-tasks/${submission.applicationId}`);
   revalidatePath(`/creator/content-studio/${submission.applicationId}`);
+  await dispatchExternalNotification({
+    userId: submission.creator.userId,
+    role: "CREATOR",
+    event: "submission.reviewed",
+    channel: "workflow",
+    title: `内容草稿审核结果：${next}`,
+    body: comment,
+    href: `/creator/my-tasks/${submission.applicationId}`,
+  });
 }
 
 const platformPostDomains: Record<string, string[]> = {
@@ -3241,6 +4097,9 @@ export async function submitProofAction(submissionId: string, formData: FormData
     if (activeProof) creatorProofRedirect(submission.applicationId, "已有发布链接正在等待验收或已通过。");
   }
   const previousRejectedCount = submission.proofs.filter((proof) => proof.verificationStatus === ProofStatus.REJECTED).length;
+  const nextPublicationStatus = previousRejectedCount > 0 ? PublicationStatus.RESUBMITTED : PublicationStatus.LINK_SUBMITTED;
+  assertSubmissionTransition(submission.status, SubmissionStatus.PROOF_SUBMITTED);
+  assertPublicationTransition(submission.publicationStatus, nextPublicationStatus);
 
   const proof = await prisma.$transaction(async (tx) => {
     const created = await tx.proof.create({
@@ -3255,7 +4114,7 @@ export async function submitProofAction(submissionId: string, formData: FormData
         urlCheckResult: urlCheck,
         publishedAt: new Date(text(formData.get("publishedAt")) || Date.now()),
         verificationStatus: ProofStatus.PENDING,
-        publicationStatus: previousRejectedCount > 0 ? PublicationStatus.RESUBMITTED : PublicationStatus.LINK_SUBMITTED,
+        publicationStatus: nextPublicationStatus,
         resubmissionCount: previousRejectedCount,
       },
     });
@@ -3263,7 +4122,7 @@ export async function submitProofAction(submissionId: string, formData: FormData
       where: { id: submissionId },
       data: {
         status: SubmissionStatus.PROOF_SUBMITTED,
-        publicationStatus: previousRejectedCount > 0 ? PublicationStatus.RESUBMITTED : PublicationStatus.LINK_SUBMITTED,
+        publicationStatus: nextPublicationStatus,
       },
     });
     await tx.notification.create({
@@ -3326,6 +4185,15 @@ export async function submitProofAction(submissionId: string, formData: FormData
   revalidatePath(`/brand/campaigns/${submission.campaignId}/proofs`);
   revalidatePath(`/creator/my-tasks/${submission.applicationId}`);
   revalidatePath("/admin/crawler");
+  await dispatchExternalNotification({
+    userId: submission.campaign.brand.userId,
+    role: "BRAND",
+    event: "proof.link_submitted",
+    channel: "workflow",
+    title: "KOL 已提交发布链接",
+    body: `${submission.creator.displayName} 已提交 ${submission.application.task.title} 的发布链接，请在 SLA 内验收。`,
+    href: `/brand/campaigns/${submission.campaignId}/proofs`,
+  });
   redirect(`/creator/my-tasks/${submission.applicationId}?proof=${proof.id}`);
 }
 
@@ -3350,6 +4218,11 @@ export async function reviewPublicationProofAction(proofId: string, formData: Fo
   }
 
   if (decision === "accept") {
+    assertProofTransition(proof.verificationStatus, ProofStatus.VERIFIED);
+    assertSubmissionTransition(proof.submission.status, SubmissionStatus.VERIFIED);
+    assertPublicationTransition(proof.publicationStatus, PublicationStatus.ACCEPTED);
+    assertPublicationTransition(proof.submission.publicationStatus, PublicationStatus.ACCEPTED);
+    assertSettlementTransition(proof.submission.settlementStatus, SettlementStatus.PAYABLE);
     await prisma.$transaction(async (tx) => {
       await tx.proof.update({
         where: { id: proofId },
@@ -3381,6 +4254,14 @@ export async function reviewPublicationProofAction(proofId: string, formData: Fo
         rewardAmount: proof.submission.application.task.rewardAmount,
         note: "商家验收通过后直接入账。",
       });
+      await tx.notification.create({
+        data: {
+          userId: proof.creator.userId,
+          title: "发布链接已通过验收",
+          body: `${proof.submission.application.task.title} 已验收通过，收益已进入可提现余额。`,
+          href: `/creator/my-tasks/${proof.submission.applicationId}`,
+        },
+      });
       await tx.auditLog.create({
         data: {
           actorUserId: session.userId,
@@ -3394,6 +4275,10 @@ export async function reviewPublicationProofAction(proofId: string, formData: Fo
       });
     });
   } else {
+    assertProofTransition(proof.verificationStatus, ProofStatus.REJECTED);
+    assertSubmissionTransition(proof.submission.status, SubmissionStatus.APPROVED);
+    assertPublicationTransition(proof.publicationStatus, PublicationStatus.REJECTED);
+    assertPublicationTransition(proof.submission.publicationStatus, PublicationStatus.REJECTED);
     await prisma.$transaction(async (tx) => {
       await tx.proof.update({
         where: { id: proofId },
@@ -3436,6 +4321,15 @@ export async function reviewPublicationProofAction(proofId: string, formData: Fo
 
   revalidatePath(`/brand/campaigns/${proof.campaignId}/proofs`);
   revalidatePath(`/creator/my-tasks/${proof.submission.applicationId}`);
+  await dispatchExternalNotification({
+    userId: proof.creator.userId,
+    role: "CREATOR",
+    event: decision === "accept" ? "proof.accepted" : "proof.rejected",
+    channel: "workflow",
+    title: decision === "accept" ? "发布链接已通过验收" : "发布链接未通过验收",
+    body: decision === "accept" ? `${proof.submission.application.task.title} 已验收通过，收益已进入可提现余额。` : `${rejectionReason}: ${rejectionNote}`,
+    href: `/creator/my-tasks/${proof.submission.applicationId}`,
+  });
 }
 
 export async function runSlaAutomationAction() {
@@ -3470,6 +4364,11 @@ export async function runSlaAutomationAction() {
     const threshold = Number(proof.campaign.highValueReviewThreshold);
 
     if (rewardAmount <= threshold) {
+      assertProofTransition(proof.verificationStatus, ProofStatus.VERIFIED);
+      assertSubmissionTransition(proof.submission.status, SubmissionStatus.VERIFIED);
+      assertPublicationTransition(proof.publicationStatus, PublicationStatus.ACCEPTED);
+      assertPublicationTransition(proof.submission.publicationStatus, PublicationStatus.ACCEPTED);
+      assertSettlementTransition(proof.submission.settlementStatus, SettlementStatus.PAYABLE);
       await prisma.$transaction(async (tx) => {
         await tx.proof.update({
           where: { id: proof.id },
@@ -3525,6 +4424,8 @@ export async function runSlaAutomationAction() {
       accepted += 1;
     } else {
       const activeDispute = proof.submission.disputes.find((dispute) => dispute.status === DisputeStatus.OPEN || dispute.status === DisputeStatus.NEEDS_INFO);
+      assertPublicationTransition(proof.publicationStatus, PublicationStatus.DISPUTED);
+      assertPublicationTransition(proof.submission.publicationStatus, PublicationStatus.DISPUTED);
       await prisma.$transaction(async (tx) => {
         await tx.proof.update({
           where: { id: proof.id },
@@ -3607,6 +4508,8 @@ export async function createDisputeFromProofAction(proofId: string, formData: Fo
   if (reason.length < 5) redirect(`/admin/disputes?error=${encodeURIComponent("请填写争议原因")}`);
   const activeDispute = proof.submission.disputes.find((dispute) => dispute.status === DisputeStatus.OPEN || dispute.status === DisputeStatus.NEEDS_INFO);
   if (activeDispute) redirect(`/admin/disputes?dispute=${activeDispute.id}`);
+  assertPublicationTransition(proof.publicationStatus, PublicationStatus.DISPUTED);
+  assertPublicationTransition(proof.submission.publicationStatus, PublicationStatus.DISPUTED);
 
   const dispute = await prisma.$transaction(async (tx) => {
     const created = await tx.dispute.create({
@@ -3648,7 +4551,7 @@ export async function createDisputeFromProofAction(proofId: string, formData: Fo
 }
 
 export async function decideDisputeAction(disputeId: string, formData: FormData) {
-  const session = await requireAdminPermission("payment.manage");
+  const session = await requireAdminPermission("payment.refund.execute");
   const decision = text(formData.get("decision")) as DisputeDecision;
   const resolution = text(formData.get("resolution"));
   const partialSettlementAmount = Number(text(formData.get("partialSettlementAmount")) || 0);
@@ -3682,6 +4585,23 @@ export async function decideDisputeAction(disputeId: string, formData: FormData)
     redirect(`/admin/disputes?error=${encodeURIComponent("部分结算金额必须大于 0 且小于任务奖励")}`);
   }
   const refundAmount = Math.max(0, rewardAmount - settlementAmount);
+  if (decision === DisputeDecision.FULL_SETTLEMENT || decision === DisputeDecision.PARTIAL_SETTLEMENT) {
+    assertSubmissionTransition(submission.status, SubmissionStatus.VERIFIED);
+    assertPublicationTransition(submission.publicationStatus, PublicationStatus.ACCEPTED);
+    assertSettlementTransition(
+      submission.settlementStatus,
+      decision === DisputeDecision.PARTIAL_SETTLEMENT ? SettlementStatus.PARTIALLY_SETTLED : SettlementStatus.PAYABLE,
+    );
+  }
+  if (decision === DisputeDecision.FULL_REFUND) {
+    assertSubmissionTransition(submission.status, SubmissionStatus.REJECTED);
+    assertPublicationTransition(submission.publicationStatus, PublicationStatus.REJECTED);
+    assertSettlementTransition(submission.settlementStatus, SettlementStatus.REFUNDED);
+  }
+  if (decision === DisputeDecision.ALLOW_RESUBMISSION) {
+    assertSubmissionTransition(submission.status, SubmissionStatus.APPROVED);
+    assertPublicationTransition(submission.publicationStatus, PublicationStatus.REJECTED);
+  }
 
   await prisma.$transaction(async (tx) => {
     if (decision === DisputeDecision.FULL_SETTLEMENT || decision === DisputeDecision.PARTIAL_SETTLEMENT) {
@@ -3820,9 +4740,26 @@ export async function verifyProofAction(proofId: string, formData: FormData) {
   if (!proof) redirect("/admin/proofs");
 
   if (action === "verify") {
+    assertProofTransition(proof.verificationStatus, ProofStatus.VERIFIED);
+    assertSubmissionTransition(proof.submission.status, SubmissionStatus.VERIFIED);
+    assertPublicationTransition(proof.publicationStatus, PublicationStatus.ACCEPTED);
+    assertPublicationTransition(proof.submission.publicationStatus, PublicationStatus.ACCEPTED);
+    assertSettlementTransition(proof.submission.settlementStatus, SettlementStatus.PAYABLE);
     await prisma.$transaction(async (tx) => {
-      await tx.proof.update({ where: { id: proofId }, data: { verificationStatus: ProofStatus.VERIFIED, adminNote: note } });
-      await tx.submission.update({ where: { id: proof.submissionId }, data: { status: SubmissionStatus.VERIFIED } });
+      await tx.proof.update({
+        where: { id: proofId },
+        data: { verificationStatus: ProofStatus.VERIFIED, publicationStatus: PublicationStatus.ACCEPTED, adminNote: note },
+      });
+      await tx.submission.update({
+        where: { id: proof.submissionId },
+        data: {
+          status: SubmissionStatus.VERIFIED,
+          publicationStatus: PublicationStatus.ACCEPTED,
+          settlementStatus: SettlementStatus.PAYABLE,
+          settlementAmount: proof.submission.application.task.rewardAmount,
+          acceptedAt: new Date(),
+        },
+      });
       await tx.metricsSnapshot.create({
         data: {
           proofId,
@@ -3860,9 +4797,19 @@ export async function verifyProofAction(proofId: string, formData: FormData) {
       });
     });
   } else {
+    assertProofTransition(proof.verificationStatus, ProofStatus.REJECTED);
+    assertSubmissionTransition(proof.submission.status, SubmissionStatus.APPROVED);
+    assertPublicationTransition(proof.publicationStatus, PublicationStatus.REJECTED);
+    assertPublicationTransition(proof.submission.publicationStatus, PublicationStatus.REJECTED);
     await prisma.$transaction(async (tx) => {
-      await tx.proof.update({ where: { id: proofId }, data: { verificationStatus: ProofStatus.REJECTED, adminNote: note } });
-      await tx.submission.update({ where: { id: proof.submissionId }, data: { status: SubmissionStatus.APPROVED } });
+      await tx.proof.update({
+        where: { id: proofId },
+        data: { verificationStatus: ProofStatus.REJECTED, publicationStatus: PublicationStatus.REJECTED, adminNote: note },
+      });
+      await tx.submission.update({
+        where: { id: proof.submissionId },
+        data: { status: SubmissionStatus.APPROVED, publicationStatus: PublicationStatus.REJECTED },
+      });
       await tx.notification.create({
         data: {
           userId: proof.submission.creator.userId,
@@ -3885,6 +4832,79 @@ export async function verifyProofAction(proofId: string, formData: FormData) {
     });
   }
   revalidatePath("/admin/proofs");
+}
+
+const manualPostMetricSnapshotSchema = z.object({
+  viewCount: z.coerce.number().int().min(0).optional(),
+  likeCount: z.coerce.number().int().min(0).optional(),
+  favoriteCount: z.coerce.number().int().min(0).optional(),
+  commentCount: z.coerce.number().int().min(0).optional(),
+  shareCount: z.coerce.number().int().min(0).optional(),
+  authorName: z.string().trim().max(120).optional(),
+  canonicalUrl: z.string().trim().url().optional().or(z.literal("")),
+  evidenceNote: z.string().trim().min(5).max(1000),
+});
+
+export async function createManualPostMetricSnapshotAction(proofId: string, formData: FormData) {
+  const session = await requireAdminPermission("proof.review");
+  const parsed = manualPostMetricSnapshotSchema.safeParse({
+    viewCount: text(formData.get("viewCount")) || undefined,
+    likeCount: text(formData.get("likeCount")) || undefined,
+    favoriteCount: text(formData.get("favoriteCount")) || undefined,
+    commentCount: text(formData.get("commentCount")) || undefined,
+    shareCount: text(formData.get("shareCount")) || undefined,
+    authorName: text(formData.get("authorName")) || undefined,
+    canonicalUrl: text(formData.get("canonicalUrl")),
+    evidenceNote: text(formData.get("evidenceNote")),
+  });
+  if (!parsed.success) redirect(`/admin/proofs?error=${encodeURIComponent("请填写有效的人工补录数据和证据说明。")}`);
+
+  const proof = await prisma.proof.findUnique({ where: { id: proofId }, include: { submission: true } });
+  if (!proof) redirect("/admin/proofs");
+
+  const snapshot = await prisma.postMetricSnapshot.create({
+    data: {
+      proofId,
+      platform: toCrawlerPlatform(proof.platform) ?? CrawlerPlatform.XIAOHONGSHU,
+      status: CrawlerSnapshotStatus.SUCCESS,
+      dataConfidence: "MEDIUM",
+      viewCount: parsed.data.viewCount ?? null,
+      likeCount: parsed.data.likeCount ?? null,
+      favoriteCount: parsed.data.favoriteCount ?? null,
+      commentCount: parsed.data.commentCount ?? null,
+      shareCount: parsed.data.shareCount ?? null,
+      authorName: parsed.data.authorName || null,
+      canonicalUrl: parsed.data.canonicalUrl || proof.resolvedPostUrl || proof.postUrl,
+      fetchedAt: new Date(),
+      rawProvider: "manual_admin",
+      rawEvidence: {
+        source: "manual_admin",
+        note: parsed.data.evidenceNote,
+        enteredByUserId: session.userId,
+        enteredAt: new Date().toISOString(),
+      },
+      parserVersion: "manual-v1",
+    },
+  });
+
+  await audit({
+    action: "proof.metrics_manual_snapshot_created",
+    entityType: "proof",
+    entityId: proofId,
+    afterJson: {
+      snapshotId: snapshot.id,
+      dataConfidence: snapshot.dataConfidence,
+      viewCount: snapshot.viewCount,
+      likeCount: snapshot.likeCount,
+      favoriteCount: snapshot.favoriteCount,
+      commentCount: snapshot.commentCount,
+      shareCount: snapshot.shareCount,
+      evidenceNote: parsed.data.evidenceNote,
+    },
+  });
+  revalidatePath("/admin/proofs");
+  revalidatePath(`/brand/campaigns/${proof.campaignId}/proofs`);
+  revalidatePath(`/creator/my-tasks/${proof.submission.applicationId}`);
 }
 
 export async function requestWithdrawalAction(formData: FormData) {
@@ -3949,7 +4969,7 @@ export async function requestWithdrawalAction(formData: FormData) {
 }
 
 export async function updateWithdrawalAction(withdrawalId: string, formData: FormData) {
-  const session = await requireAdminPermission("payment.manage");
+  const session = await requireAdminPermission("payment.confirm");
   const action = text(formData.get("action"));
   const note = text(formData.get("adminNote"));
   const confirmed = text(formData.get("confirmAction")) === "yes";
@@ -4046,8 +5066,24 @@ const platformSettingsSchema = z.object({
   insightDefaultStandardPerRunLimit: z.coerce.number().int().min(1).max(50),
   insightDefaultHotKeywordIntervalHours: z.coerce.number().int().min(1).max(168),
   insightDefaultStandardIntervalHours: z.coerce.number().int().min(1).max(720),
+  crawlerProofRefreshCooldownMinutes: z.coerce.number().int().min(1).max(1440),
+  crawlerBrandHourlyRefreshLimit: z.coerce.number().int().min(1).max(1000),
+  crawlerSocialRefreshCooldownMinutes: z.coerce.number().int().min(1).max(1440),
+  crawlerMaxAttempts: z.coerce.number().int().min(1).max(10),
   insightAiEnabled: z.boolean(),
-  insightAiSystemPrompt: z.string().min(20).max(4000),
+  insightAiBaseUrl: z.string().trim().url().optional().or(z.literal("")),
+  insightAiApiKey: z.string().trim().max(500).optional().or(z.literal("")),
+  insightAiModel: z.string().trim().min(2).max(120),
+  insightImageAiBaseUrl: z.string().trim().url().optional().or(z.literal("")),
+  insightImageAiApiKey: z.string().trim().max(500).optional().or(z.literal("")),
+  insightImageAiModel: z.string().trim().min(2).max(120),
+  insightAiSystemPrompt: z.string().min(20).max(12000),
+  insightAiScriptSystemPrompt: z.string().max(6000),
+  insightAiGraphicScriptSystemPrompt: z.string().min(20).max(20000),
+  insightAiVideoScriptSystemPrompt: z.string().min(20).max(22000),
+  insightAiCaseAnalysisSystemPrompt: z.string().min(20).max(20000),
+  insightAiCaseGraphicScriptSystemPrompt: z.string().min(20).max(20000),
+  insightAiCaseVideoScriptSystemPrompt: z.string().min(20).max(22000),
 });
 
 export async function updatePlatformSettingsAction(formData: FormData) {
@@ -4079,8 +5115,24 @@ export async function updatePlatformSettingsAction(formData: FormData) {
     insightDefaultStandardPerRunLimit: text(formData.get("insightDefaultStandardPerRunLimit")),
     insightDefaultHotKeywordIntervalHours: text(formData.get("insightDefaultHotKeywordIntervalHours")),
     insightDefaultStandardIntervalHours: text(formData.get("insightDefaultStandardIntervalHours")),
+    crawlerProofRefreshCooldownMinutes: text(formData.get("crawlerProofRefreshCooldownMinutes")),
+    crawlerBrandHourlyRefreshLimit: text(formData.get("crawlerBrandHourlyRefreshLimit")),
+    crawlerSocialRefreshCooldownMinutes: text(formData.get("crawlerSocialRefreshCooldownMinutes")),
+    crawlerMaxAttempts: text(formData.get("crawlerMaxAttempts")),
     insightAiEnabled: formData.get("insightAiEnabled") === "on",
-    insightAiSystemPrompt: text(formData.get("insightAiSystemPrompt")),
+    insightAiBaseUrl: text(formData.get("insightAiBaseUrl")) || DEFAULT_INSIGHT_AI_BASE_URL,
+    insightAiApiKey: text(formData.get("insightAiApiKey")),
+    insightAiModel: text(formData.get("insightAiModel")) || DEFAULT_INSIGHT_AI_MODEL,
+    insightImageAiBaseUrl: text(formData.get("insightImageAiBaseUrl")),
+    insightImageAiApiKey: text(formData.get("insightImageAiApiKey")),
+    insightImageAiModel: text(formData.get("insightImageAiModel")) || DEFAULT_INSIGHT_IMAGE_AI_MODEL,
+    insightAiSystemPrompt: text(formData.get("insightAiSystemPrompt")) || DEFAULT_INSIGHT_AI_TOPIC_DECK_PROMPT,
+    insightAiScriptSystemPrompt: text(formData.get("insightAiScriptSystemPrompt")) || DEFAULT_INSIGHT_AI_LEGACY_SCRIPT_PROMPT,
+    insightAiGraphicScriptSystemPrompt: text(formData.get("insightAiGraphicScriptSystemPrompt")) || DEFAULT_INSIGHT_AI_GRAPHIC_TABLE_SCRIPT_PROMPT || DEFAULT_INSIGHT_AI_GRAPHIC_SCRIPT_PROMPT,
+    insightAiVideoScriptSystemPrompt: text(formData.get("insightAiVideoScriptSystemPrompt")) || DEFAULT_INSIGHT_AI_VIDEO_TABLE_SCRIPT_PROMPT || DEFAULT_INSIGHT_AI_VIDEO_SCRIPT_PROMPT,
+    insightAiCaseAnalysisSystemPrompt: text(formData.get("insightAiCaseAnalysisSystemPrompt")) || DEFAULT_INSIGHT_AI_CASE_ANALYSIS_PROMPT,
+    insightAiCaseGraphicScriptSystemPrompt: text(formData.get("insightAiCaseGraphicScriptSystemPrompt")) || DEFAULT_INSIGHT_AI_CASE_GRAPHIC_SCRIPT_PROMPT,
+    insightAiCaseVideoScriptSystemPrompt: text(formData.get("insightAiCaseVideoScriptSystemPrompt")) || DEFAULT_INSIGHT_AI_CASE_VIDEO_SCRIPT_PROMPT,
   });
   if (!parsed.success) redirect(`/admin/settings?error=${encodeURIComponent("配置项校验失败")}`);
 
@@ -4108,8 +5160,24 @@ export async function updatePlatformSettingsAction(formData: FormData) {
       insightDefaultStandardPerRunLimit: parsed.data.insightDefaultStandardPerRunLimit,
       insightDefaultHotKeywordIntervalHours: parsed.data.insightDefaultHotKeywordIntervalHours,
       insightDefaultStandardIntervalHours: parsed.data.insightDefaultStandardIntervalHours,
+      crawlerProofRefreshCooldownMinutes: parsed.data.crawlerProofRefreshCooldownMinutes,
+      crawlerBrandHourlyRefreshLimit: parsed.data.crawlerBrandHourlyRefreshLimit,
+      crawlerSocialRefreshCooldownMinutes: parsed.data.crawlerSocialRefreshCooldownMinutes,
+      crawlerMaxAttempts: parsed.data.crawlerMaxAttempts,
       insightAiEnabled: parsed.data.insightAiEnabled,
+      insightAiBaseUrl: parsed.data.insightAiBaseUrl || null,
+      ...(parsed.data.insightAiApiKey ? { insightAiApiKey: parsed.data.insightAiApiKey } : {}),
+      insightAiModel: parsed.data.insightAiModel,
+      insightImageAiBaseUrl: parsed.data.insightImageAiBaseUrl || null,
+      ...(parsed.data.insightImageAiApiKey ? { insightImageAiApiKey: parsed.data.insightImageAiApiKey } : {}),
+      insightImageAiModel: parsed.data.insightImageAiModel,
       insightAiSystemPrompt: parsed.data.insightAiSystemPrompt,
+      insightAiScriptSystemPrompt: parsed.data.insightAiScriptSystemPrompt,
+      insightAiGraphicScriptSystemPrompt: parsed.data.insightAiGraphicScriptSystemPrompt,
+      insightAiVideoScriptSystemPrompt: parsed.data.insightAiVideoScriptSystemPrompt,
+      insightAiCaseAnalysisSystemPrompt: parsed.data.insightAiCaseAnalysisSystemPrompt,
+      insightAiCaseGraphicScriptSystemPrompt: parsed.data.insightAiCaseGraphicScriptSystemPrompt,
+      insightAiCaseVideoScriptSystemPrompt: parsed.data.insightAiCaseVideoScriptSystemPrompt,
     },
   });
   await audit({
@@ -4138,8 +5206,24 @@ export async function updatePlatformSettingsAction(formData: FormData) {
       insightDefaultStandardPerRunLimit: before.insightDefaultStandardPerRunLimit,
       insightDefaultHotKeywordIntervalHours: before.insightDefaultHotKeywordIntervalHours,
       insightDefaultStandardIntervalHours: before.insightDefaultStandardIntervalHours,
+      crawlerProofRefreshCooldownMinutes: before.crawlerProofRefreshCooldownMinutes,
+      crawlerBrandHourlyRefreshLimit: before.crawlerBrandHourlyRefreshLimit,
+      crawlerSocialRefreshCooldownMinutes: before.crawlerSocialRefreshCooldownMinutes,
+      crawlerMaxAttempts: before.crawlerMaxAttempts,
       insightAiEnabled: before.insightAiEnabled,
+      insightAiBaseUrl: before.insightAiBaseUrl ? "configured" : "missing",
+      insightAiApiKey: before.insightAiApiKey ? "configured" : "missing",
+      insightAiModel: before.insightAiModel,
+      insightImageAiBaseUrl: before.insightImageAiBaseUrl ? "configured" : "fallback-to-text-ai",
+      insightImageAiApiKey: before.insightImageAiApiKey ? "configured" : "fallback-to-text-ai",
+      insightImageAiModel: before.insightImageAiModel,
       insightAiSystemPrompt: before.insightAiSystemPrompt,
+      insightAiScriptSystemPrompt: before.insightAiScriptSystemPrompt,
+      insightAiGraphicScriptSystemPrompt: before.insightAiGraphicScriptSystemPrompt,
+      insightAiVideoScriptSystemPrompt: before.insightAiVideoScriptSystemPrompt,
+      insightAiCaseAnalysisSystemPrompt: before.insightAiCaseAnalysisSystemPrompt,
+      insightAiCaseGraphicScriptSystemPrompt: before.insightAiCaseGraphicScriptSystemPrompt,
+      insightAiCaseVideoScriptSystemPrompt: before.insightAiCaseVideoScriptSystemPrompt,
     },
     afterJson: {
       acceptanceSlaDays: settings.acceptanceSlaDays,
@@ -4163,12 +5247,288 @@ export async function updatePlatformSettingsAction(formData: FormData) {
       insightDefaultStandardPerRunLimit: settings.insightDefaultStandardPerRunLimit,
       insightDefaultHotKeywordIntervalHours: settings.insightDefaultHotKeywordIntervalHours,
       insightDefaultStandardIntervalHours: settings.insightDefaultStandardIntervalHours,
+      crawlerProofRefreshCooldownMinutes: settings.crawlerProofRefreshCooldownMinutes,
+      crawlerBrandHourlyRefreshLimit: settings.crawlerBrandHourlyRefreshLimit,
+      crawlerSocialRefreshCooldownMinutes: settings.crawlerSocialRefreshCooldownMinutes,
+      crawlerMaxAttempts: settings.crawlerMaxAttempts,
       insightAiEnabled: settings.insightAiEnabled,
+      insightAiBaseUrl: settings.insightAiBaseUrl ? "configured" : "missing",
+      insightAiApiKey: settings.insightAiApiKey ? "configured" : "missing",
+      insightAiModel: settings.insightAiModel,
+      insightImageAiBaseUrl: settings.insightImageAiBaseUrl ? "configured" : "fallback-to-text-ai",
+      insightImageAiApiKey: settings.insightImageAiApiKey ? "configured" : "fallback-to-text-ai",
+      insightImageAiModel: settings.insightImageAiModel,
       insightAiSystemPrompt: settings.insightAiSystemPrompt,
+      insightAiScriptSystemPrompt: settings.insightAiScriptSystemPrompt,
+      insightAiGraphicScriptSystemPrompt: settings.insightAiGraphicScriptSystemPrompt,
+      insightAiVideoScriptSystemPrompt: settings.insightAiVideoScriptSystemPrompt,
+      insightAiCaseAnalysisSystemPrompt: settings.insightAiCaseAnalysisSystemPrompt,
+      insightAiCaseGraphicScriptSystemPrompt: settings.insightAiCaseGraphicScriptSystemPrompt,
+      insightAiCaseVideoScriptSystemPrompt: settings.insightAiCaseVideoScriptSystemPrompt,
     },
   });
   revalidatePath("/admin/settings");
   revalidatePath("/brand/campaigns/new");
+}
+
+const alipayPaymentConfigSchema = z.object({
+  enabled: z.boolean(),
+  visibleToBrand: z.boolean(),
+  environment: z.enum(["sandbox", "production"]),
+  displayName: z.string().trim().min(2).max(40),
+  maintenanceMessage: z.string().trim().max(200).optional(),
+  sortOrder: z.coerce.number().int().min(1).max(999),
+  appId: z.string().trim().min(1).max(80),
+  gatewayUrl: z.string().trim().url(),
+  notifyUrl: z.string().trim().url(),
+  returnUrl: z.string().trim().url().optional().or(z.literal("")),
+  appPrivateKey: z.string().trim().optional(),
+  alipayPublicKey: z.string().trim().optional(),
+});
+
+export async function updateAlipayPaymentConfigAction(formData: FormData) {
+  const context = await requireAdminPermission("payment.config.manage");
+
+  const before = await prisma.paymentProviderConfig.findUnique({ where: { provider: "alipay" } });
+  const parsed = alipayPaymentConfigSchema.safeParse({
+    enabled: formData.get("enabled") === "on",
+    visibleToBrand: formData.get("visibleToBrand") === "on",
+    environment: text(formData.get("environment")) || "sandbox",
+    displayName: text(formData.get("displayName")) || "Alipay",
+    maintenanceMessage: text(formData.get("maintenanceMessage")),
+    sortOrder: text(formData.get("sortOrder")) || "100",
+    appId: text(formData.get("appId")),
+    gatewayUrl: text(formData.get("gatewayUrl")),
+    notifyUrl: text(formData.get("notifyUrl")),
+    returnUrl: text(formData.get("returnUrl")),
+    appPrivateKey: text(formData.get("appPrivateKey")),
+    alipayPublicKey: text(formData.get("alipayPublicKey")),
+  });
+  if (!parsed.success) redirect(`/admin/settings?error=${encodeURIComponent("支付宝配置校验失败，请检查 App ID、网关和回调 URL。")}`);
+
+  if (!before?.encryptedPrivateKey && !parsed.data.appPrivateKey) {
+    redirect(`/admin/settings?error=${encodeURIComponent("首次配置支付宝必须填写应用私钥。")}`);
+  }
+  if (!before?.encryptedPublicKey && !parsed.data.alipayPublicKey) {
+    redirect(`/admin/settings?error=${encodeURIComponent("首次配置支付宝必须填写支付宝公钥。")}`);
+  }
+
+  const encryptedPrivateKey = parsed.data.appPrivateKey ? encryptSecret(parsed.data.appPrivateKey) : before?.encryptedPrivateKey;
+  const encryptedPublicKey = parsed.data.alipayPublicKey ? encryptSecret(parsed.data.alipayPublicKey) : before?.encryptedPublicKey;
+
+  const saved = await prisma.paymentProviderConfig.upsert({
+    where: { provider: "alipay" },
+    update: {
+      enabled: parsed.data.enabled,
+      visibleToBrand: parsed.data.visibleToBrand,
+      environment: parsed.data.environment,
+      displayName: parsed.data.displayName,
+      maintenanceMessage: parsed.data.maintenanceMessage || null,
+      sortOrder: parsed.data.sortOrder,
+      appId: parsed.data.appId,
+      gatewayUrl: parsed.data.gatewayUrl,
+      notifyUrl: parsed.data.notifyUrl,
+      returnUrl: parsed.data.returnUrl || null,
+      encryptedPrivateKey,
+      encryptedPublicKey,
+      privateKeyConfigured: Boolean(encryptedPrivateKey),
+      publicKeyConfigured: Boolean(encryptedPublicKey),
+      lastUpdatedById: context.userId,
+    },
+    create: {
+      provider: "alipay",
+      enabled: parsed.data.enabled,
+      visibleToBrand: parsed.data.visibleToBrand,
+      environment: parsed.data.environment,
+      displayName: parsed.data.displayName,
+      maintenanceMessage: parsed.data.maintenanceMessage || null,
+      sortOrder: parsed.data.sortOrder,
+      appId: parsed.data.appId,
+      gatewayUrl: parsed.data.gatewayUrl,
+      notifyUrl: parsed.data.notifyUrl,
+      returnUrl: parsed.data.returnUrl || null,
+      encryptedPrivateKey,
+      encryptedPublicKey,
+      privateKeyConfigured: Boolean(encryptedPrivateKey),
+      publicKeyConfigured: Boolean(encryptedPublicKey),
+      lastUpdatedById: context.userId,
+    },
+  });
+
+  await audit({
+    action: "payment_provider.alipay_updated",
+    entityType: "payment_provider_config",
+    entityId: saved.id,
+    beforeJson: before
+      ? {
+          enabled: before.enabled,
+          visibleToBrand: before.visibleToBrand,
+          environment: before.environment,
+          appId: before.appId,
+          sortOrder: before.sortOrder,
+          gatewayUrl: before.gatewayUrl,
+          notifyUrl: before.notifyUrl,
+          returnUrl: before.returnUrl,
+          privateKeyConfigured: before.privateKeyConfigured,
+          publicKeyConfigured: before.publicKeyConfigured,
+        }
+      : undefined,
+    afterJson: {
+      enabled: saved.enabled,
+      visibleToBrand: saved.visibleToBrand,
+      environment: saved.environment,
+      appId: saved.appId,
+      sortOrder: saved.sortOrder,
+      gatewayUrl: saved.gatewayUrl,
+      notifyUrl: saved.notifyUrl,
+      returnUrl: saved.returnUrl,
+      privateKeyConfigured: saved.privateKeyConfigured,
+      publicKeyConfigured: saved.publicKeyConfigured,
+      privateKeyChanged: Boolean(parsed.data.appPrivateKey),
+      publicKeyChanged: Boolean(parsed.data.alipayPublicKey),
+    },
+  });
+  revalidatePath("/admin/settings");
+  redirect("/admin/settings?payment=1");
+}
+
+const wechatPaymentConfigSchema = z.object({
+  enabled: z.boolean(),
+  visibleToBrand: z.boolean(),
+  environment: z.enum(["sandbox", "production"]),
+  displayName: z.string().trim().min(2).max(40),
+  maintenanceMessage: z.string().trim().max(200).optional(),
+  sortOrder: z.coerce.number().int().min(1).max(999),
+  appId: z.string().trim().min(1).max(80),
+  merchantId: z.string().trim().min(1).max(80),
+  certificateSerialNo: z.string().trim().min(1).max(128),
+  gatewayUrl: z.string().trim().url(),
+  notifyUrl: z.string().trim().url(),
+  merchantPrivateKey: z.string().trim().optional(),
+  platformPublicKey: z.string().trim().optional(),
+  apiV3Key: z.string().trim().optional(),
+});
+
+export async function updateWechatPaymentConfigAction(formData: FormData) {
+  const context = await requireAdminPermission("payment.config.manage");
+
+  const before = await prisma.paymentProviderConfig.findUnique({ where: { provider: "wechat_pay" } });
+  const parsed = wechatPaymentConfigSchema.safeParse({
+    enabled: formData.get("enabled") === "on",
+    visibleToBrand: formData.get("visibleToBrand") === "on",
+    environment: text(formData.get("environment")) || "production",
+    displayName: text(formData.get("displayName")) || "WeChat Pay",
+    maintenanceMessage: text(formData.get("maintenanceMessage")),
+    sortOrder: text(formData.get("sortOrder")) || "110",
+    appId: text(formData.get("appId")),
+    merchantId: text(formData.get("merchantId")),
+    certificateSerialNo: text(formData.get("certificateSerialNo")),
+    gatewayUrl: text(formData.get("gatewayUrl")),
+    notifyUrl: text(formData.get("notifyUrl")),
+    merchantPrivateKey: text(formData.get("merchantPrivateKey")),
+    platformPublicKey: text(formData.get("platformPublicKey")),
+    apiV3Key: text(formData.get("apiV3Key")),
+  });
+  if (!parsed.success) redirect(`/admin/settings?error=${encodeURIComponent("微信支付配置校验失败，请检查 App ID、商户号、证书序列号、网关和通知 URL。")}`);
+  if (!before?.encryptedPrivateKey && !parsed.data.merchantPrivateKey) {
+    redirect(`/admin/settings?error=${encodeURIComponent("首次配置微信支付必须填写商户 API 私钥。")}`);
+  }
+  if (!before?.encryptedApiV3Key && !parsed.data.apiV3Key) {
+    redirect(`/admin/settings?error=${encodeURIComponent("首次配置微信支付必须填写 APIv3 密钥。")}`);
+  }
+  if (!before?.encryptedPublicKey && !parsed.data.platformPublicKey) {
+    redirect(`/admin/settings?error=${encodeURIComponent("首次配置微信支付必须填写微信支付平台公钥或证书公钥。")}`);
+  }
+
+  const encryptedPrivateKey = parsed.data.merchantPrivateKey ? encryptSecret(parsed.data.merchantPrivateKey) : before?.encryptedPrivateKey;
+  const encryptedPublicKey = parsed.data.platformPublicKey ? encryptSecret(parsed.data.platformPublicKey) : before?.encryptedPublicKey;
+  const encryptedApiV3Key = parsed.data.apiV3Key ? encryptSecret(parsed.data.apiV3Key) : before?.encryptedApiV3Key;
+  const saved = await prisma.paymentProviderConfig.upsert({
+    where: { provider: "wechat_pay" },
+    update: {
+      enabled: parsed.data.enabled,
+      visibleToBrand: parsed.data.visibleToBrand,
+      environment: parsed.data.environment,
+      displayName: parsed.data.displayName,
+      maintenanceMessage: parsed.data.maintenanceMessage || null,
+      sortOrder: parsed.data.sortOrder,
+      appId: parsed.data.appId,
+      merchantId: parsed.data.merchantId,
+      certificateSerialNo: parsed.data.certificateSerialNo,
+      gatewayUrl: parsed.data.gatewayUrl,
+      notifyUrl: parsed.data.notifyUrl,
+      returnUrl: null,
+      encryptedPrivateKey,
+      encryptedPublicKey,
+      encryptedApiV3Key,
+      privateKeyConfigured: Boolean(encryptedPrivateKey),
+      publicKeyConfigured: Boolean(encryptedPublicKey),
+      apiV3KeyConfigured: Boolean(encryptedApiV3Key),
+      lastUpdatedById: context.userId,
+    },
+    create: {
+      provider: "wechat_pay",
+      enabled: parsed.data.enabled,
+      visibleToBrand: parsed.data.visibleToBrand,
+      environment: parsed.data.environment,
+      displayName: parsed.data.displayName,
+      maintenanceMessage: parsed.data.maintenanceMessage || null,
+      sortOrder: parsed.data.sortOrder,
+      appId: parsed.data.appId,
+      merchantId: parsed.data.merchantId,
+      certificateSerialNo: parsed.data.certificateSerialNo,
+      gatewayUrl: parsed.data.gatewayUrl,
+      notifyUrl: parsed.data.notifyUrl,
+      encryptedPrivateKey,
+      encryptedPublicKey,
+      encryptedApiV3Key,
+      privateKeyConfigured: Boolean(encryptedPrivateKey),
+      publicKeyConfigured: Boolean(encryptedPublicKey),
+      apiV3KeyConfigured: Boolean(encryptedApiV3Key),
+      lastUpdatedById: context.userId,
+    },
+  });
+
+  await audit({
+    action: "payment_provider.wechat_pay_updated",
+    entityType: "payment_provider_config",
+    entityId: saved.id,
+    beforeJson: before
+      ? {
+          enabled: before.enabled,
+          visibleToBrand: before.visibleToBrand,
+          environment: before.environment,
+          appId: before.appId,
+          sortOrder: before.sortOrder,
+          merchantId: before.merchantId,
+          certificateSerialNo: before.certificateSerialNo,
+          gatewayUrl: before.gatewayUrl,
+          notifyUrl: before.notifyUrl,
+          privateKeyConfigured: before.privateKeyConfigured,
+          publicKeyConfigured: before.publicKeyConfigured,
+          apiV3KeyConfigured: before.apiV3KeyConfigured,
+        }
+      : undefined,
+    afterJson: {
+      enabled: saved.enabled,
+      visibleToBrand: saved.visibleToBrand,
+      environment: saved.environment,
+      appId: saved.appId,
+      sortOrder: saved.sortOrder,
+      merchantId: saved.merchantId,
+      certificateSerialNo: saved.certificateSerialNo,
+      gatewayUrl: saved.gatewayUrl,
+      notifyUrl: saved.notifyUrl,
+      privateKeyConfigured: saved.privateKeyConfigured,
+      publicKeyConfigured: saved.publicKeyConfigured,
+      apiV3KeyConfigured: saved.apiV3KeyConfigured,
+      privateKeyChanged: Boolean(parsed.data.merchantPrivateKey),
+      platformPublicKeyChanged: Boolean(parsed.data.platformPublicKey),
+      apiV3KeyChanged: Boolean(parsed.data.apiV3Key),
+    },
+  });
+  revalidatePath("/admin/settings");
+  redirect("/admin/settings?payment=1");
 }
 
 export async function applyInsightCollectionDefaultsAction() {
@@ -4537,6 +5897,19 @@ export async function refreshSocialAccountMetricsAction(socialAccountId: string)
 
   const platform = toCrawlerPlatform(account.platform);
   if (!platform) redirect(`/admin/social-accounts?error=${encodeURIComponent("该平台暂不支持自动抓取。")}`);
+  const settings = await prisma.platformSettings.upsert({ where: { id: "platform" }, update: {}, create: { id: "platform" } });
+  const cooldownSince = new Date(Date.now() - settings.crawlerSocialRefreshCooldownMinutes * 60 * 1000);
+  const recentSameAccount = await prisma.crawlerJob.count({
+    where: {
+      socialAccountId: account.id,
+      type: { in: [CrawlerJobType.FETCH_SOCIAL_ACCOUNT, CrawlerJobType.REFRESH_SOCIAL_ACCOUNT] },
+      status: { in: [CrawlerJobStatus.PENDING, CrawlerJobStatus.PROCESSING, CrawlerJobStatus.SUCCESS] },
+      createdAt: { gte: cooldownSince },
+    },
+  });
+  if (recentSameAccount > 0) {
+    redirect(`/admin/social-accounts?error=${encodeURIComponent(`同一个账号 ${settings.crawlerSocialRefreshCooldownMinutes} 分钟内不能重复刷新。`)}`);
+  }
 
   const job = await createCrawlerJob({
     type: CrawlerJobType.REFRESH_SOCIAL_ACCOUNT,
@@ -4578,15 +5951,16 @@ export async function refreshProofMetricsAction(proofId: string) {
   if (!platform) redirect(`${backTo}?error=${encodeURIComponent("该平台暂不支持自动抓取。")}`);
 
   const now = new Date();
+  const settings = await prisma.platformSettings.upsert({ where: { id: "platform" }, update: {}, create: { id: "platform" } });
   if (session.role === UserRole.BRAND) {
-    const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
+    const proofCooldownAgo = new Date(now.getTime() - settings.crawlerProofRefreshCooldownMinutes * 60 * 1000);
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
     const [recentSameProof, hourlyBrandRefreshes] = await Promise.all([
       prisma.crawlerJob.count({
         where: {
           proofId: proof.id,
           type: { in: [CrawlerJobType.FETCH_POST_METRICS, CrawlerJobType.REFRESH_POST_METRICS] },
-          createdAt: { gte: tenMinutesAgo },
+          createdAt: { gte: proofCooldownAgo },
         },
       }),
       prisma.crawlerJob.count({
@@ -4599,10 +5973,10 @@ export async function refreshProofMetricsAction(proofId: string) {
     ]);
 
     if (recentSameProof > 0) {
-      redirect(`${backTo}?error=${encodeURIComponent("同一个作品链接 10 分钟内不能重复刷新。")}`);
+      redirect(`${backTo}?error=${encodeURIComponent(`同一个作品链接 ${settings.crawlerProofRefreshCooldownMinutes} 分钟内不能重复刷新。`)}`);
     }
-    if (hourlyBrandRefreshes >= 100) {
-      redirect(`${backTo}?error=${encodeURIComponent("当前商家账号每小时最多刷新 100 次作品数据。")}`);
+    if (hourlyBrandRefreshes >= settings.crawlerBrandHourlyRefreshLimit) {
+      redirect(`${backTo}?error=${encodeURIComponent(`当前商家账号每小时最多刷新 ${settings.crawlerBrandHourlyRefreshLimit} 次作品数据。`)}`);
     }
   }
 
@@ -4744,6 +6118,202 @@ export async function collectConfiguredInsightKeywordsAction(formData: FormData)
   revalidatePath("/brand/insights");
 }
 
+function normalizeInsightMonitorType(value: string) {
+  if (value === "competitor") return "competitor";
+  if (value === "negative") return "negative";
+  return "keyword";
+}
+
+function normalizeInsightMonitorPlatform(value: string) {
+  if (value === "xiaohongshu" || value === "douyin" || value === "weibo" || value === "bilibili") return value;
+  return "xiaohongshu";
+}
+
+function insightMonitorEndpoint(platform: string) {
+  if (platform === "douyin") return "douyinSearchVideos";
+  if (platform === "weibo") return "weiboHotSearch";
+  if (platform === "bilibili") return "bilibiliSearchVideos";
+  return "xiaohongshuSearchNotes";
+}
+
+export async function createBrandInsightMonitorAction(formData: FormData) {
+  const session = await requireRole(UserRole.BRAND);
+  const brand = await prisma.brandProfile.findUnique({
+    where: { userId: session.userId },
+    select: { id: true, brandName: true },
+  });
+  if (!brand) redirect("/brand/insights/alerts?error=missing-brand");
+
+  const keyword = text(formData.get("keyword")).trim();
+  if (keyword.length < 2) redirect("/brand/insights/alerts?error=keyword");
+
+  const monitorType = normalizeInsightMonitorType(text(formData.get("monitorType")));
+  const platform = normalizeInsightMonitorPlatform(text(formData.get("platform")));
+  const interval = Math.max(1, Math.min(Number(text(formData.get("collectIntervalHours")) || 6), 168));
+  const keywordType = `brand:${brand.id}:${monitorType}`;
+
+  await prisma.insightKeywordConfig.upsert({
+    where: {
+      platform_keyword_keywordType: {
+        platform,
+        keyword,
+        keywordType,
+      },
+    },
+    update: {
+      active: true,
+      collectIntervalHours: interval,
+      perRunLimit: 10,
+      priority: monitorType === "negative" ? 20 : 40,
+      endpoint: insightMonitorEndpoint(platform),
+    },
+    create: {
+      keyword,
+      keywordType,
+      platform,
+      endpoint: insightMonitorEndpoint(platform),
+      active: true,
+      priority: monitorType === "negative" ? 20 : 40,
+      perRunLimit: 10,
+      collectIntervalHours: interval,
+    },
+  });
+
+  await audit({
+    action: "brand.insight_monitor_saved",
+    entityType: "insight_keyword_config",
+    entityId: `${brand.id}:${platform}:${keyword}:${monitorType}`,
+    afterJson: { brandId: brand.id, brandName: brand.brandName, keyword, monitorType, platform, interval },
+  });
+  revalidatePath("/brand/insights/alerts");
+  revalidatePath("/brand/insights");
+  redirect("/brand/insights/alerts?saved=1");
+}
+
+export async function updateBrandInsightMonitorAction(configId: string, formData: FormData) {
+  const session = await requireRole(UserRole.BRAND);
+  const brand = await prisma.brandProfile.findUnique({ where: { userId: session.userId }, select: { id: true } });
+  if (!brand) redirect("/brand/insights/alerts?error=missing-brand");
+
+  const existing = await prisma.insightKeywordConfig.findFirst({
+    where: { id: configId, keywordType: { startsWith: `brand:${brand.id}:` } },
+  });
+  if (!existing) redirect("/brand/insights/alerts?error=not-found");
+
+  const intent = text(formData.get("intent"));
+  if (intent === "delete") {
+    await prisma.insightKeywordConfig.delete({ where: { id: configId } });
+    await audit({
+      action: "brand.insight_monitor_deleted",
+      entityType: "insight_keyword_config",
+      entityId: configId,
+      beforeJson: { keyword: existing.keyword, keywordType: existing.keywordType, platform: existing.platform },
+    });
+  } else {
+    await prisma.insightKeywordConfig.update({
+      where: { id: configId },
+      data: { active: !existing.active },
+    });
+    await audit({
+      action: "brand.insight_monitor_toggled",
+      entityType: "insight_keyword_config",
+      entityId: configId,
+      beforeJson: { active: existing.active },
+      afterJson: { active: !existing.active },
+    });
+  }
+
+  revalidatePath("/brand/insights/alerts");
+  revalidatePath("/brand/insights");
+}
+
+function normalizeSavedTrendStatus(value: string) {
+  if (value === "PLANNED" || value === "PUBLISHED" || value === "DROPPED") return value;
+  return "SAVED";
+}
+
+export async function saveCreatorTrendAction(formData: FormData) {
+  const session = await requireRole(UserRole.CREATOR);
+  const creator = await prisma.creatorProfile.findUnique({ where: { userId: session.userId }, select: { id: true } });
+  if (!creator) redirect("/creator/trends?error=missing-creator");
+
+  const title = text(formData.get("title")).trim();
+  if (title.length < 2) redirect("/creator/trends?error=trend-title");
+
+  const platform = text(formData.get("platform")).trim() || null;
+  const topic = text(formData.get("topic")).trim() || null;
+  const reason = text(formData.get("reason")).trim() || null;
+  const sourceContentId = text(formData.get("sourceContentId")).trim() || null;
+  const sourceUrl = text(formData.get("sourceUrl")).trim() || null;
+
+  await prisma.creatorSavedTrend.upsert({
+    where: {
+      creatorId_title_platform: {
+        creatorId: creator.id,
+        title,
+        platform: platform ?? "",
+      },
+    },
+    update: {
+      topic,
+      reason,
+      sourceContentId,
+      sourceUrl,
+      status: "SAVED",
+    },
+    create: {
+      creatorId: creator.id,
+      title,
+      topic,
+      platform: platform ?? "",
+      reason,
+      sourceContentId,
+      sourceUrl,
+      status: "SAVED",
+    },
+  });
+
+  await audit({
+    action: "creator.trend_saved",
+    entityType: "creator_saved_trend",
+    entityId: `${creator.id}:${title}:${platform ?? ""}`,
+    afterJson: { title, platform, topic, sourceContentId },
+  });
+  revalidatePath("/creator/trends");
+}
+
+export async function updateCreatorSavedTrendAction(savedTrendId: string, formData: FormData) {
+  const session = await requireRole(UserRole.CREATOR);
+  const creator = await prisma.creatorProfile.findUnique({ where: { userId: session.userId }, select: { id: true } });
+  if (!creator) redirect("/creator/trends?error=missing-creator");
+
+  const existing = await prisma.creatorSavedTrend.findFirst({ where: { id: savedTrendId, creatorId: creator.id } });
+  if (!existing) redirect("/creator/trends?error=trend-not-found");
+
+  const intent = text(formData.get("intent"));
+  if (intent === "delete") {
+    await prisma.creatorSavedTrend.delete({ where: { id: savedTrendId } });
+    await audit({
+      action: "creator.saved_trend_deleted",
+      entityType: "creator_saved_trend",
+      entityId: savedTrendId,
+      beforeJson: { title: existing.title, status: existing.status },
+    });
+  } else {
+    const status = normalizeSavedTrendStatus(text(formData.get("status")) || intent);
+    await prisma.creatorSavedTrend.update({ where: { id: savedTrendId }, data: { status } });
+    await audit({
+      action: "creator.saved_trend_status_updated",
+      entityType: "creator_saved_trend",
+      entityId: savedTrendId,
+      beforeJson: { status: existing.status },
+      afterJson: { status },
+    });
+  }
+
+  revalidatePath("/creator/trends");
+}
+
 export async function markNotificationReadAction(notificationId: string) {
   const session = await requireRole([UserRole.ADMIN, UserRole.BRAND, UserRole.CREATOR]);
   await prisma.notification.updateMany({
@@ -4751,4 +6321,279 @@ export async function markNotificationReadAction(notificationId: string) {
     data: { unread: false },
   });
   revalidatePath("/");
+}
+
+export async function createSupportTicketAction(formData: FormData) {
+  const context = await requireAdminPermission("support.manage");
+  const parsed = supportTicketSchema.safeParse({
+    title: text(formData.get("title")),
+    category: text(formData.get("category")),
+    priority: text(formData.get("priority")) || SupportTicketPriority.NORMAL,
+    brandId: text(formData.get("brandId")) || undefined,
+    creatorId: text(formData.get("creatorId")) || undefined,
+    campaignId: text(formData.get("campaignId")) || undefined,
+    proofId: text(formData.get("proofId")) || undefined,
+    disputeId: text(formData.get("disputeId")) || undefined,
+    assignedToId: text(formData.get("assignedToId")) || undefined,
+    body: text(formData.get("body")),
+    internalNote: text(formData.get("internalNote")),
+  });
+  if (!parsed.success) redirect(`/admin/support?error=${encodeURIComponent("请填写有效的工单标题、类型、优先级和说明。")}`);
+
+  const ticket = await prisma.$transaction(async (tx) => {
+    const created = await tx.supportTicket.create({
+      data: {
+        title: parsed.data.title,
+        category: parsed.data.category,
+        priority: parsed.data.priority,
+        brandId: parsed.data.brandId || null,
+        creatorId: parsed.data.creatorId || null,
+        campaignId: parsed.data.campaignId || null,
+        proofId: parsed.data.proofId || null,
+        disputeId: parsed.data.disputeId || null,
+        openedByUserId: context.userId,
+        assignedToId: parsed.data.assignedToId || context.userId,
+        lastMessageAt: new Date(),
+        internalNote: parsed.data.internalNote || null,
+      },
+    });
+    await tx.supportTicketNote.create({
+      data: {
+        ticketId: created.id,
+        authorUserId: context.userId,
+        authorRole: context.role,
+        body: parsed.data.body,
+        internal: true,
+      },
+    });
+    await tx.auditLog.create({
+      data: {
+        actorUserId: context.userId,
+        actorRole: context.role,
+        action: "support_ticket.created",
+        entityType: "support_ticket",
+        entityId: created.id,
+        afterJson: {
+          title: created.title,
+          category: created.category,
+          priority: created.priority,
+          brandId: created.brandId,
+          creatorId: created.creatorId,
+          assignedToId: created.assignedToId,
+        },
+      },
+    });
+    return created;
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/support");
+  redirect(`/admin/support?ticket=${ticket.id}`);
+}
+
+export async function updateSupportTicketAction(ticketId: string, formData: FormData) {
+  const context = await requireAdminPermission("support.manage");
+  const before = await prisma.supportTicket.findUnique({ where: { id: ticketId } });
+  if (!before) redirect("/admin/support");
+  const visibleToCustomer = formData.get("visibleToCustomer") === "on";
+  const parsed = supportTicketUpdateSchema.safeParse({
+    status: text(formData.get("status")) || before.status,
+    priority: text(formData.get("priority")) || before.priority,
+    assignedToId: text(formData.get("assignedToId")) || undefined,
+    note: text(formData.get("note")),
+    internalNote: text(formData.get("internalNote")),
+  });
+  if (!parsed.success) redirect(`/admin/support?ticket=${ticketId}&error=${encodeURIComponent("工单更新内容无效。")}`);
+
+  const now = new Date();
+  await prisma.$transaction(async (tx) => {
+    await tx.supportTicket.update({
+      where: { id: ticketId },
+      data: {
+        status: parsed.data.status,
+        priority: parsed.data.priority,
+        assignedToId: parsed.data.assignedToId || null,
+        internalNote: parsed.data.internalNote || null,
+        lastMessageAt: parsed.data.note ? now : before.lastMessageAt,
+        resolvedAt: parsed.data.status === SupportTicketStatus.RESOLVED && before.status !== SupportTicketStatus.RESOLVED ? now : before.resolvedAt,
+        closedAt: parsed.data.status === SupportTicketStatus.CLOSED && before.status !== SupportTicketStatus.CLOSED ? now : before.closedAt,
+      },
+    });
+    if (parsed.data.note) {
+      await tx.supportTicketNote.create({
+        data: {
+          ticketId,
+          authorUserId: context.userId,
+          authorRole: context.role,
+          body: parsed.data.note,
+          internal: !visibleToCustomer,
+        },
+      });
+    }
+    if (parsed.data.note && visibleToCustomer && before.openedByUserId) {
+      await tx.notification.create({
+        data: {
+          userId: before.openedByUserId,
+          title: "客服工单有新回复",
+          body: parsed.data.note.slice(0, 120),
+          href: before.brandId ? `/brand/support?ticket=${ticketId}` : `/creator/support?ticket=${ticketId}`,
+        },
+      });
+    }
+    await tx.auditLog.create({
+      data: {
+        actorUserId: context.userId,
+        actorRole: context.role,
+        action: "support_ticket.updated",
+        entityType: "support_ticket",
+        entityId: ticketId,
+        beforeJson: {
+          status: before.status,
+          priority: before.priority,
+          assignedToId: before.assignedToId,
+        },
+        afterJson: {
+          status: parsed.data.status,
+          priority: parsed.data.priority,
+          assignedToId: parsed.data.assignedToId || null,
+          noteAdded: Boolean(parsed.data.note),
+          visibleToCustomer,
+        },
+      },
+    });
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/support");
+}
+
+export async function createCustomerSupportTicketAction(formData: FormData) {
+  const session = await requireRole([UserRole.BRAND, UserRole.CREATOR]);
+  const roleRoot = session.role === UserRole.BRAND ? "/brand" : "/creator";
+  const parsed = customerSupportTicketSchema.safeParse({
+    title: text(formData.get("title")),
+    category: text(formData.get("category")) || "general",
+    priority: text(formData.get("priority")) || SupportTicketPriority.NORMAL,
+    campaignId: text(formData.get("campaignId")) || undefined,
+    proofId: text(formData.get("proofId")) || undefined,
+    body: text(formData.get("body")),
+  });
+  if (!parsed.success) redirect(`${roleRoot}/support?error=${encodeURIComponent("请填写工单标题、类型和至少 5 个字的问题说明。")}`);
+
+  const [brand, creator] = await Promise.all([
+    session.role === UserRole.BRAND ? prisma.brandProfile.findUnique({ where: { userId: session.userId }, include: { responsibleAdmin: true } }) : null,
+    session.role === UserRole.CREATOR ? prisma.creatorProfile.findUnique({ where: { userId: session.userId }, include: { responsibleAdmin: true } }) : null,
+  ]);
+  if (session.role === UserRole.BRAND && !brand) redirect("/brand/profile");
+  if (session.role === UserRole.CREATOR && !creator) redirect("/creator/profile");
+
+  const assignedToId = brand?.responsibleAdmin?.userId ?? creator?.responsibleAdmin?.userId ?? null;
+  const ticket = await prisma.$transaction(async (tx) => {
+    const created = await tx.supportTicket.create({
+      data: {
+        title: parsed.data.title,
+        category: parsed.data.category,
+        priority: parsed.data.priority,
+        brandId: brand?.id ?? null,
+        creatorId: creator?.id ?? null,
+        campaignId: parsed.data.campaignId || null,
+        proofId: parsed.data.proofId || null,
+        openedByUserId: session.userId,
+        assignedToId,
+        lastMessageAt: new Date(),
+      },
+    });
+    await tx.supportTicketNote.create({
+      data: {
+        ticketId: created.id,
+        authorUserId: session.userId,
+        authorRole: session.role,
+        body: parsed.data.body,
+        internal: false,
+      },
+    });
+    if (assignedToId) {
+      await tx.notification.create({
+        data: {
+          userId: assignedToId,
+          title: "新的客服工单",
+          body: `${session.role === UserRole.BRAND ? brand?.brandName : creator?.displayName}：${created.title}`,
+          href: `/admin/support?ticket=${created.id}`,
+        },
+      });
+    }
+    await tx.auditLog.create({
+      data: {
+        actorUserId: session.userId,
+        actorRole: session.role,
+        action: "support_ticket.customer_created",
+        entityType: "support_ticket",
+        entityId: created.id,
+        afterJson: { category: created.category, priority: created.priority, brandId: created.brandId, creatorId: created.creatorId },
+      },
+    });
+    return created;
+  });
+
+  revalidatePath(`${roleRoot}/support`);
+  revalidatePath("/admin/support");
+  redirect(`${roleRoot}/support?ticket=${ticket.id}`);
+}
+
+export async function addCustomerSupportTicketNoteAction(ticketId: string, formData: FormData) {
+  const session = await requireRole([UserRole.BRAND, UserRole.CREATOR]);
+  const roleRoot = session.role === UserRole.BRAND ? "/brand" : "/creator";
+  const body = text(formData.get("body"));
+  if (body.length < 2) redirect(`${roleRoot}/support?ticket=${ticketId}&error=${encodeURIComponent("请填写回复内容。")}`);
+
+  const ticket = await prisma.supportTicket.findFirst({
+    where: {
+      id: ticketId,
+      openedByUserId: session.userId,
+      status: { notIn: [SupportTicketStatus.CLOSED, SupportTicketStatus.RESOLVED] },
+    },
+  });
+  if (!ticket) redirect(`${roleRoot}/support?error=${encodeURIComponent("工单不存在或已关闭。")}`);
+
+  await prisma.$transaction(async (tx) => {
+    await tx.supportTicketNote.create({
+      data: {
+        ticketId,
+        authorUserId: session.userId,
+        authorRole: session.role,
+        body,
+        internal: false,
+      },
+    });
+    await tx.supportTicket.update({
+      where: { id: ticketId },
+      data: {
+        status: ticket.status === SupportTicketStatus.WAITING_CUSTOMER ? SupportTicketStatus.IN_PROGRESS : ticket.status,
+        lastMessageAt: new Date(),
+      },
+    });
+    if (ticket.assignedToId) {
+      await tx.notification.create({
+        data: {
+          userId: ticket.assignedToId,
+          title: "客户补充了工单信息",
+          body: body.slice(0, 120),
+          href: `/admin/support?ticket=${ticketId}`,
+        },
+      });
+    }
+    await tx.auditLog.create({
+      data: {
+        actorUserId: session.userId,
+        actorRole: session.role,
+        action: "support_ticket.customer_replied",
+        entityType: "support_ticket",
+        entityId: ticketId,
+      },
+    });
+  });
+
+  revalidatePath(`${roleRoot}/support`);
+  revalidatePath("/admin/support");
+  redirect(`${roleRoot}/support?ticket=${ticketId}`);
 }

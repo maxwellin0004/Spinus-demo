@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function CopyScriptButton({ text, className }: { text: string; className?: string }) {
+export function CopyScriptButton({ text, className, label = "复制脚本" }: { text: string; className?: string; label?: string }) {
   const [copied, setCopied] = useState(false);
 
   return (
@@ -18,7 +18,7 @@ export function CopyScriptButton({ text, className }: { text: string; className?
       }}
     >
       <Copy className="mr-1 inline" size={14} />
-      {copied ? "已复制" : "复制脚本"}
+      {copied ? "已复制" : label}
     </button>
   );
 }

@@ -1,4 +1,5 @@
 import type { InsightComment, InsightContent, InsightTopic } from "@prisma/client";
+import { evaluateInsightConfidence, type InsightConfidence } from "@/lib/insights/credibility";
 import { extractCoverImageUrl } from "@/lib/tikhub/mappers";
 
 export type CommentSentiment = "正面" | "中性" | "负面";
@@ -100,6 +101,13 @@ export type RecommendationSummary = {
   };
   angles: string[];
   coverImageUrl?: string;
+  coverImagePrompt?: string;
+  coverNegativePrompt?: string;
+  updatedAt?: string;
+  sampleCount?: number;
+  commentSampleCount?: number;
+  platformSourceCount?: number;
+  confidence?: InsightConfidence;
 };
 
 export function summarizeCommentSignals(comments: InsightComment[]) {
@@ -278,6 +286,19 @@ function recommendationReason(keyword: string, comments: number, engagement: num
   return `${keyword}已有 ${comments} 条评论和 ${engagement.toLocaleString()} 次互动，${focus}，适合继续往问题拆解和可执行建议延展。`;
 }
 
+function recommendationCoverPrompt(keyword: string, platform: string, title: string, painPoint: string | null) {
+  const platformStyle =
+    platform === "douyin"
+      ? "竖版短视频封面风格，首屏冲突强，主体清晰"
+      : platform === "bilibili"
+        ? "竖版知识型封面风格，信息层级清晰，适合教程或复盘"
+        : platform === "weibo"
+          ? "竖版话题讨论封面风格，观点感明确，画面留白适合叠加话题文字"
+          : "竖版小红书封面图，真实生活方式摄影，可收藏笔记质感";
+  const problem = painPoint ? `突出“${painPoint}”这个具体痛点` : "突出新手上手和实际效果的对比";
+  return `${platformStyle}，主题是${keyword}，围绕标题“${title}”设计无品牌真实场景画面，${problem}，使用前后对比或错误/正确对照构图，主体位于下半区或左右分区，上方保留大面积干净留白用于前端叠加中文标题，自然柔光，高清真实质感，不要让图片模型生成文字`;
+}
+
 export function deriveContentRecommendations(
   contents: InsightContent[],
   commentCountByContentId: Map<string, number>,
@@ -321,6 +342,19 @@ export function deriveContentRecommendations(
       },
       angles,
       coverImageUrl: extractCoverImageUrl(content.rawPayload),
+      coverImagePrompt: recommendationCoverPrompt(keyword, content.platform, angles[index % angles.length] ?? `${keyword}为什么总是做不好`, painPoint),
+      coverNegativePrompt: "不要生成中文文字，不要水印，不要品牌 logo，不要夸张广告海报感，不要低清晰度，不要畸形手部，不要过度磨皮，不要杂乱背景，不要虚假品牌包装",
+      updatedAt: content.updatedAt.toISOString(),
+      sampleCount: 1,
+      commentSampleCount: comments,
+      platformSourceCount: 1,
+      confidence: evaluateInsightConfidence({
+        sourceKind: "真实采集",
+        sampleCount: 1,
+        commentSampleCount: comments,
+        platformSourceCount: 1,
+        updatedAt: content.updatedAt,
+      }),
     };
   });
 }

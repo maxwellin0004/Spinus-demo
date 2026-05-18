@@ -11,10 +11,16 @@ export const ADMIN_PERMISSIONS = [
   "campaign.manage",
   "content.review",
   "proof.review",
+  "payment.view",
+  "payment.confirm",
+  "payment.refund.review",
+  "payment.refund.execute",
+  "payment.config.manage",
   "payment.manage",
   "compliance.manage",
   "reports.view",
   "audit.view",
+  "support.manage",
   "demo.manage",
 ] as const;
 
@@ -54,7 +60,11 @@ export function isFounder(profile: AdminProfile) {
 }
 
 export function hasAdminPermission(profile: AdminProfile, permission: AdminPermission) {
-  return isFounder(profile) || profile.permissions.includes(permission);
+  if (isFounder(profile) || profile.permissions.includes(permission)) return true;
+  if (permission.startsWith("payment.") && permission !== "payment.manage") {
+    return profile.permissions.includes("payment.manage");
+  }
+  return false;
 }
 
 export async function requireAdminPermission(permission: AdminPermission) {

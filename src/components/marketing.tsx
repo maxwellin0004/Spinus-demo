@@ -172,7 +172,13 @@ export function MarketingFooter() {
     <footer className="border-t border-stone-200 bg-white">
       <div className="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-8 text-sm text-stone-500 md:flex-row md:items-center md:justify-between">
         <Logo />
-        <p>小黄雀 KOL 投放协作平台</p>
+        <div className="flex flex-wrap gap-4">
+          <Link href="/legal/terms">用户协议</Link>
+          <Link href="/legal/privacy">隐私政策</Link>
+          <Link href="/legal/cooperation">商单规则</Link>
+          <Link href="/legal/payout">收款税务</Link>
+          <Link href="/legal/disclosure">广告披露</Link>
+        </div>
       </div>
     </footer>
   );

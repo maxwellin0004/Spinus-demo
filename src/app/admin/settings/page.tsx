@@ -3,12 +3,29 @@ import {
   collectAndRefreshCreatorTrendsAction,
   runCreatorTrendRefreshAction,
   runSlaAutomationAction,
+  updateAlipayPaymentConfigAction,
   updatePlatformSettingsAction,
+  updateWechatPaymentConfigAction,
 } from "@/lib/actions";
+import { AdminPromptTester } from "@/components/admin-prompt-tester";
 import { SubmitButton } from "@/components/form-controls";
 import { Card, Field, PageHeader, StatusBadge, Textarea } from "@/components/ui";
+import {
+  DEFAULT_INSIGHT_AI_CASE_ANALYSIS_PROMPT,
+  DEFAULT_INSIGHT_AI_BASE_URL,
+  DEFAULT_INSIGHT_AI_CASE_GRAPHIC_SCRIPT_PROMPT,
+  DEFAULT_INSIGHT_AI_CASE_VIDEO_SCRIPT_PROMPT,
+  DEFAULT_INSIGHT_AI_GRAPHIC_TABLE_SCRIPT_PROMPT,
+  DEFAULT_INSIGHT_AI_MODEL,
+  DEFAULT_INSIGHT_AI_TOPIC_DECK_PROMPT,
+  DEFAULT_INSIGHT_AI_VIDEO_TABLE_SCRIPT_PROMPT,
+  DEFAULT_INSIGHT_IMAGE_AI_MODEL,
+  INSIGHT_SCRIPT_PROMPT_VERSION,
+  INSIGHT_TOPIC_DECK_PROMPT_VERSION,
+} from "@/lib/insights/ai-prompts";
 import { INSIGHT_DIRECTIONS } from "@/lib/insights/directions";
 import { prisma } from "@/lib/prisma";
+import { getAdminContext, hasAdminPermission } from "@/lib/admin";
 
 function formatDateTime(value: Date | null) {
   if (!value) return "尚未运行";
@@ -29,13 +46,84 @@ function isToday(value: Date | null | undefined) {
   return startOfUtcDay(value).getTime() === startOfUtcDay().getTime();
 }
 
+function isPublicUrl(value: string | null | undefined) {
+  if (!value) return false;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && !["localhost", "127.0.0.1", "::1"].includes(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
+function requiredStatus(label: string, ready: boolean, detail: string) {
+  return { label, ready, detail };
+}
+
+function hasPromptExample(prompt: string | null | undefined, marker: string) {
+  return Boolean(prompt?.includes(marker) && prompt.includes(INSIGHT_SCRIPT_PROMPT_VERSION));
+}
+
+function shouldUseDefaultTopicPrompt(prompt: string | null | undefined) {
+  const value = prompt?.trim() ?? "";
+  if (!value) return true;
+  if (value.includes(INSIGHT_TOPIC_DECK_PROMPT_VERSION)) return false;
+  return true;
+}
+
+function PaymentReadinessPanel({
+  title,
+  items,
+  failureCount,
+}: {
+  title: string;
+  items: Array<{ label: string; ready: boolean; detail: string }>;
+  failureCount: number;
+}) {
+  const readyCount = items.filter((item) => item.ready).length;
+  const allReady = readyCount === items.length && failureCount === 0;
+  return (
+    <div className="rounded-2xl border border-stone-200 bg-white p-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h3 className="text-base font-black text-stone-950">{title}</h3>
+          <p className="mt-1 text-sm text-stone-500">
+            {readyCount}/{items.length} 项通过，最近失败事件 {failureCount} 条
+          </p>
+        </div>
+        <StatusBadge tone={allReady ? "success" : "warning"}>{allReady ? "可测试" : "需处理"}</StatusBadge>
+      </div>
+      <div className="mt-4 grid gap-2">
+        {items.map((item) => (
+          <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm" key={item.label}>
+            <div>
+              <p className="font-black text-stone-900">{item.label}</p>
+              <p className="mt-1 text-stone-500">{item.detail}</p>
+            </div>
+            <StatusBadge tone={item.ready ? "success" : "warning"}>{item.ready ? "通过" : "待配置"}</StatusBadge>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default async function AdminSettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; sla?: string; trendRefresh?: string; trendCollect?: string; insightDefaults?: string }>;
+  searchParams: Promise<{ error?: string; sla?: string; trendRefresh?: string; trendCollect?: string; insightDefaults?: string; payment?: string }>;
 }) {
   const directionSlugs = INSIGHT_DIRECTIONS.map((direction) => direction.slug);
-  const [{ error, sla, trendRefresh, trendCollect, insightDefaults }, settings, [topicCount, contentCount, commentCount, snapshotCount, latestCollectionRun], snapshotRows] =
+  const [
+    { error, sla, trendRefresh, trendCollect, insightDefaults, payment },
+    settings,
+    [topicCount, contentCount, commentCount, snapshotCount, latestCollectionRun],
+    snapshotRows,
+    alipayConfig,
+    wechatConfig,
+    paymentEvents,
+    adminContext,
+  ] =
     await Promise.all([
       searchParams,
       prisma.platformSettings.upsert({
@@ -54,6 +142,14 @@ export default async function AdminSettingsPage({
         where: { direction: { in: directionSlugs } },
         orderBy: [{ generatedAt: "desc" }, { date: "desc" }],
       }),
+      prisma.paymentProviderConfig.findUnique({ where: { provider: "alipay" } }),
+      prisma.paymentProviderConfig.findUnique({ where: { provider: "wechat_pay" } }),
+      prisma.paymentProviderEvent.findMany({
+        where: { provider: { in: ["alipay", "wechat_pay"] } },
+        orderBy: { createdAt: "desc" },
+        take: 50,
+      }),
+      getAdminContext(),
     ]);
 
   const latestSnapshotByDirection = new Map<string, (typeof snapshotRows)[number]>();
@@ -62,8 +158,49 @@ export default async function AdminSettingsPage({
       latestSnapshotByDirection.set(snapshot.direction, snapshot);
     }
   }
-  const aiEnvConfigured = Boolean(process.env.INSIGHT_AI_BASE_URL && process.env.INSIGHT_AI_API_KEY);
-  const aiModel = process.env.INSIGHT_AI_MODEL || "chatgpt-4o-latest";
+  const aiBaseUrl = settings.insightAiBaseUrl || DEFAULT_INSIGHT_AI_BASE_URL;
+  const aiConfigured = Boolean(aiBaseUrl && settings.insightAiApiKey);
+  const aiModel = settings.insightAiModel || DEFAULT_INSIGHT_AI_MODEL;
+  const imageAiBaseUrl = settings.insightImageAiBaseUrl || aiBaseUrl;
+  const imageAiKeyConfigured = Boolean(settings.insightImageAiApiKey || settings.insightAiApiKey);
+  const imageAiModel = settings.insightImageAiModel || DEFAULT_INSIGHT_IMAGE_AI_MODEL;
+  const topicRewritePrompt = shouldUseDefaultTopicPrompt(settings.insightAiSystemPrompt) ? DEFAULT_INSIGHT_AI_TOPIC_DECK_PROMPT : settings.insightAiSystemPrompt;
+  const graphicScriptPrompt =
+    hasPromptExample(settings.insightAiGraphicScriptSystemPrompt, "graphicTables") ? settings.insightAiGraphicScriptSystemPrompt : DEFAULT_INSIGHT_AI_GRAPHIC_TABLE_SCRIPT_PROMPT;
+  const videoScriptPrompt =
+    hasPromptExample(settings.insightAiVideoScriptSystemPrompt, "videoTables") ? settings.insightAiVideoScriptSystemPrompt : DEFAULT_INSIGHT_AI_VIDEO_TABLE_SCRIPT_PROMPT;
+  const caseAnalysisPrompt =
+    hasPromptExample(settings.insightAiCaseAnalysisSystemPrompt, "caseAnalysisTables") ? settings.insightAiCaseAnalysisSystemPrompt : DEFAULT_INSIGHT_AI_CASE_ANALYSIS_PROMPT;
+  const caseGraphicPrompt =
+    hasPromptExample(settings.insightAiCaseGraphicScriptSystemPrompt, "graphicTables") ? settings.insightAiCaseGraphicScriptSystemPrompt : DEFAULT_INSIGHT_AI_CASE_GRAPHIC_SCRIPT_PROMPT;
+  const caseVideoPrompt =
+    hasPromptExample(settings.insightAiCaseVideoScriptSystemPrompt, "videoTables") ? settings.insightAiCaseVideoScriptSystemPrompt : DEFAULT_INSIGHT_AI_CASE_VIDEO_SCRIPT_PROMPT;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
+  const alipayFailures = paymentEvents.filter((event) => event.provider === "alipay" && event.status === "FAILED").length;
+  const wechatFailures = paymentEvents.filter((event) => event.provider === "wechat_pay" && event.status === "FAILED").length;
+  const alipayReadiness = [
+    requiredStatus("渠道启用", Boolean(alipayConfig?.enabled), alipayConfig?.enabled ? "Admin 已启用支付宝。" : "未启用时品牌端不会进入真实付款流程。"),
+    requiredStatus("品牌端展示", Boolean(alipayConfig?.visibleToBrand), alipayConfig?.visibleToBrand ? "品牌端会显示支付宝入口。" : "关闭后品牌端会隐藏或显示维护状态。"),
+    requiredStatus("App ID", Boolean(alipayConfig?.appId), alipayConfig?.appId ? "已填写应用 App ID。" : "需要在支付宝开放平台申请后填写。"),
+    requiredStatus("网关地址", Boolean(alipayConfig?.gatewayUrl), alipayConfig?.gatewayUrl ?? "未配置网关地址。"),
+    requiredStatus("异步回调 URL", isPublicUrl(alipayConfig?.notifyUrl), alipayConfig?.notifyUrl ? `${alipayConfig.notifyUrl}，正式测试建议使用公网 HTTPS。` : "需要配置 /api/payments/alipay/notify 的公网 HTTPS 地址。"),
+    requiredStatus("应用私钥", Boolean(alipayConfig?.privateKeyConfigured), alipayConfig?.privateKeyConfigured ? "已加密保存。" : "需要填写应用 RSA 私钥。"),
+    requiredStatus("支付宝公钥", Boolean(alipayConfig?.publicKeyConfigured), alipayConfig?.publicKeyConfigured ? "已加密保存。" : "需要填写支付宝公钥。"),
+    requiredStatus("配置加密密钥", Boolean(process.env.PAYMENT_CONFIG_SECRET || process.env.AUTH_SECRET), "生产环境建议配置 PAYMENT_CONFIG_SECRET。"),
+  ];
+  const wechatReadiness = [
+    requiredStatus("渠道启用", Boolean(wechatConfig?.enabled), wechatConfig?.enabled ? "Admin 已启用微信支付。" : "未启用时品牌端不会进入真实付款流程。"),
+    requiredStatus("品牌端展示", Boolean(wechatConfig?.visibleToBrand), wechatConfig?.visibleToBrand ? "品牌端会显示微信支付入口。" : "关闭后品牌端会隐藏或显示维护状态。"),
+    requiredStatus("App ID", Boolean(wechatConfig?.appId), wechatConfig?.appId ? "已填写 App ID。" : "需要填写公众号/小程序/应用 App ID。"),
+    requiredStatus("商户号", Boolean(wechatConfig?.merchantId), wechatConfig?.merchantId ? "已填写 MCHID。" : "需要填写微信支付商户号。"),
+    requiredStatus("证书序列号", Boolean(wechatConfig?.certificateSerialNo), wechatConfig?.certificateSerialNo ? "已填写商户 API 证书序列号。" : "需要从微信商户平台获取。"),
+    requiredStatus("网关地址", Boolean(wechatConfig?.gatewayUrl), wechatConfig?.gatewayUrl ?? "未配置网关地址。"),
+    requiredStatus("异步回调 URL", isPublicUrl(wechatConfig?.notifyUrl), wechatConfig?.notifyUrl ? `${wechatConfig.notifyUrl}，正式测试建议使用公网 HTTPS。` : "需要配置 /api/payments/wechat/notify 的公网 HTTPS 地址。"),
+    requiredStatus("商户私钥", Boolean(wechatConfig?.privateKeyConfigured), wechatConfig?.privateKeyConfigured ? "已加密保存。" : "需要填写商户 API 私钥。"),
+    requiredStatus("平台公钥", Boolean(wechatConfig?.publicKeyConfigured), wechatConfig?.publicKeyConfigured ? "已加密保存。" : "需要填写微信支付平台公钥或证书公钥。"),
+    requiredStatus("APIv3 密钥", Boolean(wechatConfig?.apiV3KeyConfigured), wechatConfig?.apiV3KeyConfigured ? "已加密保存。" : "需要填写 APIv3 密钥用于解密回调。"),
+    requiredStatus("配置加密密钥", Boolean(process.env.PAYMENT_CONFIG_SECRET || process.env.AUTH_SECRET), "生产环境建议配置 PAYMENT_CONFIG_SECRET。"),
+  ];
 
   return (
     <div className="grid gap-6">
@@ -86,6 +223,29 @@ export default async function AdminSettingsPage({
       {insightDefaults ? (
         <div className="rounded-2xl bg-green-50 p-4 text-sm font-semibold text-green-700">已将推荐采集策略同步到 {insightDefaults} 条关键词配置。</div>
       ) : null}
+
+      {payment ? <div className="rounded-2xl bg-green-50 p-4 text-sm font-semibold text-green-700">支付配置已保存。</div> : null}
+
+      <Card>
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div>
+            <h2 className="text-xl font-black text-stone-950">支付上线自检</h2>
+            <p className="mt-2 text-sm text-stone-600">
+              填完支付宝和微信支付商户资料后，先看这里。全部通过后，再用小额付款单做真实支付、回调和退款测试。
+            </p>
+          </div>
+          <StatusBadge tone={alipayReadiness.every((item) => item.ready) && wechatReadiness.every((item) => item.ready) ? "success" : "warning"}>
+            {alipayReadiness.every((item) => item.ready) && wechatReadiness.every((item) => item.ready) ? "配置完整" : "仍需配置"}
+          </StatusBadge>
+        </div>
+        <div className="mt-5 grid gap-4 xl:grid-cols-2">
+          <PaymentReadinessPanel title="支付宝" items={alipayReadiness} failureCount={alipayFailures} />
+          <PaymentReadinessPanel title="微信支付" items={wechatReadiness} failureCount={wechatFailures} />
+        </div>
+        <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50/70 p-4 text-sm leading-6 text-amber-800">
+          当前应用地址：<code>{appUrl || "未配置 NEXT_PUBLIC_APP_URL"}</code>。正式测试时，支付宝和微信支付后台里的回调地址必须能被公网访问，并且建议使用 HTTPS。
+        </div>
+      </Card>
 
       <Card>
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
@@ -123,6 +283,170 @@ export default async function AdminSettingsPage({
       </Card>
 
       <Card>
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div>
+            <h2 className="text-xl font-black text-stone-950">支付配置 / Alipay</h2>
+            <p className="mt-2 text-sm text-stone-600">
+              品牌付款单会优先使用这里的支付宝配置。密钥只保存加密值，页面不会回显明文；如需修改，请重新粘贴完整密钥。
+            </p>
+          </div>
+          <StatusBadge tone={alipayConfig?.enabled && alipayConfig.privateKeyConfigured && alipayConfig.publicKeyConfigured ? "success" : "warning"}>
+            {alipayConfig?.enabled ? "已启用" : "未启用"}
+          </StatusBadge>
+        </div>
+        <div className="mt-4 grid gap-3 md:grid-cols-4">
+          <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm">
+            <p className="font-black text-stone-900">环境</p>
+            <p className="mt-1 text-stone-600">{alipayConfig?.environment ?? "sandbox"}</p>
+          </div>
+          <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm">
+            <p className="font-black text-stone-900">App ID</p>
+            <p className="mt-1 break-all text-stone-600">{alipayConfig?.appId ?? "未配置"}</p>
+          </div>
+          <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm">
+            <p className="font-black text-stone-900">应用私钥</p>
+            <p className="mt-1 text-stone-600">{alipayConfig?.privateKeyConfigured ? "已加密保存" : "未配置"}</p>
+          </div>
+          <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm">
+            <p className="font-black text-stone-900">支付宝公钥</p>
+            <p className="mt-1 text-stone-600">{alipayConfig?.publicKeyConfigured ? "已加密保存" : "未配置"}</p>
+          </div>
+        </div>
+
+        {hasAdminPermission(adminContext.profile, "payment.config.manage") ? (
+          <form action={updateAlipayPaymentConfigAction} className="mt-5 grid gap-4 md:grid-cols-2">
+            <label className="flex items-center gap-3 rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm font-black text-stone-700">
+              <input name="enabled" type="checkbox" defaultChecked={alipayConfig?.enabled ?? false} />
+              启用支付宝付款
+            </label>
+            <label className="flex items-center gap-3 rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm font-black text-stone-700">
+              <input name="visibleToBrand" type="checkbox" defaultChecked={alipayConfig?.visibleToBrand ?? true} />
+              对品牌方展示
+            </label>
+            <label className="grid gap-2 text-sm font-medium text-stone-700">
+              运行环境
+              <select
+                className="rounded-xl border border-stone-200 bg-white/90 px-4 py-3 text-stone-950 shadow-inner outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-amber-100"
+                name="environment"
+                defaultValue={alipayConfig?.environment ?? "sandbox"}
+              >
+                <option value="sandbox">沙箱</option>
+                <option value="production">正式</option>
+              </select>
+            </label>
+            <Field label="显示名称" name="displayName" defaultValue={alipayConfig?.displayName ?? "Alipay"} required />
+            <Field label="展示顺序" name="sortOrder" type="number" defaultValue={alipayConfig?.sortOrder ?? 100} required />
+            <Field label="App ID" name="appId" defaultValue={alipayConfig?.appId ?? ""} required />
+            <Field label="网关地址" name="gatewayUrl" defaultValue={alipayConfig?.gatewayUrl ?? "https://openapi-sandbox.dl.alipaydev.com/gateway.do"} required />
+            <Field label="异步通知 URL" name="notifyUrl" defaultValue={alipayConfig?.notifyUrl ?? `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/api/payments/alipay/notify`} required />
+            <Field label="同步返回 URL" name="returnUrl" defaultValue={alipayConfig?.returnUrl ?? `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/brand/billing?tab=invoices`} />
+            <div className="md:col-span-2">
+              <Textarea label="维护提示文案" name="maintenanceMessage" defaultValue={alipayConfig?.maintenanceMessage ?? "支付宝通道维护中，请使用其他付款方式。"} rows={3} />
+            </div>
+            <div className="md:col-span-2 grid gap-4 md:grid-cols-2">
+              <Textarea label="应用私钥（留空则保持原配置）" name="appPrivateKey" rows={7} />
+              <Textarea label="支付宝公钥（留空则保持原配置）" name="alipayPublicKey" rows={7} />
+            </div>
+            <div className="md:col-span-2 rounded-2xl border border-amber-200 bg-amber-50/70 p-4 text-sm text-amber-800">
+              只有具备支付配置权限的管理员可以保存支付配置。审计日志只记录是否修改密钥，不记录密钥内容。生产环境请配置 <code>PAYMENT_CONFIG_SECRET</code>。
+            </div>
+            <div className="md:col-span-2">
+              <SubmitButton pendingLabel="正在保存支付配置..." variant="secondary">保存支付宝配置</SubmitButton>
+            </div>
+          </form>
+        ) : (
+          <div className="mt-5 rounded-2xl border border-stone-200 bg-stone-50 p-4 text-sm text-stone-600">
+            只有具备支付配置权限的管理员可以修改支付密钥和支付网关配置。
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div>
+            <h2 className="text-xl font-black text-stone-950">支付配置 / WeChat Pay</h2>
+            <p className="mt-2 text-sm text-stone-600">
+              当前接入微信支付 V3 Native 扫码支付。商户私钥和 APIv3 密钥加密保存，页面不会回显明文。
+            </p>
+          </div>
+          <StatusBadge tone={wechatConfig?.enabled && wechatConfig.privateKeyConfigured && wechatConfig.publicKeyConfigured && wechatConfig.apiV3KeyConfigured ? "success" : "warning"}>
+            {wechatConfig?.enabled ? "已启用" : "未启用"}
+          </StatusBadge>
+        </div>
+        <div className="mt-4 grid gap-3 md:grid-cols-5">
+          <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm">
+            <p className="font-black text-stone-900">商户号</p>
+            <p className="mt-1 break-all text-stone-600">{wechatConfig?.merchantId ?? "未配置"}</p>
+          </div>
+          <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm">
+            <p className="font-black text-stone-900">App ID</p>
+            <p className="mt-1 break-all text-stone-600">{wechatConfig?.appId ?? "未配置"}</p>
+          </div>
+          <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm">
+            <p className="font-black text-stone-900">商户私钥</p>
+            <p className="mt-1 text-stone-600">{wechatConfig?.privateKeyConfigured ? "已加密保存" : "未配置"}</p>
+          </div>
+          <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm">
+            <p className="font-black text-stone-900">平台公钥</p>
+            <p className="mt-1 text-stone-600">{wechatConfig?.publicKeyConfigured ? "已加密保存" : "未配置"}</p>
+          </div>
+          <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm">
+            <p className="font-black text-stone-900">APIv3 密钥</p>
+            <p className="mt-1 text-stone-600">{wechatConfig?.apiV3KeyConfigured ? "已加密保存" : "未配置"}</p>
+          </div>
+        </div>
+
+        {hasAdminPermission(adminContext.profile, "payment.config.manage") ? (
+          <form action={updateWechatPaymentConfigAction} className="mt-5 grid gap-4 md:grid-cols-2">
+            <label className="flex items-center gap-3 rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm font-black text-stone-700">
+              <input name="enabled" type="checkbox" defaultChecked={wechatConfig?.enabled ?? false} />
+              启用微信支付
+            </label>
+            <label className="flex items-center gap-3 rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm font-black text-stone-700">
+              <input name="visibleToBrand" type="checkbox" defaultChecked={wechatConfig?.visibleToBrand ?? true} />
+              对品牌方展示
+            </label>
+            <label className="grid gap-2 text-sm font-medium text-stone-700">
+              运行环境
+              <select
+                className="rounded-xl border border-stone-200 bg-white/90 px-4 py-3 text-stone-950 shadow-inner outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-amber-100"
+                name="environment"
+                defaultValue={wechatConfig?.environment ?? "production"}
+              >
+                <option value="sandbox">沙箱</option>
+                <option value="production">正式</option>
+              </select>
+            </label>
+            <Field label="显示名称" name="displayName" defaultValue={wechatConfig?.displayName ?? "WeChat Pay"} required />
+            <Field label="展示顺序" name="sortOrder" type="number" defaultValue={wechatConfig?.sortOrder ?? 110} required />
+            <Field label="App ID" name="appId" defaultValue={wechatConfig?.appId ?? ""} required />
+            <Field label="商户号 MCHID" name="merchantId" defaultValue={wechatConfig?.merchantId ?? ""} required />
+            <Field label="商户 API 证书序列号" name="certificateSerialNo" defaultValue={wechatConfig?.certificateSerialNo ?? ""} required />
+            <Field label="网关地址" name="gatewayUrl" defaultValue={wechatConfig?.gatewayUrl ?? "https://api.mch.weixin.qq.com"} required />
+            <Field label="异步通知 URL" name="notifyUrl" defaultValue={wechatConfig?.notifyUrl ?? `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/api/payments/wechat/notify`} required />
+            <div className="md:col-span-2">
+              <Textarea label="维护提示文案" name="maintenanceMessage" defaultValue={wechatConfig?.maintenanceMessage ?? "微信支付通道维护中，请使用其他付款方式。"} rows={3} />
+            </div>
+            <div className="md:col-span-2 grid gap-4 md:grid-cols-3">
+              <Textarea label="商户 API 私钥（留空则保持原配置）" name="merchantPrivateKey" rows={7} />
+              <Textarea label="微信支付平台公钥/证书公钥（留空则保持原配置）" name="platformPublicKey" rows={7} />
+              <Textarea label="APIv3 密钥（留空则保持原配置）" name="apiV3Key" rows={7} />
+            </div>
+            <div className="md:col-span-2 rounded-2xl border border-amber-200 bg-amber-50/70 p-4 text-sm text-amber-800">
+              微信支付 Native 下单会生成二维码。APIv3 密钥用于解密微信支付异步通知，请和商户平台配置保持一致。
+            </div>
+            <div className="md:col-span-2">
+              <SubmitButton pendingLabel="正在保存微信支付配置..." variant="secondary">保存微信支付配置</SubmitButton>
+            </div>
+          </form>
+        ) : (
+          <div className="mt-5 rounded-2xl border border-stone-200 bg-stone-50 p-4 text-sm text-stone-600">
+            只有具备支付配置权限的管理员可以修改微信支付密钥和支付网关配置。
+          </div>
+        )}
+      </Card>
+
+      <Card>
         <form action={updatePlatformSettingsAction} className="grid gap-4 md:grid-cols-2">
           <Field label="商家验收 SLA（天）" name="acceptanceSlaDays" type="number" defaultValue={settings.acceptanceSlaDays} />
           <Field label="高金额复核阈值（元）" name="highValueReviewThreshold" type="number" defaultValue={Number(settings.highValueReviewThreshold)} />
@@ -132,6 +456,10 @@ export default async function AdminSettingsPage({
           <Field label="平台服务费率（%）" name="platformFeeRatePercent" type="number" defaultValue={Number(settings.platformFeeRate) * 100} />
           <Field label="平台联系邮箱" name="platformContactEmail" type="email" defaultValue={settings.platformContactEmail} />
           <Field label="风险行业关键词（逗号分隔）" name="riskIndustryKeywords" defaultValue={settings.riskIndustryKeywords.join(", ")} />
+          <Field label="作品刷新冷却（分钟）" name="crawlerProofRefreshCooldownMinutes" type="number" defaultValue={settings.crawlerProofRefreshCooldownMinutes} />
+          <Field label="品牌每小时作品刷新上限" name="crawlerBrandHourlyRefreshLimit" type="number" defaultValue={settings.crawlerBrandHourlyRefreshLimit} />
+          <Field label="账号刷新冷却（分钟）" name="crawlerSocialRefreshCooldownMinutes" type="number" defaultValue={settings.crawlerSocialRefreshCooldownMinutes} />
+          <Field label="抓取任务最大重试次数" name="crawlerMaxAttempts" type="number" defaultValue={settings.crawlerMaxAttempts} />
           <div className="md:col-span-2">
             <Textarea label="风险行业软提示" name="riskIndustryPrompt" defaultValue={settings.riskIndustryPrompt} rows={4} />
           </div>
@@ -233,45 +561,109 @@ export default async function AdminSettingsPage({
           <div className="md:col-span-2 rounded-2xl border border-stone-200 bg-stone-50/70 p-4">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h2 className="text-lg font-black text-stone-950">AI 选题改写</h2>
+                <h2 className="text-lg font-black text-stone-950">AI 选题生成</h2>
                 <p className="mt-1 text-sm text-stone-600">
-                  先用真实帖子和评论做规则筛样本，再调用中转站模型把标题和推荐理由改写得更像真人策划。模型凭证从环境变量读取，接口失败时会自动回退到规则生成。
+                  先用真实帖子和评论做规则筛样本，再调用中转站模型把标题和推荐理由改写得更像真人策划。接口地址和 API Key 可在此处配置，接口失败时会自动回退到规则生成。
                 </p>
               </div>
-              <StatusBadge tone={settings.insightAiEnabled && aiEnvConfigured ? "success" : "warning"}>
-                {settings.insightAiEnabled && aiEnvConfigured ? "已配置" : "未配置完成"}
+              <StatusBadge tone={settings.insightAiEnabled && aiConfigured ? "success" : "warning"}>
+                {settings.insightAiEnabled && aiConfigured ? "已配置" : "未配置完成"}
               </StatusBadge>
             </div>
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <label className="flex items-center gap-3 rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm font-black text-stone-700">
                 <input name="insightAiEnabled" type="checkbox" defaultChecked={settings.insightAiEnabled} />
-                启用 AI 选题改写
+                启用 AI 选题生成
               </label>
               <div className="rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-600">
                 <p className="font-black text-stone-900">当前状态</p>
                 <p className="mt-1">
-                  Base URL：{process.env.INSIGHT_AI_BASE_URL ? "已配置" : "未配置"}<br />
-                  API Key：{process.env.INSIGHT_AI_API_KEY ? "已配置" : "未配置"}<br />
+                  Base URL：{aiBaseUrl}<br />
+                  API Key：{settings.insightAiApiKey ? "已配置" : "未配置"}<br />
                   模型：{aiModel}
                 </p>
               </div>
               <div className="rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-600">
-                <p className="font-black text-stone-900">环境变量</p>
+                <p className="font-black text-stone-900">4Router 默认配置</p>
                 <p className="mt-1">
-                  请在 <code>.env</code> 或部署环境里配置：<br />
-                  <code>INSIGHT_AI_BASE_URL</code><br />
-                  <code>INSIGHT_AI_API_KEY</code><br />
-                  <code>INSIGHT_AI_MODEL</code>（可选，默认 <code>chatgpt-4o-latest</code>）
+                  Base URL 建议填：<br />
+                  <code>{DEFAULT_INSIGHT_AI_BASE_URL}</code><br />
+                  文本模型建议用 <code>gpt-5.5</code>，需要更快时可改为 <code>gpt-5.4-mini</code>。API Key 留空保存时会保留原配置。
                 </p>
               </div>
               <div className="rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-600">
                 <p className="font-black text-stone-900">接入说明</p>
                 <p className="mt-1">
-                  代码会请求 <code>{`{INSIGHT_AI_BASE_URL}/chat/completions`}</code>，所以 Base URL 应该填到带 <code>/v1</code> 的根路径。
+                  代码会请求 <code>{`{BaseURL}/chat/completions`}</code>，所以 Base URL 应该填到带 <code>/v1</code> 的根路径。
                 </p>
               </div>
+              <Field label="AI Base URL" name="insightAiBaseUrl" defaultValue={aiBaseUrl} />
+              <Field label="AI 模型名" name="insightAiModel" defaultValue={aiModel} placeholder="gpt-5.5 或 gpt-5.4-mini" />
+              <Field label="AI API Key（留空保持原配置）" name="insightAiApiKey" type="password" placeholder={settings.insightAiApiKey ? "已配置，留空不变" : "粘贴 4Router API Key"} />
+              <div className="md:col-span-2 rounded-xl border border-cyan-200 bg-cyan-50/60 px-4 py-3 text-sm text-cyan-900">
+                <p className="font-black">前端生图模型配置</p>
+                <p className="mt-1 text-cyan-800">
+                  默认沿用文本 AI 的 Base URL 和 API Key；如果后续生图服务需要单独网关或单独 Key，可以在下面覆盖。当前生图模型：{imageAiModel}
+                  ，Key：{imageAiKeyConfigured ? "已配置或沿用文本 Key" : "未配置"}。
+                </p>
+              </div>
+              <Field label="生图 Base URL（留空沿用文本 AI）" name="insightImageAiBaseUrl" defaultValue={settings.insightImageAiBaseUrl ?? ""} placeholder={imageAiBaseUrl} />
+              <Field label="生图模型名" name="insightImageAiModel" defaultValue={imageAiModel} />
+              <Field
+                label="生图 API Key（留空沿用文本 AI Key）"
+                name="insightImageAiApiKey"
+                type="password"
+                placeholder={settings.insightImageAiApiKey ? "已单独配置，留空不变" : settings.insightAiApiKey ? "留空沿用文本 AI Key" : "粘贴 4Router API Key"}
+              />
               <div className="md:col-span-2">
-                <Textarea label="系统提示词" name="insightAiSystemPrompt" defaultValue={settings.insightAiSystemPrompt} rows={6} />
+                <Textarea label="选题生成提示词" name="insightAiSystemPrompt" defaultValue={topicRewritePrompt} rows={14} />
+                <AdminPromptTester label="选题生成提示词" promptField="insightAiSystemPrompt" promptType="topicRewrite" />
+              </div>
+              <input name="insightAiScriptSystemPrompt" type="hidden" value={settings.insightAiScriptSystemPrompt} />
+              <div className="md:col-span-2">
+                <Textarea
+                  label="图文脚本生成提示词"
+                  name="insightAiGraphicScriptSystemPrompt"
+                  defaultValue={graphicScriptPrompt}
+                  rows={12}
+                />
+                <AdminPromptTester label="图文脚本生成提示词" promptField="insightAiGraphicScriptSystemPrompt" promptType="topicGraphic" />
+              </div>
+              <div className="md:col-span-2">
+                <Textarea
+                  label="视频脚本生成提示词"
+                  name="insightAiVideoScriptSystemPrompt"
+                  defaultValue={videoScriptPrompt}
+                  rows={12}
+                />
+                <AdminPromptTester label="视频脚本生成提示词" promptField="insightAiVideoScriptSystemPrompt" promptType="topicVideo" />
+              </div>
+              <div className="md:col-span-2">
+                <Textarea
+                  label="爆款案例拆解提示词"
+                  name="insightAiCaseAnalysisSystemPrompt"
+                  defaultValue={caseAnalysisPrompt}
+                  rows={10}
+                />
+                <AdminPromptTester label="爆款案例拆解提示词" promptField="insightAiCaseAnalysisSystemPrompt" promptType="caseAnalysis" />
+              </div>
+              <div className="md:col-span-2">
+                <Textarea
+                  label="爆款案例图文改写提示词"
+                  name="insightAiCaseGraphicScriptSystemPrompt"
+                  defaultValue={caseGraphicPrompt}
+                  rows={8}
+                />
+                <AdminPromptTester label="爆款案例图文改写提示词" promptField="insightAiCaseGraphicScriptSystemPrompt" promptType="caseGraphic" />
+              </div>
+              <div className="md:col-span-2">
+                <Textarea
+                  label="爆款案例视频改写提示词"
+                  name="insightAiCaseVideoScriptSystemPrompt"
+                  defaultValue={caseVideoPrompt}
+                  rows={8}
+                />
+                <AdminPromptTester label="爆款案例视频改写提示词" promptField="insightAiCaseVideoScriptSystemPrompt" promptType="caseVideo" />
               </div>
             </div>
           </div>

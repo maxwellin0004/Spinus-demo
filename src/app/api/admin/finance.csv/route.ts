@@ -1,5 +1,4 @@
-import { UserRole } from "@prisma/client";
-import { requireRole } from "@/lib/auth";
+import { requireAdminPermission } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 
 function escapeCsv(value: unknown) {
@@ -8,7 +7,7 @@ function escapeCsv(value: unknown) {
 }
 
 export async function GET() {
-  await requireRole(UserRole.ADMIN);
+  await requireAdminPermission("payment.view");
   const [brandLedgers, walletTransactions, withdrawals, refunds, invoices] = await Promise.all([
     prisma.brandLedgerTransaction.findMany({
       include: { brand: true, campaign: true },
@@ -23,7 +22,7 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     }),
     prisma.brandRefundRequest.findMany({
-      include: { brand: true, campaign: true },
+      include: { brand: true, campaign: true, relatedInvoice: true },
       orderBy: { createdAt: "desc" },
     }),
     prisma.invoice.findMany({
@@ -33,7 +32,29 @@ export async function GET() {
   ]);
 
   const rows = [
-    ["source", "entity_id", "party_type", "party_name", "campaign", "type", "amount", "currency", "status", "before_balance", "after_balance", "payment_reference", "note", "created_at"],
+    [
+      "source",
+      "entity_id",
+      "party_type",
+      "party_name",
+      "campaign",
+      "type",
+      "amount",
+      "currency",
+      "status",
+      "before_balance",
+      "after_balance",
+      "payment_provider",
+      "payment_reference",
+      "provider_refund_id",
+      "provider_refund_status",
+      "related_invoice_id",
+      "invoice_number",
+      "paid_at",
+      "refunded_at",
+      "note",
+      "created_at",
+    ],
     ...brandLedgers.map((ledger) => [
       "brand_ledger",
       ledger.id,
@@ -46,6 +67,13 @@ export async function GET() {
       ledger.status,
       ledger.beforeBalance,
       ledger.afterBalance,
+      "",
+      "",
+      "",
+      "",
+      ledger.relatedInvoiceId ?? "",
+      "",
+      "",
       "",
       ledger.note ?? "",
       ledger.createdAt.toISOString(),
@@ -60,6 +88,13 @@ export async function GET() {
       tx.amount,
       tx.currency,
       tx.status,
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
       "",
       "",
       "",
@@ -79,6 +114,13 @@ export async function GET() {
       "",
       "",
       "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
       request.adminNote ?? "",
       request.createdAt.toISOString(),
     ]),
@@ -94,7 +136,14 @@ export async function GET() {
       request.status,
       "",
       "",
-      "",
+      request.provider ?? "",
+      request.relatedInvoice?.paymentReference ?? "",
+      request.providerRefundId ?? "",
+      request.providerRefundStatus ?? "",
+      request.relatedInvoiceId ?? "",
+      request.relatedInvoice?.invoiceNumber ?? "",
+      request.relatedInvoice?.paidAt?.toISOString() ?? "",
+      request.refundedAt?.toISOString() ?? "",
       request.adminNote ?? "",
       request.createdAt.toISOString(),
     ]),
@@ -110,7 +159,14 @@ export async function GET() {
       invoice.status,
       "",
       "",
+      invoice.paymentMethod ?? "",
       invoice.paymentReference ?? "",
+      "",
+      "",
+      "",
+      invoice.invoiceNumber ?? "",
+      invoice.paidAt?.toISOString() ?? "",
+      "",
       invoice.note ?? "",
       invoice.createdAt.toISOString(),
     ]),

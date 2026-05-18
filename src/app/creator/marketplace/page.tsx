@@ -2,6 +2,7 @@ import { CampaignStatus, TaskStatus, UserRole } from "@prisma/client";
 import { CreatorMarketplaceExperience, type MarketplaceTask } from "@/components/creator-marketplace-experience";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { buildTaskMatch } from "@/lib/task-match";
 import { V1_CATEGORIES, V1_COUNTRIES, V1_PLATFORMS } from "@/lib/v1Options";
 
 type MarketplaceSearchParams = {
@@ -21,22 +22,6 @@ function daysUntil(value: Date | null, nowMs: number) {
   if (!value) return null;
   const ms = value.getTime() - nowMs;
   return Math.ceil(ms / (1000 * 60 * 60 * 24));
-}
-
-function scoreTask(task: {
-  platform: string;
-  contentType: string;
-  minimumFollowers: number;
-  campaign: { industry: string };
-}, creator?: { categories: string[]; contentTypes: string[]; socialAccounts: { platform: string; followers: number; verified: boolean }[] } | null) {
-  let score = 58;
-  if (creator?.categories.includes(task.campaign.industry)) score += 16;
-  if (creator?.contentTypes.includes(task.contentType)) score += 10;
-  const account = creator?.socialAccounts.find((item) => item.platform === task.platform);
-  if (account) score += account.verified ? 10 : 5;
-  if (account && account.followers >= task.minimumFollowers) score += 8;
-  if (task.minimumFollowers <= 10_000) score += 4;
-  return Math.min(98, score);
 }
 
 function taskMatchesQuery(task: MarketplaceTask, query: string) {
@@ -84,7 +69,7 @@ export default async function CreatorMarketplacePage({
   const taskDtos = rawTasks.map<MarketplaceTask>((task) => {
     const deadline = task.publishDeadline ?? task.deadline;
     const remainingSlots = task.slotsTotal - task.slotsTaken;
-    const matchScore = scoreTask(task, creator);
+    const match = buildTaskMatch(task, creator);
     return {
       id: task.id,
       title: task.title || task.campaign.title,
@@ -100,14 +85,17 @@ export default async function CreatorMarketplacePage({
       minimumFollowers: task.minimumFollowers,
       deadline: deadline.toISOString(),
       daysLeft: daysUntil(deadline, nowMs),
-      matchScore,
+      matchScore: match.score,
+      matchReasons: match.reasons,
+      blockers: match.blockers,
+      canApply: match.canApply,
       tags: [
         task.contentType,
         task.campaign.requiresDraftReview ? "需审核" : "免初审",
         task.campaign.allowUnverifiedSocialAccounts ? "低门槛" : "已认证账号",
         task.campaign.disclosureRequired ? "需标识广告" : "自然种草",
       ],
-      isRecommended: matchScore >= 86,
+      isRecommended: match.recommended,
       requiresDraftReview: task.campaign.requiresDraftReview,
       allowUnverifiedSocialAccounts: task.campaign.allowUnverifiedSocialAccounts,
       href: `/creator/tasks/${task.id}`,

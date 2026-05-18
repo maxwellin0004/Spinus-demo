@@ -2,7 +2,7 @@ import { CreatorMembershipApplicationStatus } from "@prisma/client";
 import { SubmitButton } from "@/components/form-controls";
 import { Card, DataTable, Field, PageHeader, StatusBadge, Textarea, WorkflowHint } from "@/components/ui";
 import { updateCreatorMembershipApplicationAction } from "@/lib/actions";
-import { getAdminContext } from "@/lib/admin";
+import { requireAdminPermission } from "@/lib/admin";
 import { creatorMembershipLabel, creatorMembershipTone } from "@/lib/creator-membership-status";
 import { money, shortDate } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
@@ -17,7 +17,7 @@ export default async function AdminMembershipApplicationsPage({
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
-  await getAdminContext();
+  await requireAdminPermission("payment.view");
   const { error } = await searchParams;
   const applications = await prisma.creatorMembershipApplication.findMany({
     include: {

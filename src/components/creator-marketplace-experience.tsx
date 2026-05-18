@@ -36,6 +36,9 @@ export type MarketplaceTask = {
   deadline: string;
   daysLeft: number | null;
   matchScore: number;
+  matchReasons: string[];
+  blockers: string[];
+  canApply: boolean;
   tags: string[];
   isRecommended: boolean;
   requiresDraftReview: boolean;
@@ -223,6 +226,11 @@ function TaskCard({ task }: { task: MarketplaceTask }) {
 
       <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold leading-relaxed text-amber-800">
         需使用已认证社媒账号申请，商家通过后进入创作或发布流程。
+      </div>
+
+      <div className={`mt-3 rounded-lg border px-3 py-2 text-xs font-semibold leading-relaxed ${task.canApply ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-amber-200 bg-amber-50 text-amber-800"}`}>
+        <p className="font-black">{task.canApply ? `匹配度 ${task.matchScore}%` : "暂不可申请"}</p>
+        <p className="mt-1">{task.canApply ? task.matchReasons.slice(0, 2).join(" / ") : task.blockers[0]}</p>
       </div>
 
       <Link

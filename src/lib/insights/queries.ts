@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getInsightDirectionTerms } from "@/lib/insights/directions";
 import { withSharedInsightCache } from "@/lib/insights/cache";
+import { buildInsightReason, evaluateInsightConfidence } from "@/lib/insights/credibility";
 
 const INSIGHTS_CACHE_MAX = 400;
 
@@ -21,6 +22,10 @@ export type InsightScopedFilters = {
   days?: number;
 };
 
+export type CreatorTrendScopedFilters = InsightScopedFilters & {
+  scenario?: string;
+};
+
 function since(days: number) {
   const date = new Date();
   date.setDate(date.getDate() - days);
@@ -38,6 +43,26 @@ function normalizeScopedFilters(filters?: InsightScopedFilters, fallbackDays = 3
   const keyword = filters?.keyword?.trim() || undefined;
   const terms = getInsightDirectionTerms(filters?.directionSlug);
   return { days, platform, keyword, terms };
+}
+
+function normalizeCreatorTrendFilters(filters?: string | CreatorTrendScopedFilters, fallbackDays = 7) {
+  if (typeof filters === "string" || filters == null) {
+    return normalizeScopedFilters({ directionSlug: filters }, fallbackDays);
+  }
+  return normalizeScopedFilters(filters, fallbackDays);
+}
+
+function creatorTrendCacheKey(filters?: string | CreatorTrendScopedFilters, fallbackDays = 7) {
+  if (typeof filters === "string" || filters == null) {
+    return JSON.stringify({ direction: filters ?? "all", platform: "all", keyword: "", days: fallbackDays });
+  }
+  return JSON.stringify({
+    direction: filters.directionSlug ?? "all",
+    platform: filters.platform ?? "all",
+    keyword: filters.keyword?.trim() ?? "",
+    days: clampDays(filters.days, fallbackDays),
+    scenario: filters.scenario ?? "creator_ops",
+  });
 }
 
 function matchesDirectionText(text: string, terms: string[]) {
@@ -68,24 +93,92 @@ function contentMatchesScope(
   return matchesDirectionText(text, terms) && matchesKeywordText(text, keyword);
 }
 
-export async function getCreatorTrendsOverview(directionSlug?: string) {
-  return withInsightsCache(`creator-overview:${directionSlug ?? "all"}`, 60_000, async () => {
-  const terms = getInsightDirectionTerms(directionSlug);
+type KeywordStatContent = {
+  keyword: string | null;
+  platform: string;
+  title: string;
+  description?: string | null;
+  heatScore: number;
+  likeCount: number;
+  commentCount: number;
+  shareCount: number;
+  collectCount: number;
+  updatedAt: Date;
+};
+
+type KeywordStats = {
+  topic: string;
+  platforms: Set<string>;
+  maxHeatScore: number;
+  contentCount: number;
+  interactionCount: number;
+  commentSampleCount: number;
+  collectCount: number;
+  latestUpdatedAt: Date | null;
+};
+
+function collectKeywordStats(contents: KeywordStatContent[], terms: string[], keyword?: string) {
+  const merged = new Map<string, KeywordStats>();
+  for (const content of contents) {
+    if (!content.keyword || !contentMatchesScope(content, terms, keyword)) continue;
+    const existing = merged.get(content.keyword) ?? {
+      topic: content.keyword,
+      platforms: new Set<string>(),
+      maxHeatScore: 0,
+      contentCount: 0,
+      interactionCount: 0,
+      commentSampleCount: 0,
+      collectCount: 0,
+      latestUpdatedAt: null,
+    };
+    existing.platforms.add(content.platform);
+    existing.maxHeatScore = Math.max(existing.maxHeatScore, content.heatScore ?? 0);
+    existing.contentCount += 1;
+    existing.interactionCount += content.likeCount + content.commentCount + content.shareCount + content.collectCount;
+    existing.commentSampleCount += content.commentCount;
+    existing.collectCount += content.collectCount;
+    if (!existing.latestUpdatedAt || content.updatedAt > existing.latestUpdatedAt) {
+      existing.latestUpdatedAt = content.updatedAt;
+    }
+    merged.set(content.keyword, existing);
+  }
+  return merged;
+}
+
+function scoreCreatorScenario(row: { heatScore: number; sampleCount?: number; commentSampleCount?: number; stage?: string }, scenario?: string) {
+  const sampleSignal = Math.log10((row.sampleCount ?? 0) + 1) * 8 + Math.log10((row.commentSampleCount ?? 0) + 1) * 6;
+  if (scenario === "case_review") {
+    const overheatedBoost = row.stage === "已过热" || row.heatScore >= 85 ? 18 : 0;
+    return row.heatScore * 1.15 + sampleSignal + overheatedBoost;
+  }
+  if (scenario === "topic_seeding") {
+    const competitionPenalty = row.heatScore >= 88 ? 16 : 0;
+    return row.heatScore + sampleSignal - competitionPenalty;
+  }
+  return row.heatScore + sampleSignal;
+}
+
+export async function getCreatorTrendsOverview(filters?: string | CreatorTrendScopedFilters) {
+  return withInsightsCache(`creator-overview:${creatorTrendCacheKey(filters, 7)}`, 60_000, async () => {
+  const scoped = normalizeCreatorTrendFilters(filters, 7);
   const [recentTopics, recentContents] = await Promise.all([
     prisma.insightTopic.findMany({
-      where: { date: { gte: since(7) } },
+      where: { date: { gte: since(scoped.days) } },
       orderBy: { heatScore: "desc" },
       take: 320,
     }),
     prisma.insightContent.findMany({
-      where: { createdAt: { gte: since(7) } },
+      where: {
+        createdAt: { gte: since(scoped.days) },
+        ...(scoped.platform ? { platform: scoped.platform } : {}),
+      },
       orderBy: { heatScore: "desc" },
       take: 320,
     }),
   ]);
 
-  const scopedTopics = recentTopics.filter((item) => topicMatchesScope(item, terms)).slice(0, 50);
-  const scopedContents = recentContents.filter((item) => contentMatchesScope(item, terms)).slice(0, 50);
+  const scopedTopics = recentTopics.filter((item) => topicMatchesScope(item, scoped.terms, scoped.keyword)).slice(0, 50);
+  const scopedContents = recentContents.filter((item) => contentMatchesScope(item, scoped.terms, scoped.keyword)).slice(0, 50);
   const keywordTopicCount = new Set(scopedContents.map((item) => item.keyword).filter(Boolean)).size;
   const topicMatchCount = scopedTopics.filter((item) => item.heatScore >= 70).length;
   const contentMatchCount = scopedContents.filter((item) => item.heatScore >= 70).length;
@@ -101,101 +194,130 @@ export async function getCreatorTrendsOverview(directionSlug?: string) {
   });
 }
 
-export async function getCreatorTopTopics(directionSlug?: string) {
-  return withInsightsCache(`creator-topics:${directionSlug ?? "all"}`, 60_000, async () => {
-  const terms = getInsightDirectionTerms(directionSlug);
-  const topics = (await prisma.insightTopic.findMany({
-    where: { date: { gte: since(7) } },
-    orderBy: [{ heatScore: "desc" }, { updatedAt: "desc" }],
-    take: 180,
-  }))
-    .filter((topic) => topicMatchesScope(topic, terms))
+export async function getCreatorTopTopics(filters?: string | CreatorTrendScopedFilters) {
+  return withInsightsCache(`creator-topics:${creatorTrendCacheKey(filters, 7)}`, 60_000, async () => {
+  const scoped = normalizeCreatorTrendFilters(filters, 7);
+  const [topicSourceRows, recentContentRows] = await Promise.all([
+    prisma.insightTopic.findMany({
+      where: { date: { gte: since(scoped.days) } },
+      orderBy: [{ heatScore: "desc" }, { updatedAt: "desc" }],
+      take: 180,
+    }),
+    prisma.insightContent.findMany({
+      where: {
+        keyword: { not: null },
+        createdAt: { gte: since(scoped.days) },
+        ...(scoped.platform ? { platform: scoped.platform } : {}),
+      },
+      select: {
+        keyword: true,
+        platform: true,
+        title: true,
+        description: true,
+        heatScore: true,
+        likeCount: true,
+        commentCount: true,
+        shareCount: true,
+        collectCount: true,
+        updatedAt: true,
+      },
+      orderBy: [{ heatScore: "desc" }, { updatedAt: "desc" }],
+      take: 900,
+    }),
+  ]);
+  const contentStats = collectKeywordStats(recentContentRows, scoped.terms, scoped.keyword);
+  const topics = topicSourceRows
+    .filter((topic) => topicMatchesScope(topic, scoped.terms, scoped.keyword))
     .slice(0, 10);
 
-  const rankedTopicRows = topics.map((topic, index) => ({
-    rank: index + 1,
-    topic: topic.topic,
-    stage: topic.stage ?? "长尾可做",
-    heatScore: topic.heatScore,
-    growthRate: topic.growthRate ?? 0,
-    platforms: topic.platforms,
-    advice: topic.heatScore >= 70 ? "立即跟进" : topic.heatScore >= 45 ? "可长期做" : "谨慎跟进",
-  }));
-  if (rankedTopicRows.length >= 10) {
-    return rankedTopicRows;
-  }
-
-  const groupedContents = await prisma.insightContent.groupBy({
-    by: ["keyword", "platform"],
-    where: {
-      keyword: { not: null },
-      createdAt: { gte: since(7) },
-    },
-    _count: { _all: true },
-    _avg: { heatScore: true },
-    _sum: {
-      likeCount: true,
-      commentCount: true,
-      shareCount: true,
-      collectCount: true,
-    },
-  });
-
-  const merged = new Map<
-    string,
-    {
-      topic: string;
-      platforms: Set<string>;
-      avgHeatScore: number;
-      contentCount: number;
-      interactionCount: number;
-    }
-  >();
-
-  for (const row of groupedContents) {
-    if (!row.keyword || !matchesDirectionText(row.keyword, terms)) continue;
-    const existing = merged.get(row.keyword) ?? {
-      topic: row.keyword,
-      platforms: new Set<string>(),
-      avgHeatScore: 0,
-      contentCount: 0,
-      interactionCount: 0,
+  const rankedTopicRows = topics.map((topic, index) => {
+    const stats = contentStats.get(topic.topic);
+    const platformSourceCount = stats?.platforms.size ?? topic.platforms.length;
+    const sampleCount = stats?.contentCount ?? 1;
+    const commentSampleCount = stats?.commentSampleCount ?? 0;
+    const updatedAt = (stats?.latestUpdatedAt ?? topic.updatedAt).toISOString();
+    const confidence = evaluateInsightConfidence({
+      sourceKind: "真实采集",
+      sampleCount,
+      commentSampleCount,
+      platformSourceCount,
+      updatedAt,
+    });
+    return {
+      rank: index + 1,
+      topic: topic.topic,
+      stage: topic.stage ?? "长尾可做",
+      heatScore: topic.heatScore,
+      growthRate: topic.growthRate ?? 0,
+      platforms: topic.platforms,
+      advice: topic.heatScore >= 70 ? "立即跟进" : topic.heatScore >= 45 ? "可长期做" : "谨慎跟进",
+      updatedAt,
+      sampleCount,
+      commentSampleCount,
+      platformSourceCount,
+      confidence,
+      reason: buildInsightReason({
+        topic: topic.topic,
+        heatScore: topic.heatScore,
+        sampleCount,
+        commentSampleCount,
+        platformSourceCount,
+        source: "综合热榜",
+      }),
     };
-    existing.platforms.add(row.platform);
-    existing.avgHeatScore = Math.max(existing.avgHeatScore, row._avg.heatScore ?? 0);
-    existing.contentCount += row._count._all ?? 0;
-    existing.interactionCount +=
-      (row._sum.likeCount ?? 0) +
-      (row._sum.commentCount ?? 0) +
-      (row._sum.shareCount ?? 0) +
-      (row._sum.collectCount ?? 0);
-    merged.set(row.keyword, existing);
-  }
-
-  const fallbackRows = Array.from(merged.values())
+  });
+  const fallbackRows = Array.from(contentStats.values())
     .map((row) => {
       const interactionBoost = row.interactionCount > 0 ? Math.log10(row.interactionCount + 1) * 8 : 0;
       const contentBoost = row.contentCount > 0 ? Math.log10(row.contentCount + 1) * 6 : 0;
-      const heatScore = Math.min(100, Math.round((row.avgHeatScore || 0) + interactionBoost + contentBoost));
+      const heatScore = Math.min(100, Math.round((row.maxHeatScore || 0) + interactionBoost + contentBoost));
       return {
         topic: row.topic,
         heatScore,
         platforms: Array.from(row.platforms),
+        sampleCount: row.contentCount,
+        commentSampleCount: row.commentSampleCount,
+        platformSourceCount: row.platforms.size,
+        updatedAt: row.latestUpdatedAt?.toISOString(),
       };
     })
     .sort((a, b) => b.heatScore - a.heatScore)
     .filter((row) => !rankedTopicRows.some((topic) => topic.topic === row.topic))
     .slice(0, Math.max(0, 10 - rankedTopicRows.length))
-    .map((row, index) => ({
-      rank: rankedTopicRows.length + index + 1,
-      topic: row.topic,
-      stage: row.heatScore >= 85 ? "爆发中" : row.heatScore >= 55 ? "长尾可做" : "谨慎跟进",
-      heatScore: row.heatScore,
-      growthRate: 0,
-      platforms: row.platforms,
-      advice: row.heatScore >= 70 ? "立即跟进" : row.heatScore >= 45 ? "可长期做" : "谨慎跟进",
-    }));
-  return [...rankedTopicRows, ...fallbackRows];
+    .map((row, index) => {
+      const confidence = evaluateInsightConfidence({
+        sourceKind: "真实采集",
+        sampleCount: row.sampleCount,
+        commentSampleCount: row.commentSampleCount,
+        platformSourceCount: row.platformSourceCount,
+        updatedAt: row.updatedAt,
+      });
+      return {
+        rank: rankedTopicRows.length + index + 1,
+        topic: row.topic,
+        stage: row.heatScore >= 85 ? "爆发中" : row.heatScore >= 55 ? "长尾可做" : "谨慎跟进",
+        heatScore: row.heatScore,
+        growthRate: 0,
+        platforms: row.platforms,
+        advice: row.heatScore >= 70 ? "立即跟进" : row.heatScore >= 45 ? "可长期做" : "谨慎跟进",
+        updatedAt: row.updatedAt,
+        sampleCount: row.sampleCount,
+        commentSampleCount: row.commentSampleCount,
+        platformSourceCount: row.platformSourceCount,
+        confidence,
+        reason: buildInsightReason({
+          topic: row.topic,
+          heatScore: row.heatScore,
+          sampleCount: row.sampleCount,
+          commentSampleCount: row.commentSampleCount,
+          platformSourceCount: row.platformSourceCount,
+          source: "内容样本",
+        }),
+      };
+    });
+  return [...rankedTopicRows, ...fallbackRows]
+    .sort((a, b) => scoreCreatorScenario(b, filters && typeof filters !== "string" ? filters.scenario : undefined) - scoreCreatorScenario(a, filters && typeof filters !== "string" ? filters.scenario : undefined))
+    .map((row, index) => ({ ...row, rank: index + 1 }));
   });
 }
 
@@ -220,91 +342,144 @@ function xiaohongshuMatchScore(input: {
   return Math.max(45, Math.min(98, Math.round(searchHeat * 0.25 + noteFit * 0.2 + titleCover * 0.2 + accountFit * 0.2 + (100 - competitionPenalty * 4) * 0.15)));
 }
 
-export async function getXiaohongshuOpportunityRows(directionSlug?: string) {
-  return withInsightsCache(`creator-xhs:${directionSlug ?? "all"}`, 60_000, async () => {
-  const terms = getInsightDirectionTerms(directionSlug);
-  const [topics, groupedContents] = await Promise.all([
+export async function getXiaohongshuOpportunityRows(filters?: string | CreatorTrendScopedFilters) {
+  return withInsightsCache(`creator-xhs:${creatorTrendCacheKey(filters, 7)}`, 60_000, async () => {
+  const scoped = normalizeCreatorTrendFilters(filters, 7);
+  if (scoped.platform && scoped.platform !== "xiaohongshu") return [];
+  const [topics, xiaohongshuContents] = await Promise.all([
     prisma.insightTopic.findMany({
       where: {
         source: "tikhub:xiaohongshu",
-        date: { gte: since(7) },
+        date: { gte: since(scoped.days) },
       },
       orderBy: [{ heatScore: "desc" }, { updatedAt: "desc" }],
       take: 60,
     }),
-    prisma.insightContent.groupBy({
-      by: ["keyword"],
+    prisma.insightContent.findMany({
       where: {
         platform: "xiaohongshu",
         keyword: { not: null },
-        createdAt: { gte: since(14) },
+        createdAt: { gte: since(Math.max(scoped.days, 14)) },
       },
-      _count: { _all: true },
-      _sum: {
+      select: {
+        keyword: true,
+        platform: true,
+        title: true,
+        description: true,
+        heatScore: true,
         likeCount: true,
         commentCount: true,
         shareCount: true,
         collectCount: true,
+        updatedAt: true,
       },
-      orderBy: { _sum: { collectCount: "desc" } },
-      take: 120,
+      orderBy: [{ collectCount: "desc" }, { heatScore: "desc" }, { updatedAt: "desc" }],
+      take: 600,
     }),
   ]);
 
-  const scopedTopics = topics.filter((topic) => topicMatchesScope(topic, terms));
-  const scopedGroupedContents = groupedContents.filter((row) => row.keyword && matchesDirectionText(row.keyword, terms));
-  const contentByKeyword = new Map(scopedGroupedContents.map((row) => [row.keyword, row]));
+  const scopedTopics = topics.filter((topic) => topicMatchesScope(topic, scoped.terms, scoped.keyword));
+  const contentStats = collectKeywordStats(xiaohongshuContents, scoped.terms, scoped.keyword);
+  const contentByKeyword = new Map(Array.from(contentStats.values()).map((row) => [row.topic, row]));
 
   const topicRows = scopedTopics.map((topic) => {
     const content = contentByKeyword.get(topic.topic);
     const interactionCount =
-      (content?._sum.likeCount ?? 0) +
-      (content?._sum.commentCount ?? 0) +
-      (content?._sum.shareCount ?? 0) +
-      (content?._sum.collectCount ?? 0);
-    const contentCount = content?._count._all ?? 0;
+      content?.interactionCount ?? 0;
+    const contentCount = content?.contentCount ?? 0;
     const matchScore = xiaohongshuMatchScore({
       heatScore: topic.heatScore,
       contentCount,
       interactionCount,
-      collectCount: content?._sum.collectCount ?? 0,
-      commentCount: content?._sum.commentCount ?? 0,
+      collectCount: content?.collectCount ?? 0,
+      commentCount: content?.commentSampleCount ?? 0,
     });
+    const sampleCount = contentCount || 1;
+    const commentSampleCount = content?.commentSampleCount ?? 0;
+    const platformSourceCount = content?.platforms.size ?? 1;
+    const updatedAt = (content?.latestUpdatedAt ?? topic.updatedAt).toISOString();
+    const source = topic.source.includes("Creator") ? "创作灵感" : "热搜热榜";
 
     return {
       topic: topic.topic,
-      source: topic.source.includes("Creator") ? "创作灵感" : "热搜热榜",
+      source,
       heat: Math.round(topic.heatScore),
       match: matchScore,
       noteFit: opportunityLevel(matchScore),
       titlePotential: opportunityLevel(Math.min(100, topic.heatScore + Math.round(interactionCount / 120))),
       competition: contentCount >= 12 ? "高" : contentCount >= 5 ? "中" : "低",
       action: matchScore >= 82 ? "立即写" : matchScore >= 68 ? "观察补样本" : "暂缓",
+      updatedAt,
+      sampleCount,
+      commentSampleCount,
+      platformSourceCount,
+      confidence: evaluateInsightConfidence({
+        sourceKind: "真实采集",
+        sampleCount,
+        commentSampleCount,
+        platformSourceCount,
+        updatedAt,
+      }),
+      reason: buildInsightReason({
+        topic: topic.topic,
+        heatScore: topic.heatScore,
+        matchScore,
+        sampleCount,
+        commentSampleCount,
+        platformSourceCount,
+        source,
+      }),
     };
   });
 
-  const contentOnlyRows = scopedGroupedContents
-    .filter((row) => row.keyword && !scopedTopics.some((topic) => topic.topic === row.keyword))
+  const contentOnlyRows = Array.from(contentStats.values())
+    .sort((a, b) => {
+      if (b.collectCount !== a.collectCount) return b.collectCount - a.collectCount;
+      return b.interactionCount - a.interactionCount;
+    })
+    .filter((row) => !scopedTopics.some((topic) => topic.topic === row.topic))
     .slice(0, Math.max(0, 8 - topicRows.length))
     .map((row) => {
-      const interactionCount = (row._sum.likeCount ?? 0) + (row._sum.commentCount ?? 0) + (row._sum.shareCount ?? 0) + (row._sum.collectCount ?? 0);
-      const heat = Math.min(100, Math.round(interactionCount / Math.max(1, row._count._all * 50)));
+      const interactionCount = row.interactionCount;
+      const heat = Math.min(100, Math.round(interactionCount / Math.max(1, row.contentCount * 50)));
       const match = xiaohongshuMatchScore({
         heatScore: heat,
-        contentCount: row._count._all,
+        contentCount: row.contentCount,
         interactionCount,
-        collectCount: row._sum.collectCount ?? 0,
-        commentCount: row._sum.commentCount ?? 0,
+        collectCount: row.collectCount,
+        commentCount: row.commentSampleCount,
+      });
+      const updatedAt = row.latestUpdatedAt?.toISOString();
+      const confidence = evaluateInsightConfidence({
+        sourceKind: "真实采集",
+        sampleCount: row.contentCount,
+        commentSampleCount: row.commentSampleCount,
+        platformSourceCount: row.platforms.size,
+        updatedAt,
       });
       return {
-        topic: row.keyword ?? "未标记关键词",
+        topic: row.topic,
         source: "笔记样本",
         heat,
         match,
         noteFit: opportunityLevel(match),
         titlePotential: opportunityLevel(Math.min(100, heat + Math.round(interactionCount / 120))),
-        competition: row._count._all >= 12 ? "高" : row._count._all >= 5 ? "中" : "低",
+        competition: row.contentCount >= 12 ? "高" : row.contentCount >= 5 ? "中" : "低",
         action: match >= 82 ? "立即写" : match >= 68 ? "观察补样本" : "暂缓",
+        updatedAt,
+        sampleCount: row.contentCount,
+        commentSampleCount: row.commentSampleCount,
+        platformSourceCount: row.platforms.size,
+        confidence,
+        reason: buildInsightReason({
+          topic: row.topic,
+          heatScore: heat,
+          matchScore: match,
+          sampleCount: row.contentCount,
+          commentSampleCount: row.commentSampleCount,
+          platformSourceCount: row.platforms.size,
+          source: "笔记样本",
+        }),
       };
     });
 
@@ -566,8 +741,8 @@ export async function getKeywordTrendSeries(
   });
 }
 
-export async function getCreatorTrendSeries(days = 7, directionSlug?: string) {
-  const rows = await getKeywordTrendSeries(days, directionSlug);
+export async function getCreatorTrendSeries(days = 7, directionSlug?: string, options?: { platform?: string; keyword?: string }) {
+  const rows = await getKeywordTrendSeries(days, directionSlug, options);
   return rows.map((row) => ({
     date: row.date,
     skincare: row.brand,

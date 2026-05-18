@@ -65,6 +65,8 @@ export type PostMetricsLike = {
   authorPlatformUserId?: string | null;
   authorMatchStatus?: string | null;
   rawProvider?: string | null;
+  dataConfidence?: string | null;
+  failureCategory?: string | null;
   failureReason?: string | null;
   fetchedAt?: Date | string | null;
 };
@@ -101,6 +103,7 @@ export function PostMetricsPanel({
   const source = snapshot?.rawProvider ?? latestAttempt?.rawProvider ?? "-";
   const fetchedAt = snapshot?.fetchedAt ?? latestAttempt?.fetchedAt;
   const status = latestAttempt?.status ?? snapshot?.status ?? "-";
+  const confidence = snapshot?.dataConfidence ?? latestAttempt?.dataConfidence ?? "-";
 
   return (
     <div className="rounded-2xl border border-stone-200 bg-white/82 p-4 text-sm text-stone-700">
@@ -111,7 +114,11 @@ export function PostMetricsPanel({
             {zhText("Provider")}: {source} · {zhText("Status")}: {zhText(status)} · {zhText("Fetched")}: {metricDate(fetchedAt)}
           </p>
         </div>
-        {snapshot?.authorMatchStatus ? <StatusBadge>{snapshot.authorMatchStatus}</StatusBadge> : null}
+        <div className="flex flex-wrap gap-2">
+          <StatusBadge>{confidence}</StatusBadge>
+          {source === "manual_admin" ? <StatusBadge>人工补录</StatusBadge> : null}
+          {snapshot?.authorMatchStatus ? <StatusBadge>{snapshot.authorMatchStatus}</StatusBadge> : null}
+        </div>
       </div>
       <div className={cn("mt-4 grid gap-3", compact ? "grid-cols-2 md:grid-cols-5" : "grid-cols-2 md:grid-cols-5")}>
         {[
@@ -131,6 +138,8 @@ export function PostMetricsPanel({
         <div className="mt-4 grid gap-2 text-xs text-stone-600 md:grid-cols-2">
           <p>{zhText("Author")}: {snapshot?.authorName ?? "-"}</p>
           <p>{zhText("Author ID")}: {snapshot?.authorPlatformUserId ?? "-"}</p>
+          {latestAttempt?.failureCategory ? <p>{zhText("Failure category")}: {latestAttempt.failureCategory}</p> : null}
+          {source === "manual_admin" ? <p>{zhText("Evidence source")}: manual_admin</p> : null}
           {latestAttempt?.failureReason ? <p className="md:col-span-2 text-amber-700">{latestAttempt.failureReason}</p> : null}
         </div>
       ) : null}

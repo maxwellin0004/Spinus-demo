@@ -15,7 +15,12 @@ const permissionLabels: Record<string, string> = {
   "campaign.manage": "推广管理",
   "content.review": "内容审核",
   "proof.review": "证明审核",
-  "payment.manage": "结算管理",
+  "payment.view": "财务只读",
+  "payment.confirm": "付款确认",
+  "payment.refund.review": "退款审核",
+  "payment.refund.execute": "退款执行",
+  "payment.config.manage": "支付配置",
+  "payment.manage": "结算管理（旧版全权限）",
   "compliance.manage": "合规管理",
   "reports.view": "报表查看",
   "audit.view": "审计日志",
@@ -152,6 +157,7 @@ export default async function AdminStaffPage({ searchParams }: { searchParams: P
                     <option value={UserStatus.FROZEN}>冻结</option>
                   </Select>
                   <Field label="重置密码（可空）" name="password" type="password" />
+                  <Field label="敏感操作确认" name="sensitiveConfirmation" placeholder="需要时输入 CONFIRM" />
                   <Field label="BD 邀请码" name="inviteCode" defaultValue={inviteCode} />
                   <Field label="邀请码备注（可选）" name="inviteNote" defaultValue={latestInvite?.note ?? ""} />
                   <label className="rounded-xl border border-stone-200 bg-white/80 px-4 py-3 text-sm font-semibold text-stone-700">

@@ -23,6 +23,9 @@ export default async function LoginPage({
           <p className="mt-5 text-sm text-stone-500">
             还没有账号？ <Link className="font-semibold text-stone-950" href="/auth/register">注册</Link>
           </p>
+          <p className="mt-2 text-sm text-stone-500">
+            忘记密码？ <Link className="font-semibold text-stone-950" href="/auth/forgot-password">找回密码</Link>
+          </p>
         </Card>
       </div>
     </main>
