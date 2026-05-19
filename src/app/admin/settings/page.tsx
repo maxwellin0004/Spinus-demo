@@ -7,6 +7,8 @@ import {
   updatePlatformSettingsAction,
   updateWechatPaymentConfigAction,
 } from "@/lib/actions";
+import { AdminSettingsAccordion, AdminSettingsAccordionSection } from "@/components/admin-settings-accordion";
+import { AdminMetricGrid, AdminNotice } from "@/components/admin-workbench";
 import { AdminPromptTester } from "@/components/admin-prompt-tester";
 import { SubmitButton } from "@/components/form-controls";
 import { Card, Field, PageHeader, StatusBadge, Textarea } from "@/components/ui";
@@ -201,31 +203,62 @@ export default async function AdminSettingsPage({
     requiredStatus("APIv3 密钥", Boolean(wechatConfig?.apiV3KeyConfigured), wechatConfig?.apiV3KeyConfigured ? "已加密保存。" : "需要填写 APIv3 密钥用于解密回调。"),
     requiredStatus("配置加密密钥", Boolean(process.env.PAYMENT_CONFIG_SECRET || process.env.AUTH_SECRET), "生产环境建议配置 PAYMENT_CONFIG_SECRET。"),
   ];
+  const paymentReady = alipayReadiness.every((item) => item.ready) && wechatReadiness.every((item) => item.ready);
+  const paymentFailureTotal = alipayFailures + wechatFailures;
+  const insightReady = contentCount > 0 && snapshotCount > 0;
+  const alipayConfigReady = Boolean(alipayConfig?.enabled && alipayConfig?.privateKeyConfigured && alipayConfig?.publicKeyConfigured);
+  const wechatConfigReady = Boolean(
+    wechatConfig?.enabled && wechatConfig?.privateKeyConfigured && wechatConfig?.publicKeyConfigured && wechatConfig?.apiV3KeyConfigured,
+  );
+  const trendSnapshotsFresh = INSIGHT_DIRECTIONS.every((direction) => isToday(latestSnapshotByDirection.get(direction.slug)?.date));
+  const aiSectionReady = settings.insightAiEnabled && aiConfigured;
+  const automationSectionHealthy = settings.creatorTrendRefreshLastStatus !== "FAILED";
+  const platformConfigReady = aiSectionReady && automationSectionHealthy && trendSnapshotsFresh;
 
   return (
     <div className="grid gap-6">
       <PageHeader eyebrow="管理端" title="平台配置" />
 
-      {error ? <div className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</div> : null}
+      {error ? <AdminNotice tone="danger">{error}</AdminNotice> : null}
       {sla ? (
-        <div className="rounded-2xl bg-green-50 p-4 text-sm font-semibold text-green-700">
+        <AdminNotice tone="success">
           SLA 处理完成：自动通过 {sla.split("-")[0] ?? 0} 条，进入平台复核 {sla.split("-")[1] ?? 0} 条。
-        </div>
+        </AdminNotice>
       ) : null}
       {trendRefresh ? (
-        <div className="rounded-2xl bg-green-50 p-4 text-sm font-semibold text-green-700">达人洞察刷新完成：生成 {trendRefresh} 个方向快照。</div>
+        <AdminNotice tone="success">达人洞察刷新完成：生成 {trendRefresh} 个方向快照。</AdminNotice>
       ) : null}
       {trendCollect ? (
-        <div className="rounded-2xl bg-green-50 p-4 text-sm font-semibold text-green-700">
+        <AdminNotice tone="success">
           采集并刷新完成：采集 {trendCollect} 条内容，生成 {trendRefresh ?? 0} 个方向快照。
-        </div>
+        </AdminNotice>
       ) : null}
       {insightDefaults ? (
-        <div className="rounded-2xl bg-green-50 p-4 text-sm font-semibold text-green-700">已将推荐采集策略同步到 {insightDefaults} 条关键词配置。</div>
+        <AdminNotice tone="success">已将推荐采集策略同步到 {insightDefaults} 条关键词配置。</AdminNotice>
       ) : null}
 
-      {payment ? <div className="rounded-2xl bg-green-50 p-4 text-sm font-semibold text-green-700">支付配置已保存。</div> : null}
+      {payment ? <AdminNotice tone="success">支付配置已保存。</AdminNotice> : null}
 
+      <AdminMetricGrid
+        columns="md:grid-cols-3 xl:grid-cols-6"
+        items={[
+          { label: "支付上线", value: paymentReady ? "已就绪" : "待处理", sub: `${paymentFailureTotal} 条失败事件` },
+          { label: "洞察话题", value: topicCount, sub: `内容 ${contentCount} / 评论 ${commentCount}` },
+          { label: "达人快照", value: snapshotCount, sub: trendSnapshotsFresh ? "今日已刷新" : "仍有方向未刷新" },
+          { label: "AI 配置", value: aiSectionReady ? "已启用" : "未完成", sub: aiModel },
+          { label: "自动化状态", value: automationSectionHealthy ? "正常" : "失败", sub: formatDateTime(settings.creatorTrendRefreshLastRunAt) },
+          { label: "最近采集", value: latestCollectionRun?.resultCount ?? 0, sub: latestCollectionRun ? latestCollectionRun.status : "尚未采集" },
+        ]}
+      />
+
+      <AdminSettingsAccordion defaultExpandedId="payment-readiness">
+        <AdminSettingsAccordionSection
+          abnormal={!paymentReady}
+          id="payment-readiness"
+          summary={`支付宝 ${alipayReadiness.filter((item) => item.ready).length}/${alipayReadiness.length} · 微信 ${wechatReadiness.filter((item) => item.ready).length}/${wechatReadiness.length} · 失败事件 ${paymentFailureTotal} 条`}
+          title="支付上线自检"
+          tone={paymentReady ? "success" : "warning"}
+        >
       <Card>
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
@@ -246,7 +279,15 @@ export default async function AdminSettingsPage({
           当前应用地址：<code>{appUrl || "未配置 NEXT_PUBLIC_APP_URL"}</code>。正式测试时，支付宝和微信支付后台里的回调地址必须能被公网访问，并且建议使用 HTTPS。
         </div>
       </Card>
+        </AdminSettingsAccordionSection>
 
+        <AdminSettingsAccordionSection
+          abnormal={!insightReady}
+          id="insight-status"
+          summary={`话题 ${topicCount} · 内容 ${contentCount} · 评论 ${commentCount} · 快照 ${snapshotCount}`}
+          title="洞察数据状态"
+          tone={insightReady ? "success" : "warning"}
+        >
       <Card>
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
@@ -281,7 +322,15 @@ export default async function AdminSettingsPage({
           <p>最近快照：{formatDateTime(settings.creatorTrendRefreshLastRunAt)}</p>
         </div>
       </Card>
+        </AdminSettingsAccordionSection>
 
+        <AdminSettingsAccordionSection
+          abnormal={!alipayConfigReady}
+          id="alipay-config"
+          summary={`${alipayConfig?.enabled ? "已启用" : "未启用"} · ${alipayConfig?.appId ? "App ID 已配" : "缺 App ID"} · 失败事件 ${alipayFailures} 条`}
+          title="支付配置 / Alipay"
+          tone={alipayConfigReady ? "success" : "warning"}
+        >
       <Card>
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
@@ -360,7 +409,15 @@ export default async function AdminSettingsPage({
           </div>
         )}
       </Card>
+        </AdminSettingsAccordionSection>
 
+        <AdminSettingsAccordionSection
+          abnormal={!wechatConfigReady}
+          id="wechat-config"
+          summary={`${wechatConfig?.enabled ? "已启用" : "未启用"} · ${wechatConfig?.merchantId ? "MCHID 已配" : "缺 MCHID"} · 失败事件 ${wechatFailures} 条`}
+          title="支付配置 / WeChat Pay"
+          tone={wechatConfigReady ? "success" : "warning"}
+        >
       <Card>
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
@@ -445,7 +502,15 @@ export default async function AdminSettingsPage({
           </div>
         )}
       </Card>
+        </AdminSettingsAccordionSection>
 
+        <AdminSettingsAccordionSection
+          abnormal={!platformConfigReady}
+          id="platform-rules"
+          summary={`趋势刷新 ${settings.creatorTrendRefreshEnabled ? "已启用" : "未启用"} · AI ${settings.insightAiEnabled ? "已启用" : "未启用"} · ${aiConfigured ? "AI Key 已配" : "缺 AI Key"}`}
+          title="平台规则 / 趋势 / AI"
+          tone={platformConfigReady ? "success" : "warning"}
+        >
       <Card>
         <form action={updatePlatformSettingsAction} className="grid gap-4 md:grid-cols-2">
           <Field label="商家验收 SLA（天）" name="acceptanceSlaDays" type="number" defaultValue={settings.acceptanceSlaDays} />
@@ -673,7 +738,14 @@ export default async function AdminSettingsPage({
           </div>
         </form>
       </Card>
+        </AdminSettingsAccordionSection>
 
+        <AdminSettingsAccordionSection
+          id="manual-trend-refresh"
+          summary="按当前配置立即生成今日快照，不额外采集外部数据。"
+          title="手动刷新达人洞察"
+          tone="neutral"
+        >
       <Card>
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
@@ -687,7 +759,14 @@ export default async function AdminSettingsPage({
           </form>
         </div>
       </Card>
+        </AdminSettingsAccordionSection>
 
+        <AdminSettingsAccordionSection
+          id="collect-and-refresh"
+          summary="采集到期关键词后重建趋势快照，适合运营手动补跑。"
+          title="采集并刷新达人洞察"
+          tone="neutral"
+        >
       <Card>
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div>
@@ -704,7 +783,14 @@ export default async function AdminSettingsPage({
           </form>
         </div>
       </Card>
+        </AdminSettingsAccordionSection>
 
+        <AdminSettingsAccordionSection
+          id="render-cron-guide"
+          summary="Collect 和 Daily Refresh 两条建议任务，供 Render Cron 或其他调度器复用。"
+          title="Render Cron 建议"
+          tone="info"
+        >
       <Card>
         <h2 className="text-xl font-black text-stone-950">Render Cron 建议</h2>
         <div className="mt-4 grid gap-4 text-sm text-stone-700 lg:grid-cols-2">
@@ -726,7 +812,14 @@ export default async function AdminSettingsPage({
           </div>
         </div>
       </Card>
+        </AdminSettingsAccordionSection>
 
+        <AdminSettingsAccordionSection
+          id="config-notes"
+          summary="V1 必须稳定的平台边界、风险提示和争议处理说明。"
+          title="第一版配置边界"
+          tone="neutral"
+        >
       <Card>
         <h2 className="text-xl font-black text-stone-950">第一版配置边界</h2>
         <div className="mt-3 grid gap-3 text-sm leading-6 text-stone-600">
@@ -735,6 +828,8 @@ export default async function AdminSettingsPage({
           <p>资金争议和任务争议必须留在系统内处理，联系邮箱只用于一般问题。</p>
         </div>
       </Card>
+        </AdminSettingsAccordionSection>
+      </AdminSettingsAccordion>
 
       <Card>
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

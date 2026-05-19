@@ -149,19 +149,27 @@ function Dropdown({
   items,
   value,
   onSelect,
+  active,
+  size = "md",
 }: {
   label: string;
   icon?: ReactNode;
   items: { label: string; value: string }[];
   value: string;
   onSelect: (value: string) => void;
+  active?: boolean;
+  size?: "md" | "lg";
 }) {
   const [open, setOpen] = useState(false);
 
   return (
     <div className="relative">
       <button
-        className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black shadow-sm transition hover:border-teal-200 hover:text-teal-700"
+        className={cn(
+          "flex shrink-0 items-center whitespace-nowrap border shadow-sm transition hover:border-teal-200 hover:text-teal-700",
+          size === "lg" ? "h-14 min-w-[13rem] gap-3 rounded-2xl px-6 text-[1.05rem]" : "h-10 gap-2 rounded-xl px-4 text-sm",
+          active ? "border-teal-200 bg-teal-50 text-teal-800" : "border-slate-200 bg-white text-slate-900",
+        )}
         type="button"
         onClick={() => setOpen((next) => !next)}
       >
@@ -203,30 +211,38 @@ export function CreatorTrendHeaderFilters() {
   }, [directions, direction, platform, range, scenario, router]);
 
   return (
-    <div className="flex w-full min-w-0 items-center gap-3 overflow-x-auto no-scrollbar lg:w-auto lg:shrink-0" aria-busy={isNavigating}>
+    <div
+      className="flex w-full min-w-0 items-center gap-4 overflow-x-auto no-scrollbar rounded-[1.75rem] border border-slate-200/90 bg-white/90 p-2.5 shadow-[0_10px_28px_rgba(15,23,42,0.06)] lg:w-auto lg:shrink-0"
+      aria-busy={isNavigating}
+    >
       <Dropdown
         icon={<CalendarDays size={14} />}
         items={rangeFilters}
         label={rangeFilters.find((item) => item.value === filters.range)?.label ?? "近7天"}
         value={filters.range}
+        size="lg"
         onSelect={(value) => setFilters({ range: value as TrendRange }, "#hot-topics", { scroll: false })}
       />
       <Dropdown
         items={platformFilters}
         label={platformFilters.find((item) => item.value === filters.platform)?.label ?? "全部"}
         value={filters.platform}
+        size="lg"
         onSelect={(value) => setFilters({ platform: value as TrendPlatform }, "#hot-topics", { scroll: false })}
       />
       <Dropdown
         items={directions.map((item) => ({ label: item.label, value: item.slug }))}
         label={currentDirection.label}
         value={filters.direction}
+        active
+        size="lg"
         onSelect={(value) => setFilters({ direction: value, keyword: "" })}
       />
       <Dropdown
         items={scenarioFilters}
         label={scenarioFilters.find((item) => item.value === filters.scenario)?.label ?? "达人运营"}
         value={filters.scenario}
+        size="lg"
         onSelect={(value) => setFilters({ scenario: value }, "#hot-topics", { scroll: false })}
       />
     </div>
@@ -245,16 +261,19 @@ export function CreatorTrendSearch() {
   }
 
   return (
-    <section className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-center">
-      <form className="flex h-12 min-w-0 flex-1 items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 shadow-sm sm:min-w-[26rem] sm:px-4" onSubmit={submit}>
-        <Search className="text-slate-400" size={20} />
+    <section className="flex min-w-0 flex-col gap-5">
+      <form
+        className="flex h-14 min-w-0 flex-1 items-center gap-4 rounded-2xl border border-slate-200 bg-white px-5 shadow-[0_10px_22px_rgba(15,23,42,0.05)] sm:px-5"
+        onSubmit={submit}
+      >
+        <Search className="text-slate-400" size={24} />
         <input
-          className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-slate-700 outline-none placeholder:text-slate-400"
+          className="min-w-0 flex-1 bg-transparent text-base font-semibold text-slate-700 outline-none placeholder:text-slate-400"
           placeholder="搜索热点 / 选题 / 关键词 / 对标账号"
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
         />
-        <button className="shrink-0 rounded-lg bg-slate-950 px-3 py-1.5 text-xs font-black text-white" type="submit">
+        <button className="h-12 shrink-0 rounded-xl bg-slate-950 px-7 text-base font-black text-white shadow-[0_12px_30px_rgba(15,23,42,0.15)]" type="submit">
           搜索
         </button>
       </form>
@@ -263,7 +282,7 @@ export function CreatorTrendSearch() {
           chip === "更多" ? (
             <div key={chip} className="relative">
               <button
-                className="shrink-0 whitespace-nowrap rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 shadow-sm transition hover:border-teal-200 hover:text-teal-700"
+                className="h-11 shrink-0 whitespace-nowrap rounded-2xl border border-slate-200 bg-white px-6 text-base font-black text-slate-700 shadow-sm transition hover:border-teal-200 hover:text-teal-700"
                 type="button"
                 onClick={() => setMoreOpen((next) => !next)}
               >
@@ -292,7 +311,7 @@ export function CreatorTrendSearch() {
             <button
               key={chip}
               className={cn(
-                "shrink-0 whitespace-nowrap rounded-xl border px-4 py-2 text-sm font-black shadow-sm transition hover:border-teal-200 hover:text-teal-700",
+                "h-11 shrink-0 whitespace-nowrap rounded-2xl border px-6 text-base font-black shadow-sm transition hover:border-teal-200 hover:text-teal-700",
                 filters.keyword === chip || (!filters.keyword && index === 0) ? "border-teal-600 bg-teal-600 text-white hover:text-white" : "border-slate-200 bg-white text-slate-700",
               )}
               type="button"
@@ -317,7 +336,7 @@ function SourceBadge({ kind }: { kind: SourceKind }) {
       : kind === "规则计算"
         ? "border-blue-200 bg-blue-50 text-blue-700"
         : "border-slate-200 bg-slate-50 text-slate-500";
-  return <span className={cn("whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-black", style)}>{kind}</span>;
+  return <span className={cn("whitespace-nowrap rounded-2xl border px-4 py-2 text-sm font-black shadow-sm", style)}>{kind}</span>;
 }
 
 function PlatformBadge({ label }: { label: string }) {
@@ -375,15 +394,26 @@ export function CreatorTrendHotTopics({
 
   return (
     <section id="hot-topics" className="scroll-mt-28 grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-      <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl font-black">适合我的热点趋势</h2>
+      <div className="min-w-0 rounded-[1.6rem] border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-2">
+            <div>
+              <h2 className="text-xl font-black">判断这个热点值不值得追</h2>
+              <p className="mt-2 text-sm font-semibold leading-6 text-slate-500">先看趋势升温，再决定进入选题和脚本。</p>
+            </div>
             <SourceBadge kind={trendSource} />
           </div>
-          <div className="flex rounded-lg border border-slate-200 text-sm font-black">
+          <div className="flex rounded-2xl border border-slate-200 bg-slate-50 p-1 text-sm font-black shadow-sm">
             {rangeFilters.map((item) => (
-              <button key={item.value} className={cn("px-4 py-2", localRange === item.value && "bg-blue-50 text-blue-600")} type="button" onClick={() => setLocalRange(item.value)}>
+              <button
+                key={item.value}
+                className={cn(
+                  "rounded-xl px-5 py-2.5 text-sm transition",
+                  localRange === item.value ? "bg-white text-blue-600 shadow-sm" : "text-slate-600 hover:text-slate-900",
+                )}
+                type="button"
+                onClick={() => setLocalRange(item.value)}
+              >
                 {item.label === "近7天" ? "7天" : item.label}
               </button>
             ))}
@@ -402,18 +432,21 @@ export function CreatorTrendHotTopics({
         <CreatorTrendChart data={displayTrendData} />
       </div>
 
-      <div className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="min-w-0 overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl font-black">热点匹配度排行</h2>
+          <div className="flex items-start gap-2">
+            <div>
+              <h2 className="text-xl font-black">热点匹配度排行</h2>
+              <p className="mt-2 text-sm font-semibold leading-6 text-slate-500">按匹配度、可信度和创作难度筛掉不值得做的热点。</p>
+            </div>
             <SourceBadge kind={topicSource} />
           </div>
-          <div className="flex flex-wrap gap-2 text-xs font-black">
+          <div className="flex flex-wrap gap-3 text-sm font-black">
             {platformFilters.map((item) => (
               <button
                 key={item.value}
                 className={cn(
-                  "inline-flex h-8 items-center justify-center whitespace-nowrap rounded-full border px-3 py-1.5 leading-none transition",
+                  "inline-flex h-11 items-center justify-center whitespace-nowrap rounded-2xl border px-5 leading-none shadow-sm transition",
                   localPlatform === item.value ? "border-blue-200 bg-blue-50 text-blue-600" : "border-slate-200 bg-white text-slate-500 hover:text-slate-800",
                 )}
                 type="button"
@@ -425,41 +458,41 @@ export function CreatorTrendHotTopics({
           </div>
         </div>
         <div className="max-h-80 max-w-full overflow-auto pr-1">
-          <table className="min-w-[58rem] w-full text-left text-sm">
-            <thead className="sticky top-0 z-10 bg-slate-50 text-xs text-slate-500">
-              <tr>{["排名", "话题/推荐原因", "来源可信度", "热度", "匹配度", "竞争度", "创作难度", "主要平台", "建议"].map((head) => <th key={head} className="px-3 py-3 font-black">{head}</th>)}</tr>
+          <table className="min-w-[62rem] w-full text-left text-sm">
+            <thead className="sticky top-0 z-10 bg-slate-50 text-sm text-slate-500">
+              <tr>{["排名", "话题/推荐原因", "来源可信度", "热度", "匹配度", "竞争度", "创作难度", "主要平台", "建议"].map((head) => <th key={head} className="px-4 py-4 font-black">{head}</th>)}</tr>
             </thead>
             <tbody>
               {filteredRows.map((row) => (
                 <tr key={`${row.rank}-${row.topic}`} className="border-b border-slate-100">
-                  <td className="px-3 py-3"><span className="inline-flex size-6 items-center justify-center rounded-md bg-amber-500 text-xs font-black text-white">{row.rank}</span></td>
-                  <td className="min-w-[14rem] px-3 py-3">
+                  <td className="px-4 py-4"><span className="inline-flex size-8 items-center justify-center rounded-xl bg-amber-500 text-sm font-black text-white">{row.rank}</span></td>
+                  <td className="min-w-[14rem] px-4 py-4">
                     <div className="flex flex-wrap items-center gap-2">
-                      <button className="font-black transition hover:text-teal-700" type="button" onClick={() => setFilters({ keyword: row.topic }, "#topic-recommendations", { navigate: false })}>{row.topic}</button>
-                      <span className={cn("rounded-md border px-2 py-1 text-xs font-black", stageClass(row.stage))}>{row.stage}</span>
+                      <button className="text-base font-black transition hover:text-teal-700" type="button" onClick={() => setFilters({ keyword: row.topic }, "#topic-recommendations", { navigate: false })}>{row.topic}</button>
+                      <span className={cn("rounded-xl border px-3 py-1.5 text-sm font-black", stageClass(row.stage))}>{row.stage}</span>
                     </div>
-                    <p className="mt-1 line-clamp-2 text-xs font-semibold leading-5 text-slate-500">{row.reason ?? "系统根据热度、匹配度和平台信号生成推荐。"}</p>
+                    <p className="mt-2 line-clamp-2 text-sm font-semibold leading-6 text-slate-500">{row.reason ?? "系统根据热度、匹配度和平台信号生成推荐。"}</p>
                   </td>
-                  <td className="min-w-[11rem] px-3 py-3">
+                  <td className="min-w-[11rem] px-4 py-4">
                     <div className="flex flex-wrap gap-1.5">
-                      <span className="inline-flex h-7 items-center whitespace-nowrap rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-black leading-none text-slate-600">
+                      <span className="inline-flex h-9 items-center whitespace-nowrap rounded-xl border border-slate-200 bg-slate-50 px-3 py-1 text-sm font-black leading-none text-slate-600">
                         {row.source ?? "综合热榜"}
                       </span>
-                      <span className={cn("inline-flex h-7 items-center whitespace-nowrap rounded-md border px-2 py-1 text-xs font-black leading-none", confidenceClass(row.confidence))}>
+                      <span className={cn("inline-flex h-9 items-center whitespace-nowrap rounded-xl border px-3 py-1 text-sm font-black leading-none", confidenceClass(row.confidence))}>
                         {row.confidence ?? "示例数据"}
                       </span>
                     </div>
-                    <p className="mt-1 text-xs font-semibold leading-5 text-slate-500">
+                    <p className="mt-2 text-sm font-semibold leading-6 text-slate-500">
                       {formatInsightSampleText(row)} · {formatInsightUpdatedAt(row.updatedAt)}
                     </p>
                   </td>
-                  <td className="px-3 py-3 font-black">{row.heat}</td>
-                  <td className="px-3 py-3 font-black text-teal-600">{row.match}</td>
-                  <td className="px-3 py-3"><span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-black">{row.competition}</span></td>
-                  <td className="px-3 py-3"><span className="rounded-full bg-red-50 px-2 py-1 text-xs font-black text-red-600">{row.difficulty}</span></td>
-                  <td className="px-3 py-3"><div className="flex gap-1">{row.platforms.map((platform) => <PlatformBadge key={platform} label={platform} />)}</div></td>
-                  <td className="px-3 py-3">
-                    <button className={cn("rounded-md border px-2 py-1 text-xs font-black", adviceClass(row.advice))} type="button" onClick={() => setFilters({ keyword: row.topic }, row.advice === "谨慎跟进" ? "#case-study" : "#topic-recommendations", { navigate: false })}>
+                  <td className="px-4 py-4 text-base font-black">{row.heat}</td>
+                  <td className="px-4 py-4 text-base font-black text-teal-600">{row.match}</td>
+                  <td className="px-4 py-4"><span className="rounded-2xl bg-slate-100 px-3 py-1.5 text-sm font-black">{row.competition}</span></td>
+                  <td className="px-4 py-4"><span className="rounded-2xl bg-red-50 px-3 py-1.5 text-sm font-black text-red-600">{row.difficulty}</span></td>
+                  <td className="px-4 py-4"><div className="flex gap-2">{row.platforms.map((platform) => <PlatformBadge key={platform} label={platform} />)}</div></td>
+                  <td className="px-4 py-4">
+                    <button className={cn("rounded-xl border px-3 py-2 text-sm font-black", adviceClass(row.advice))} type="button" onClick={() => setFilters({ keyword: row.topic }, row.advice === "谨慎跟进" ? "#case-study" : "#topic-recommendations", { navigate: false })}>
                       {row.advice}
                     </button>
                   </td>
@@ -468,7 +501,17 @@ export function CreatorTrendHotTopics({
               {filteredRows.length === 0 ? (
                 <tr>
                   <td className="px-3 py-8 text-center text-sm font-semibold text-slate-400" colSpan={9}>
-                    当前筛选暂无可展示热点，试试切换平台或清空关键词。
+                    <div className="flex flex-col items-center gap-3">
+                      <p>当前筛选暂无可展示热点。</p>
+                      <div className="flex flex-wrap justify-center gap-2">
+                        <button className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-black text-slate-600" type="button" onClick={() => setFilters({ keyword: "" }, "#hot-topics", { navigate: false })}>
+                          清空关键词
+                        </button>
+                        <button className="rounded-xl border border-teal-200 bg-teal-50 px-4 py-2.5 text-sm font-black text-teal-700" type="button" onClick={() => setLocalPlatform("all")}>
+                          查看全部平台
+                        </button>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               ) : null}

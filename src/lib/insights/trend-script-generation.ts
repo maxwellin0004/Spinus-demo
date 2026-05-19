@@ -1,4 +1,4 @@
-import type { CreatorTrendScriptGeneration, PlatformSettings } from "@prisma/client";
+import type { CreatorTrendScriptGeneration, CreatorTrendScriptImage, CreatorTrendScriptReview, PlatformSettings } from "@prisma/client";
 import {
   DEFAULT_INSIGHT_AI_CASE_ANALYSIS_PROMPT,
   DEFAULT_INSIGHT_AI_CASE_GRAPHIC_SCRIPT_PROMPT,
@@ -15,12 +15,14 @@ import {
   validationSummary,
   type ScriptGenerationMode,
   type ScriptGenerationView,
+  type ScriptImageView,
   type ScriptSourceType,
   type ScriptTable,
   type ScriptTableGroupKey,
   tablesToPlainText,
 } from "@/lib/insights/script-tables";
 import { prisma } from "@/lib/prisma";
+import { buildScriptReviewInput, hashScriptReviewInput, scriptReviewToView } from "@/lib/insights/script-review";
 
 export type ScriptTopicContext = {
   title: string;
@@ -646,7 +648,35 @@ export async function generateTrendScriptTables(settings: ScriptGenerationSettin
   }
 }
 
-export function scriptGenerationToView(record: CreatorTrendScriptGeneration): ScriptGenerationView {
+type ScriptGenerationRecord = CreatorTrendScriptGeneration & {
+  scriptImages?: CreatorTrendScriptImage[];
+  scriptReviews?: CreatorTrendScriptReview[];
+};
+
+function scriptImageToView(image: CreatorTrendScriptImage): ScriptImageView {
+  return {
+    id: image.id,
+    pageKey: image.pageKey,
+    pageLabel: image.pageLabel,
+    pageOrder: image.pageOrder,
+    model: image.model,
+    promptHash: image.promptHash,
+    prompt: image.prompt,
+    negativePrompt: image.negativePrompt,
+    aspectRatio: image.aspectRatio,
+    size: image.size,
+    imageUrl: image.imageUrl,
+    status: image.status === "READY" || image.status === "FAILED" ? image.status : "GENERATING",
+    errorMessage: image.errorMessage,
+    generatedAt: image.generatedAt?.toISOString() ?? null,
+    updatedAt: image.updatedAt.toISOString(),
+  };
+}
+
+export function scriptGenerationToView(record: ScriptGenerationRecord): ScriptGenerationView {
+  const scriptImages = (record.scriptImages ?? []).sort((a, b) => a.pageOrder - b.pageOrder);
+  const reviewModel = record.model ?? "unknown";
+  const reviewInputHash = hashScriptReviewInput(buildScriptReviewInput(record, scriptImages), reviewModel);
   return {
     id: record.id,
     sourceType: record.sourceType === "CASE_STUDY" ? "CASE_STUDY" : "TOPIC_RECOMMENDATION",
@@ -663,6 +693,10 @@ export function scriptGenerationToView(record: CreatorTrendScriptGeneration): Sc
     graphicTables: normalizeScriptTables(record.graphicTablesJson),
     videoTables: normalizeScriptTables(record.videoTablesJson),
     caseAnalysisTables: normalizeScriptTables(record.caseAnalysisTablesJson),
+    scriptImages: scriptImages.map(scriptImageToView),
+    scriptReviews: (record.scriptReviews ?? [])
+      .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+      .map((review) => scriptReviewToView(review, reviewInputHash)),
     plainText: record.plainText ?? "",
   };
 }

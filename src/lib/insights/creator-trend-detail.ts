@@ -1,4 +1,4 @@
-import { getOrGenerateAiTopicDeck } from "@/lib/insights/ai-topic-deck";
+import { completeAiTopicDeck, getOrGenerateAiTopicDeck } from "@/lib/insights/ai-topic-deck";
 import { invalidateInsightCache, withSharedInsightCache } from "@/lib/insights/cache";
 import type { InsightConfidence, InsightSourceKind } from "@/lib/insights/credibility";
 import { DEFAULT_INSIGHT_DIRECTION, getInsightDirection, getInsightDirectionTerms } from "@/lib/insights/directions";
@@ -95,7 +95,11 @@ export type CreatorTrendDetailFilters = {
 
 export type CreatorTrendDetailData = {
   recommendationSource: SourceKind;
-  recommendationStatus?: "READY" | "FAILED";
+  recommendationStatus?: "READY" | "PARTIAL" | "FAILED";
+  recommendationCacheSource?: "CURRENT" | "PREVIOUS" | "PLATFORM_FALLBACK" | "RULE_FALLBACK" | "NONE";
+  recommendationNeedsRefresh?: boolean;
+  recommendationRefreshFailureCount?: number;
+  recommendationRefreshRetryAfter?: string | null;
   recommendationError?: string | null;
   recommendationGeneratedAt?: string | null;
   caseSource: SourceKind;
@@ -320,7 +324,10 @@ function normalizeTopicRows(
   });
 }
 
-async function loadCreatorTrendDetailData(filters: CreatorTrendDetailFilters, options: { forceAiRecommendations?: boolean } = {}): Promise<CreatorTrendDetailData> {
+async function loadCreatorTrendDetailData(
+  filters: CreatorTrendDetailFilters,
+  options: { forceAiRecommendations?: boolean; completeAiRecommendations?: boolean } = {},
+): Promise<CreatorTrendDetailData> {
   const direction = filters.direction || DEFAULT_INSIGHT_DIRECTION;
   const currentDirection = getInsightDirection(direction);
   const directionTextTerms = getInsightDirectionTerms(direction);
@@ -384,7 +391,7 @@ async function loadCreatorTrendDetailData(filters: CreatorTrendDetailFilters, op
     liveCommentTextsByContentId.set(comment.contentId, texts);
   }
 
-  const aiTopicDeck = await getOrGenerateAiTopicDeck({
+  const aiTopicDeckParams = {
     direction,
     directionLabel: currentDirection.label,
     platform: filters.platform,
@@ -392,17 +399,23 @@ async function loadCreatorTrendDetailData(filters: CreatorTrendDetailFilters, op
     sourceContents: liveRecommendationSource,
     commentsByContentId: liveCommentTextsByContentId,
     settings: aiSettings,
-    force: options.forceAiRecommendations,
-  });
+  };
+  const aiTopicDeck = options.completeAiRecommendations
+    ? await completeAiTopicDeck(aiTopicDeckParams)
+    : await getOrGenerateAiTopicDeck({
+        ...aiTopicDeckParams,
+        force: options.forceAiRecommendations,
+      });
   const baseLiveRecommendationBatches =
-    aiTopicDeck.status === "READY"
+    aiTopicDeck.status === "READY" || aiTopicDeck.status === "PARTIAL"
       ? Array.from({ length: Math.ceil(aiTopicDeck.items.length / 3) }, (_, index) => aiTopicDeck.items.slice(index * 3, index * 3 + 3)).filter(
           (batch) => batch.length > 0,
         )
       : [];
-  const liveRecommendationsUsedAi = aiTopicDeck.status === "READY";
+  const liveRecommendationsUsedAi = aiTopicDeck.status === "READY" || aiTopicDeck.status === "PARTIAL";
 
-  const rawRecommendationBatches = baseLiveRecommendationBatches.length > 0 ? baseLiveRecommendationBatches : [];
+  const usingRuleRecommendationFallback = baseLiveRecommendationBatches.length === 0;
+  const rawRecommendationBatches = usingRuleRecommendationFallback ? [getDirectionFallbackRecommendations(direction)] : baseLiveRecommendationBatches;
 
   const topCase = scopedTopContentsWithCover[0] ?? scopedTopContents[0];
   const excludedRecommendationTitle = topCase?.title ?? snapshotCaseStudy?.title;
@@ -508,9 +521,13 @@ async function loadCreatorTrendDetailData(filters: CreatorTrendDetailFilters, op
     recommendationSource:
       liveRecommendationsUsedAi
         ? "AI生成"
-        : "示例兜底",
-    recommendationStatus: aiTopicDeck.status,
-    recommendationError: aiTopicDeck.errorMessage,
+        : "规则计算",
+    recommendationStatus: liveRecommendationsUsedAi ? aiTopicDeck.status : undefined,
+    recommendationCacheSource: aiTopicDeck.cacheSource,
+    recommendationNeedsRefresh: aiTopicDeck.needsRefresh,
+    recommendationRefreshFailureCount: aiTopicDeck.refreshFailureCount,
+    recommendationRefreshRetryAfter: aiTopicDeck.refreshRetryAfter,
+    recommendationError: liveRecommendationsUsedAi ? aiTopicDeck.errorMessage : null,
     recommendationGeneratedAt: aiTopicDeck.generatedAt,
     caseSource: topCase ? "真实采集" : snapshotCaseStudy ? "规则计算" : "示例兜底",
     recommendationBatches: effectiveRecommendationBatches,
@@ -547,4 +564,14 @@ export async function regenerateCreatorTrendAiRecommendations(filters: CreatorTr
   };
   await invalidateInsightCache({ namespace: "creator-trend-detail" });
   return loadCreatorTrendDetailData(normalizedFilters, { forceAiRecommendations: true });
+}
+
+export async function completeCreatorTrendAiRecommendations(filters: CreatorTrendDetailFilters): Promise<CreatorTrendDetailData> {
+  const normalizedFilters: CreatorTrendDetailFilters = {
+    direction: filters.direction || DEFAULT_INSIGHT_DIRECTION,
+    platform: filters.platform,
+    keyword: filters.keyword.trim(),
+  };
+  await invalidateInsightCache({ namespace: "creator-trend-detail" });
+  return loadCreatorTrendDetailData(normalizedFilters, { completeAiRecommendations: true });
 }

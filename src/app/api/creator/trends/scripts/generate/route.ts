@@ -145,6 +145,10 @@ export async function POST(request: Request) {
         aiDebugJson: jsonInput(generated.aiDebug),
         generatedAt: new Date(),
       },
+      include: {
+        scriptImages: { orderBy: [{ pageOrder: "asc" }, { updatedAt: "desc" }] },
+        scriptReviews: { orderBy: { updatedAt: "desc" }, take: 1 },
+      },
     });
 
     return timedJson(
@@ -167,6 +171,10 @@ export async function POST(request: Request) {
           generationMode: "FALLBACK",
           errorMessage: message,
           aiDebugJson: jsonInput({ exception: message }),
+        },
+        include: {
+          scriptImages: { orderBy: [{ pageOrder: "asc" }, { updatedAt: "desc" }] },
+          scriptReviews: { orderBy: { updatedAt: "desc" }, take: 1 },
         },
       });
 

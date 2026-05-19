@@ -1,8 +1,10 @@
-import type { InsightContent, PlatformSettings, Prisma } from "@prisma/client";
+import type { CreatorTrendAiTopicDeck, InsightContent, PlatformSettings, Prisma } from "@prisma/client";
 import crypto from "node:crypto";
 import { DEFAULT_INSIGHT_AI_TOPIC_DECK_PROMPT, INSIGHT_TOPIC_DECK_PROMPT_VERSION } from "@/lib/insights/ai-prompts";
 import { evaluateInsightConfidence } from "@/lib/insights/credibility";
 import {
+  formatInsightAiRequestError,
+  INSIGHT_AI_TOPIC_DECK_TIMEOUT_MS,
   isInsightAiConfigured,
   readInsightAiRuntimeConfig,
   requestInsightAiJsonDetailed,
@@ -14,6 +16,8 @@ import { extractCoverImageUrl } from "@/lib/tikhub/mappers";
 const AI_TOPIC_DECK_SIZE = 12;
 const AI_TOPIC_DECK_BATCH_COUNT = 4;
 const AI_TOPIC_DECK_ITEMS_PER_BATCH = 3;
+const AI_TOPIC_DECK_RETRY_LIMIT = 3;
+const AI_TOPIC_DECK_RETRY_COOLDOWN_MS = 5 * 60 * 1000;
 
 type TopicDeckSettings = AiRuntimeSettings & Pick<PlatformSettings, "insightAiSystemPrompt">;
 
@@ -92,8 +96,12 @@ export type AiTopicDeckCard = {
 };
 
 export type AiTopicDeckResult = {
-  status: "READY" | "FAILED";
+  status: "READY" | "PARTIAL" | "FAILED";
   source: "AI生成" | "示例兜底";
+  cacheSource: "CURRENT" | "PREVIOUS" | "PLATFORM_FALLBACK" | "RULE_FALLBACK" | "NONE";
+  needsRefresh: boolean;
+  refreshFailureCount?: number;
+  refreshRetryAfter?: string | null;
   items: AiTopicDeckCard[];
   errorMessage: string | null;
   generatedAt: string | null;
@@ -236,26 +244,119 @@ function sanitizeRawItem(item: AiTopicDeckRawItem, index: number, fallbackPlatfo
   } satisfies Required<AiTopicDeckRawItem>;
 }
 
-function normalizeAiItems(payload: AiTopicDeckPayload | null, fallbackPlatform: string, validSourceIds: Set<string>) {
+function normalizeAiItems(
+  payload: AiTopicDeckPayload | null,
+  fallbackPlatform: string,
+  validSourceIds: Set<string>,
+  options: { existingTitles?: Set<string>; startIndex?: number } = {},
+) {
   const rawItems = Array.isArray(payload?.items) ? payload.items : [];
-  const seenTitles = new Set<string>();
+  const seenTitles = new Set(options.existingTitles ?? []);
   const normalized: Required<AiTopicDeckRawItem>[] = [];
 
   for (const raw of rawItems) {
-    const item = sanitizeRawItem(raw, normalized.length, fallbackPlatform, validSourceIds);
+    const item = sanitizeRawItem(raw, (options.startIndex ?? 0) + normalized.length, fallbackPlatform, validSourceIds);
     if (!item) continue;
-    const titleKey = item.title.replace(/\s+/g, "");
-    if (seenTitles.has(titleKey)) continue;
-    seenTitles.add(titleKey);
+    const key = titleKey(item.title);
+    if (seenTitles.has(key)) continue;
+    seenTitles.add(key);
     normalized.push(item);
     if (normalized.length >= AI_TOPIC_DECK_SIZE) break;
   }
 
-  if (normalized.length < AI_TOPIC_DECK_SIZE) {
-    throw new Error(`AI 只返回了 ${normalized.length} 张有效选题，未达到 12 张。`);
+  return normalized.map((item, index) => ({ ...item, itemIndex: (options.startIndex ?? 0) + index }));
+}
+
+function titleKey(value: string) {
+  return value.replace(/\s+/g, "");
+}
+
+function deckStatusForItemCount(count: number): "READY" | "PARTIAL" {
+  return count >= AI_TOPIC_DECK_SIZE ? "READY" : "PARTIAL";
+}
+
+function partialDeckMessage(count: number) {
+  const missing = Math.max(0, AI_TOPIC_DECK_SIZE - count);
+  return `AI 已生成 ${count}/${AI_TOPIC_DECK_SIZE} 张有效选题，正在后台补齐剩余 ${missing} 张。`;
+}
+
+function retryAfterDate() {
+  return new Date(Date.now() + AI_TOPIC_DECK_RETRY_COOLDOWN_MS);
+}
+
+function readDeckItems(deck: Pick<CreatorTrendAiTopicDeck, "items">) {
+  return (Array.isArray(deck.items) ? (deck.items as Required<AiTopicDeckRawItem>[]) : []).slice(0, AI_TOPIC_DECK_SIZE);
+}
+
+function isUsableDeck(deck: Pick<CreatorTrendAiTopicDeck, "status" | "items"> | null | undefined) {
+  if (!deck || (deck.status !== "READY" && deck.status !== "PARTIAL")) return false;
+  return readDeckItems(deck).length > 0;
+}
+
+function canAttemptRefresh(deck: Pick<CreatorTrendAiTopicDeck, "refreshFailureCount" | "refreshRetryAfter"> | null | undefined, force = false) {
+  if (force) return true;
+  if (!deck) return true;
+  if (deck.refreshFailureCount >= AI_TOPIC_DECK_RETRY_LIMIT) return false;
+  if (deck.refreshRetryAfter && deck.refreshRetryAfter.getTime() > Date.now()) return false;
+  return true;
+}
+
+async function findFallbackDeck(params: { direction: string; platform: string; keyword: string; sampleSignature: string }) {
+  const baseWhere = {
+    direction: params.direction,
+    keyword: params.keyword,
+    sampleSignature: { not: params.sampleSignature },
+    status: { in: ["READY", "PARTIAL"] },
+  } satisfies Prisma.CreatorTrendAiTopicDeckWhereInput;
+  const orderBy = [{ generatedAt: "desc" as const }, { updatedAt: "desc" as const }];
+
+  const platformQueries =
+    params.platform === "all"
+      ? [
+          { platform: "all", cacheSource: "PREVIOUS" as const },
+          { platform: { not: "all" }, cacheSource: "PLATFORM_FALLBACK" as const },
+        ]
+      : [
+          { platform: params.platform, cacheSource: "PREVIOUS" as const },
+          { platform: "all", cacheSource: "PLATFORM_FALLBACK" as const },
+        ];
+
+  for (const query of platformQueries) {
+    const deck = await prisma.creatorTrendAiTopicDeck.findFirst({
+      where: { ...baseWhere, platform: query.platform },
+      orderBy,
+    });
+    if (isUsableDeck(deck)) return { deck: deck!, cacheSource: query.cacheSource };
   }
 
-  return normalized.map((item, index) => ({ ...item, itemIndex: index }));
+  return null;
+}
+
+function mapDeckToResult(params: {
+  deck: CreatorTrendAiTopicDeck;
+  cacheKey: string;
+  sampleSignature: string;
+  cacheSource: AiTopicDeckResult["cacheSource"];
+  needsRefresh: boolean;
+  sourceById: Map<string, SourceContent>;
+  commentsByContentId: Map<string, string[]>;
+}): AiTopicDeckResult {
+  const items = readDeckItems(params.deck);
+  const status = params.deck.status === "READY" ? "READY" : "PARTIAL";
+  return {
+    sampleSignature: params.sampleSignature,
+    cacheKey: params.cacheKey,
+    status,
+    source: "AI生成",
+    cacheSource: params.cacheSource,
+    needsRefresh: params.needsRefresh,
+    refreshFailureCount: params.deck.refreshFailureCount,
+    refreshRetryAfter: params.deck.refreshRetryAfter?.toISOString() ?? null,
+    items: mapItemsToCards({ cacheKey: params.deck.cacheKey, items, sourceById: params.sourceById, commentsByContentId: params.commentsByContentId }),
+    errorMessage: status === "PARTIAL" ? params.deck.errorMessage ?? partialDeckMessage(items.length) : null,
+    generatedAt: params.deck.generatedAt?.toISOString() ?? params.deck.updatedAt.toISOString(),
+    cached: true,
+  };
 }
 
 function mapItemsToCards(params: {
@@ -328,6 +429,26 @@ async function writeFailedDeck(params: {
   promptHash: string;
   message: string;
 }) {
+  const existing = await prisma.creatorTrendAiTopicDeck.findUnique({ where: { cacheKey: params.cacheKey } });
+  const failureCount = Math.min(AI_TOPIC_DECK_RETRY_LIMIT, (existing?.refreshFailureCount ?? 0) + 1);
+  const retryAfter = failureCount >= AI_TOPIC_DECK_RETRY_LIMIT ? null : retryAfterDate();
+  if (isUsableDeck(existing)) {
+    await prisma.creatorTrendAiTopicDeck.update({
+      where: { cacheKey: params.cacheKey },
+      data: {
+        model: params.model,
+        promptHash: params.promptHash,
+        sampleContentIds: params.sampleContentIds,
+        refreshStatus: "FAILED",
+        refreshFailureCount: failureCount,
+        refreshRetryAfter: retryAfter,
+        lastRefreshFailedAt: new Date(),
+        lastRefreshError: params.message,
+      },
+    });
+    return { failureCount, retryAfter };
+  }
+
   await prisma.creatorTrendAiTopicDeck.upsert({
     where: { cacheKey: params.cacheKey },
     update: {
@@ -336,6 +457,11 @@ async function writeFailedDeck(params: {
       sampleContentIds: params.sampleContentIds,
       status: "FAILED",
       errorMessage: params.message,
+      refreshStatus: "FAILED",
+      refreshFailureCount: failureCount,
+      refreshRetryAfter: retryAfter,
+      lastRefreshFailedAt: new Date(),
+      lastRefreshError: params.message,
       items: jsonInput([]),
       generatedAt: new Date(),
     },
@@ -353,7 +479,50 @@ async function writeFailedDeck(params: {
       items: jsonInput([]),
       status: "FAILED",
       errorMessage: params.message,
+      refreshStatus: "FAILED",
+      refreshFailureCount: failureCount,
+      refreshRetryAfter: retryAfter,
+      lastRefreshStartedAt: new Date(),
+      lastRefreshFailedAt: new Date(),
+      lastRefreshError: params.message,
       generatedAt: new Date(),
+    },
+  });
+  return { failureCount, retryAfter };
+}
+
+async function markRefreshStarted(params: {
+  cacheKey: string;
+  direction: string;
+  platform: string;
+  keyword: string;
+  sampleSignature: string;
+  sampleContentIds: string[];
+  model: string;
+  promptHash: string;
+}) {
+  await prisma.creatorTrendAiTopicDeck.upsert({
+    where: { cacheKey: params.cacheKey },
+    update: {
+      refreshStatus: "GENERATING",
+      lastRefreshStartedAt: new Date(),
+      lastRefreshError: null,
+    },
+    create: {
+      cacheKey: params.cacheKey,
+      direction: params.direction,
+      platform: params.platform,
+      keyword: params.keyword,
+      sampleSignature: params.sampleSignature,
+      sampleContentIds: params.sampleContentIds,
+      model: params.model,
+      promptHash: params.promptHash,
+      batchCount: AI_TOPIC_DECK_BATCH_COUNT,
+      itemsPerBatch: AI_TOPIC_DECK_ITEMS_PER_BATCH,
+      items: jsonInput([]),
+      status: "FAILED",
+      refreshStatus: "GENERATING",
+      lastRefreshStartedAt: new Date(),
     },
   });
 }
@@ -391,6 +560,8 @@ export async function getOrGenerateAiTopicDeck(params: {
       ...baseResult,
       status: "FAILED",
       source: "示例兜底",
+      cacheSource: "NONE",
+      needsRefresh: false,
       items: [],
       errorMessage: "当前筛选下没有可用于 AI 选题的热门样本。",
       cached: false,
@@ -402,6 +573,8 @@ export async function getOrGenerateAiTopicDeck(params: {
       ...baseResult,
       status: "FAILED",
       source: "示例兜底",
+      cacheSource: "NONE",
+      needsRefresh: false,
       items: [],
       errorMessage: "AI 选题模型未配置或未启用。",
       cached: false,
@@ -410,30 +583,72 @@ export async function getOrGenerateAiTopicDeck(params: {
 
   if (!params.force) {
     const cached = await prisma.creatorTrendAiTopicDeck.findUnique({ where: { cacheKey } });
-    if (cached?.status === "READY") {
-      const cachedItems = Array.isArray(cached.items) ? (cached.items as Required<AiTopicDeckRawItem>[]) : [];
-      return {
-        ...baseResult,
-        status: "READY",
-        source: "AI生成",
-        items: mapItemsToCards({ cacheKey, items: cachedItems.slice(0, AI_TOPIC_DECK_SIZE), sourceById, commentsByContentId: params.commentsByContentId }),
-        errorMessage: null,
-        generatedAt: cached.generatedAt?.toISOString() ?? cached.updatedAt.toISOString(),
-        cached: true,
-      };
+    if (isUsableDeck(cached)) {
+      return mapDeckToResult({
+        deck: cached!,
+        cacheKey,
+        sampleSignature,
+        cacheSource: "CURRENT",
+        needsRefresh: cached!.status === "PARTIAL" && canAttemptRefresh(cached),
+        sourceById,
+        commentsByContentId: params.commentsByContentId,
+      });
     }
-    if (cached?.status === "FAILED") {
+
+    const fallback = await findFallbackDeck({ direction: params.direction, platform: params.platform, keyword: params.keyword, sampleSignature });
+    if (fallback) {
+      return mapDeckToResult({
+        deck: fallback.deck,
+        cacheKey,
+        sampleSignature,
+        cacheSource: fallback.cacheSource,
+        needsRefresh: canAttemptRefresh(cached),
+        sourceById,
+        commentsByContentId: params.commentsByContentId,
+      });
+    }
+
+    if (cached && !canAttemptRefresh(cached)) {
       return {
         ...baseResult,
         status: "FAILED",
         source: "示例兜底",
+        cacheSource: "RULE_FALLBACK",
+        needsRefresh: false,
+        refreshFailureCount: cached.refreshFailureCount,
+        refreshRetryAfter: cached.refreshRetryAfter?.toISOString() ?? null,
         items: [],
-        errorMessage: cached.errorMessage ?? "AI 选题生成失败，请点击重新生成。",
+        errorMessage: cached.errorMessage ?? "AI 选题生成失败，请稍后再试。",
         generatedAt: cached.generatedAt?.toISOString() ?? cached.updatedAt.toISOString(),
         cached: true,
       };
     }
+
+    return {
+      ...baseResult,
+      status: "FAILED",
+      source: "示例兜底",
+      cacheSource: "RULE_FALLBACK",
+      needsRefresh: canAttemptRefresh(cached),
+      refreshFailureCount: cached?.refreshFailureCount ?? 0,
+      refreshRetryAfter: cached?.refreshRetryAfter?.toISOString() ?? null,
+      items: [],
+      errorMessage: cached?.errorMessage ?? "暂无可用 AI 选题缓存，已使用规则兜底。",
+      generatedAt: cached?.generatedAt?.toISOString() ?? null,
+      cached: Boolean(cached),
+    };
   }
+
+  await markRefreshStarted({
+    cacheKey,
+    direction: params.direction,
+    platform: params.platform,
+    keyword: params.keyword,
+    sampleSignature,
+    sampleContentIds,
+    model: runtime.model,
+    promptHash,
+  });
 
   try {
     const result = await requestInsightAiJsonDetailed<AiTopicDeckPayload>({
@@ -457,6 +672,7 @@ export async function getOrGenerateAiTopicDeck(params: {
         sampleSignals: params.sourceContents.map((content) => sourceSignal(content, params.commentsByContentId.get(content.id) ?? [])),
       },
       maxTokens: 5200,
+      timeoutMs: INSIGHT_AI_TOPIC_DECK_TIMEOUT_MS,
     });
 
     if (!result.parsed) {
@@ -464,6 +680,11 @@ export async function getOrGenerateAiTopicDeck(params: {
     }
 
     const items = normalizeAiItems(result.parsed, params.platform, new Set(sampleContentIds));
+    if (items.length === 0) {
+      throw new Error("AI 没有返回有效选题，请重新生成。");
+    }
+    const status = deckStatusForItemCount(items.length);
+    const errorMessage = status === "PARTIAL" ? partialDeckMessage(items.length) : null;
     const now = new Date();
     await prisma.creatorTrendAiTopicDeck.upsert({
       where: { cacheKey },
@@ -478,8 +699,12 @@ export async function getOrGenerateAiTopicDeck(params: {
         batchCount: AI_TOPIC_DECK_BATCH_COUNT,
         itemsPerBatch: AI_TOPIC_DECK_ITEMS_PER_BATCH,
         items: jsonInput(items),
-        status: "READY",
-        errorMessage: null,
+        status,
+        errorMessage,
+        refreshStatus: "IDLE",
+        refreshFailureCount: 0,
+        refreshRetryAfter: null,
+        lastRefreshError: null,
         generatedAt: now,
       },
       create: {
@@ -494,24 +719,33 @@ export async function getOrGenerateAiTopicDeck(params: {
         batchCount: AI_TOPIC_DECK_BATCH_COUNT,
         itemsPerBatch: AI_TOPIC_DECK_ITEMS_PER_BATCH,
         items: jsonInput(items),
-        status: "READY",
-        errorMessage: null,
+        status,
+        errorMessage,
+        refreshStatus: "IDLE",
+        refreshFailureCount: 0,
+        refreshRetryAfter: null,
+        lastRefreshStartedAt: now,
+        lastRefreshError: null,
         generatedAt: now,
       },
     });
 
     return {
       ...baseResult,
-      status: "READY",
+      status,
       source: "AI生成",
+      cacheSource: "CURRENT",
+      needsRefresh: status === "PARTIAL",
+      refreshFailureCount: 0,
+      refreshRetryAfter: null,
       items: mapItemsToCards({ cacheKey, items, sourceById, commentsByContentId: params.commentsByContentId }),
-      errorMessage: null,
+      errorMessage,
       generatedAt: now.toISOString(),
       cached: false,
     };
   } catch (error) {
-    const message = error instanceof Error ? error.message.slice(0, 500) : "AI 选题生成失败。";
-    await writeFailedDeck({
+    const message = formatInsightAiRequestError(error, INSIGHT_AI_TOPIC_DECK_TIMEOUT_MS);
+    const failure = await writeFailedDeck({
       cacheKey,
       direction: params.direction,
       platform: params.platform,
@@ -522,13 +756,225 @@ export async function getOrGenerateAiTopicDeck(params: {
       promptHash,
       message,
     });
+    const preserved = await prisma.creatorTrendAiTopicDeck.findUnique({ where: { cacheKey } });
+    if (isUsableDeck(preserved)) {
+      return mapDeckToResult({
+        deck: preserved!,
+        cacheKey,
+        sampleSignature,
+        cacheSource: "CURRENT",
+        needsRefresh: false,
+        sourceById,
+        commentsByContentId: params.commentsByContentId,
+      });
+    }
     return {
       ...baseResult,
       status: "FAILED",
       source: "示例兜底",
+      cacheSource: "RULE_FALLBACK",
+      needsRefresh: false,
+      refreshFailureCount: failure.failureCount,
+      refreshRetryAfter: failure.retryAfter?.toISOString() ?? null,
       items: [],
       errorMessage: message,
       generatedAt: new Date().toISOString(),
+      cached: false,
+    };
+  }
+}
+
+export async function completeAiTopicDeck(params: {
+  direction: string;
+  directionLabel: string;
+  platform: string;
+  keyword: string;
+  sourceContents: SourceContent[];
+  commentsByContentId: Map<string, string[]>;
+  settings: TopicDeckSettings;
+}): Promise<AiTopicDeckResult> {
+  const sampleContentIds = buildSampleIds(params.sourceContents);
+  const sampleSignature = buildAiTopicDeckSampleSignature(params.sourceContents);
+  const cacheKey = buildCacheKey({
+    direction: params.direction,
+    platform: params.platform,
+    keyword: params.keyword,
+    sampleSignature,
+  });
+  const sourceById = new Map(params.sourceContents.map((content) => [content.id, content]));
+  const runtime = readInsightAiRuntimeConfig(params.settings);
+  const systemPrompt = resolveTopicDeckPrompt(params.settings);
+  const promptHash = sha256(systemPrompt);
+  const baseResult = {
+    sampleSignature,
+    cacheKey,
+    generatedAt: null,
+  };
+
+  const cached = await prisma.creatorTrendAiTopicDeck.findUnique({ where: { cacheKey } });
+  if (!cached || cached.status !== "PARTIAL") {
+    if (!canAttemptRefresh(cached)) {
+      return getOrGenerateAiTopicDeck(params);
+    }
+    return getOrGenerateAiTopicDeck({ ...params, force: true });
+  }
+
+  if (!canAttemptRefresh(cached)) {
+    return mapDeckToResult({
+      deck: cached,
+      cacheKey,
+      sampleSignature,
+      cacheSource: "CURRENT",
+      needsRefresh: false,
+      sourceById,
+      commentsByContentId: params.commentsByContentId,
+    });
+  }
+
+  const existingItems = readDeckItems(cached);
+  if (existingItems.length >= AI_TOPIC_DECK_SIZE) {
+    const now = new Date();
+    await prisma.creatorTrendAiTopicDeck.update({
+      where: { cacheKey },
+      data: {
+        status: "READY",
+        errorMessage: null,
+        refreshStatus: "IDLE",
+        refreshFailureCount: 0,
+        refreshRetryAfter: null,
+        lastRefreshError: null,
+        generatedAt: now,
+      },
+    });
+    return {
+      ...baseResult,
+      status: "READY",
+      source: "AI生成",
+      cacheSource: "CURRENT",
+      needsRefresh: false,
+      refreshFailureCount: 0,
+      refreshRetryAfter: null,
+      items: mapItemsToCards({ cacheKey, items: existingItems, sourceById, commentsByContentId: params.commentsByContentId }),
+      errorMessage: null,
+      generatedAt: now.toISOString(),
+      cached: false,
+    };
+  }
+
+  const missingCount = AI_TOPIC_DECK_SIZE - existingItems.length;
+  await markRefreshStarted({
+    cacheKey,
+    direction: params.direction,
+    platform: params.platform,
+    keyword: params.keyword,
+    sampleSignature,
+    sampleContentIds,
+    model: runtime.model,
+    promptHash,
+  });
+
+  try {
+    const existingTitles = new Set(existingItems.map((item) => titleKey(item.title)));
+    const result = await requestInsightAiJsonDetailed<AiTopicDeckPayload>({
+      settings: params.settings,
+      systemPrompt,
+      instruction:
+        "请继续补齐 AI 选题卡，只生成缺失数量，不要重复已有标题。热门帖只作为依据，不得复制原帖标题结构、原帖封面人物姿势或场景。每张卡必须有新标题、新推荐理由、目标平台、证据摘要、3 个创作角度、gpt-image-2 无文字封面提示词和负向提示词。只返回 JSON。",
+      input: {
+        direction: params.direction,
+        directionLabel: params.directionLabel,
+        targetPlatform: params.platform,
+        targetPlatformLabel: params.platform === "all" ? "全部平台" : platformLabel(params.platform),
+        keyword: params.keyword,
+        completionRules: {
+          existingCount: existingItems.length,
+          missingCount,
+          totalItems: AI_TOPIC_DECK_SIZE,
+          avoidTitles: existingItems.map((item) => item.title),
+          avoidSourceIds: existingItems.flatMap((item) => item.sourceContentIds).slice(0, 24),
+          imagePolicy: "coverImagePrompt 必须和 title 一一对应，图片内不要生成中文文字。",
+        },
+        sampleSignals: params.sourceContents.map((content) => sourceSignal(content, params.commentsByContentId.get(content.id) ?? [])),
+      },
+      maxTokens: Math.min(5200, Math.max(1800, missingCount * 800)),
+      timeoutMs: INSIGHT_AI_TOPIC_DECK_TIMEOUT_MS,
+    });
+
+    if (!result.parsed) {
+      throw new Error(result.errorMessage ?? "AI 选题补齐失败。");
+    }
+
+    const supplementItems = normalizeAiItems(result.parsed, params.platform, new Set(sampleContentIds), {
+      existingTitles,
+      startIndex: existingItems.length,
+    });
+    if (supplementItems.length === 0) {
+      throw new Error("AI 没有返回可追加的有效选题。");
+    }
+
+    const items = [...existingItems, ...supplementItems].slice(0, AI_TOPIC_DECK_SIZE).map((item, index) => ({ ...item, itemIndex: index }));
+    const status = deckStatusForItemCount(items.length);
+    const errorMessage = status === "PARTIAL" ? partialDeckMessage(items.length) : null;
+    const now = new Date();
+    await prisma.creatorTrendAiTopicDeck.update({
+      where: { cacheKey },
+      data: {
+        model: runtime.model,
+        promptHash,
+        sampleContentIds,
+        items: jsonInput(items),
+        status,
+        errorMessage,
+        refreshStatus: "IDLE",
+        refreshFailureCount: 0,
+        refreshRetryAfter: null,
+        lastRefreshError: null,
+        generatedAt: now,
+      },
+    });
+
+    return {
+      ...baseResult,
+      status,
+      source: "AI生成",
+      cacheSource: "CURRENT",
+      needsRefresh: status === "PARTIAL",
+      refreshFailureCount: 0,
+      refreshRetryAfter: null,
+      items: mapItemsToCards({ cacheKey, items, sourceById, commentsByContentId: params.commentsByContentId }),
+      errorMessage,
+      generatedAt: now.toISOString(),
+      cached: false,
+    };
+  } catch (error) {
+    const message = `${partialDeckMessage(existingItems.length)} 补齐失败：${formatInsightAiRequestError(error, INSIGHT_AI_TOPIC_DECK_TIMEOUT_MS)}`;
+    const failureCount = Math.min(AI_TOPIC_DECK_RETRY_LIMIT, cached.refreshFailureCount + 1);
+    const retryAfter = failureCount >= AI_TOPIC_DECK_RETRY_LIMIT ? null : retryAfterDate();
+    const now = new Date();
+    await prisma.creatorTrendAiTopicDeck.update({
+      where: { cacheKey },
+      data: {
+        status: "PARTIAL",
+        errorMessage: message,
+        refreshStatus: "FAILED",
+        refreshFailureCount: failureCount,
+        refreshRetryAfter: retryAfter,
+        lastRefreshFailedAt: now,
+        lastRefreshError: message,
+        generatedAt: now,
+      },
+    });
+    return {
+      ...baseResult,
+      status: "PARTIAL",
+      source: "AI生成",
+      cacheSource: "CURRENT",
+      needsRefresh: false,
+      refreshFailureCount: failureCount,
+      refreshRetryAfter: retryAfter?.toISOString() ?? null,
+      items: mapItemsToCards({ cacheKey, items: existingItems, sourceById, commentsByContentId: params.commentsByContentId }),
+      errorMessage: message,
+      generatedAt: now.toISOString(),
       cached: false,
     };
   }

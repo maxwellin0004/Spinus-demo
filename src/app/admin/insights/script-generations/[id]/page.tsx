@@ -18,7 +18,11 @@ export default async function AdminScriptGenerationDetailPage({ params }: { para
   const { id } = await params;
   const record = await prisma.creatorTrendScriptGeneration.findUnique({
     where: { id },
-    include: { creator: { include: { user: true } } },
+    include: {
+      creator: { include: { user: true } },
+      scriptImages: { orderBy: [{ pageOrder: "asc" }, { updatedAt: "desc" }] },
+      scriptReviews: { orderBy: { updatedAt: "desc" }, take: 1 },
+    },
   });
 
   if (!record) notFound();

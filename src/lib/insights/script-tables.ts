@@ -9,6 +9,68 @@ export type ScriptTable = {
   rows: string[][];
 };
 
+export type ScriptImageView = {
+  id: string;
+  pageKey: string;
+  pageLabel: string;
+  pageOrder: number;
+  model: string;
+  promptHash: string;
+  prompt: string;
+  negativePrompt: string | null;
+  aspectRatio: string | null;
+  size: string;
+  imageUrl: string | null;
+  status: "GENERATING" | "READY" | "FAILED";
+  errorMessage: string | null;
+  generatedAt: string | null;
+  updatedAt: string;
+};
+
+export type ScriptReviewStatus = "GENERATING" | "READY" | "FAILED";
+export type ScriptReviewCheckStatus = "PASS" | "WARNING" | "FAIL";
+export type ScriptReviewRiskSeverity = "LOW" | "MEDIUM" | "HIGH";
+
+export type ScriptReviewCheck = {
+  id: string;
+  label: string;
+  status: ScriptReviewCheckStatus;
+  detail: string;
+};
+
+export type ScriptReviewImageFinding = {
+  pageKey: string;
+  pageLabel: string;
+  status: ScriptReviewCheckStatus;
+  textAccuracy: string;
+  visualRisk: string;
+  suggestion: string;
+};
+
+export type ScriptReviewRiskItem = {
+  severity: ScriptReviewRiskSeverity;
+  source: "script" | "image" | "publishing";
+  detail: string;
+  suggestion: string;
+};
+
+export type ScriptReviewView = {
+  id: string;
+  model: string;
+  inputHash: string;
+  status: ScriptReviewStatus;
+  score: number | null;
+  summary: string | null;
+  checks: ScriptReviewCheck[];
+  imageFindings: ScriptReviewImageFinding[];
+  riskItems: ScriptReviewRiskItem[];
+  suggestions: string[];
+  errorMessage: string | null;
+  stale: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type ScriptTableGroupKey = "graphicTables" | "videoTables" | "caseAnalysisTables";
 
 export type ScriptTableValidation = {
@@ -35,6 +97,8 @@ export type ScriptGenerationView = {
   graphicTables: ScriptTable[];
   videoTables: ScriptTable[];
   caseAnalysisTables: ScriptTable[];
+  scriptImages: ScriptImageView[];
+  scriptReviews: ScriptReviewView[];
   plainText: string;
 };
 

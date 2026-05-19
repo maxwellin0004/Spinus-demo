@@ -9,7 +9,7 @@ export function CopyScriptButton({ text, className, label = "复制脚本" }: { 
 
   return (
     <button
-      className={cn("rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-xs font-black text-teal-700 transition hover:bg-teal-100", className)}
+      className={cn("rounded-xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm font-black text-teal-700 shadow-sm transition hover:bg-teal-100", className)}
       type="button"
       onClick={async () => {
         await navigator.clipboard.writeText(text);

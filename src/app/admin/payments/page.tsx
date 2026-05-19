@@ -2,8 +2,10 @@ import { BrandLedgerTxStatus, BrandLedgerTxType, InvoiceStatus, WithdrawalStatus
 import type { ReactNode } from "react";
 import { refreshInvoicePaymentStatusAction, resolvePaymentProviderEventAction, updateBrandRefundAction, updateInvoiceStatusAction, updateWithdrawalAction } from "@/lib/actions";
 import { prisma } from "@/lib/prisma";
+import { AdminSettingsAccordion, AdminSettingsAccordionSection } from "@/components/admin-settings-accordion";
+import { AdminInfoPanel, AdminMetricGrid, AdminNotice } from "@/components/admin-workbench";
 import { SubmitButton } from "@/components/form-controls";
-import { Card, DataTable, LinkButton, MetricCard, PageHeader, StatusBadge, WorkflowHint } from "@/components/ui";
+import { DataTable, LinkButton, PageHeader, StatusBadge, WorkflowHint } from "@/components/ui";
 import { money, shortDate } from "@/lib/format";
 import { demoWhere, hasAdminPermission, requireAdminPermission } from "@/lib/admin";
 
@@ -197,11 +199,7 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
         <LinkButton href="/api/admin/payment-provider-events.csv" variant="ghost">导出渠道事件 CSV</LinkButton>
         <LinkButton href="/api/admin/withdrawals.csv" variant="ghost">导出提现 CSV</LinkButton>
       </PageHeader>
-      {error ? (
-        <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
-          {error}
-        </div>
-      ) : null}
+      {error ? <AdminNotice tone="danger">{error}</AdminNotice> : null}
 
       <form className="flex flex-wrap gap-3">
         <input
@@ -222,16 +220,19 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
       </form>
       {referenceQuery ? <p className="text-sm font-semibold text-stone-500">当前匹配 {invoices.length} 笔付款记录</p> : null}
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
-        <MetricCard label="待确认付款" value={money(pendingInvoices.reduce((sum, invoice) => sum + Number(invoice.amount), 0), "CNY")} sub={`${pendingInvoices.length} 笔付款单`} />
-        <MetricCard label="已确认入账" value={money(confirmedPayments, "CNY")} sub="品牌付款确认流水" />
-        <MetricCard label="累计托管冻结" value={money(frozenEscrow, "CNY")} sub="Campaign 上架前锁定" />
-        <MetricCard label="平台服务费" value={money(platformFee, "CNY")} sub="随验收逐步确认" />
-        <MetricCard label="待人工打款" value={money(pendingWithdrawalAmount + pendingRefundAmount, "CNY")} sub={`${pendingWithdrawals.length} 个提现 / ${pendingRefunds.length} 个退款`} />
-        <MetricCard label="支付异常" value={paymentAbnormalRows.length} sub={`${failedProviderEvents.length} 渠道失败 / ${pendingProviderEvents.length} 待完成事件`} />
-      </div>
+      <AdminMetricGrid
+        className="sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6"
+        items={[
+          { label: "待确认付款", value: money(pendingInvoices.reduce((sum, invoice) => sum + Number(invoice.amount), 0), "CNY"), sub: `${pendingInvoices.length} 笔付款单` },
+          { label: "已确认入账", value: money(confirmedPayments, "CNY"), sub: "品牌付款确认流水" },
+          { label: "累计托管冻结", value: money(frozenEscrow, "CNY"), sub: "Campaign 上架前锁定" },
+          { label: "平台服务费", value: money(platformFee, "CNY"), sub: "随验收逐步确认" },
+          { label: "待人工打款", value: money(pendingWithdrawalAmount + pendingRefundAmount, "CNY"), sub: `${pendingWithdrawals.length} 个提现 / ${pendingRefunds.length} 个退款` },
+          { label: "支付异常", value: paymentAbnormalRows.length, sub: `${failedProviderEvents.length} 渠道失败 / ${pendingProviderEvents.length} 待完成事件` },
+        ]}
+      />
 
-      <Card className="border-amber-200 bg-amber-50/70">
+      <AdminInfoPanel tone="warning">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-700">资金运营待处理</p>
@@ -246,8 +247,16 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
             <span className="rounded-xl bg-white/80 px-3 py-2">退款待处理：{pendingRefunds.length}</span>
           </div>
         </div>
-      </Card>
+      </AdminInfoPanel>
 
+      <AdminSettingsAccordion defaultExpandedId="payment-provider-review">
+        <AdminSettingsAccordionSection
+          abnormal={providerEventReviewRows.length > 0}
+          id="payment-provider-review"
+          summary={`待复核事件 ${providerEventReviewRows.length} 条，失败 ${failedProviderEvents.length} 条，待完成 ${pendingProviderEvents.length} 条。`}
+          title="支付失败复核队列"
+          tone={providerEventReviewRows.length > 0 ? "warning" : "success"}
+        >
       <section className="min-w-0">
         <h2 className="mb-3 text-xl font-semibold">支付失败复核队列</h2>
         <DataTable
@@ -306,7 +315,15 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
           })}
         />
       </section>
+        </AdminSettingsAccordionSection>
 
+        <AdminSettingsAccordionSection
+          abnormal={paymentAbnormalRows.length > 0}
+          id="payment-abnormal"
+          summary={`风险标记、失败日志与渠道异常共 ${paymentAbnormalRows.length} 条。`}
+          title="支付异常"
+          tone={paymentAbnormalRows.length > 0 ? "warning" : "success"}
+        >
       <section className="min-w-0">
         <h2 className="mb-3 text-xl font-semibold">支付异常</h2>
         <DataTable
@@ -343,7 +360,15 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
           })}
         />
       </section>
+        </AdminSettingsAccordionSection>
 
+        <AdminSettingsAccordionSection
+          abnormal={failedProviderEvents.length > 0 || pendingProviderEvents.length > 0}
+          id="payment-provider-events"
+          summary={`最近渠道事件 ${providerEvents.length} 条，失败 ${failedProviderEvents.length} 条，待完成 ${pendingProviderEvents.length} 条。`}
+          title="支付渠道事件"
+          tone={failedProviderEvents.length > 0 ? "warning" : pendingProviderEvents.length > 0 ? "info" : "success"}
+        >
       <section className="min-w-0">
         <h2 className="mb-3 text-xl font-semibold">支付渠道事件</h2>
         <DataTable
@@ -361,7 +386,15 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
           ])}
         />
       </section>
+        </AdminSettingsAccordionSection>
 
+        <AdminSettingsAccordionSection
+          abnormal={pendingInvoices.length > 0}
+          id="invoice-review"
+          summary={`付款单 ${invoices.length} 笔，待确认 ${pendingInvoices.length} 笔，重复风险 ${invoiceRiskFlags.length} 条。`}
+          title="商家付款与托管确认"
+          tone={pendingInvoices.length > 0 ? "warning" : "success"}
+        >
       <section className="min-w-0">
         <h2 className="mb-3 text-xl font-semibold">商家付款与托管确认</h2>
         <DataTable
@@ -438,7 +471,15 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
           })}
         />
       </section>
+        </AdminSettingsAccordionSection>
 
+        <AdminSettingsAccordionSection
+          abnormal={pendingRefunds.length > 0}
+          id="refund-review"
+          summary={`退款申请 ${refunds.length} 笔，待处理 ${pendingRefunds.length} 笔，待退款金额 ${money(pendingRefundAmount, "CNY")}。`}
+          title="商家退款申请"
+          tone={pendingRefunds.length > 0 ? "warning" : "success"}
+        >
       <section className="min-w-0">
         <h2 className="mb-3 text-xl font-semibold">商家退款申请</h2>
         <DataTable
@@ -495,7 +536,14 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
           })}
         />
       </section>
+        </AdminSettingsAccordionSection>
 
+        <AdminSettingsAccordionSection
+          id="brand-ledger"
+          summary={`品牌资金流水最近 ${ledgers.length} 条，累计已确认收款 ${money(confirmedPayments, "CNY")}。`}
+          title="商家资金流水"
+          tone="neutral"
+        >
       <section className="min-w-0">
         <h2 className="mb-3 text-xl font-semibold">商家资金流水</h2>
         <DataTable
@@ -512,7 +560,14 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
           ])}
         />
       </section>
+        </AdminSettingsAccordionSection>
 
+        <AdminSettingsAccordionSection
+          id="creator-earnings"
+          summary={`KOL 收益入账最近 ${earnings.length} 条。`}
+          title="KOL 收益入账记录"
+          tone="neutral"
+        >
       <section className="min-w-0">
         <h2 className="mb-3 text-xl font-semibold">KOL 收益入账记录</h2>
         <DataTable
@@ -526,7 +581,15 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
           ])}
         />
       </section>
+        </AdminSettingsAccordionSection>
 
+        <AdminSettingsAccordionSection
+          abnormal={pendingWithdrawals.length > 0}
+          id="creator-withdrawals"
+          summary={`提现申请 ${withdrawals.length} 笔，待处理 ${pendingWithdrawals.length} 笔，待打款金额 ${money(pendingWithdrawalAmount, "CNY")}。`}
+          title="KOL 提现申请"
+          tone={pendingWithdrawals.length > 0 ? "warning" : "success"}
+        >
       <section className="min-w-0">
         <h2 className="mb-3 text-xl font-semibold">KOL 提现申请</h2>
         <DataTable
@@ -571,6 +634,8 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
           })}
         />
       </section>
+        </AdminSettingsAccordionSection>
+      </AdminSettingsAccordion>
     </div>
   );
 }

@@ -1,14 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { FileText, Loader2, RefreshCw, Save, Trash2 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { FileText, Loader2, RefreshCw, Trash2 } from "lucide-react";
+import type { KeyboardEvent, MouseEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CopyScriptButton } from "@/components/copy-script-button";
 import { useCreatorTrendFilters } from "@/components/creator-trends-interactive";
-import { ScriptGenerationDrawer } from "@/components/script-generation-viewer";
+import { ScriptGenerationDrawer, ScriptGenerationWorkspace, type PendingScriptGeneration } from "@/components/script-generation-viewer";
 import { saveCreatorTrendAction, updateCreatorSavedTrendAction } from "@/lib/actions";
-import { formatInsightSampleText, formatInsightUpdatedAt, type InsightConfidence } from "@/lib/insights/credibility";
+import { formatInsightUpdatedAt, type InsightConfidence } from "@/lib/insights/credibility";
 import type { CreatorTrendDetailData, DraftPoolItem, SourceKind, TopicCard, WatchPoolItem } from "@/lib/insights/creator-trend-detail";
 import type { ScriptGenerationView, ScriptSourceType } from "@/lib/insights/script-tables";
 import { cn } from "@/lib/utils";
@@ -31,6 +31,7 @@ type SavedTrend = {
 };
 
 const DETAIL_CACHE_TTL_MS = 90_000;
+const DETAIL_REQUEST_TIMEOUT_MS = 120_000;
 const TOPIC_COVER_IMAGE_TIMEOUT_MS = 90_000;
 const detailCache = new Map<string, { data: CreatorTrendDetailData; expiresAt: number }>();
 const inflightRequests = new Map<string, Promise<CreatorTrendDetailData>>();
@@ -62,6 +63,21 @@ function useDebouncedValue(value: string, delayMs: number) {
   return debounced;
 }
 
+function formatAiErrorForUser(message?: string | null) {
+  if (!message) return "当前没有可展示的 AI 选题，请重新生成。";
+  const timeoutMatch = message.match(/timed out after\s+(\d+)ms/i);
+  if (timeoutMatch?.[1]) {
+    return `AI 模型响应超时（约 ${Math.round(Number(timeoutMatch[1]) / 1000)} 秒），请稍后重新生成，或在 Admin 中切换到更快的模型。`;
+  }
+  if (/timeout|超时/i.test(message)) {
+    return "AI 模型响应超时，请稍后重新生成，或在 Admin 中切换到更快的模型。";
+  }
+  if (/fetch failed|网关连接失败|ENOTFOUND|ECONNRESET|ECONNREFUSED/i.test(message)) {
+    return "AI 网关连接失败，请检查 Base URL、API Key、代理或网络连通性。";
+  }
+  return message;
+}
+
 function readCachedDetail(key: string) {
   const cached = detailCache.get(key);
   if (!cached) return null;
@@ -76,11 +92,13 @@ function writeCachedDetail(key: string, data: CreatorTrendDetailData) {
   detailCache.set(key, { data, expiresAt: Date.now() + DETAIL_CACHE_TTL_MS });
 }
 
-function requestDetail(url: string, key: string, signal: AbortSignal) {
-  const cached = readCachedDetail(key);
-  if (cached) return Promise.resolve(cached);
-  const inflight = inflightRequests.get(key);
-  if (inflight) return inflight;
+function requestDetail(url: string, key: string, signal: AbortSignal, options: { bypassCache?: boolean } = {}) {
+  if (!options.bypassCache) {
+    const cached = readCachedDetail(key);
+    if (cached) return Promise.resolve(cached);
+    const inflight = inflightRequests.get(key);
+    if (inflight) return inflight;
+  }
 
   const request = fetch(url, { signal, cache: "no-store" })
     .then(async (response) => {
@@ -92,10 +110,14 @@ function requestDetail(url: string, key: string, signal: AbortSignal) {
       return next;
     })
     .finally(() => {
-      inflightRequests.delete(key);
+      if (!options.bypassCache) {
+        inflightRequests.delete(key);
+      }
     });
 
-  inflightRequests.set(key, request);
+  if (!options.bypassCache) {
+    inflightRequests.set(key, request);
+  }
   return request;
 }
 
@@ -142,7 +164,7 @@ function replaceMetaUrl(filters: { range: string; platform: string; direction: s
   if (rec) params.set("rec", rec);
   if (pool === "draft") params.set("pool", pool);
   const query = params.toString();
-  window.history.replaceState(null, "", `/creator/trends${query ? `?${query}` : ""}#topic-recommendations`);
+  window.history.replaceState(null, "", `/creator/trends${query ? `?${query}` : ""}#workflow`);
 }
 
 function scriptRecordKey(sourceType: ScriptSourceType, sourceKey: string) {
@@ -199,17 +221,43 @@ function savedStatusLabel(status: string) {
   return "已收藏";
 }
 
-export function CreatorTrendDetailPanels({ initialBatch, initialRec, initialPool, savedTrends = [] }: Props) {
+const workflowSteps = [
+  { label: "发现热点", hint: "筛选方向和平台" },
+  { label: "AI 选题", hint: "挑选可执行角度" },
+  { label: "爆款拆解", hint: "确认内容结构" },
+  { label: "生成脚本", hint: "进入图文/视频生产" },
+];
+
+const secondaryButtonClass =
+  "inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 shadow-sm transition hover:border-teal-200 hover:text-teal-700 disabled:cursor-not-allowed disabled:opacity-60";
+
+const accentButtonClass =
+  "inline-flex items-center justify-center gap-2 rounded-xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm font-black text-teal-700 shadow-sm transition hover:bg-teal-100 disabled:cursor-not-allowed disabled:opacity-50";
+
+const primaryButtonClass =
+  "inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-base font-black text-white shadow-[0_12px_28px_rgba(15,23,42,0.14)] transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60";
+
+function recommendationStatusLabel(data: CreatorTrendDetailData | null, loading: boolean, error: string | null) {
+  if (loading) return "AI 选题加载中";
+  if (error) return "AI 选题加载失败";
+  if (!data) return "暂无 AI 选题";
+  if (data.recommendationStatus === "FAILED") return "AI 选题生成失败";
+  if (data.recommendationStatus === "PARTIAL") return "AI 选题补全中";
+  if (data.recommendationNeedsRefresh) return "AI 选题建议刷新";
+  return "AI 选题已就绪";
+}
+
+export function CreatorTrendDetailPanels({ initialBatch, initialPool, savedTrends = [] }: Props) {
   const { filters, currentDirection, setFilters } = useCreatorTrendFilters();
   const [data, setData] = useState<CreatorTrendDetailData | null>(null);
   const [lastResolvedKey, setLastResolvedKey] = useState("");
   const [batch, setBatch] = useState(initialBatch ?? "0");
-  const [rec, setRec] = useState(initialRec ?? "");
   const [poolView, setPoolView] = useState(initialPool === "draft" ? "draft" : "watch");
   const [detailError, setDetailError] = useState<string | null>(null);
   const [scriptRecords, setScriptRecords] = useState<Record<string, ScriptGenerationView>>({});
   const [topicCoverImages, setTopicCoverImages] = useState<Record<string, TopicCoverImageState>>({});
   const requestedTopicCoverImageKeys = useRef(new Set<string>());
+  const requestedCompletionKeys = useRef(new Set<string>());
   const [openScriptRecord, setOpenScriptRecord] = useState<ScriptGenerationView | null>(null);
   const [openScriptPayload, setOpenScriptPayload] = useState<ScriptGeneratePayload | null>(null);
   const [generatingScriptKey, setGeneratingScriptKey] = useState<string | null>(null);
@@ -231,7 +279,7 @@ export function CreatorTrendDetailPanels({ initialBatch, initialRec, initialPool
     const timeout = window.setTimeout(() => {
       timedOut = true;
       controller.abort();
-    }, 35_000);
+    }, DETAIL_REQUEST_TIMEOUT_MS);
     void requestDetail(requestUrl, requestKey, controller.signal)
       .then((next) => {
         if (controller.signal.aborted) return;
@@ -243,13 +291,13 @@ export function CreatorTrendDetailPanels({ initialBatch, initialRec, initialPool
         if (controller.signal.aborted && !timedOut) return;
         if (controller.signal.aborted && timedOut) {
           setData(null);
-          setDetailError("详情接口响应超时，请稍后重试。");
+          setDetailError("详情接口响应超时，请稍后重试，AI 选题首次生成可能需要更久。");
           setLastResolvedKey(requestKey);
           return;
         }
         console.error(error);
         setData(null);
-        setDetailError(timedOut ? "详情接口响应超时，请稍后重试。" : error instanceof Error ? error.message : "热点详情加载失败");
+        setDetailError(timedOut ? "详情接口响应超时，请稍后重试，AI 选题首次生成可能需要更久。" : error instanceof Error ? error.message : "热点详情加载失败");
         setLastResolvedKey(requestKey);
       });
     return () => {
@@ -259,19 +307,20 @@ export function CreatorTrendDetailPanels({ initialBatch, initialRec, initialPool
   }, [requestKey, requestUrl]);
 
   useEffect(() => {
-    setTopicCoverImages({});
     requestedTopicCoverImageKeys.current.clear();
+    const timeout = window.setTimeout(() => setTopicCoverImages({}), 0);
+    return () => window.clearTimeout(timeout);
   }, [requestKey]);
 
   const batchCount = data?.recommendationBatches.length ?? 0;
   const activeBatchIndex = positiveBatchIndex(batch, batchCount);
   const activeNextBatchIndex = batchCount > 1 ? (activeBatchIndex + 1) % batchCount : 0;
   const activeRecommendations = useMemo(() => data?.recommendationBatches[activeBatchIndex] ?? [], [activeBatchIndex, data]);
-  const selectedRecommendation =
-    rec && activeRecommendations.length > 0
-      ? activeRecommendations.find((item) => item.id === rec || item.sampleSourceContentId === rec || item.title === rec) ?? null
-      : null;
-  const activeRec = selectedRecommendation ? rec : "";
+  const recommendationItemCount = data?.recommendationBatches.reduce((sum, group) => sum + group.length, 0) ?? 0;
+  const partialCompletionKey =
+    data?.recommendationStatus === "PARTIAL" || data?.recommendationNeedsRefresh
+      ? `${requestKey}|${data.recommendationGeneratedAt ?? ""}|${recommendationItemCount}|${data.recommendationCacheSource ?? "none"}`
+      : "";
   const activeDraftPool = data?.draftPools[activeBatchIndex] ?? [];
   const loading = lastResolvedKey !== requestKey;
   const caseSource = data?.caseStudy ? caseScriptSource(filters, data.caseStudy) : null;
@@ -284,16 +333,98 @@ export function CreatorTrendDetailPanels({ initialBatch, initialRec, initialPool
     return topicCoverImages[topicImageKey(item)]?.status ?? (item.coverImagePrompt ? "loading" : "failed");
   }
 
-  function topicCoverNode(item: TopicCard, heightClass = "h-24", sizes = "160px") {
+  const requestTopicCoverImage = useCallback(
+    async (item: TopicCard) => {
+      const key = topicImageKey(item);
+      if (!item.coverImagePrompt?.trim()) {
+        setTopicCoverImages((current) => ({
+          ...current,
+          [key]: { status: "failed", imageUrl: null },
+        }));
+        return;
+      }
+
+      requestedTopicCoverImageKeys.current.add(key);
+      setTopicCoverImages((current) => ({
+        ...current,
+        [key]: { status: "loading", imageUrl: null },
+      }));
+
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), TOPIC_COVER_IMAGE_TIMEOUT_MS);
+      try {
+        const response = await fetch("/api/creator/trends/topic-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: controller.signal,
+          body: JSON.stringify({
+            sourceContentId: item.sampleSourceContentId ?? item.id ?? "",
+            sourceTitle: item.title,
+            platform: item.platform ?? item.tags[1] ?? filters.platform,
+            prompt: item.coverImagePrompt,
+            negativePrompt: item.coverNegativePrompt,
+            fallbackImageUrl: null,
+          }),
+        });
+        const payload = (await response.json().catch(() => ({}))) as { imageUrl?: string | null };
+        setTopicCoverImages((current) => ({
+          ...current,
+          [key]: {
+            status: response.ok && payload.imageUrl ? "ready" : "failed",
+            imageUrl: payload.imageUrl ?? null,
+          },
+        }));
+      } catch {
+        setTopicCoverImages((current) => ({
+          ...current,
+          [key]: { status: "failed", imageUrl: null },
+        }));
+      } finally {
+        window.clearTimeout(timeout);
+      }
+    },
+    [filters.platform],
+  );
+
+  function topicCoverNode(item: TopicCard, heightClass = "h-24", sizes = "160px", options: { nestedInButton?: boolean } = {}) {
     const imageUrl = resolvedCoverImageUrl(item);
     const status = topicCoverStatus(item);
+    const canRetry = status === "failed" && Boolean(item.coverImagePrompt?.trim());
+    const retryClassName =
+      "mt-1 inline-flex items-center justify-center gap-1 rounded-md border border-teal-200 bg-white/90 px-2 py-1 text-[0.66rem] font-black text-teal-700 shadow-sm transition hover:bg-teal-50";
+    const retryCover = (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      void requestTopicCoverImage(item);
+    };
     return (
-      <div className={cn("relative overflow-hidden rounded-lg bg-gradient-to-br", heightClass, item.tone)}>
-        {imageUrl ? <Image alt={item.title} className="object-cover" fill sizes={sizes} src={imageUrl} unoptimized /> : null}
+      <div className={cn("relative overflow-hidden rounded-lg border border-slate-100 bg-slate-50", heightClass)}>
+        {imageUrl ? <Image alt={item.title} className="object-contain p-1" fill sizes={sizes} src={imageUrl} unoptimized /> : null}
         {!imageUrl ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-white/55 px-2 text-center text-[0.68rem] font-black text-teal-800">
             {status === "loading" ? <Loader2 className="animate-spin" size={18} /> : <FileText size={17} />}
-            <span>{status === "loading" ? "AI封面生成中" : "AI封面生成失败"}</span>
+            {status === "failed" ? <span>AI 封面生成失败</span> : null}
+            {status === "loading" ? <span>AI 封面生成中</span> : null}
+            {canRetry && options.nestedInButton ? (
+              <span
+                className={retryClassName}
+                role="button"
+                tabIndex={0}
+                onClick={retryCover}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") retryCover(event);
+                }}
+              >
+                <RefreshCw size={12} />
+                重新生成封面
+              </span>
+            ) : null}
+            {canRetry && !options.nestedInButton ? (
+              <button className={retryClassName} type="button" onClick={retryCover}>
+                <RefreshCw size={12} />
+                重新生成封面
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>
@@ -301,8 +432,8 @@ export function CreatorTrendDetailPanels({ initialBatch, initialRec, initialPool
   }
 
   useEffect(() => {
-    replaceMetaUrl(filters, String(activeBatchIndex), activeRec, poolView);
-  }, [activeBatchIndex, activeRec, filters, poolView]);
+    replaceMetaUrl(filters, String(activeBatchIndex), "", poolView);
+  }, [activeBatchIndex, filters, poolView]);
 
   useEffect(() => {
     if (loading || !data) return;
@@ -345,51 +476,61 @@ export function CreatorTrendDetailPanels({ initialBatch, initialRec, initialPool
       if (!item.coverImagePrompt?.trim()) continue;
       const key = topicImageKey(item);
       if (requestedTopicCoverImageKeys.current.has(key)) continue;
-      requestedTopicCoverImageKeys.current.add(key);
-      setTopicCoverImages((current) =>
-        current[key]
-          ? current
-          : {
-              ...current,
-              [key]: { status: "loading", imageUrl: null },
-            },
-      );
-      const controller = new AbortController();
-      const timeout = window.setTimeout(() => controller.abort(), TOPIC_COVER_IMAGE_TIMEOUT_MS);
-      void fetch("/api/creator/trends/topic-image", {
+      void requestTopicCoverImage(item);
+    }
+  }, [activeRecommendations, loading, requestTopicCoverImage]);
+
+  useEffect(() => {
+    if (!data || (data.recommendationStatus !== "PARTIAL" && !data.recommendationNeedsRefresh) || !partialCompletionKey) return;
+    let active = true;
+
+    if (!requestedCompletionKeys.current.has(partialCompletionKey)) {
+      requestedCompletionKeys.current.add(partialCompletionKey);
+      void fetch("/api/creator/trends/recommendations/complete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        signal: controller.signal,
         body: JSON.stringify({
-          sourceContentId: item.sampleSourceContentId ?? item.id ?? "",
-          sourceTitle: item.title,
-          platform: item.platform ?? item.tags[1] ?? filters.platform,
-          prompt: item.coverImagePrompt,
-          negativePrompt: item.coverNegativePrompt,
-          fallbackImageUrl: null,
+          direction: filters.direction,
+          platform: filters.platform,
+          keyword: debouncedKeyword,
         }),
       })
         .then(async (response) => {
-          const payload = (await response.json().catch(() => ({}))) as { imageUrl?: string | null };
-          setTopicCoverImages((current) => ({
-            ...current,
-            [key]: {
-              status: response.ok && payload.imageUrl ? "ready" : "failed",
-              imageUrl: payload.imageUrl ?? null,
-            },
-          }));
+          const result = (await response.json().catch(() => ({}))) as { data?: CreatorTrendDetailData };
+          if (!active || !response.ok || !result.data) return;
+          setData(result.data);
+          writeCachedDetail(requestKey, result.data);
+          if (result.data.recommendationStatus === "READY" && !result.data.recommendationNeedsRefresh) {
+            setTopicCoverImages({});
+            requestedTopicCoverImageKeys.current.clear();
+          }
         })
-        .catch(() => {
-          setTopicCoverImages((current) => ({
-            ...current,
-            [key]: { status: "failed", imageUrl: null },
-          }));
-        })
-        .finally(() => {
-          window.clearTimeout(timeout);
-        });
+        .catch((error) => console.error(error));
     }
-  }, [activeRecommendations, filters.platform, loading]);
+
+    const interval = window.setInterval(() => {
+      const controller = new AbortController();
+      const pollUrl = `${requestUrl}&partialPoll=${Date.now()}`;
+      void requestDetail(pollUrl, requestKey, controller.signal, { bypassCache: true })
+        .then((next) => {
+          if (!active) return;
+          setData(next);
+          setDetailError(null);
+          setLastResolvedKey(requestKey);
+          if (next.recommendationStatus !== "PARTIAL" && !next.recommendationNeedsRefresh) {
+            window.clearInterval(interval);
+            setTopicCoverImages({});
+            requestedTopicCoverImageKeys.current.clear();
+          }
+        })
+        .catch(() => undefined);
+    }, 8_000);
+
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, [data, debouncedKeyword, filters.direction, filters.platform, partialCompletionKey, requestKey, requestUrl]);
 
   async function regenerateAiRecommendations() {
     setRegeneratingRecommendations(true);
@@ -406,18 +547,18 @@ export function CreatorTrendDetailPanels({ initialBatch, initialRec, initialPool
       });
       const result = (await response.json().catch(() => ({}))) as { data?: CreatorTrendDetailData; error?: string };
       if (!response.ok || !result.data) {
-        setDetailError(result.error ?? "AI 选题重新生成失败，请稍后重试。");
+        setDetailError(formatAiErrorForUser(result.error ?? "AI 选题重新生成失败，请稍后重试。"));
         return;
       }
       setData(result.data);
       writeCachedDetail(requestKey, result.data);
       setLastResolvedKey(requestKey);
       setBatch("0");
-      setRec("");
       setTopicCoverImages({});
       requestedTopicCoverImageKeys.current.clear();
+      requestedCompletionKeys.current.clear();
     } catch (error) {
-      setDetailError(error instanceof Error ? error.message : "AI 选题重新生成失败，请稍后重试。");
+      setDetailError(formatAiErrorForUser(error instanceof Error ? error.message : "AI 选题重新生成失败，请稍后重试。"));
     } finally {
       setRegeneratingRecommendations(false);
     }
@@ -425,7 +566,10 @@ export function CreatorTrendDetailPanels({ initialBatch, initialRec, initialPool
 
   async function generateScript(payload: ScriptGeneratePayload, userInstruction = "") {
     const key = scriptRecordKey(payload.sourceType, payload.sourceKey);
+    const existingRecord = scriptRecords[key] ?? null;
     setGeneratingScriptKey(key);
+    setOpenScriptPayload(payload);
+    setOpenScriptRecord(existingRecord);
     setScriptError(null);
     try {
       const response = await fetch("/api/creator/trends/scripts/generate", {
@@ -460,7 +604,7 @@ export function CreatorTrendDetailPanels({ initialBatch, initialRec, initialPool
     if (record) {
       return (
         <button
-          className="inline-flex w-full items-center justify-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-2 py-2 text-xs font-black text-blue-700 transition hover:bg-blue-100"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-black text-blue-700 shadow-sm transition hover:bg-blue-100"
           type="button"
           onClick={() => openScript(payload, record)}
         >
@@ -471,7 +615,7 @@ export function CreatorTrendDetailPanels({ initialBatch, initialRec, initialPool
     }
     return (
       <button
-        className="inline-flex w-full items-center justify-center gap-1 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs font-black text-slate-700 transition hover:border-teal-200 hover:text-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
+        className={secondaryButtonClass}
         type="button"
         disabled={generating}
         onClick={() => generateScript(payload)}
@@ -482,362 +626,414 @@ export function CreatorTrendDetailPanels({ initialBatch, initialRec, initialPool
     );
   }
 
+  function primaryScriptAction(payload: ScriptGeneratePayload) {
+    const key = scriptRecordKey(payload.sourceType, payload.sourceKey);
+    const record = scriptRecords[key];
+    const generating = generatingScriptKey === key;
+    if (record) {
+      return (
+        <button
+          className={primaryButtonClass}
+          type="button"
+          onClick={() => openScript(payload, record)}
+        >
+          <FileText size={16} />
+          查看脚本
+        </button>
+      );
+    }
+    return (
+      <button
+        className={primaryButtonClass}
+        type="button"
+        disabled={generating}
+        onClick={() => generateScript(payload)}
+      >
+        {generating ? <Loader2 className="animate-spin" size={16} /> : <FileText size={16} />}
+        {generating ? "生成中..." : "生成脚本"}
+      </button>
+    );
+  }
+
+  const workflowStatus = recommendationStatusLabel(data, loading, detailError);
+  const pendingScript: PendingScriptGeneration | null =
+    openScriptPayload && generatingScriptKey === scriptRecordKey(openScriptPayload.sourceType, openScriptPayload.sourceKey)
+      ? {
+          sourceTitle: openScriptPayload.sourceTitle,
+          platformLabel: openScriptPayload.platformLabel,
+          directionLabel: openScriptPayload.directionLabel,
+          mode: openScriptRecord ? "regenerate" : "create",
+        }
+      : null;
+
   return (
     <>
-    {scriptError ? (
-      <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
-        脚本生成失败：{scriptError}
-      </div>
-    ) : null}
-    <section id="topic-recommendations" className="scroll-mt-28 grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,0.75fr)]">
-      <div className={cn("min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm", loading && "opacity-70")}>
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl font-black">AI 选题推荐</h2>
-            <SourceBadge kind={data?.recommendationSource ?? "规则计算"} />
-            {data?.recommendationStatus === "FAILED" ? <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-black text-amber-700">AI失败</span> : null}
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              className="flex items-center gap-1 text-sm font-black text-slate-600 transition hover:text-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
-              type="button"
-              disabled={loading || regeneratingRecommendations}
-              onClick={regenerateAiRecommendations}
-            >
-              {regeneratingRecommendations ? <Loader2 className="animate-spin" size={15} /> : <RefreshCw size={15} />}
-              重新生成 AI 选题
-            </button>
-            <button
-              className="flex items-center gap-1 text-sm font-black text-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
-              type="button"
-              disabled={batchCount <= 1}
-              onClick={() => {
-                setRec("");
-                setBatch(String(activeNextBatchIndex));
-              }}
-            >
-              <RefreshCw size={15} />换一批
-            </button>
-          </div>
+      {scriptError ? (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
+          脚本生成失败：{scriptError}
         </div>
-        <div className="-mx-1 overflow-x-auto px-1 pb-2">
-          <div className="flex min-w-max gap-4">
-            {!loading && !data ? (
-              <div className="flex h-40 min-w-96 items-center justify-center rounded-xl border border-dashed border-amber-200 bg-amber-50 px-6 text-center text-sm font-semibold text-amber-700">
-                热点详情加载失败，请稍后重试。{detailError ? ` ${detailError}` : ""}
+      ) : null}
+
+      <div className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_minmax(30rem,36rem)]">
+        <div className="min-w-0 space-y-5">
+          <section id="workflow" className={cn("scroll-mt-28 rounded-[1.6rem] border border-slate-200 bg-white p-6 shadow-sm", loading && "opacity-80")}>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                <div className="min-w-0">
+                  <p className="text-sm font-black tracking-[0.08em] text-teal-700">创作路径</p>
+                  <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950">从热点到脚本，一步步完成今天的内容</h2>
+                  <p className="mt-3 text-base font-semibold leading-7 text-slate-500">
+                    当前方向：{currentDirection.label} · 平台：{platformDisplay(filters.platform)} · 关键词：{filters.keyword.trim() || "全部热点"}
+                  </p>
+                </div>
+                <span className="inline-flex w-fit items-center rounded-2xl border border-teal-200 bg-teal-50 px-4 py-2.5 text-sm font-black text-teal-700 shadow-sm">
+                  {workflowStatus}
+                </span>
               </div>
-            ) : !loading && data?.recommendationStatus === "FAILED" ? (
-              <div className="flex h-48 min-w-96 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-amber-200 bg-amber-50 px-6 text-center text-sm font-semibold text-amber-800">
-                <p className="text-base font-black">AI 选题生成失败</p>
-                <p>{data.recommendationError ?? detailError ?? "当前没有可展示的 AI 选题，请重新生成。"}</p>
-                <button
-                  className="inline-flex items-center gap-1 rounded-lg bg-slate-950 px-3 py-2 text-xs font-black text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-                  type="button"
-                  disabled={regeneratingRecommendations}
-                  onClick={regenerateAiRecommendations}
-                >
-                  {regeneratingRecommendations ? <Loader2 className="animate-spin" size={14} /> : <RefreshCw size={14} />}
-                  重新生成 AI 选题
+
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                {workflowSteps.map((step, index) => (
+                  <div key={step.label} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+                    <div className="flex items-center gap-3">
+                      <span className="inline-flex size-9 items-center justify-center rounded-2xl bg-slate-950 text-sm font-black text-white">{index + 1}</span>
+                      <p className="text-base font-black text-slate-950">{step.label}</p>
+                    </div>
+                    <p className="mt-3 text-sm font-semibold leading-6 text-slate-500">{step.hint}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex flex-col gap-4 rounded-[1.4rem] border border-slate-200 bg-slate-50/80 p-4">
+                <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      className={cn(
+                        "rounded-xl border px-4 py-3 text-sm font-black shadow-sm transition",
+                        poolView === "watch" ? "border-teal-200 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-500 hover:text-slate-900",
+                      )}
+                      type="button"
+                      onClick={() => setPoolView("watch")}
+                    >
+                      趋势推荐
+                    </button>
+                    <button
+                      className={cn(
+                        "rounded-xl border px-4 py-3 text-sm font-black shadow-sm transition",
+                        poolView === "draft" ? "border-teal-200 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-500 hover:text-slate-900",
+                      )}
+                      type="button"
+                      onClick={() => setPoolView("draft")}
+                    >
+                      我的关注
+                    </button>
+                    <SourceBadge kind={data?.recommendationSource ?? "规则计算"} />
+                    {data?.recommendationStatus === "PARTIAL" ? (
+                      <span className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-black text-blue-700 shadow-sm">AI 补全中 {recommendationItemCount}/12</span>
+                    ) : null}
+                    {data?.recommendationStatus === "FAILED" ? (
+                      <span className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-black text-amber-700 shadow-sm">AI 失败</span>
+                    ) : null}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      className={cn(secondaryButtonClass, "w-full sm:w-auto")}
+                      type="button"
+                      disabled={loading || regeneratingRecommendations}
+                      onClick={regenerateAiRecommendations}
+                    >
+                      {regeneratingRecommendations ? <Loader2 className="animate-spin" size={14} /> : <RefreshCw size={14} />}
+                      重新生成 AI 选题
+                    </button>
+                    <button
+                      className={cn(accentButtonClass, "w-full sm:w-auto")}
+                      type="button"
+                      disabled={batchCount <= 1}
+                      onClick={() => {
+                        setBatch(String(activeNextBatchIndex));
+                      }}
+                    >
+                      <RefreshCw size={14} />
+                      换一批
+                    </button>
+                  </div>
+                </div>
+
+                {data?.recommendationStatus === "PARTIAL" ? (
+                  <div className="rounded-2xl border border-blue-100 bg-blue-50 px-5 py-4 text-base font-semibold text-blue-800">
+                    {data.recommendationError ?? `AI 已生成 ${recommendationItemCount}/12 张有效选题，后台正在补全，完成后会自动刷新。`}
+                  </div>
+                ) : null}
+
+                {poolView === "watch" ? (
+                  !loading && !data ? (
+                    <div className="rounded-2xl border border-dashed border-amber-200 bg-amber-50 px-5 py-10 text-center text-base font-semibold text-amber-800">
+                      {detailError ? formatAiErrorForUser(detailError) : "热点详情加载失败，请稍后重试。"}
+                    </div>
+                  ) : !loading && data?.recommendationStatus === "FAILED" ? (
+                    <div className="rounded-2xl border border-dashed border-amber-200 bg-amber-50 px-5 py-10 text-center text-base font-semibold text-amber-800">
+                      <p className="text-base font-black">AI 选题生成失败</p>
+                      <p className="mt-2">{formatAiErrorForUser(data.recommendationError ?? detailError)}</p>
+                    </div>
+                  ) : activeRecommendations.length > 0 ? (
+                    <div id="topic-recommendations" className="scroll-mt-28 grid gap-4">
+                      {activeRecommendations.map((item) => (
+                        <article
+                          key={item.id ?? item.title}
+                          className="grid gap-5 rounded-[1.4rem] border border-slate-200 bg-white p-5 shadow-sm lg:grid-cols-[8rem_minmax(0,1fr)]"
+                        >
+                          {topicCoverNode(item, "h-40 lg:h-full", "(min-width: 1280px) 128px, (min-width: 1024px) 112px, 100vw")}
+                          <div className="min-w-0">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start">
+                              <h3 className="min-w-0 flex-1 text-xl font-black text-slate-950">{item.title}</h3>
+                              <span className={cn("rounded-xl border px-3 py-1.5 text-sm font-black", stageClass(item.stage))}>{item.stage}</span>
+                            </div>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              <span className={cn("rounded-xl border px-3 py-1.5 text-sm font-black", confidenceClass(item.confidence))}>{item.confidence ?? "示例数据"}</span>
+                              <span className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-black text-slate-600">{formatInsightUpdatedAt(item.updatedAt)}</span>
+                              <span className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-black text-slate-600">热度 {item.heat}</span>
+                            </div>
+                            <p className="mt-4 line-clamp-2 text-base font-semibold leading-7 text-slate-600">{item.reason}</p>
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              {item.tags.slice(0, 3).map((tag) => (
+                                <span key={tag} className="rounded-xl border border-teal-200 bg-teal-50 px-3 py-1.5 text-sm font-black text-teal-700">
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                            <div className="mt-5 grid gap-4 text-sm sm:grid-cols-3">
+                              <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                                <p className="text-sm font-black text-slate-400">讨论量</p>
+                                <p className="mt-1 text-xl font-black text-slate-900">{item.metrics?.comments?.toLocaleString() ?? 0}</p>
+                              </div>
+                              <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                                <p className="text-sm font-black text-slate-400">互动量</p>
+                                <p className="mt-1 text-xl font-black text-teal-700">{item.metrics?.likes?.toLocaleString() ?? 0}</p>
+                              </div>
+                              <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                                <p className="text-sm font-black text-slate-400">预计热度</p>
+                                <p className="mt-1 text-xl font-black text-slate-900">{item.heat}</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="grid gap-3 sm:grid-cols-2 lg:col-span-2 self-start">
+                            {primaryScriptAction({
+                              ...topicScriptSource(item),
+                              sourceTitle: item.title,
+                              platform: item.platform ?? item.tags[1] ?? filters.platform,
+                              platformLabel: item.platform ?? item.tags[1] ?? platformDisplay(filters.platform),
+                              directionLabel: currentDirection.label,
+                              topic: item,
+                            })}
+                            <form action={saveCreatorTrendAction}>
+                              <input name="title" type="hidden" value={item.title} />
+                              <input name="topic" type="hidden" value={item.keyword ?? item.title} />
+                              <input name="platform" type="hidden" value={item.platform ?? item.tags[1] ?? ""} />
+                              <input name="reason" type="hidden" value={item.reason} />
+                              <input name="sourceContentId" type="hidden" value={item.sampleSourceContentId ?? item.id ?? ""} />
+                              <input name="sourceUrl" type="hidden" value={item.sampleContentUrl ?? ""} />
+                              <button className="w-full rounded-xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm font-black text-teal-700 shadow-sm transition hover:bg-teal-100" type="submit">
+                                加入选题库
+                              </button>
+                            </form>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-5 py-10 text-center text-base font-semibold text-slate-500">
+                      当前筛选下暂无 AI 选题。
+                    </div>
+                  )
+                ) : (
+                  <div className="grid gap-3">
+                    {savedTrends.map((item) => (
+                      <div key={item.id} className="rounded-[1.4rem] border border-teal-100 bg-teal-50/50 p-5">
+                        <div className="flex items-start justify-between gap-3">
+                          <button className="line-clamp-2 text-left text-base font-black text-slate-950 transition hover:text-teal-700" type="button" onClick={() => setFilters({ keyword: item.topic ?? item.title }, "#workflow", { navigate: false })}>
+                            {item.title}
+                          </button>
+                          <span className={cn("shrink-0 rounded-xl border px-3 py-1.5 text-sm font-black", poolStatusClass(item.status === "DROPPED" ? "已过热" : "可创作"))}>{savedStatusLabel(item.status)}</span>
+                        </div>
+                        <p className="mt-3 line-clamp-2 text-base font-semibold text-slate-500">{item.reason ?? "手动加入选题池。"}</p>
+                        <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+                          <span className="text-sm font-bold text-slate-400">{formatInsightUpdatedAt(item.updatedAt)}</span>
+                          <form action={updateCreatorSavedTrendAction.bind(null, item.id)} className="flex flex-wrap gap-1.5">
+                            <button className="rounded-xl border border-teal-200 bg-white px-3 py-2 text-sm font-black text-teal-700" name="status" type="submit" value="PLANNED">
+                              准备做
+                            </button>
+                            <button className="rounded-xl border border-blue-200 bg-white px-3 py-2 text-sm font-black text-blue-700" name="status" type="submit" value="PUBLISHED">
+                              已发布
+                            </button>
+                            <button className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-black text-slate-500" name="intent" type="submit" value="delete">
+                              <Trash2 size={12} />
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    ))}
+                    {activeDraftPool.map((item) => (
+                      <div key={`${item.title}-${item.angle}`} className="rounded-[1.4rem] border border-slate-200 bg-white p-5">
+                        <div className="flex items-start justify-between gap-3">
+                          <button className="line-clamp-2 text-left text-base font-black text-slate-950 transition hover:text-teal-700" type="button" onClick={() => setFilters({ keyword: item.title }, "#workflow", { navigate: false })}>
+                            {item.title}
+                          </button>
+                          <span className={cn("shrink-0 rounded-xl border px-3 py-1.5 text-sm font-black", poolStatusClass(item.status))}>{item.status}</span>
+                        </div>
+                        <p className="mt-3 text-sm font-black text-teal-700">{item.angle}</p>
+                        <p className="mt-2 line-clamp-2 text-base font-semibold text-slate-500">{item.reason}</p>
+                        <div className="mt-3 flex flex-wrap gap-1">
+                          {item.platforms.slice(0, 3).map((platform) => <PlatformBadge key={platform} label={platform} />)}
+                        </div>
+                      </div>
+                    ))}
+                    {savedTrends.length === 0 && activeDraftPool.length === 0 ? (
+                      <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-5 py-10 text-center text-base font-semibold text-slate-500">
+                        当前还没有收藏的选题和草稿。
+                      </div>
+                    ) : null}
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+
+          <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)]">
+            <section id="case-study" className={cn("scroll-mt-28 rounded-[1.6rem] border border-slate-200 bg-white p-6 shadow-sm", loading && "opacity-70")}>
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-xl font-black">爆款案例拆解</h2>
+                  <SourceBadge kind={data?.caseSource ?? "规则计算"} />
+                </div>
+                <button className="text-base font-black text-blue-600 hover:text-blue-700" type="button" onClick={() => setFilters({ keyword: "" }, "#workflow", { navigate: false })}>
+                  清空筛选
                 </button>
               </div>
-            ) : activeRecommendations.length > 0 ? (
-              activeRecommendations.map((item) => (
-                <div key={item.id ?? item.title} className="w-40 shrink-0 rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
-                  <button
-                    className="block w-full text-left"
-                    type="button"
-                    onClick={() => setRec(item.id ?? item.sampleSourceContentId ?? item.title)}
-                  >
-                    <div className="mb-3">{topicCoverNode(item)}</div>
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="line-clamp-2 font-black">{item.title}</p>
-                      <span className={cn("shrink-0 rounded-md border px-2 py-1 text-xs font-black", stageClass(item.stage))}>{item.stage}</span>
+              {!loading && !data ? (
+                <div className="rounded-2xl border border-dashed border-amber-200 bg-amber-50 px-5 py-10 text-center text-base font-semibold text-amber-700">
+                  爆款案例暂时没有加载成功。{detailError ? ` ${detailError}` : "请切换筛选或稍后重试。"}
+                </div>
+              ) : (
+                <>
+                  <div className="grid gap-4 sm:grid-cols-[7rem_minmax(0,1fr)]">
+                    <div className="relative h-28 overflow-hidden rounded-xl bg-gradient-to-br from-amber-100 to-stone-200">
+                      {data?.caseStudy.coverImageUrl ? <Image alt={data.caseStudy.title} className="object-contain p-1" fill sizes="112px" src={data.caseStudy.coverImageUrl} unoptimized /> : null}
+                      <div className="absolute inset-x-0 bottom-0 flex items-end p-2">
+                        <span className="rounded-full bg-stone-700 px-2 py-1 text-xs font-black text-white">{data?.caseStudy.likes ?? "加载中"}</span>
+                      </div>
                     </div>
-                  </button>
-                  <p className="mt-3 text-xs font-black text-slate-500">推荐理由</p>
-                  <p className="mt-1 line-clamp-3 text-sm text-slate-600">{item.reason}</p>
-                  <div className="mt-3 flex flex-wrap gap-1.5 text-xs font-black">
-                    <span className={cn("rounded-md border px-2 py-1", confidenceClass(item.confidence))}>{item.confidence ?? "示例数据"}</span>
-                    <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-slate-600">{formatInsightUpdatedAt(item.updatedAt)}</span>
+                    <div>
+                      <p className="line-clamp-2 text-xl font-black text-slate-950">{data?.caseStudy.title ?? "加载中..."}</p>
+                      <div className="mt-3 grid grid-cols-4 gap-2 text-center text-sm font-black text-slate-600">
+                        {(data?.caseStudy.stats ?? ["-", "-", "-", "-"]).map((stat, index) => <span key={`${stat}-${index}`}>{stat}</span>)}
+                      </div>
+                    </div>
                   </div>
-                  <p className="mt-2 text-xs font-semibold text-slate-500">{formatInsightSampleText(item)}</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {item.tags.slice(0, 3).map((tag) => (
-                      <span key={tag} className="whitespace-nowrap rounded-md border border-teal-200 bg-teal-50 px-2 py-1 text-xs font-black text-teal-700">
-                        {tag}
-                      </span>
+                  <div className="mt-4 space-y-2">
+                    {(data?.caseStudy.rows ?? []).slice(0, 5).map(([label, value]) => (
+                      <div key={label} className="grid gap-2 rounded-xl border border-slate-100 px-4 py-3 text-base sm:grid-cols-[7rem_minmax(0,1fr)]">
+                        <span className="font-bold text-slate-500">{label}</span>
+                        <span className="font-black">{value}</span>
+                      </div>
                     ))}
                   </div>
-                  <p className="mt-3 text-sm font-black text-red-500">预计热度 {item.heat}</p>
-                  <form action={saveCreatorTrendAction} className="mt-3">
-                    <input name="title" type="hidden" value={item.title} />
-                    <input name="topic" type="hidden" value={item.keyword ?? item.title} />
-                    <input name="platform" type="hidden" value={item.platform ?? item.tags[1] ?? ""} />
-                    <input name="reason" type="hidden" value={item.reason} />
-                    <input name="sourceContentId" type="hidden" value={item.sampleSourceContentId ?? item.id ?? ""} />
-                    <input name="sourceUrl" type="hidden" value={item.sampleContentUrl ?? ""} />
-                    <button className="flex w-full items-center justify-center gap-1 rounded-lg border border-teal-200 bg-teal-50 px-2 py-2 text-xs font-black text-teal-700 transition hover:bg-teal-100" type="submit">
-                      <Save size={14} />
-                      加入选题池
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <button
+                      className="rounded-xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm font-black text-teal-700 shadow-sm transition hover:bg-teal-100"
+                      type="button"
+                      onClick={() => setFilters({ keyword: data?.caseStudy.templateKeyword ?? currentDirection.label }, "#workflow", { navigate: false })}
+                    >
+                      {data?.caseStudy.templateKeyword ?? "案例模板"}
                     </button>
-                  </form>
-                  <div className="mt-2">
-                    {scriptButtons({
-                      ...topicScriptSource(item),
-                      sourceTitle: item.title,
-                      platform: item.platform ?? item.tags[1] ?? filters.platform,
-                      platformLabel: item.platform ?? item.tags[1] ?? platformDisplay(filters.platform),
-                      directionLabel: currentDirection.label,
-                      topic: item,
-                    })}
+                    <CopyScriptButton label="复制图文脚本" text={data?.caseStudy.graphicScriptText ?? data?.caseStudy.scriptText ?? ""} />
+                    <CopyScriptButton label="复制视频脚本" text={data?.caseStudy.videoScriptText ?? data?.caseStudy.scriptText ?? ""} />
+                    {data?.caseStudy && caseSource ? (
+                      <div className="min-w-32">
+                        {scriptButtons({
+                          ...caseSource,
+                          sourceTitle: data.caseStudy.title,
+                          platform: filters.platform,
+                          platformLabel: platformDisplay(filters.platform),
+                          directionLabel: currentDirection.label,
+                          caseStudy: data.caseStudy,
+                        })}
+                      </div>
+                    ) : null}
                   </div>
+                </>
+              )}
+            </section>
+
+            <section id="task-flow" className={cn("scroll-mt-28 rounded-[1.6rem] border border-slate-200 bg-white p-6 shadow-sm", loading && "opacity-70")}>
+              <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h2 className="text-xl font-black">方向趋势池</h2>
+                  <p className="mt-2 text-sm font-semibold text-slate-500">{poolView === "watch" ? currentDirection.label : "收藏 + 系统生成"}</p>
                 </div>
-              ))
-            ) : (
-              <div className="flex h-40 min-w-96 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 px-6 text-sm font-semibold text-slate-400">
-                当前筛选下暂无推荐，试试切换平台或清空关键词。
+                <span className="rounded-2xl border border-teal-200 bg-teal-50 px-4 py-2 text-sm font-black text-teal-700 shadow-sm">{poolView === "watch" ? "可筛选" : "已关注"}</span>
               </div>
-            )}
-          </div>
-        </div>
-        {selectedRecommendation ? (
-          <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-teal-700">推荐详情</p>
-                <h3 className="mt-2 text-lg font-black text-slate-950">{selectedRecommendation.title}</h3>
-                <p className="mt-1 text-sm font-semibold text-slate-500">{selectedRecommendation.reason}</p>
-                <div className="mt-3 flex flex-wrap gap-1.5 text-xs font-black">
-                  <span className={cn("rounded-md border px-2 py-1", confidenceClass(selectedRecommendation.confidence))}>{selectedRecommendation.confidence ?? "示例数据"}</span>
-                  <span className="rounded-md border border-slate-200 bg-white px-2 py-1 text-slate-600">{formatInsightSampleText(selectedRecommendation)}</span>
-                  <span className="rounded-md border border-slate-200 bg-white px-2 py-1 text-slate-600">{formatInsightUpdatedAt(selectedRecommendation.updatedAt)}</span>
-                </div>
-              </div>
-              <button
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-500 transition hover:text-slate-700"
-                type="button"
-                onClick={() => setRec("")}
-              >
-                关闭
-              </button>
-            </div>
-            <div className="mt-4 grid gap-4 lg:grid-cols-[10rem_minmax(0,1fr)]">
-              {topicCoverNode(selectedRecommendation, "h-40 rounded-xl", "160px")}
               <div className="space-y-3">
-                <div className="grid gap-2 md:grid-cols-2">
-                  <div className="rounded-xl border border-white bg-white px-3 py-2 text-sm"><span className="font-bold text-slate-500">参考样本</span><p className="mt-1 font-black text-slate-900">{selectedRecommendation.sampleTitle ?? "暂无"}</p></div>
-                  <div className="rounded-xl border border-white bg-white px-3 py-2 text-sm"><span className="font-bold text-slate-500">关键词 / 平台</span><p className="mt-1 font-black text-slate-900">{selectedRecommendation.keyword ?? "内容样本"} / {selectedRecommendation.tags[1] ?? selectedRecommendation.platform ?? ""}</p></div>
-                  <div className="rounded-xl border border-white bg-white px-3 py-2 text-sm"><span className="font-bold text-slate-500">参考作者</span><p className="mt-1 font-black text-slate-900">{selectedRecommendation.creator ?? "未知作者"}</p></div>
-                  <div className="rounded-xl border border-white bg-white px-3 py-2 text-sm"><span className="font-bold text-slate-500">互动结构</span><p className="mt-1 font-black text-slate-900">赞 {selectedRecommendation.metrics?.likes?.toLocaleString() ?? 0} / 评 {selectedRecommendation.metrics?.comments?.toLocaleString() ?? 0} / 藏 {selectedRecommendation.metrics?.collects?.toLocaleString() ?? 0}</p></div>
-                </div>
-                <div className="rounded-xl border border-white bg-white px-3 py-3 text-sm">
-                  <p className="font-bold text-slate-500">可延展角度</p>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {(selectedRecommendation.angles ?? []).map((angle) => (
-                      <span key={angle} className="rounded-md border border-teal-200 bg-teal-50 px-2 py-1 text-xs font-black text-teal-700">
-                        {angle}
-                      </span>
+                {poolView === "watch"
+                  ? (data?.watchPool ?? []).slice(0, 5).map((item) => (
+                      <div key={`${item.topic}-${item.status}`} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <button className="line-clamp-2 text-left text-base font-black transition hover:text-teal-700" type="button" onClick={() => setFilters({ keyword: item.topic }, "#workflow", { navigate: false })}>
+                            {item.topic}
+                          </button>
+                          <span className={cn("shrink-0 rounded-xl border px-3 py-1.5 text-sm font-black", poolStatusClass(item.status))}>{item.status}</span>
+                        </div>
+                        <div className="mt-3 flex flex-col gap-2 text-sm font-bold text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+                          <span>{item.signal}</span>
+                          <button className="text-sm text-teal-700 hover:text-teal-800" type="button" onClick={() => setFilters({ keyword: item.topic }, "#workflow", { navigate: false })}>
+                            {item.action}
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  : activeDraftPool.slice(0, 5).map((item) => (
+                      <div key={`${item.title}-${item.angle}`} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <button className="line-clamp-2 text-left text-base font-black transition hover:text-teal-700" type="button" onClick={() => setFilters({ keyword: item.title }, "#workflow", { navigate: false })}>
+                            {item.title}
+                          </button>
+                          <span className={cn("shrink-0 rounded-xl border px-3 py-1.5 text-sm font-black", poolStatusClass(item.status))}>{item.status}</span>
+                        </div>
+                        <p className="mt-3 text-sm font-black text-teal-700">{item.angle}</p>
+                        <p className="mt-2 line-clamp-2 text-base font-semibold text-slate-500">{item.reason}</p>
+                      </div>
                     ))}
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  {selectedRecommendation.sampleContentUrl ? (
-                    <Link href={selectedRecommendation.sampleContentUrl} target="_blank" className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-xs font-black text-teal-700 transition hover:bg-teal-100">
-                      查看原帖
-                    </Link>
-                  ) : null}
-                  <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-500">样本 ID：{selectedRecommendation.sampleSourceContentId ?? selectedRecommendation.id ?? "暂无"}</span>
-                </div>
               </div>
-            </div>
+            </section>
           </div>
-        ) : null}
+        </div>
+
+        <aside className="hidden min-w-0 2xl:block">
+          <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-[1.6rem] border border-slate-200 bg-slate-50 p-4 shadow-sm">
+            <ScriptGenerationWorkspace
+              record={openScriptRecord}
+              pendingScript={pendingScript}
+              regenerating={openScriptPayload ? generatingScriptKey === scriptRecordKey(openScriptPayload.sourceType, openScriptPayload.sourceKey) : false}
+              onRegenerate={(instruction) => {
+                if (!openScriptPayload) return;
+                void generateScript(openScriptPayload, instruction);
+              }}
+            />
+          </div>
+        </aside>
       </div>
 
-      <div id="case-study" className={cn("min-w-0 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm", loading && "opacity-70")}>
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl font-black">爆款案例拆解</h2>
-            <SourceBadge kind={data?.caseSource ?? "规则计算"} />
-          </div>
-          <button className="text-sm font-black text-blue-600 hover:text-blue-700" type="button" onClick={() => setFilters({ keyword: "" }, "#case-study", { navigate: false })}>
-            查看更多
-          </button>
-        </div>
-        {!loading && !data ? (
-          <div className="rounded-xl border border-dashed border-amber-200 bg-amber-50 px-4 py-8 text-center text-sm font-semibold text-amber-700">
-            爆款案例暂时没有加载成功。{detailError ? ` ${detailError}` : "请切换筛选或稍后重试。"}
-          </div>
-        ) : (
-          <>
-        <div className="grid grid-cols-[7rem_minmax(0,1fr)] gap-4">
-          <div className="relative h-28 overflow-hidden rounded-xl bg-gradient-to-br from-amber-100 to-stone-200">
-            {data?.caseStudy.coverImageUrl ? <Image alt={data.caseStudy.title} className="object-cover" fill sizes="112px" src={data.caseStudy.coverImageUrl} unoptimized /> : null}
-            <div className="absolute inset-x-0 bottom-0 flex items-end p-2">
-              <span className="rounded-full bg-stone-700 px-2 py-1 text-xs font-black text-white">{data?.caseStudy.likes ?? "加载中"}</span>
-            </div>
-          </div>
-          <div>
-            <p className="line-clamp-2 font-black">{data?.caseStudy.title ?? "加载中..."}</p>
-            <div className="mt-3 grid grid-cols-4 gap-2 text-center text-xs font-black text-slate-600">
-              {(data?.caseStudy.stats ?? ["-", "-", "-", "-"]).map((stat, index) => <span key={`${stat}-${index}`}>{stat}</span>)}
-            </div>
-          </div>
-        </div>
-        <div className="mt-4 space-y-2">
-          {(data?.caseStudy.rows ?? []).map(([label, value]) => (
-            <div key={label} className="grid grid-cols-[6rem_minmax(0,1fr)] rounded-lg border border-slate-100 px-3 py-2 text-sm">
-              <span className="font-bold text-slate-500">{label}</span>
-              <span className="font-black">{value}</span>
-            </div>
-          ))}
-        </div>
-        <div className="mt-4 flex flex-wrap gap-3">
-          <button
-            className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-xs font-black text-teal-700 transition hover:bg-teal-100"
-            type="button"
-            onClick={() => setFilters({ keyword: data?.caseStudy.templateKeyword ?? currentDirection.label }, "#task-flow", { navigate: false })}
-          >
-            {data?.caseStudy.templateKeyword ?? "案例模板"}
-          </button>
-          <CopyScriptButton label="复制图文脚本" text={data?.caseStudy.graphicScriptText ?? data?.caseStudy.scriptText ?? ""} />
-          <CopyScriptButton label="复制视频脚本" text={data?.caseStudy.videoScriptText ?? data?.caseStudy.scriptText ?? ""} />
-          {data?.caseStudy && caseSource ? (
-            <div className="min-w-32">
-              {scriptButtons({
-                ...caseSource,
-                sourceTitle: data.caseStudy.title,
-                platform: filters.platform,
-                platformLabel: platformDisplay(filters.platform),
-                directionLabel: currentDirection.label,
-                caseStudy: data.caseStudy,
-              })}
-            </div>
-          ) : null}
-        </div>
-          </>
-        )}
+      <div className="2xl:hidden">
+        <ScriptGenerationDrawer
+          open={Boolean(openScriptRecord || pendingScript)}
+          record={openScriptRecord}
+          pendingScript={pendingScript}
+          regenerating={openScriptPayload ? generatingScriptKey === scriptRecordKey(openScriptPayload.sourceType, openScriptPayload.sourceKey) : false}
+          onClose={() => setOpenScriptRecord(null)}
+          onRegenerate={(instruction) => {
+            if (!openScriptPayload) return;
+            void generateScript(openScriptPayload, instruction);
+          }}
+        />
       </div>
-
-      <div id="task-flow" className={cn("min-w-0 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm", loading && "opacity-70")}>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-black">方向趋势池</h2>
-          <span className="rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-black text-teal-700">可筛选</span>
-        </div>
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <button
-              className={cn(
-                "rounded-lg border px-3 py-1.5 text-xs font-black transition",
-                poolView === "watch" ? "border-teal-200 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-500 hover:text-slate-700",
-              )}
-              type="button"
-              onClick={() => setPoolView("watch")}
-            >
-              方向观察池
-            </button>
-            <button
-              className={cn(
-                "rounded-lg border px-3 py-1.5 text-xs font-black transition",
-                poolView === "draft" ? "border-teal-200 bg-teal-50 text-teal-700" : "border-slate-200 bg-white text-slate-500 hover:text-slate-700",
-              )}
-              type="button"
-              onClick={() => setPoolView("draft")}
-            >
-              方向选题草稿池
-            </button>
-          </div>
-          <span className="text-xs font-bold text-slate-400">{poolView === "watch" ? currentDirection.label : "系统生成"}</span>
-        </div>
-        <div className="max-h-[28rem] space-y-3 overflow-y-auto pr-1">
-          {poolView === "watch" ? (
-            <div>
-              <div className="mb-3 flex items-center justify-between">
-                <p className="text-sm font-black text-slate-700">方向观察池</p>
-                <span className="text-xs font-bold text-slate-400">{currentDirection.label}</span>
-              </div>
-              <div className="space-y-3">
-                {(data?.watchPool ?? []).map((item) => (
-                  <div key={`${item.topic}-${item.status}`} className="rounded-xl border border-slate-100 bg-slate-50 p-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <button className="line-clamp-2 text-left text-sm font-black transition hover:text-teal-700" type="button" onClick={() => setFilters({ keyword: item.topic }, "#topic-recommendations", { navigate: false })}>
-                        {item.topic}
-                      </button>
-                      <span className={cn("shrink-0 rounded-md border px-2 py-1 text-xs font-black", poolStatusClass(item.status))}>{item.status}</span>
-                    </div>
-                    <div className="mt-2 flex items-center justify-between gap-3 text-xs font-bold text-slate-500">
-                      <span>{item.signal}</span>
-                      <button className="text-teal-700 hover:text-teal-800" type="button" onClick={() => setFilters({ keyword: item.topic }, item.action === "暂缓" ? "#case-study" : "#topic-recommendations", { navigate: false })}>
-                        {item.action}
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div>
-              <div className="mb-3 flex items-center justify-between">
-                <p className="text-sm font-black text-slate-700">我的选题池</p>
-                <span className="text-xs font-bold text-slate-400">收藏 + 系统生成</span>
-              </div>
-              <div className="space-y-3">
-                {savedTrends.map((item) => (
-                  <div key={item.id} className="rounded-xl border border-teal-100 bg-teal-50/50 p-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <button className="line-clamp-2 text-left text-sm font-black transition hover:text-teal-700" type="button" onClick={() => setFilters({ keyword: item.topic ?? item.title }, "#topic-recommendations", { navigate: false })}>
-                        {item.title}
-                      </button>
-                      <span className={cn("shrink-0 rounded-md border px-2 py-1 text-xs font-black", poolStatusClass(item.status === "DROPPED" ? "已过热" : "可创作"))}>{savedStatusLabel(item.status)}</span>
-                    </div>
-                    <p className="mt-2 line-clamp-2 text-xs font-semibold text-slate-500">{item.reason ?? "手动加入选题池。"}</p>
-                    <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-                      <span className="text-xs font-bold text-slate-400">{formatInsightUpdatedAt(item.updatedAt)}</span>
-                      <form action={updateCreatorSavedTrendAction.bind(null, item.id)} className="flex flex-wrap gap-1.5">
-                        <button className="rounded-md border border-teal-200 bg-white px-2 py-1 text-xs font-black text-teal-700" name="status" type="submit" value="PLANNED">
-                          准备做
-                        </button>
-                        <button className="rounded-md border border-blue-200 bg-white px-2 py-1 text-xs font-black text-blue-700" name="status" type="submit" value="PUBLISHED">
-                          已发布
-                        </button>
-                        <button className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-black text-slate-500" name="intent" type="submit" value="delete">
-                          <Trash2 size={12} />
-                        </button>
-                      </form>
-                    </div>
-                  </div>
-                ))}
-                {activeDraftPool.map((item) => (
-                  <div key={`${item.title}-${item.angle}`} className="rounded-xl border border-slate-100 bg-white p-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <button className="line-clamp-2 text-left text-sm font-black transition hover:text-teal-700" type="button" onClick={() => setFilters({ keyword: item.title }, "#topic-recommendations", { navigate: false })}>
-                        {item.title}
-                      </button>
-                      <span className={cn("shrink-0 rounded-md border px-2 py-1 text-xs font-black", poolStatusClass(item.status))}>{item.status}</span>
-                    </div>
-                    <p className="mt-2 text-xs font-black text-teal-700">{item.angle}</p>
-                    <p className="mt-1 line-clamp-2 text-xs font-semibold text-slate-500">{item.reason}</p>
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {item.platforms.slice(0, 3).map((platform) => <PlatformBadge key={platform} label={platform} />)}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </section>
-    <ScriptGenerationDrawer
-      open={Boolean(openScriptRecord)}
-      record={openScriptRecord}
-      regenerating={openScriptPayload ? generatingScriptKey === scriptRecordKey(openScriptPayload.sourceType, openScriptPayload.sourceKey) : false}
-      onClose={() => setOpenScriptRecord(null)}
-      onRegenerate={(instruction) => {
-        if (!openScriptPayload) return;
-        void generateScript(openScriptPayload, instruction);
-      }}
-    />
     </>
   );
 }

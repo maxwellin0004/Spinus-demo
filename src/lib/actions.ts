@@ -71,9 +71,11 @@ import {
 } from "@/lib/insights/ai-prompts";
 import { invalidateInsightReadCaches, scheduleInsightPrewarm } from "@/lib/insights/cache-maintenance";
 import { refreshCreatorTrendDailySnapshots } from "@/lib/insights/creator-daily-snapshots";
-import { INSIGHT_DIRECTION_SLUGS } from "@/lib/insights/directions";
+import { DEFAULT_INSIGHT_DIRECTION, INSIGHT_DIRECTION_SLUGS } from "@/lib/insights/directions";
+import { regenerateCreatorTrendAiRecommendations } from "@/lib/insights/creator-trend-detail";
 import { recommendedCollectionSettings, seedDefaultInsightKeywords } from "@/lib/insights/keywords";
 import { rebuildTrendSnapshotsFromContents } from "@/lib/insights/snapshots";
+import { generateTopicCoverImage } from "@/lib/insights/topic-cover-images";
 import { TIKHUB_ENDPOINTS } from "@/lib/tikhub/endpoints";
 import {
   applyAdminLevelInviteRules,
@@ -6116,6 +6118,81 @@ export async function collectConfiguredInsightKeywordsAction(formData: FormData)
   revalidatePath("/admin/insights");
   revalidatePath("/creator/trends");
   revalidatePath("/brand/insights");
+}
+
+export async function regenerateTopicCoverImageAction(imageId: string) {
+  await requireAdminPermission("compliance.manage");
+  const existing = await prisma.creatorTrendTopicImage.findUnique({ where: { id: imageId } });
+  if (!existing) redirect("/admin/insights");
+
+  const settings = await prisma.platformSettings.upsert({
+    where: { id: "platform" },
+    update: {},
+    create: { id: "platform" },
+    select: {
+      insightAiEnabled: true,
+      insightAiBaseUrl: true,
+      insightAiApiKey: true,
+      insightImageAiBaseUrl: true,
+      insightImageAiApiKey: true,
+      insightImageAiModel: true,
+    },
+  });
+
+  const result = await generateTopicCoverImage(settings, {
+    sourceContentId: existing.sourceContentId,
+    sourceTitle: existing.sourceTitle,
+    platform: existing.platform,
+    prompt: existing.prompt,
+    negativePrompt: existing.negativePrompt,
+    fallbackImageUrl: null,
+  });
+
+  await audit({
+    action: "insights.topic_cover_regenerated",
+    entityType: "creator_trend_topic_image",
+    entityId: imageId,
+    beforeJson: {
+      status: existing.status,
+      imageUrl: existing.imageUrl,
+      errorMessage: existing.errorMessage,
+    },
+    afterJson: result,
+  });
+  revalidatePath("/admin/insights");
+  revalidatePath("/creator/trends");
+}
+
+function normalizeCreatorTrendAiPlatform(value: string): "all" | "xiaohongshu" | "douyin" | "weibo" | "bilibili" {
+  if (value === "xiaohongshu" || value === "douyin" || value === "weibo" || value === "bilibili") return value;
+  return "all";
+}
+
+export async function retryCreatorTrendAiTopicDeckAction(formData: FormData) {
+  await requireAdminPermission("compliance.manage");
+  const rawDirection = text(formData.get("direction"));
+  const direction = INSIGHT_DIRECTION_SLUGS.includes(rawDirection as (typeof INSIGHT_DIRECTION_SLUGS)[number]) ? rawDirection : DEFAULT_INSIGHT_DIRECTION;
+  const platform = normalizeCreatorTrendAiPlatform(text(formData.get("platform")));
+  const keyword = text(formData.get("keyword")).slice(0, 120);
+
+  const result = await regenerateCreatorTrendAiRecommendations({ direction, platform, keyword });
+  await invalidateInsightReadCaches();
+  await audit({
+    action: "insights.ai_topic_deck_retry",
+    entityType: "creator_trend_ai_topic_deck",
+    entityId: `${direction}:${platform}:${keyword || "all"}`,
+    afterJson: {
+      direction,
+      platform,
+      keyword,
+      recommendationStatus: result.recommendationStatus ?? "RULE_FALLBACK",
+      recommendationSource: result.recommendationSource,
+      recommendationCacheSource: result.recommendationCacheSource ?? null,
+      recommendationNeedsRefresh: result.recommendationNeedsRefresh ?? false,
+    },
+  });
+  revalidatePath("/admin/insights");
+  revalidatePath("/creator/trends");
 }
 
 function normalizeInsightMonitorType(value: string) {

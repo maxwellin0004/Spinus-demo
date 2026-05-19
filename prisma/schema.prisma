@@ -1269,27 +1269,34 @@ model CreatorTrendDailySnapshot {
 }
 
 model CreatorTrendAiTopicDeck {
-  id              String   @id @default(cuid())
-  cacheKey        String   @unique
-  direction       String
-  platform        String
-  keyword         String   @default("")
-  sampleSignature String
-  sampleContentIds String[] @default([])
-  model           String
-  promptHash      String
-  batchCount      Int      @default(4)
-  itemsPerBatch   Int      @default(3)
-  items           Json
-  status          String   @default("READY")
-  errorMessage    String?
-  generatedAt     DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                   String    @id @default(cuid())
+  cacheKey             String    @unique
+  direction            String
+  platform             String
+  keyword              String    @default("")
+  sampleSignature      String
+  sampleContentIds     String[]  @default([])
+  model                String
+  promptHash           String
+  batchCount           Int       @default(4)
+  itemsPerBatch        Int       @default(3)
+  items                Json
+  status               String    @default("READY")
+  errorMessage         String?
+  refreshStatus        String    @default("IDLE")
+  refreshFailureCount  Int       @default(0)
+  refreshRetryAfter    DateTime?
+  lastRefreshStartedAt DateTime?
+  lastRefreshFailedAt  DateTime?
+  lastRefreshError     String?
+  generatedAt          DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
   @@index([direction, platform, keyword])
   @@index([sampleSignature])
   @@index([status, updatedAt])
+  @@index([refreshStatus, refreshRetryAfter])
 }
 
 model CreatorSavedTrend {
@@ -1313,16 +1320,16 @@ model CreatorSavedTrend {
 }
 
 model CreatorTrendScriptGeneration {
-  id                     String         @id @default(cuid())
+  id                     String                     @id @default(cuid())
   creatorId              String
-  creator                CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creator                CreatorProfile             @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   savedTrendId           String?
   sourceType             String
   sourceKey              String
   sourceTitle            String
   platform               String?
-  status                 String         @default("GENERATING")
-  generationMode         String         @default("FALLBACK")
+  status                 String                     @default("GENERATING")
+  generationMode         String                     @default("FALLBACK")
   model                  String?
   userInstruction        String?
   sourcePayload          Json?
@@ -1332,13 +1339,63 @@ model CreatorTrendScriptGeneration {
   plainText              String?
   errorMessage           String?
   aiDebugJson            Json?
+  scriptImages           CreatorTrendScriptImage[]
+  scriptReviews          CreatorTrendScriptReview[]
   generatedAt            DateTime?
-  createdAt              DateTime       @default(now())
-  updatedAt              DateTime       @updatedAt
+  createdAt              DateTime                   @default(now())
+  updatedAt              DateTime                   @updatedAt
 
   @@unique([creatorId, sourceType, sourceKey])
   @@index([creatorId, updatedAt])
   @@index([sourceType, status, updatedAt])
+  @@index([status, updatedAt])
+}
+
+model CreatorTrendScriptImage {
+  id                 String                       @id @default(cuid())
+  scriptGenerationId String
+  scriptGeneration   CreatorTrendScriptGeneration @relation(fields: [scriptGenerationId], references: [id], onDelete: Cascade)
+  pageKey            String
+  pageLabel          String
+  pageOrder          Int
+  model              String
+  promptHash         String
+  prompt             String
+  negativePrompt     String?
+  aspectRatio        String?
+  size               String
+  imageUrl           String?
+  status             String                       @default("READY")
+  errorMessage       String?
+  generatedAt        DateTime?
+  createdAt          DateTime                     @default(now())
+  updatedAt          DateTime                     @updatedAt
+
+  @@unique([scriptGenerationId, pageKey, promptHash, model])
+  @@index([scriptGenerationId, pageOrder])
+  @@index([status, updatedAt])
+}
+
+model CreatorTrendScriptReview {
+  id                 String                       @id @default(cuid())
+  scriptGenerationId String
+  scriptGeneration   CreatorTrendScriptGeneration @relation(fields: [scriptGenerationId], references: [id], onDelete: Cascade)
+  model              String
+  inputHash          String
+  status             String                       @default("READY")
+  score              Int?
+  summary            String?
+  checksJson         Json?
+  imageFindingsJson  Json?
+  riskItemsJson      Json?
+  suggestionsJson    Json?
+  rawResponseJson    Json?
+  errorMessage       String?
+  createdAt          DateTime                     @default(now())
+  updatedAt          DateTime                     @updatedAt
+
+  @@unique([scriptGenerationId, inputHash, model])
+  @@index([scriptGenerationId, updatedAt])
   @@index([status, updatedAt])
 }
 

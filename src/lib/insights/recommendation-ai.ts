@@ -314,7 +314,50 @@ function platformTitleGuide(platform: string) {
   };
 }
 
-const DEFAULT_AI_POST_TIMEOUT_MS = 20_000;
+function readTimeoutMs(name: string, fallback: number) {
+  const value = Number.parseInt(process.env[name] ?? "", 10);
+  return Number.isFinite(value) && value >= 5_000 ? value : fallback;
+}
+
+const DEFAULT_AI_POST_TIMEOUT_MS = readTimeoutMs("INSIGHT_AI_TIMEOUT_MS", 60_000);
+export const INSIGHT_AI_TOPIC_DECK_TIMEOUT_MS = readTimeoutMs("INSIGHT_AI_TOPIC_DECK_TIMEOUT_MS", 90_000);
+
+function timeoutSeconds(timeoutMs: number) {
+  return Math.round(timeoutMs / 1000);
+}
+
+export function formatInsightAiRequestError(error: unknown, timeoutMs = DEFAULT_AI_POST_TIMEOUT_MS) {
+  const message = error instanceof Error ? error.message : String(error || "");
+  if (/timed out|timeout|abort|aborted/i.test(message)) {
+    return `AI 模型响应超时（已等待 ${timeoutSeconds(timeoutMs)} 秒）。请稍后重新生成，或临时切换到更快的模型。`;
+  }
+  if (/fetch failed|ENOTFOUND|EAI_AGAIN|ECONNRESET|ECONNREFUSED|socket hang up/i.test(message)) {
+    return "AI 网关连接失败，请检查 Base URL、代理或网络连通性。";
+  }
+  return message ? message.slice(0, 500) : "AI 请求失败，请稍后重试。";
+}
+
+function responseErrorMessage(data: unknown) {
+  if (!data || typeof data !== "object") return "";
+  const record = data as Record<string, unknown>;
+  const error = record.error;
+  if (typeof error === "string") return error;
+  if (error && typeof error === "object") {
+    const message = (error as Record<string, unknown>).message;
+    if (typeof message === "string") return message;
+  }
+  const message = record.message;
+  return typeof message === "string" ? message : "";
+}
+
+export function formatInsightAiHttpError(status: number, data: unknown) {
+  const detail = responseErrorMessage(data);
+  if (status === 401 || status === 403) return detail ? `AI API Key 无权限或已失效：${detail}` : "AI API Key 无权限或已失效。";
+  if (status === 404) return detail ? `AI 模型或接口地址不存在：${detail}` : "AI 模型或接口地址不存在，请检查 Base URL 和模型名。";
+  if (status === 429) return detail ? `AI 接口限流：${detail}` : "AI 接口限流，请稍后重新生成。";
+  if (status >= 500) return detail ? `AI 网关服务异常 ${status}：${detail}` : `AI 网关服务异常 ${status}，请稍后重试。`;
+  return detail ? `AI 接口返回 ${status}：${detail}` : `AI 接口返回 ${status}`;
+}
 
 function socketTimeoutError(label: string, timeoutMs: number) {
   return new Error(`${label} timed out after ${timeoutMs}ms.`);
@@ -908,35 +951,48 @@ export async function requestInsightAiJsonDetailed<T>({
   instruction,
   input,
   maxTokens,
+  timeoutMs = DEFAULT_AI_POST_TIMEOUT_MS,
 }: {
   settings: InsightAiRequestSettings;
   systemPrompt: string;
   instruction: string;
   input: unknown;
   maxTokens: number;
+  timeoutMs?: number;
 }): Promise<InsightAiJsonDetailedResult<T>> {
   if (!isConfigured(settings)) {
     return { parsed: null, rawContent: "", status: null, errorMessage: "AI 未配置或未启用。" };
   }
   const runtime = readInsightAiRuntimeConfig(settings);
   const endpoint = `${normalizeBaseUrl(runtime.baseUrl)}/chat/completions`;
-  const response = await postJson(
-    endpoint,
-    {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${runtime.apiKey}`,
-    },
-    {
-      model: runtime.model,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: JSON.stringify({ instruction, input }) },
-      ],
-      max_tokens: maxTokens,
-      response_format: { type: "json_object" },
-    },
-    runtime.proxyUrl,
-  );
+  let response: Awaited<ReturnType<typeof postJson>>;
+  try {
+    response = await postJson(
+      endpoint,
+      {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${runtime.apiKey}`,
+      },
+      {
+        model: runtime.model,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: JSON.stringify({ instruction, input }) },
+        ],
+        max_tokens: maxTokens,
+        response_format: { type: "json_object" },
+      },
+      runtime.proxyUrl,
+      timeoutMs,
+    );
+  } catch (error) {
+    return {
+      parsed: null,
+      rawContent: "",
+      status: null,
+      errorMessage: formatInsightAiRequestError(error, timeoutMs),
+    };
+  }
 
   const data = await response.json().catch(() => null);
   if (!response.ok) {
@@ -944,7 +1000,7 @@ export async function requestInsightAiJsonDetailed<T>({
       parsed: null,
       rawContent: "",
       status: response.status,
-      errorMessage: `AI 接口返回 ${response.status}`,
+      errorMessage: formatInsightAiHttpError(response.status, data),
       responseBody: data,
     };
   }

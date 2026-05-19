@@ -42,6 +42,10 @@ export async function POST(request: Request) {
       })),
     },
     orderBy: { updatedAt: "desc" },
+    include: {
+      scriptImages: { orderBy: [{ pageOrder: "asc" }, { updatedAt: "desc" }] },
+      scriptReviews: { orderBy: { updatedAt: "desc" }, take: 1 },
+    },
   });
 
   return timedJson(
