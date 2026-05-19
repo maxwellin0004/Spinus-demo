@@ -904,6 +904,24 @@ export function ScriptTablesPanel({ record, pendingScript = null, readOnly = fal
   const [regeneratingTableKey, setRegeneratingTableKey] = useState<string | null>(null);
   const [fullscreen, setFullscreen] = useState(false);
   const currentRecord = localRecord?.id === record?.id ? localRecord : record;
+  useEffect(() => {
+    if (!fullscreen) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopPropagation();
+      setFullscreen(false);
+    }
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", handleKeyDown, { capture: true });
+    window.addEventListener("keydown", handleKeyDown, { capture: true });
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown, { capture: true });
+      window.removeEventListener("keydown", handleKeyDown, { capture: true });
+    };
+  }, [fullscreen]);
 
   const tabs = useMemo(() => tablesByTab(currentRecord), [currentRecord]);
   const [requestedTab, setRequestedTab] = useState<TabKey>("graphic");
@@ -976,7 +994,24 @@ export function ScriptTablesPanel({ record, pendingScript = null, readOnly = fal
   const technicalStartIndex = activeGroups ? activeGroups.primary.length + activeGroups.secondary.length : 0;
 
   return (
-    <div className={cn("min-w-0", fullscreen ? "fixed inset-0 z-[80] overflow-y-auto bg-slate-50 p-5" : "")}>
+    <div className={cn("min-w-0", fullscreen ? "fixed inset-0 z-[80] overflow-y-auto bg-slate-50 p-5 pt-20" : "")}>
+      {fullscreen ? (
+        <div className="fixed left-0 right-0 top-0 z-[90] flex items-center justify-between border-b border-slate-200 bg-white/95 px-5 py-3 shadow-sm backdrop-blur">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-black text-slate-950">脚本全屏查看</p>
+            <p className="mt-0.5 text-xs font-semibold text-slate-500">按 Esc 或点击右侧按钮退出</p>
+          </div>
+          <button
+            className="inline-flex h-10 shrink-0 items-center gap-2 rounded-lg bg-slate-950 px-4 text-sm font-black text-white shadow-lg transition hover:bg-slate-800"
+            type="button"
+            onClick={() => setFullscreen(false)}
+            aria-label="退出全屏"
+          >
+            <Minimize2 size={16} />
+            退出全屏
+          </button>
+        </div>
+      ) : null}
       <div className="sticky top-0 z-20 border-b border-slate-200 bg-slate-50/95 py-3 backdrop-blur">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div className="min-w-0">
@@ -1007,9 +1042,13 @@ export function ScriptTablesPanel({ record, pendingScript = null, readOnly = fal
               复制全部
             </button>
             <button
-              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-600 transition hover:text-slate-900"
+              className={cn(
+                "inline-flex items-center gap-1 rounded-lg px-3 py-2 text-xs font-black transition",
+                fullscreen ? "border border-slate-200 bg-white text-slate-600 hover:text-slate-900" : "border border-blue-200 bg-blue-50 text-blue-700 shadow-sm hover:bg-blue-100",
+              )}
               type="button"
               onClick={() => setFullscreen((value) => !value)}
+              title={fullscreen ? "退出全屏，也可以按 Esc" : "全屏查看脚本"}
             >
               {fullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
               {fullscreen ? "退出全屏" : "脚本全屏"}
