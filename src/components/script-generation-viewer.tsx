@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, ChevronDown, ChevronUp, Copy, ImageIcon, List, Loader2, RefreshCw, ShieldCheck, Table2, X } from "lucide-react";
+import { CheckCircle2, ChevronDown, ChevronUp, Copy, ImageIcon, List, Loader2, Maximize2, Minimize2, RefreshCw, ShieldCheck, Table2, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -221,14 +221,14 @@ function ScriptSummaryCards({ items }: { items: SummaryItem[] }) {
           <p className="mt-0.5 text-xs font-semibold text-slate-500">先看可执行结论，再进入完整表格。</p>
         </div>
       </div>
-      <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="flex gap-2 overflow-x-auto pb-1">
         {items.map((item) => (
-          <div key={item.label} className="min-w-0 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2">
+          <div key={item.label} className="min-w-[10rem] flex-1 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2">
             <div className="mb-1 flex items-center justify-between gap-2">
-              <span className="text-xs font-black text-slate-950">{item.label}</span>
-              <span className="shrink-0 text-[11px] font-black text-slate-400">{item.hint}</span>
+              <span className="shrink-0 whitespace-nowrap text-xs font-black text-slate-950">{item.label}</span>
+              <span className="shrink-0 whitespace-nowrap text-[11px] font-black text-slate-400">{item.hint}</span>
             </div>
-            <p className="line-clamp-3 text-xs font-semibold leading-5 text-slate-700">{item.value}</p>
+            <p className="line-clamp-3 break-words text-xs font-semibold leading-5 text-slate-700">{item.value}</p>
           </div>
         ))}
       </div>
@@ -902,6 +902,7 @@ function ScriptGenerationPendingPanel({ pendingScript }: { pendingScript: Pendin
 export function ScriptTablesPanel({ record, pendingScript = null, readOnly = false, onRegenerate, onRecordUpdate, regenerating = false, allowTableRegenerate = false }: Omit<Props, "open" | "onClose">) {
   const [localRecord, setLocalRecord] = useState<ScriptGenerationView | null>(null);
   const [regeneratingTableKey, setRegeneratingTableKey] = useState<string | null>(null);
+  const [fullscreen, setFullscreen] = useState(false);
   const currentRecord = localRecord?.id === record?.id ? localRecord : record;
 
   const tabs = useMemo(() => tablesByTab(currentRecord), [currentRecord]);
@@ -975,7 +976,7 @@ export function ScriptTablesPanel({ record, pendingScript = null, readOnly = fal
   const technicalStartIndex = activeGroups ? activeGroups.primary.length + activeGroups.secondary.length : 0;
 
   return (
-    <div className="min-w-0">
+    <div className={cn("min-w-0", fullscreen ? "fixed inset-0 z-[80] overflow-y-auto bg-slate-50 p-5" : "")}>
       <div className="sticky top-0 z-20 border-b border-slate-200 bg-slate-50/95 py-3 backdrop-blur">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div className="min-w-0">
@@ -1004,6 +1005,14 @@ export function ScriptTablesPanel({ record, pendingScript = null, readOnly = fal
             <button className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-600 transition hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-60" type="button" disabled={regenerating} onClick={copyAll}>
               <Copy size={14} />
               复制全部
+            </button>
+            <button
+              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-600 transition hover:text-slate-900"
+              type="button"
+              onClick={() => setFullscreen((value) => !value)}
+            >
+              {fullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+              {fullscreen ? "退出全屏" : "脚本全屏"}
             </button>
             {!readOnly && onRegenerate ? (
               <button
