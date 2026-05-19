@@ -75,6 +75,12 @@ import { DEFAULT_INSIGHT_DIRECTION, INSIGHT_DIRECTION_SLUGS } from "@/lib/insigh
 import { regenerateCreatorTrendAiRecommendations } from "@/lib/insights/creator-trend-detail";
 import { recommendedCollectionSettings, seedDefaultInsightKeywords } from "@/lib/insights/keywords";
 import { rebuildTrendSnapshotsFromContents } from "@/lib/insights/snapshots";
+import {
+  DEFAULT_CASE_ANALYSIS_TABLE_PROMPTS,
+  DEFAULT_GRAPHIC_TABLE_PROMPTS,
+  DEFAULT_VIDEO_TABLE_PROMPTS,
+  isValidTablePromptJson,
+} from "@/lib/insights/trend-script-generation";
 import { generateTopicCoverImage } from "@/lib/insights/topic-cover-images";
 import { TIKHUB_ENDPOINTS } from "@/lib/tikhub/endpoints";
 import {
@@ -5086,7 +5092,14 @@ const platformSettingsSchema = z.object({
   insightAiCaseAnalysisSystemPrompt: z.string().min(20).max(20000),
   insightAiCaseGraphicScriptSystemPrompt: z.string().min(20).max(20000),
   insightAiCaseVideoScriptSystemPrompt: z.string().min(20).max(22000),
+  insightAiGraphicTablePromptsJson: z.string().min(20).max(30000).refine(isValidTablePromptJson),
+  insightAiVideoTablePromptsJson: z.string().min(20).max(40000).refine(isValidTablePromptJson),
+  insightAiCaseAnalysisTablePromptsJson: z.string().min(20).max(40000).refine(isValidTablePromptJson),
 });
+
+function parseJsonInput(value: string): Prisma.InputJsonValue {
+  return JSON.parse(value) as Prisma.InputJsonValue;
+}
 
 export async function updatePlatformSettingsAction(formData: FormData) {
   await requireAdminPermission("compliance.manage");
@@ -5135,6 +5148,9 @@ export async function updatePlatformSettingsAction(formData: FormData) {
     insightAiCaseAnalysisSystemPrompt: text(formData.get("insightAiCaseAnalysisSystemPrompt")) || DEFAULT_INSIGHT_AI_CASE_ANALYSIS_PROMPT,
     insightAiCaseGraphicScriptSystemPrompt: text(formData.get("insightAiCaseGraphicScriptSystemPrompt")) || DEFAULT_INSIGHT_AI_CASE_GRAPHIC_SCRIPT_PROMPT,
     insightAiCaseVideoScriptSystemPrompt: text(formData.get("insightAiCaseVideoScriptSystemPrompt")) || DEFAULT_INSIGHT_AI_CASE_VIDEO_SCRIPT_PROMPT,
+    insightAiGraphicTablePromptsJson: text(formData.get("insightAiGraphicTablePromptsJson")) || JSON.stringify(DEFAULT_GRAPHIC_TABLE_PROMPTS, null, 2),
+    insightAiVideoTablePromptsJson: text(formData.get("insightAiVideoTablePromptsJson")) || JSON.stringify(DEFAULT_VIDEO_TABLE_PROMPTS, null, 2),
+    insightAiCaseAnalysisTablePromptsJson: text(formData.get("insightAiCaseAnalysisTablePromptsJson")) || JSON.stringify(DEFAULT_CASE_ANALYSIS_TABLE_PROMPTS, null, 2),
   });
   if (!parsed.success) redirect(`/admin/settings?error=${encodeURIComponent("配置项校验失败")}`);
 
@@ -5180,6 +5196,9 @@ export async function updatePlatformSettingsAction(formData: FormData) {
       insightAiCaseAnalysisSystemPrompt: parsed.data.insightAiCaseAnalysisSystemPrompt,
       insightAiCaseGraphicScriptSystemPrompt: parsed.data.insightAiCaseGraphicScriptSystemPrompt,
       insightAiCaseVideoScriptSystemPrompt: parsed.data.insightAiCaseVideoScriptSystemPrompt,
+      insightAiGraphicTablePromptsJson: parseJsonInput(parsed.data.insightAiGraphicTablePromptsJson),
+      insightAiVideoTablePromptsJson: parseJsonInput(parsed.data.insightAiVideoTablePromptsJson),
+      insightAiCaseAnalysisTablePromptsJson: parseJsonInput(parsed.data.insightAiCaseAnalysisTablePromptsJson),
     },
   });
   await audit({
@@ -5226,6 +5245,9 @@ export async function updatePlatformSettingsAction(formData: FormData) {
       insightAiCaseAnalysisSystemPrompt: before.insightAiCaseAnalysisSystemPrompt,
       insightAiCaseGraphicScriptSystemPrompt: before.insightAiCaseGraphicScriptSystemPrompt,
       insightAiCaseVideoScriptSystemPrompt: before.insightAiCaseVideoScriptSystemPrompt,
+      insightAiGraphicTablePromptsJson: before.insightAiGraphicTablePromptsJson,
+      insightAiVideoTablePromptsJson: before.insightAiVideoTablePromptsJson,
+      insightAiCaseAnalysisTablePromptsJson: before.insightAiCaseAnalysisTablePromptsJson,
     },
     afterJson: {
       acceptanceSlaDays: settings.acceptanceSlaDays,
@@ -5267,6 +5289,9 @@ export async function updatePlatformSettingsAction(formData: FormData) {
       insightAiCaseAnalysisSystemPrompt: settings.insightAiCaseAnalysisSystemPrompt,
       insightAiCaseGraphicScriptSystemPrompt: settings.insightAiCaseGraphicScriptSystemPrompt,
       insightAiCaseVideoScriptSystemPrompt: settings.insightAiCaseVideoScriptSystemPrompt,
+      insightAiGraphicTablePromptsJson: settings.insightAiGraphicTablePromptsJson,
+      insightAiVideoTablePromptsJson: settings.insightAiVideoTablePromptsJson,
+      insightAiCaseAnalysisTablePromptsJson: settings.insightAiCaseAnalysisTablePromptsJson,
     },
   });
   revalidatePath("/admin/settings");

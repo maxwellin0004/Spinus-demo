@@ -1016,6 +1016,13 @@ export function CreatorTrendDetailPanels({ initialBatch, initialPool, savedTrend
                 if (!openScriptPayload) return;
                 void generateScript(openScriptPayload, instruction);
               }}
+              onRecordUpdate={(record) => {
+                if (!openScriptPayload) return;
+                const key = scriptRecordKey(openScriptPayload.sourceType, openScriptPayload.sourceKey);
+                setScriptRecords((current) => ({ ...current, [key]: record }));
+                setOpenScriptRecord(record);
+              }}
+              allowTableRegenerate
             />
           </div>
         </aside>
@@ -1032,6 +1039,13 @@ export function CreatorTrendDetailPanels({ initialBatch, initialPool, savedTrend
             if (!openScriptPayload) return;
             void generateScript(openScriptPayload, instruction);
           }}
+          onRecordUpdate={(record) => {
+            if (!openScriptPayload) return;
+            const key = scriptRecordKey(openScriptPayload.sourceType, openScriptPayload.sourceKey);
+            setScriptRecords((current) => ({ ...current, [key]: record }));
+            setOpenScriptRecord(record);
+          }}
+          allowTableRegenerate
         />
       </div>
     </>

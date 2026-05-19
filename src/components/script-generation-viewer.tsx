@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { WorkbenchEmptyState, WorkbenchProgress, WorkbenchStatusBadge, WorkbenchTabs } from "@/components/workbench-ui";
-import type { ScriptGenerationView, ScriptImageView, ScriptReviewView, ScriptTable } from "@/lib/insights/script-tables";
+import type { ScriptGenerationView, ScriptImageView, ScriptReviewView, ScriptTable, ScriptTableGroupKey } from "@/lib/insights/script-tables";
 import { cn } from "@/lib/utils";
 
 type TabKey = "case" | "graphic" | "video";
@@ -18,7 +18,9 @@ type Props = {
   readOnly?: boolean;
   onClose?: () => void;
   onRegenerate?: (instruction: string) => void;
+  onRecordUpdate?: (record: ScriptGenerationView) => void;
   regenerating?: boolean;
+  allowTableRegenerate?: boolean;
 };
 
 export type PendingScriptGeneration = {
@@ -32,6 +34,11 @@ type ScriptTab = {
   key: TabKey;
   label: string;
   tables: ScriptTable[];
+};
+
+type TableRegenerateTarget = {
+  groupKey: ScriptTableGroupKey;
+  tableId: string;
 };
 
 type SummaryItem = {
@@ -78,6 +85,12 @@ function tablesByTab(record: ScriptGenerationView | null): ScriptTab[] {
     record.graphicTables.length > 0 ? { key: "graphic" as const, label: "图文脚本", tables: record.graphicTables } : null,
     record.videoTables.length > 0 ? { key: "video" as const, label: "视频脚本", tables: record.videoTables } : null,
   ].filter((item): item is ScriptTab => Boolean(item));
+}
+
+function groupKeyForTab(tabKey: TabKey): ScriptTableGroupKey {
+  if (tabKey === "case") return "caseAnalysisTables";
+  if (tabKey === "graphic") return "graphicTables";
+  return "videoTables";
 }
 
 function includesAny(value: string, keywords: string[]) {
@@ -223,7 +236,17 @@ function ScriptSummaryCards({ items }: { items: SummaryItem[] }) {
   );
 }
 
-function ScriptTableBlock({ table, tableId }: { table: ScriptTable; tableId: string }) {
+function ScriptTableBlock({
+  table,
+  tableId,
+  regenerating = false,
+  onRegenerateTable,
+}: {
+  table: ScriptTable;
+  tableId: string;
+  regenerating?: boolean;
+  onRegenerateTable?: () => void;
+}) {
   const [expanded, setExpanded] = useState(false);
   const promptColumnIndexes = table.columns.map((column, index) => (isPromptColumn(column) ? index : -1)).filter((index) => index >= 0);
   const hasLongContent = table.rows.some((row) => row.some((cell) => cell.length > 110));
@@ -265,6 +288,17 @@ function ScriptTableBlock({ table, tableId }: { table: ScriptTable; tableId: str
             <Copy size={12} />
             复制本表
           </button>
+          {onRegenerateTable ? (
+            <button
+              className="inline-flex items-center gap-1 rounded-md border border-teal-200 bg-teal-50 px-2 py-1 text-[11px] font-black text-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
+              type="button"
+              disabled={regenerating}
+              onClick={onRegenerateTable}
+            >
+              <RefreshCw size={12} className={regenerating ? "animate-spin" : ""} />
+              {regenerating ? "生成中" : "重新生成"}
+            </button>
+          ) : null}
         </div>
       </div>
       <div className="max-w-full overflow-x-auto">
@@ -312,6 +346,8 @@ function ScriptTableSection({
   startIndex,
   defaultOpen = false,
   tone = "default",
+  regeneratingTableKey = null,
+  onRegenerateTable,
 }: {
   title: string;
   description: string;
@@ -320,13 +356,21 @@ function ScriptTableSection({
   startIndex: number;
   defaultOpen?: boolean;
   tone?: "default" | "muted" | "technical";
+  regeneratingTableKey?: string | null;
+  onRegenerateTable?: (target: TableRegenerateTarget) => void;
 }) {
   if (tables.length === 0) return null;
 
   const body = (
     <div className={cn("grid gap-3", defaultOpen ? "mt-3" : "mt-0 border-t border-slate-200 p-3")}>
       {tables.map((table, index) => (
-        <ScriptTableBlock key={table.id} table={table} tableId={tableDomId(tabKey, table, startIndex + index)} />
+        <ScriptTableBlock
+          key={table.id}
+          table={table}
+          tableId={tableDomId(tabKey, table, startIndex + index)}
+          regenerating={regeneratingTableKey === `${groupKeyForTab(tabKey)}:${table.id}`}
+          onRegenerateTable={onRegenerateTable ? () => onRegenerateTable({ groupKey: groupKeyForTab(tabKey), tableId: table.id }) : undefined}
+        />
       ))}
     </div>
   );
@@ -855,8 +899,12 @@ function ScriptGenerationPendingPanel({ pendingScript }: { pendingScript: Pendin
   );
 }
 
-export function ScriptTablesPanel({ record, pendingScript = null, readOnly = false, onRegenerate, regenerating = false }: Omit<Props, "open" | "onClose">) {
-  const tabs = useMemo(() => tablesByTab(record), [record]);
+export function ScriptTablesPanel({ record, pendingScript = null, readOnly = false, onRegenerate, onRecordUpdate, regenerating = false, allowTableRegenerate = false }: Omit<Props, "open" | "onClose">) {
+  const [localRecord, setLocalRecord] = useState<ScriptGenerationView | null>(null);
+  const [regeneratingTableKey, setRegeneratingTableKey] = useState<string | null>(null);
+  const currentRecord = localRecord?.id === record?.id ? localRecord : record;
+
+  const tabs = useMemo(() => tablesByTab(currentRecord), [currentRecord]);
   const [requestedTab, setRequestedTab] = useState<TabKey>("graphic");
   const [workspaceTab, setWorkspaceTab] = useState("summary");
   const [instructionOpen, setInstructionOpen] = useState(false);
@@ -865,17 +913,17 @@ export function ScriptTablesPanel({ record, pendingScript = null, readOnly = fal
   const activeGroups = active ? classifyTables(active.key, active.tables) : null;
   const directoryTables = visibleDirectoryTables(activeGroups, readOnly);
   const totalRows = tabs.reduce((sum, tab) => sum + tab.tables.reduce((tableSum, table) => tableSum + table.rows.length, 0), 0);
-  const summaryItems = useMemo(() => (record ? buildSummaryItems(record) : []), [record]);
-  const isFallback = record?.generationMode === "FALLBACK";
-  const readyImages = record?.scriptImages.filter((image) => image.status === "READY" && image.imageUrl).length ?? 0;
-  const latestReview = record?.scriptReviews?.[0] ?? null;
-  const workflowDone = (record?.status === "READY" ? 1 : 0) + (readyImages > 0 ? 1 : 0) + (latestReview?.status === "READY" && !latestReview.stale ? 1 : 0);
+  const summaryItems = useMemo(() => (currentRecord ? buildSummaryItems(currentRecord) : []), [currentRecord]);
+  const isFallback = currentRecord?.generationMode === "FALLBACK";
+  const readyImages = currentRecord?.scriptImages.filter((image) => image.status === "READY" && image.imageUrl).length ?? 0;
+  const latestReview = currentRecord?.scriptReviews?.[0] ?? null;
+  const workflowDone = (currentRecord?.status === "READY" ? 1 : 0) + (readyImages > 0 ? 1 : 0) + (latestReview?.status === "READY" && !latestReview.stale ? 1 : 0);
 
-  if (!record && pendingScript) {
+  if (!currentRecord && pendingScript) {
     return <ScriptGenerationPendingPanel pendingScript={pendingScript} />;
   }
 
-  if (!record) {
+  if (!currentRecord) {
     return <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center text-sm font-semibold text-slate-400">暂无脚本记录</div>;
   }
 
@@ -885,7 +933,7 @@ export function ScriptTablesPanel({ record, pendingScript = null, readOnly = fal
   }
 
   async function copyAll() {
-    await navigator.clipboard.writeText(record?.plainText || tableText(tabs.flatMap((tab) => tab.tables)));
+    await navigator.clipboard.writeText(currentRecord?.plainText || tableText(tabs.flatMap((tab) => tab.tables)));
   }
 
   function applyQuickInstruction(tag: string) {
@@ -894,6 +942,33 @@ export function ScriptTablesPanel({ record, pendingScript = null, readOnly = fal
       if (value.includes(tag)) return value;
       return `${value}，${tag}`;
     });
+  }
+
+  async function regenerateTable(target: TableRegenerateTarget) {
+    if (!currentRecord || regeneratingTableKey) return;
+    const key = `${target.groupKey}:${target.tableId}`;
+    setRegeneratingTableKey(key);
+    try {
+      const response = await fetch("/api/creator/trends/scripts/tables/regenerate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          scriptGenerationId: currentRecord.id,
+          groupKey: target.groupKey,
+          tableId: target.tableId,
+          userInstruction: instruction.trim() || null,
+        }),
+      });
+      const payload = (await response.json().catch(() => ({}))) as { record?: ScriptGenerationView; error?: string };
+      if (!response.ok || !payload.record) throw new Error(payload.error ?? "单表重新生成失败");
+      setLocalRecord(payload.record);
+      onRecordUpdate?.(payload.record);
+      toast.success("表格已重新生成");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "单表重新生成失败");
+    } finally {
+      setRegeneratingTableKey(null);
+    }
   }
 
   const secondaryStartIndex = activeGroups ? activeGroups.primary.length : 0;
@@ -905,20 +980,20 @@ export function ScriptTablesPanel({ record, pendingScript = null, readOnly = fal
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="max-w-3xl truncate text-lg font-black text-slate-950">{record.sourceTitle}</h2>
-              <span className={cn("rounded-full border px-2.5 py-1 text-xs font-black", record.generationMode === "AI" ? "border-teal-200 bg-teal-50 text-teal-700" : "border-amber-200 bg-amber-50 text-amber-700")}>
-                {record.generationMode === "AI" ? "AI 生成" : "AI 失败 · 规则兜底"}
+              <h2 className="max-w-3xl truncate text-lg font-black text-slate-950">{currentRecord.sourceTitle}</h2>
+              <span className={cn("rounded-full border px-2.5 py-1 text-xs font-black", currentRecord.generationMode === "AI" ? "border-teal-200 bg-teal-50 text-teal-700" : "border-amber-200 bg-amber-50 text-amber-700")}>
+                {currentRecord.generationMode === "AI" ? "AI 生成" : "AI 失败 · 规则兜底"}
               </span>
-              <span className={cn("rounded-full border px-2.5 py-1 text-xs font-black", record.status === "READY" ? "border-blue-200 bg-blue-50 text-blue-700" : record.status === "FAILED" ? "border-red-200 bg-red-50 text-red-600" : "border-slate-200 bg-slate-50 text-slate-500")}>
-                {record.status === "READY" ? (isFallback ? "兜底草稿" : "已生成") : record.status === "FAILED" ? "生成失败" : "生成中"}
+              <span className={cn("rounded-full border px-2.5 py-1 text-xs font-black", currentRecord.status === "READY" ? "border-blue-200 bg-blue-50 text-blue-700" : currentRecord.status === "FAILED" ? "border-red-200 bg-red-50 text-red-600" : "border-slate-200 bg-slate-50 text-slate-500")}>
+                {currentRecord.status === "READY" ? (isFallback ? "兜底草稿" : "已生成") : currentRecord.status === "FAILED" ? "生成失败" : "生成中"}
               </span>
               <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-black text-slate-500">
                 {tabs.length} 组 / {totalRows} 行
               </span>
             </div>
             <p className="mt-2 text-xs font-semibold text-slate-500">
-              生成时间：{formatTime(record.generatedAt)} · 模型：{record.model ?? "未记录"}
-              {record.userInstruction ? ` · 重新生成要求：${record.userInstruction}` : ""}
+              生成时间：{formatTime(currentRecord.generatedAt)} · 模型：{currentRecord.model ?? "未记录"}
+              {currentRecord.userInstruction ? ` · 重新生成要求：${currentRecord.userInstruction}` : ""}
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-2">
@@ -964,7 +1039,7 @@ export function ScriptTablesPanel({ record, pendingScript = null, readOnly = fal
         {isFallback ? (
           <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-amber-900">
             当前不是 AI 成功生成结果，而是中转站请求失败后的规则兜底草稿。它只用于临时占位和继续编辑，建议稍后点击“重新生成”获取真正的 AI 脚本。
-            {record.errorMessage ? <span className="mt-1 block text-xs text-amber-800">诊断：{record.errorMessage}</span> : null}
+            {currentRecord.errorMessage ? <span className="mt-1 block text-xs text-amber-800">诊断：{currentRecord.errorMessage}</span> : null}
           </div>
         ) : null}
 
@@ -1015,9 +1090,9 @@ export function ScriptTablesPanel({ record, pendingScript = null, readOnly = fal
             onValueChange={setWorkspaceTab}
             tabs={[
               { value: "summary", label: "摘要", content: <ScriptSummaryCards items={summaryItems} /> },
-              { value: "images", label: "图片", content: <ScriptImagesPanel key={record.id} record={record} readOnly={readOnly} /> },
+              { value: "images", label: "图片", content: <ScriptImagesPanel key={currentRecord.id} record={currentRecord} readOnly={readOnly} /> },
               { value: "tables", label: "表格", content: <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500">下方展示完整脚本表格，可继续切换图文、视频和案例拆解。</div> },
-              { value: "review", label: "发布检查", content: <ScriptPublishReviewPanel record={record} readOnly={readOnly} /> },
+              { value: "review", label: "发布检查", content: <ScriptPublishReviewPanel record={currentRecord} readOnly={readOnly} /> },
             ]}
           />
         </section>
@@ -1055,6 +1130,8 @@ export function ScriptTablesPanel({ record, pendingScript = null, readOnly = fal
                 tables={activeGroups.primary}
                 startIndex={0}
                 defaultOpen
+                regeneratingTableKey={regeneratingTableKey}
+                onRegenerateTable={allowTableRegenerate ? (target) => void regenerateTable(target) : undefined}
               />
               <ScriptTableSection
                 title="补充表"
@@ -1063,6 +1140,8 @@ export function ScriptTablesPanel({ record, pendingScript = null, readOnly = fal
                 tables={activeGroups.secondary}
                 startIndex={secondaryStartIndex}
                 tone="muted"
+                regeneratingTableKey={regeneratingTableKey}
+                onRegenerateTable={allowTableRegenerate ? (target) => void regenerateTable(target) : undefined}
               />
               {readOnly ? (
                 <ScriptTableSection
@@ -1072,6 +1151,8 @@ export function ScriptTablesPanel({ record, pendingScript = null, readOnly = fal
                   tables={activeGroups.technical}
                   startIndex={technicalStartIndex}
                   tone="technical"
+                  regeneratingTableKey={regeneratingTableKey}
+                  onRegenerateTable={allowTableRegenerate ? (target) => void regenerateTable(target) : undefined}
                 />
               ) : activeGroups.technical.length > 0 ? (
                 <div className="rounded-xl border border-violet-100 bg-violet-50 px-4 py-3 text-xs font-semibold text-violet-700">
@@ -1087,17 +1168,17 @@ export function ScriptTablesPanel({ record, pendingScript = null, readOnly = fal
   );
 }
 
-export function ScriptGenerationWorkspace({ record, pendingScript = null, readOnly = false, onRegenerate, regenerating = false }: Omit<Props, "open" | "onClose">) {
+export function ScriptGenerationWorkspace({ record, pendingScript = null, readOnly = false, onRegenerate, onRecordUpdate, regenerating = false, allowTableRegenerate = false }: Omit<Props, "open" | "onClose">) {
   if (!record && pendingScript) {
-    return <ScriptTablesPanel record={record} pendingScript={pendingScript} readOnly={readOnly} onRegenerate={onRegenerate} regenerating={regenerating} />;
+    return <ScriptTablesPanel record={record} pendingScript={pendingScript} readOnly={readOnly} onRegenerate={onRegenerate} onRecordUpdate={onRecordUpdate} regenerating={regenerating} allowTableRegenerate={allowTableRegenerate} />;
   }
   if (!record) {
     return <WorkbenchEmptyState title="选择一个热点开始创作" body="打开或生成脚本后，这里会显示脚本摘要、图片成片、完整表格和 AI 发布检查。" />;
   }
-  return <ScriptTablesPanel record={record} pendingScript={pendingScript} readOnly={readOnly} onRegenerate={onRegenerate} regenerating={regenerating} />;
+  return <ScriptTablesPanel record={record} pendingScript={pendingScript} readOnly={readOnly} onRegenerate={onRegenerate} onRecordUpdate={onRecordUpdate} regenerating={regenerating} allowTableRegenerate={allowTableRegenerate} />;
 }
 
-export function ScriptGenerationDrawer({ record, pendingScript = null, open = false, readOnly = false, onClose, onRegenerate, regenerating = false }: Props) {
+export function ScriptGenerationDrawer({ record, pendingScript = null, open = false, readOnly = false, onClose, onRegenerate, onRecordUpdate, regenerating = false, allowTableRegenerate = false }: Props) {
   if (!open || (!record && !pendingScript)) return null;
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/40">
@@ -1112,7 +1193,7 @@ export function ScriptGenerationDrawer({ record, pendingScript = null, open = fa
           </button>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto p-5">
-          <ScriptGenerationWorkspace record={record} pendingScript={pendingScript} readOnly={readOnly} onRegenerate={onRegenerate} regenerating={regenerating} />
+          <ScriptGenerationWorkspace record={record} pendingScript={pendingScript} readOnly={readOnly} onRegenerate={onRegenerate} onRecordUpdate={onRecordUpdate} regenerating={regenerating} allowTableRegenerate={allowTableRegenerate} />
         </div>
       </div>
     </div>

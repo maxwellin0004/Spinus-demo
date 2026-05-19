@@ -66,7 +66,7 @@ export default async function AdminScriptGenerationDetailPage({ params }: { para
       </Card>
 
       <Card>
-        <ScriptTablesPanel record={view} readOnly />
+        <ScriptTablesPanel record={view} readOnly allowTableRegenerate />
       </Card>
 
       <Card>

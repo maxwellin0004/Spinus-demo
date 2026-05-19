@@ -27,6 +27,12 @@ import {
   INSIGHT_TOPIC_DECK_PROMPT_VERSION,
 } from "@/lib/insights/ai-prompts";
 import { INSIGHT_DIRECTIONS } from "@/lib/insights/directions";
+import {
+  DEFAULT_CASE_ANALYSIS_TABLE_PROMPTS,
+  DEFAULT_GRAPHIC_TABLE_PROMPTS,
+  DEFAULT_VIDEO_TABLE_PROMPTS,
+  stringifyTablePrompts,
+} from "@/lib/insights/trend-script-generation";
 import { prisma } from "@/lib/prisma";
 import { getAdminContext, hasAdminPermission } from "@/lib/admin";
 
@@ -178,6 +184,9 @@ export default async function AdminSettingsPage({
     hasPromptExample(settings.insightAiCaseGraphicScriptSystemPrompt, "graphicTables") ? settings.insightAiCaseGraphicScriptSystemPrompt : DEFAULT_INSIGHT_AI_CASE_GRAPHIC_SCRIPT_PROMPT;
   const caseVideoPrompt =
     hasPromptExample(settings.insightAiCaseVideoScriptSystemPrompt, "videoTables") ? settings.insightAiCaseVideoScriptSystemPrompt : DEFAULT_INSIGHT_AI_CASE_VIDEO_SCRIPT_PROMPT;
+  const graphicTablePrompts = stringifyTablePrompts(settings.insightAiGraphicTablePromptsJson, DEFAULT_GRAPHIC_TABLE_PROMPTS);
+  const videoTablePrompts = stringifyTablePrompts(settings.insightAiVideoTablePromptsJson, DEFAULT_VIDEO_TABLE_PROMPTS);
+  const caseAnalysisTablePrompts = stringifyTablePrompts(settings.insightAiCaseAnalysisTablePromptsJson, DEFAULT_CASE_ANALYSIS_TABLE_PROMPTS);
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
   const alipayFailures = paymentEvents.filter((event) => event.provider === "alipay" && event.status === "FAILED").length;
   const wechatFailures = paymentEvents.filter((event) => event.provider === "wechat_pay" && event.status === "FAILED").length;
@@ -737,6 +746,21 @@ export default async function AdminSettingsPage({
                   rows={8}
                 />
                 <AdminPromptTester label="爆款案例视频改写提示词" promptField="insightAiCaseVideoScriptSystemPrompt" promptType="caseVideo" />
+              </div>
+              <div className="md:col-span-2 rounded-xl border border-teal-200 bg-teal-50/60 px-4 py-3 text-sm text-teal-900">
+                <p className="font-black">单表并发生成提示词</p>
+                <p className="mt-1 text-teal-800">
+                  脚本生成会按下面 JSON 的每个 key 分拆成独立 AI 请求并发执行；单张表失败时只替换这一张表为规则兜底，不再拖垮整包。
+                </p>
+              </div>
+              <div className="md:col-span-2">
+                <Textarea label="图文单表提示词 JSON" name="insightAiGraphicTablePromptsJson" defaultValue={graphicTablePrompts} rows={14} />
+              </div>
+              <div className="md:col-span-2">
+                <Textarea label="视频单表提示词 JSON" name="insightAiVideoTablePromptsJson" defaultValue={videoTablePrompts} rows={18} />
+              </div>
+              <div className="md:col-span-2">
+                <Textarea label="案例拆解单表提示词 JSON" name="insightAiCaseAnalysisTablePromptsJson" defaultValue={caseAnalysisTablePrompts} rows={18} />
               </div>
             </div>
           </div>
