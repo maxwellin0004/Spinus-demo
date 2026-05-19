@@ -5271,6 +5271,7 @@ export async function updatePlatformSettingsAction(formData: FormData) {
   });
   revalidatePath("/admin/settings");
   revalidatePath("/brand/campaigns/new");
+  redirect("/admin/settings?platformSettings=1");
 }
 
 const alipayPaymentConfigSchema = z.object({

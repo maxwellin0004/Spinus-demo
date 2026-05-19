@@ -8,6 +8,7 @@ import {
   updateWechatPaymentConfigAction,
 } from "@/lib/actions";
 import { AdminSettingsAccordion, AdminSettingsAccordionSection } from "@/components/admin-settings-accordion";
+import { AdminSettingsSaveToast } from "@/components/admin-settings-save-toast";
 import { AdminMetricGrid, AdminNotice } from "@/components/admin-workbench";
 import { AdminPromptTester } from "@/components/admin-prompt-tester";
 import { SubmitButton } from "@/components/form-controls";
@@ -113,11 +114,11 @@ function PaymentReadinessPanel({
 export default async function AdminSettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; sla?: string; trendRefresh?: string; trendCollect?: string; insightDefaults?: string; payment?: string }>;
+  searchParams: Promise<{ error?: string; sla?: string; trendRefresh?: string; trendCollect?: string; insightDefaults?: string; payment?: string; platformSettings?: string }>;
 }) {
   const directionSlugs = INSIGHT_DIRECTIONS.map((direction) => direction.slug);
   const [
-    { error, sla, trendRefresh, trendCollect, insightDefaults, payment },
+    { error, sla, trendRefresh, trendCollect, insightDefaults, payment, platformSettings },
     settings,
     [topicCount, contentCount, commentCount, snapshotCount, latestCollectionRun],
     snapshotRows,
@@ -217,6 +218,7 @@ export default async function AdminSettingsPage({
 
   return (
     <div className="grid gap-6">
+      <AdminSettingsSaveToast show={platformSettings === "1"} />
       <PageHeader eyebrow="管理端" title="平台配置" />
 
       {error ? <AdminNotice tone="danger">{error}</AdminNotice> : null}
@@ -238,6 +240,7 @@ export default async function AdminSettingsPage({
       ) : null}
 
       {payment ? <AdminNotice tone="success">支付配置已保存。</AdminNotice> : null}
+      {platformSettings === "1" ? <AdminNotice tone="success">平台配置已保存。</AdminNotice> : null}
 
       <AdminMetricGrid
         columns="md:grid-cols-3 xl:grid-cols-6"
@@ -664,7 +667,12 @@ export default async function AdminSettingsPage({
               </div>
               <Field label="AI Base URL" name="insightAiBaseUrl" defaultValue={aiBaseUrl} />
               <Field label="AI 模型名" name="insightAiModel" defaultValue={aiModel} placeholder="gpt-5.5 或 gpt-5.4-mini" />
-              <Field label="AI API Key（留空保持原配置）" name="insightAiApiKey" type="password" placeholder={settings.insightAiApiKey ? "已配置，留空不变" : "粘贴 4Router API Key"} />
+              <Field
+                label="AI API Key"
+                name="insightAiApiKey"
+                defaultValue={settings.insightAiApiKey ?? ""}
+                placeholder="粘贴 4Router API Key"
+              />
               <div className="md:col-span-2 rounded-xl border border-cyan-200 bg-cyan-50/60 px-4 py-3 text-sm text-cyan-900">
                 <p className="font-black">前端生图模型配置</p>
                 <p className="mt-1 text-cyan-800">
@@ -675,10 +683,10 @@ export default async function AdminSettingsPage({
               <Field label="生图 Base URL（留空沿用文本 AI）" name="insightImageAiBaseUrl" defaultValue={settings.insightImageAiBaseUrl ?? ""} placeholder={imageAiBaseUrl} />
               <Field label="生图模型名" name="insightImageAiModel" defaultValue={imageAiModel} />
               <Field
-                label="生图 API Key（留空沿用文本 AI Key）"
+                label="生图 API Key"
                 name="insightImageAiApiKey"
-                type="password"
-                placeholder={settings.insightImageAiApiKey ? "已单独配置，留空不变" : settings.insightAiApiKey ? "留空沿用文本 AI Key" : "粘贴 4Router API Key"}
+                defaultValue={settings.insightImageAiApiKey ?? ""}
+                placeholder={settings.insightAiApiKey ? "留空沿用文本 AI Key" : "粘贴 4Router API Key"}
               />
               <div className="md:col-span-2">
                 <Textarea label="选题生成提示词" name="insightAiSystemPrompt" defaultValue={topicRewritePrompt} rows={14} />
